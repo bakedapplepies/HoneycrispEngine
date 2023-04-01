@@ -4,9 +4,11 @@ out vec4 FragColor;
 in vec3 outColor;
 in vec2 TexCoord;
 
+// uniforms
 uniform float time;
+
+// textures
 uniform sampler2D uTexture0;
-// uniform sampler2D uTexture2;
 
 void main()
 {
@@ -17,5 +19,5 @@ void main()
     // FragColor = vec4(newR, newG, newB, 1.0);
 
     // FragColor = vec4(outColor, 1.0);
-    FragColor = texture(uTexture0, TexCoord);
+    FragColor = texture(uTexture0, TexCoord) * vec4(outColor, 1.0);
 }
