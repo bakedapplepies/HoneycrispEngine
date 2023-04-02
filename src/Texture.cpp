@@ -1,7 +1,4 @@
-#include <glad/glad.h>
-#include <stb/stb_image.h>
-
-#include <iostream>
+#include "pch/pch.h"
 
 #include "Debug.h"
 #include "Texture.h"

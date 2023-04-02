@@ -1,22 +1,30 @@
 #pragma once
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include "pch/pch.h"
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
+#include "constants.h"
 #include "VertexArray.h"
 #include "Texture.h"
 #include "Shader.h"
 #include "Camera.h"
 
 
+struct CallbackData  // maybe make private
+{
+    bool firstMouse = true;
+    float lastX = WINDOW_WIDTH/2;
+    float lastY = WINDOW_HEIGHT/2;
+    float yaw = -90.0f;
+    float pitch = 0.0f;
+    float fov = 45.0f;
+    glm::vec3 direction;
+};
+
 class Window
 {
 private:
     GLFWwindow* glfwWindow;
+    CallbackData callbackData;
     Camera camera;
     VertexArray currentVAO;
     Texture currentTexture;
@@ -33,6 +41,10 @@ private:
 private:
     void calcFPS();
     void processInput();
+
+    // static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+    // static void error_callback(int error, const char *msg);
+    // static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 public:
     Window();

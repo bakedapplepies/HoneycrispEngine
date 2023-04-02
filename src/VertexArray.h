@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glad/glad.h>
+#include "pch/pch.h"
 
 #include "VertexBuffer.h"
 #include "ElementBuffer.h"

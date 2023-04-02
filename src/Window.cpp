@@ -1,14 +1,4 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
-#include <stb/stb_image.h>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-#include <iostream>
-#include <cmath>
+#include "pch/pch.h"
 
 #include "Debug.h"
 #include "constants.h"
@@ -51,6 +41,9 @@ Window::Window()
     glfwSwapInterval(1);  // vsync
 
     /* Callbacks */
+    glfwSetWindowUserPointer(glfwWindow, &callbackData);
+
+    glfwSetCursorPosCallback(glfwWindow, mouse_callback);
     glfwSetFramebufferSizeCallback(glfwWindow, framebuffer_size_callback);
     glfwSetKeyCallback(glfwWindow, key_callback);
 
@@ -62,7 +55,8 @@ Window::Window()
     }
     std::cout << glGetString(GL_VERSION) << '\n';
 
-    glEnable(GL_DEPTH_TEST);
+    glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    GLCall(glEnable(GL_DEPTH_TEST));
     GLCall(glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT));
 
 
@@ -197,6 +191,7 @@ Window::Window()
     currentShader.Use();
     GLCall(glUniform1i(glGetUniformLocation(currentShader.getID(), "uTexture0"), 0));
     
+    /* Camera stuff */
     // Model matrix
     modelMatrix = glm::mat4(1.0f);
     modelMatrix = glm::rotate(modelMatrix, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -243,6 +238,13 @@ void Window::Loop()
 
         modelMatrix = glm::rotate(modelMatrix, sinf(begin)/10, glm::vec3(0.0f, 1.0f, 1.0f));
 
+        camera.cameraDirection = glm::normalize(callbackData.direction);
+        viewMatrix = glm::lookAt(
+            camera.cameraPos,
+            camera.cameraPos + camera.cameraDirection,
+            camera.cameraUp
+        );
+
         currentShader.setMatrixfvUniform("model", modelMatrix);
         currentShader.setMatrixfvUniform("view", viewMatrix);
 
@@ -278,6 +280,21 @@ void Window::processInput()
 {
     if (glfwGetKey(glfwWindow, GLFW_KEY_W) == GLFW_PRESS)
     {
-        
+        camera.cameraPos += 3.0f * camera.cameraDirection * deltaTime;
+    }
+
+    if (glfwGetKey(glfwWindow, GLFW_KEY_S) == GLFW_PRESS)
+    {
+        camera.cameraPos -= 3.0f * camera.cameraDirection * deltaTime;
+    }
+
+    if (glfwGetKey(glfwWindow, GLFW_KEY_A) == GLFW_PRESS)
+    {
+        camera.cameraPos -= glm::normalize(glm::cross(camera.cameraDirection, camera.cameraUp)) * 3.0f * deltaTime;
+    }
+
+    if (glfwGetKey(glfwWindow, GLFW_KEY_D) == GLFW_PRESS)
+    {
+        camera.cameraPos += glm::normalize(glm::cross(camera.cameraDirection, camera.cameraUp)) * 3.0f * deltaTime;
     }
 }

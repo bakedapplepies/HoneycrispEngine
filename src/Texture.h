@@ -1,8 +1,6 @@
 #pragma once
 
-#include <glad/glad.h>
-
-#include <string>
+#include "pch/pch.h"
 
 class Texture
 {
