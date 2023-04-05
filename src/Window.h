@@ -3,6 +3,7 @@
 #include "pch/pch.h"
 
 #include "constants.h"
+#include "Object.h"
 #include "VertexArray.h"
 #include "Texture.h"
 #include "Shader.h"
@@ -27,6 +28,8 @@ private:
     CallbackData callbackData;
     Camera camera;
     VertexArray currentVAO;
+    Object* currentObject = nullptr;
+    std::vector<Object*> objects;
     Texture currentTexture;
     Shader currentShader;
 
@@ -42,12 +45,9 @@ private:
     void calcFPS();
     void processInput();
 
-    // static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-    // static void error_callback(int error, const char *msg);
-    // static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
-
 public:
     Window();
+    ~Window();
 
     void Loop();
 };

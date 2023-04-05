@@ -52,9 +52,11 @@ void mouse_callback(GLFWwindow* window, double xpos_double, double ypos_double)
 
     if (callbackData->firstMouse)
     {
-        deltaX = xpos;
-        deltaY = ypos;
+        deltaX = callbackData->lastX;
+        deltaY = callbackData->lastY;
         callbackData->firstMouse = false;
+        direction = glm::vec3(0.0f, 0.0f, 3.0f);
+        return;
     }
 
     deltaX = xpos - callbackData->lastX;

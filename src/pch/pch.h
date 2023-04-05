@@ -14,3 +14,6 @@
 #include <fstream>
 #include <sstream>
 #include <cmath>
+#include <memory>
+#include <stdexcept>
+#include <vector>

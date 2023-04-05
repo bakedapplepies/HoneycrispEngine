@@ -14,6 +14,7 @@ private:
     ElementBuffer m_elementBuffer;
 
 public:
+    VertexArray() = default;
     void CreateVAO(float* vboData, unsigned int vboSize, unsigned int* eboData, unsigned int eboSize, GLenum mode);
     void Bind() const;
     void Unbind() const;

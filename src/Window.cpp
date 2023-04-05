@@ -2,6 +2,7 @@
 
 #include "Debug.h"
 #include "constants.h"
+#include "Cube.h"
 #include "Window.h"
 #include "Callbacks.h"
 #include "VertexArray.h"
@@ -38,7 +39,7 @@ Window::Window()
         // return -1;
     }
     glfwMakeContextCurrent(glfwWindow);
-    glfwSwapInterval(1);  // vsync
+    // glfwSwapInterval(1);  // vsync
 
     /* Callbacks */
     glfwSetWindowUserPointer(glfwWindow, &callbackData);
@@ -63,57 +64,14 @@ Window::Window()
     /* Vertex Buffer */
     float vertices[] = {
 //       x      y      z      r      g      b      tx    ty
-        // -0.5f,  0.5f,  0.5f,  0.7f,  0.9f,  0.5f,  0.0f, 1.0f,  // front top left - 0
-        //  0.5f,  0.5f,  0.5f,  0.0f,  0.7f,  0.7f,  1.0f, 1.0f,  // front top right - 1
-        //  0.5f, -0.5f,  0.5f,  0.6f,  0.8f,  1.0f,  1.0f, 0.0f,  // front bottom right - 2
-        // -0.5f, -0.5f,  0.5f,  0.7f,  0.2f,  0.4f,  0.0f, 0.0f,  // front bottom left - 3
-        // -0.5f,  0.5f, -0.5f,  0.7f,  0.9f,  0.5f,  0.0f, 1.0f,  // back top left - 4
-        //  0.5f,  0.5f, -0.5f,  0.0f,  0.7f,  0.7f,  1.0f, 1.0f,  // back top right - 5
-        //  0.5f, -0.5f, -0.5f,  0.6f,  0.8f,  1.0f,  1.0f, 0.0f,  // back bottom right - 6
-        // -0.5f, -0.5f, -0.5f,  0.7f,  0.2f,  0.4f,  0.0f, 0.0f,  // back bottom left - 7
-
-
         -0.5f,  0.5f,  0.5f,  0.7f,  0.9f,  0.5f,  0.0f, 1.0f,  // front top left - 0
          0.5f,  0.5f,  0.5f,  0.0f,  0.7f,  0.7f,  1.0f, 1.0f,  // front top right - 1
          0.5f, -0.5f,  0.5f,  0.6f,  0.8f,  1.0f,  1.0f, 0.0f,  // front bottom right - 2
-         0.5f, -0.5f,  0.5f,  0.6f,  0.8f,  1.0f,  1.0f, 0.0f,  // front bottom right - 2
         -0.5f, -0.5f,  0.5f,  0.7f,  0.2f,  0.4f,  0.0f, 0.0f,  // front bottom left - 3
-        -0.5f,  0.5f,  0.5f,  0.7f,  0.9f,  0.5f,  0.0f, 1.0f,  // front top left - 0
-
-         0.5f,  0.5f,  0.5f,  0.0f,  0.7f,  0.7f,  0.0f, 1.0f,  // front top right - 1
-         0.5f,  0.5f, -0.5f,  0.0f,  0.7f,  0.7f,  1.0f, 1.0f,  // back top right - 5
-         0.5f, -0.5f, -0.5f,  0.6f,  0.8f,  1.0f,  1.0f, 0.0f,  // back bottom right - 6
-         0.5f, -0.5f, -0.5f,  0.6f,  0.8f,  1.0f,  1.0f, 0.0f,  // back bottom right - 6
-         0.5f, -0.5f,  0.5f,  0.6f,  0.8f,  1.0f,  0.0f, 0.0f,  // front bottom right - 2
-         0.5f,  0.5f,  0.5f,  0.0f,  0.7f,  0.7f,  0.0f, 1.0f,  // front top right - 1
-
-         0.5f,  0.5f, -0.5f,  0.0f,  0.7f,  0.7f,  0.0f, 1.0f,  // back top right - 5
-        -0.5f,  0.5f, -0.5f,  0.7f,  0.9f,  0.5f,  1.0f, 1.0f,  // back top left - 4
-        -0.5f, -0.5f, -0.5f,  0.7f,  0.2f,  0.4f,  1.0f, 0.0f,  // back bottom left - 7
-        -0.5f, -0.5f, -0.5f,  0.7f,  0.2f,  0.4f,  1.0f, 0.0f,  // back bottom left - 7
-         0.5f, -0.5f, -0.5f,  0.6f,  0.8f,  1.0f,  0.0f, 0.0f,  // back bottom right - 6
-         0.5f,  0.5f, -0.5f,  0.0f,  0.7f,  0.7f,  0.0f, 1.0f,  // back top right - 5
-
-        -0.5f,  0.5f, -0.5f,  0.7f,  0.9f,  0.5f,  0.0f, 1.0f,  // back top left - 4
-        -0.5f,  0.5f,  0.5f,  0.7f,  0.9f,  0.5f,  1.0f, 1.0f,  // front top left - 0
-        -0.5f, -0.5f,  0.5f,  0.7f,  0.2f,  0.4f,  1.0f, 0.0f,  // front bottom left - 3
-        -0.5f, -0.5f,  0.5f,  0.7f,  0.2f,  0.4f,  1.0f, 0.0f,  // front bottom left - 3
-        -0.5f, -0.5f, -0.5f,  0.7f,  0.2f,  0.4f,  0.0f, 0.0f,  // back bottom left - 7
-        -0.5f,  0.5f, -0.5f,  0.7f,  0.9f,  0.5f,  0.0f, 1.0f,  // back top left - 4
-
         -0.5f,  0.5f, -0.5f,  0.7f,  0.9f,  0.5f,  0.0f, 1.0f,  // back top left - 4
          0.5f,  0.5f, -0.5f,  0.0f,  0.7f,  0.7f,  1.0f, 1.0f,  // back top right - 5
-         0.5f,  0.5f,  0.5f,  0.0f,  0.7f,  0.7f,  1.0f, 0.0f,  // front top right - 1
-         0.5f,  0.5f,  0.5f,  0.0f,  0.7f,  0.7f,  1.0f, 0.0f,  // front top right - 1
-        -0.5f,  0.5f,  0.5f,  0.7f,  0.9f,  0.5f,  0.0f, 0.0f,  // front top left - 0
-        -0.5f,  0.5f, -0.5f,  0.7f,  0.9f,  0.5f,  0.0f, 1.0f,  // back top left - 4
-
-        -0.5f, -0.5f,  0.5f,  0.7f,  0.2f,  0.4f,  0.0f, 1.0f,  // front bottom left - 3
-         0.5f, -0.5f,  0.5f,  0.6f,  0.8f,  1.0f,  1.0f, 1.0f,  // front bottom right - 2
-         0.5f, -0.5f, -0.5f,  0.6f,  0.8f,  1.0f,  1.0f, 0.0f,  // back bottom right - 6
          0.5f, -0.5f, -0.5f,  0.6f,  0.8f,  1.0f,  1.0f, 0.0f,  // back bottom right - 6
         -0.5f, -0.5f, -0.5f,  0.7f,  0.2f,  0.4f,  0.0f, 0.0f,  // back bottom left - 7
-        -0.5f, -0.5f,  0.5f,  0.7f,  0.2f,  0.4f,  0.0f, 1.0f,  // front bottom left - 3
     };
 
     /* Element Buffer Object */
@@ -132,52 +90,9 @@ Window::Window()
         6, 7, 3,
     };
 
-    /* Vertex Array Object */
-    currentVAO.CreateVAO(vertices, sizeof(vertices), indicies, sizeof(indicies), GL_STATIC_DRAW);
-    currentVAO.getEBO()->Unbind();
-    currentVAO.Bind();
-
     /* Textures */
-    // Texture Rendering parameters
-
     // Image data
     stbi_set_flip_vertically_on_load(true);
-    currentTexture.CreateTexture("resources/textures/grass_block_side.png");
-
-    
-    /* Vertex Attributes */
-    // Position XYZ
-    GLCall(glVertexAttribPointer(
-        0,
-        3,
-        GL_FLOAT,
-        GL_FALSE,
-        8 * sizeof(float),
-        (void*)0
-    ));
-    GLCall(glEnableVertexAttribArray(0));
-
-    // Color RGB
-    GLCall(glVertexAttribPointer(
-        1,
-        3,
-        GL_FLOAT,
-        GL_FALSE,
-        8 * sizeof(float),
-        (void*)(3 * sizeof(float))
-    ));
-    GLCall(glEnableVertexAttribArray(1));
-
-    // Texture Coordinates XY (2D)
-    GLCall(glVertexAttribPointer(
-        2,
-        2,
-        GL_FLOAT,
-        GL_FALSE,
-        8 * sizeof(float),
-        (void*)(6 * sizeof(float))
-    ));
-    GLCall(glEnableVertexAttribArray(2));
 
 
     /* Shader Programs */
@@ -193,12 +108,9 @@ Window::Window()
     
     /* Camera stuff */
     // Model matrix
-    modelMatrix = glm::mat4(1.0f);
-    modelMatrix = glm::rotate(modelMatrix, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
     // View Matrix
-
-    viewMatrix = camera.view;
+    viewMatrix = camera.getViewMatrix();
 
     // Projection Matrix
     projectionMatrix = glm::perspective(
@@ -210,6 +122,11 @@ Window::Window()
     currentShader.setMatrixfvUniform("projection", projectionMatrix);
 
     currentVAO.Unbind();
+
+    for (unsigned int i = 0; i < 10; i++)
+    {
+        objects.push_back(new Cube(0.0f, (float)i, 0.0f));
+    }
 }
 
 
@@ -227,33 +144,36 @@ void Window::Loop()
 
         processInput();
 
-        GLCall(glClearColor(0.18f, 0.0f, 0.0f, 1.0f));
+        // Set background
+        GLCall(glClearColor(0.53, 0.81f, 0.92f, 1.0f));
         GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-        // defaultShader.setFloatUniform("time", begin);
-
-        currentTexture.Bind();
-
-        currentShader.Use();
-
-        modelMatrix = glm::rotate(modelMatrix, sinf(begin)/10, glm::vec3(0.0f, 1.0f, 1.0f));
-
-        camera.cameraDirection = glm::normalize(callbackData.direction);
-        viewMatrix = glm::lookAt(
-            camera.cameraPos,
-            camera.cameraPos + camera.cameraDirection,
-            camera.cameraUp
-        );
-
-        currentShader.setMatrixfvUniform("model", modelMatrix);
+        // Update camera
+        camera.SetDirection(glm::normalize(callbackData.direction));
+        viewMatrix = camera.getViewMatrix();
         currentShader.setMatrixfvUniform("view", viewMatrix);
 
-        currentVAO.Bind();
-        // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
-        GLCall(glDrawArrays(GL_TRIANGLES, 0, 36));
-        
-        GLCall(glfwSwapBuffers(glfwWindow));  // swap double buffers
+
+        currentShader.Use();
+        for (Object*& object : objects)
+        {
+            modelMatrix = glm::mat4(1.0f);
+            modelMatrix = glm::translate(modelMatrix, object->GetPosition());
+            currentShader.setMatrixfvUniform("model", modelMatrix);
+            object->Draw();
+        }
+                
+        GLCall(glfwSwapBuffers(glfwWindow));
         GLCall(glfwPollEvents());
+    }
+}
+
+
+Window::~Window()
+{
+    for (Object* object : objects)
+    {
+        delete object;
     }
 
     currentVAO.Delete();
@@ -269,8 +189,10 @@ void Window::calcFPS()
     totalTime += deltaTime;
     frames++;
     if (totalTime >= 1.0f)
-    {
-        std::cout << "FPS: " << frames << '\n';
+    {   
+        std::stringstream ss;
+        ss << "LearnOpenGL - FPS: " << frames;
+        glfwSetWindowTitle(glfwWindow, ss.str().c_str());
         frames = 0;
         totalTime = 0.0f;
     }
@@ -280,21 +202,33 @@ void Window::processInput()
 {
     if (glfwGetKey(glfwWindow, GLFW_KEY_W) == GLFW_PRESS)
     {
-        camera.cameraPos += 3.0f * camera.cameraDirection * deltaTime;
+        camera.ChangePos(glm::normalize(glm::vec3(camera.cameraDirection.x, 0.0f, camera.cameraDirection.z)) * 3.0f * deltaTime);
     }
 
     if (glfwGetKey(glfwWindow, GLFW_KEY_S) == GLFW_PRESS)
     {
-        camera.cameraPos -= 3.0f * camera.cameraDirection * deltaTime;
+        camera.ChangePos(-glm::normalize(glm::vec3(camera.cameraDirection.x, 0.0f, camera.cameraDirection.z)) * 3.0f * deltaTime);
     }
 
     if (glfwGetKey(glfwWindow, GLFW_KEY_A) == GLFW_PRESS)
     {
-        camera.cameraPos -= glm::normalize(glm::cross(camera.cameraDirection, camera.cameraUp)) * 3.0f * deltaTime;
+        glm::vec3 direction = glm::normalize(glm::cross(camera.cameraDirection, camera.cameraUp));
+        camera.ChangePos(-glm::vec3(direction.x, 0.0f, direction.z) * 3.0f * deltaTime);
     }
 
     if (glfwGetKey(glfwWindow, GLFW_KEY_D) == GLFW_PRESS)
     {
-        camera.cameraPos += glm::normalize(glm::cross(camera.cameraDirection, camera.cameraUp)) * 3.0f * deltaTime;
+        glm::vec3 direction = glm::normalize(glm::cross(camera.cameraDirection, camera.cameraUp));
+        camera.ChangePos(glm::vec3(direction.x, 0.0f, direction.z) * 3.0f * deltaTime);
+    }
+
+    if (glfwGetKey(glfwWindow, GLFW_KEY_SPACE) == GLFW_PRESS)
+    {
+        camera.ChangePos(glm::vec3(0.0f, 1.0f, 0.0f) * 3.0f * deltaTime);
+    }
+
+    if (glfwGetKey(glfwWindow, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+    {
+        camera.ChangePos(glm::vec3(0.0f, -1.0f, 0.0f) * 3.0f * deltaTime);
     }
 }
