@@ -16,6 +16,8 @@ public:
     void Use() const;
     void Delete() const;
 
-    void setFloatUniform(const std::string& name, float value) const;
-    void setMatrixfvUniform(const std::string& name, glm::mat4 matrix) const;
+    void setFloatUniform(const char* name, float value) const;
+    void setMatrix4Uniform(const char* name, const glm::mat4& matrix) const;
+    void setMatrix3Uniform(const char* name, const glm::mat3& matrix) const;
+    void setVector3Uniform(const char* name, const glm::vec3& vector) const;
 };

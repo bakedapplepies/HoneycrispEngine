@@ -18,7 +18,7 @@ void Camera::SetDirection(const glm::vec3& newDirection)
     cameraDirection = newDirection;
 }
 
-glm::mat4 Camera::getViewMatrix()
+glm::mat4 Camera::GetViewMatrix()
 {
     return glm::lookAt(
         cameraPos,

@@ -33,5 +33,5 @@ public:
     void ChangePos(const glm::vec3& posOffset);
     void SetDirection(const glm::vec3& direction);
     
-    glm::mat4 getViewMatrix();
+    glm::mat4 GetViewMatrix();
 };

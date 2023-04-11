@@ -17,3 +17,12 @@
 #include <memory>
 #include <stdexcept>
 #include <vector>
+#include <typeinfo>
+#include <imgui/imgui.h>
+#include <imgui/imgui_internal.h>
+#include <imgui/imconfig.h>
+#include <imgui/imstb_rectpack.h>
+#include <imgui/imstb_textedit.h>
+#include <imgui/imstb_truetype.h>
+#include <imgui/imgui_impl_glfw.h>
+#include <imgui/imgui_impl_opengl3.h>

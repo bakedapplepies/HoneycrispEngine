@@ -3,13 +3,13 @@
 #include "Debug.h"
 #include "Texture.h"
 
-void Texture::CreateTexture(const std::string& texturePath)
+void Texture::CreateTexture(const char* texturePath)
 {
     GLCall(glGenTextures(1, &m_textureID));
 
     int width, height, nrChannels;
     unsigned char* data = stbi_load(
-        texturePath.c_str(), &width, &height, &nrChannels, 4);
+        texturePath, &width, &height, &nrChannels, 4);
     
     if (data)
     {
@@ -23,7 +23,7 @@ void Texture::CreateTexture(const std::string& texturePath)
 
         // Generate texture
         GLCall(glBindTexture(GL_TEXTURE_2D, m_textureID));
-        GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data));
+        GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, format, GL_UNSIGNED_BYTE, data));
         GLCall(glGenerateMipmap(GL_TEXTURE_2D));
 
         GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST));
@@ -45,9 +45,9 @@ GLuint Texture::getID() const
     return m_textureID;
 }
 
-void Texture::Bind() const
+void Texture::Bind(GLenum texture_unit) const
 {
-    GLCall(glActiveTexture(GL_TEXTURE0));
+    GLCall(glActiveTexture(texture_unit));
     GLCall(glBindTexture(GL_TEXTURE_2D, m_textureID));
 }
 

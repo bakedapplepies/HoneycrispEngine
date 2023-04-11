@@ -3,8 +3,6 @@ g++ -g -c -std=c++17 -I./include -I./src/pch ./src/pch/pch.cpp -o ./bin/intermed
 
 g++ -g -c -std=c++17 -I./include -I./src/pch ./src/Debug.cpp -o ./bin/intermediates/Debug.obj || exit
 
-g++ -g -c -std=c++17 -I./include ./src/glad.c -o ./bin/intermediates/glad.obj || exit
-
 g++ -g -c -std=c++17 -I./include -I./src/pch ./src/main.cpp -o ./bin/intermediates/main.obj || exit
 
 g++ -g -c -std=c++17 -I./include -I./src/pch ./src/VertexArray.cpp -o ./bin/intermediates/VertexArray.obj || exit
@@ -19,7 +17,7 @@ g++ -g -c -std=c++17 -I./include -I./src/pch ./src/Texture.cpp -o ./bin/intermed
 
 g++ -g -c -std=c++17 -I./include -I./src/pch ./src/Cube.cpp -o ./bin/intermediates/Cube.obj || exit
 
-g++ -g -c -std=c++17 -I./include ./src/stb_image.cpp -o ./bin/intermediates/stb_image.obj || exit
+g++ -g -c -std=c++17 -I./include -I./src/pch ./src/Light.cpp -o ./bin/intermediates/Light.obj || exit
 
 g++ -g -c -std=c++17 -I./include -I./src/pch ./src/Camera.cpp -o ./bin/intermediates/Camera.obj || exit
 
@@ -27,6 +25,3 @@ g++ -g -c -std=c++17 -I./include -I./src/pch ./src/Window.cpp -o ./bin/intermedi
 
 :: Linking
 g++ -g ./bin/intermediates/*.obj -o ./bin/main.exe -L./lib -lglfw3 -lopengl32 -lgdi32 -luser32 -lkernel32 -lshell32 || exit
-
-
-:: g++ -I./include ./src/pch/pch.h

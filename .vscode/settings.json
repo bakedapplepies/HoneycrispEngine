@@ -61,7 +61,9 @@
         "random": "cpp",
         "ratio": "cpp",
         "iomanip": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "string_view": "cpp",
+        "thread": "cpp"
     },
     "cmake.configureOnOpen": true
 }

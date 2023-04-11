@@ -3,6 +3,7 @@
 #include "pch/pch.h"
 
 #include "VertexArray.h"
+#include "Shader.h"
 #include "Texture.h"
 
 
@@ -10,12 +11,15 @@ class Object
 {
 private:
     VertexArray m_VAO;
+    Shader m_shader;
     Texture m_texture;
+    glm::vec3 m_position;
 
 public:
-    glm::vec3 position;
+    virtual ~Object() {}
 
-public:
     virtual void Draw() const {}
-    virtual glm::vec3 GetPosition() const {}
+    virtual glm::vec3* GetPosition() {}
+    virtual glm::mat4 GetModelMatrix() const {}
+    virtual Shader* GetShader() {}
 };

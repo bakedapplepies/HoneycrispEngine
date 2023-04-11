@@ -8,11 +8,11 @@ private:
     GLuint m_textureID;
 
 public:
-    void CreateTexture(const std::string& texturePath);
+    void CreateTexture(const char* texturePath);
 
     GLuint getID() const;
 
-    void Bind() const;
+    void Bind(GLenum texture_unit) const;
     void Unbind() const;
     void Delete() const;
 };

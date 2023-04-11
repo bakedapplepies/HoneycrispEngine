@@ -1,1 +1,2 @@
-- ABSTRACTION
+- inlining stuff (maybe that stuff's done automatically)
+- better object hierarchy abstraction

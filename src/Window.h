@@ -12,6 +12,7 @@
 
 struct CallbackData  // maybe make private
 {
+    bool showMouse = false;
     bool firstMouse = true;
     float lastX = WINDOW_WIDTH/2;
     float lastY = WINDOW_HEIGHT/2;
@@ -27,10 +28,8 @@ private:
     GLFWwindow* glfwWindow;
     CallbackData callbackData;
     Camera camera;
-    VertexArray currentVAO;
     Object* currentObject = nullptr;
     std::vector<Object*> objects;
-    Texture currentTexture;
     Shader currentShader;
 
     glm::mat4 modelMatrix;
