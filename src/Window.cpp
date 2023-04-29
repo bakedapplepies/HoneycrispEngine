@@ -61,35 +61,6 @@ Window::Window()
     GLCall(glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT));
 
 
-    /* Vertex Buffer */
-    float vertices[] = {
-//       x      y      z      r      g      b      tx    ty
-        -0.5f,  0.5f,  0.5f,  0.7f,  0.9f,  0.5f,  0.0f, 1.0f,  // front top left - 0
-         0.5f,  0.5f,  0.5f,  0.0f,  0.7f,  0.7f,  1.0f, 1.0f,  // front top right - 1
-         0.5f, -0.5f,  0.5f,  0.6f,  0.8f,  1.0f,  1.0f, 0.0f,  // front bottom right - 2
-        -0.5f, -0.5f,  0.5f,  0.7f,  0.2f,  0.4f,  0.0f, 0.0f,  // front bottom left - 3
-        -0.5f,  0.5f, -0.5f,  0.7f,  0.9f,  0.5f,  0.0f, 1.0f,  // back top left - 4
-         0.5f,  0.5f, -0.5f,  0.0f,  0.7f,  0.7f,  1.0f, 1.0f,  // back top right - 5
-         0.5f, -0.5f, -0.5f,  0.6f,  0.8f,  1.0f,  1.0f, 0.0f,  // back bottom right - 6
-        -0.5f, -0.5f, -0.5f,  0.7f,  0.2f,  0.4f,  0.0f, 0.0f,  // back bottom left - 7
-    };
-
-    /* Element Buffer Object */
-    unsigned int indicies[] = {
-        0, 1, 2,  // front
-        2, 3, 0,
-        1, 5, 6, // right
-        6, 2, 1,
-        5, 4, 7,  // back
-        7, 6, 5,
-        4, 0, 3,  // left
-        3, 7, 4,
-        4, 5, 1,  // top
-        1, 0, 4,
-        3, 2, 6,  // bottom
-        6, 7, 3,
-    };
-
     /* Textures */
     // Image data
     stbi_set_flip_vertically_on_load(true);
@@ -153,46 +124,60 @@ void Window::Loop()
         camera.SetDirection(glm::normalize(callbackData.direction));
         viewMatrix = camera.GetViewMatrix();
 
+        ImGui::Begin("Demo");
+        
+        static float lightSizeScale = 0.2f;
+        
+        ImGui::SliderFloat("Light Size", &lightSizeScale, 0.0f, 1.0f);
+
+        ImGui::End();
+        
+        
+        glm::vec3& color = static_cast<Light*>(objects.back())->GetColor();
+        color.r *= cosf(4*begin)/4 + 0.75f;
+        color.g *= -sinf(4*begin)/4 + 0.75f;
+        color.b *= -sinf(4*begin)/4 + 0.75f;
 
         // currentShader.Use();
         for (Object*& object : objects)
         {
-            object->GetShader()->Use();
+            object->GetShader().Use();
             modelMatrix = object->GetModelMatrix();
-            object->GetShader()->setMatrix4Uniform("view", viewMatrix);
-            object->GetShader()->setMatrix4Uniform("projection", projectionMatrix);
+            object->GetShader().setMatrix4Uniform("view", viewMatrix);
+            object->GetShader().setMatrix4Uniform("projection", projectionMatrix);
 
-            glm::vec3 color = *static_cast<Light*>(objects.back())->GetColor();
-            color.r *= cosf(4*begin)/4 + 0.75f;
-            color.g *= -sinf(4*begin)/4 + 0.75f;
-            color.b *= -sinf(4*begin)/4 + 0.75f;
 
             if (typeid(*object) == typeid(Cube))
             {
-                object->GetShader()->setMatrix4Uniform("model", modelMatrix);
-                object->GetShader()->setVector3Uniform("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));
-                object->GetShader()->setVector3Uniform("lightColor", color);
-                object->GetShader()->setVector3Uniform("lightPos", *(objects.back()->GetPosition()));
-                object->GetShader()->setVector3Uniform("viewPos", camera.cameraPos);
+                object->GetShader().setMatrix4Uniform("model", modelMatrix);
+                object->GetShader().setVector3Uniform("lightColor", color);
+                object->GetShader().setVector3Uniform("lightPos", objects.back()->GetPosition());
+                object->GetShader().setVector3Uniform("viewPos", camera.cameraPos);
+
+                object->GetShader().setVector3Uniform("material.ambient", glm::vec3(1.0f) * color);
+                object->GetShader().setVector3Uniform("material.diffuse", glm::vec3(1.0f) * color);
+                object->GetShader().setVector3Uniform("material.specular", glm::vec3(0.5f) * color);
+                object->GetShader().setFloatUniform("material.shininess", 32.0f);
+
+                object->GetShader().setVector3Uniform("light.ambient", glm::vec3(0.2f));
+                object->GetShader().setVector3Uniform("light.diffuse", glm::vec3(0.5f));
+                object->GetShader().setVector3Uniform("light.specular", glm::vec3(1.0f));
                 
-                object->GetShader()->setMatrix3Uniform("normalMatrix", glm::mat4(glm::transpose(glm::inverse(modelMatrix))));
+                // for Phong shading
+                object->GetShader().setMatrix3Uniform("normalMatrix", glm::mat4(glm::transpose(glm::inverse(modelMatrix))));
             }
             else if (typeid(*object) == typeid(Light))
             {
-                modelMatrix = glm::scale(modelMatrix, glm::vec3(0.2f));
-                object->GetShader()->setMatrix4Uniform("model", modelMatrix);
-                object->GetPosition()->x = 1.5f * cosf(begin*1.5f);
-                object->GetPosition()->z = 1.5f * sinf(begin*1.5f);
+                modelMatrix = glm::scale(modelMatrix, glm::vec3(lightSizeScale));
+                object->GetShader().setMatrix4Uniform("model", modelMatrix);
+                object->GetPosition().x = 1.5f * cosf(begin*1.5f);
+                object->GetPosition().z = 1.5f * sinf(begin*1.5f);
 
-                object->GetShader()->setVector3Uniform("uColor", color);
+                object->GetShader().setVector3Uniform("uColor", color);
             }
 
             object->Draw();
         }
-
-        ImGui::Begin("Demo");
-        ImGui::Button("Button");
-        ImGui::End();
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -225,8 +210,7 @@ void Window::calcFPS()
     frames++;
     if (totalTime >= 1.0f)
     {   
-        std::string s;
-        s = "LearnOpenGL - FPS: " + frames;
+        std::string s = "LearnOpenGL - FPS: " + std::to_string(frames);
         glfwSetWindowTitle(glfwWindow, s.c_str());
         frames = 0;
         totalTime = 0.0f;
@@ -237,33 +221,33 @@ void Window::processInput()
 {
     if (glfwGetKey(glfwWindow, GLFW_KEY_W) == GLFW_PRESS)
     {
-        camera.ChangePos(glm::normalize(glm::vec3(camera.cameraDirection.x, 0.0f, camera.cameraDirection.z)) * 5.0f * deltaTime);
+        camera.ChangePos(glm::normalize(glm::vec3(camera.cameraDirection.x, 0.0f, camera.cameraDirection.z)) * camera.speed * deltaTime);
     }
 
     if (glfwGetKey(glfwWindow, GLFW_KEY_S) == GLFW_PRESS)
     {
-        camera.ChangePos(-glm::normalize(glm::vec3(camera.cameraDirection.x, 0.0f, camera.cameraDirection.z)) * 5.0f * deltaTime);
+        camera.ChangePos(-glm::normalize(glm::vec3(camera.cameraDirection.x, 0.0f, camera.cameraDirection.z)) * camera.speed * deltaTime);
     }
 
     if (glfwGetKey(glfwWindow, GLFW_KEY_A) == GLFW_PRESS)
     {
         glm::vec3 direction = glm::normalize(glm::cross(camera.cameraDirection, camera.cameraUp));
-        camera.ChangePos(-glm::vec3(direction.x, 0.0f, direction.z) * 5.0f * deltaTime);
+        camera.ChangePos(-glm::vec3(direction.x, 0.0f, direction.z) * camera.speed * deltaTime);
     }
 
     if (glfwGetKey(glfwWindow, GLFW_KEY_D) == GLFW_PRESS)
     {
         glm::vec3 direction = glm::normalize(glm::cross(camera.cameraDirection, camera.cameraUp));
-        camera.ChangePos(glm::vec3(direction.x, 0.0f, direction.z) * 5.0f * deltaTime);
+        camera.ChangePos(glm::vec3(direction.x, 0.0f, direction.z) * camera.speed * deltaTime);
     }
 
     if (glfwGetKey(glfwWindow, GLFW_KEY_SPACE) == GLFW_PRESS)
     {
-        camera.ChangePos(glm::vec3(0.0f, 1.0f, 0.0f) * 5.0f * deltaTime);
+        camera.ChangePos(glm::vec3(0.0f, 1.0f, 0.0f) * camera.speed * deltaTime);
     }
 
     if (glfwGetKey(glfwWindow, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
     {
-        camera.ChangePos(glm::vec3(0.0f, -1.0f, 0.0f) * 5.0f * deltaTime);
+        camera.ChangePos(glm::vec3(0.0f, -1.0f, 0.0f) * camera.speed * deltaTime);
     }
 }

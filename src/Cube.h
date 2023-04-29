@@ -122,7 +122,7 @@ public:
     ~Cube() override;
 
     void Draw() const override;
-    glm::vec3* GetPosition() override;
+    glm::vec3& GetPosition() override;
     glm::mat4 GetModelMatrix() const override;
-    Shader* GetShader() override;
+    Shader& GetShader() override;
 };

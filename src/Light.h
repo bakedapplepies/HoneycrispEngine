@@ -77,8 +77,8 @@ public:
     ~Light() override;
 
     void Draw() const override;
-    glm::vec3* GetPosition() override;
-    glm::vec3* GetColor();
+    glm::vec3& GetPosition() override;
+    glm::vec3& GetColor();
     glm::mat4 GetModelMatrix() const override;
-    Shader* GetShader() override;
+    Shader& GetShader() override;
 };

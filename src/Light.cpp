@@ -49,14 +49,14 @@ void Light::Draw() const
     GLCall(glDrawArrays(GL_TRIANGLES, 0, 36));
 }
 
-glm::vec3* Light::GetPosition()
+glm::vec3& Light::GetPosition()
 {
-    return &m_position;
+    return m_position;
 }
 
-glm::vec3* Light::GetColor()
+glm::vec3& Light::GetColor()
 {
-    return &m_color;
+    return m_color;
 }
 
 glm::mat4 Light::GetModelMatrix() const
@@ -66,7 +66,7 @@ glm::mat4 Light::GetModelMatrix() const
     return model;
 }
 
-Shader* Light::GetShader()
+Shader& Light::GetShader()
 {
-    return &m_shader;
+    return m_shader;
 }

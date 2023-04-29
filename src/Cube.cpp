@@ -65,9 +65,9 @@ void Cube::Draw() const
     // glDrawElements(GL_TRIANGLES, );
 }
 
-glm::vec3* Cube::GetPosition()
+glm::vec3& Cube::GetPosition()
 {
-    return &m_position;
+    return m_position;
 }
 
 glm::mat4 Cube::GetModelMatrix() const
@@ -77,7 +77,7 @@ glm::mat4 Cube::GetModelMatrix() const
     return model;
 }
 
-Shader* Cube::GetShader()
+Shader& Cube::GetShader()
 {
-    return &m_shader;
+    return m_shader;
 }

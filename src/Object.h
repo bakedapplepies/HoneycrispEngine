@@ -19,7 +19,7 @@ public:
     virtual ~Object() {}
 
     virtual void Draw() const {}
-    virtual glm::vec3* GetPosition() {}
+    virtual glm::vec3& GetPosition() {}
     virtual glm::mat4 GetModelMatrix() const {}
-    virtual Shader* GetShader() {}
+    virtual Shader& GetShader() {}
 };

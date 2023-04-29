@@ -40,6 +40,20 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
+    else if (key == GLFW_KEY_RIGHT_ALT && action == GLFW_PRESS)
+    {
+        if (!callbackData->capFPS)
+        {
+            glfwSwapInterval(1);
+            callbackData->capFPS = true;
+        }
+        else
+        {
+            glfwSwapInterval(0);
+            callbackData->capFPS = false;
+        }
+    }
+
     else if (key == GLFW_KEY_LEFT_ALT && action == GLFW_PRESS)
     {   
         if (!callbackData->showMouse)

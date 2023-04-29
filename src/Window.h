@@ -12,6 +12,7 @@
 
 struct CallbackData  // maybe make private
 {
+    bool capFPS = true;
     bool showMouse = false;
     bool firstMouse = true;
     float lastX = WINDOW_WIDTH/2;
