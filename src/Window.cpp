@@ -91,7 +91,6 @@ Window::Window()
     ImGui::CreateContext();
     ImGui_ImplGlfw_InitForOpenGL(glfwWindow, true);
     ImGui::StyleColorsDark();
-    // ImGuiIO &io = ImGui::GetIO();
     ImGui_ImplOpenGL3_Init();
 }
 

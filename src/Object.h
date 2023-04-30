@@ -10,15 +10,14 @@
 class Object
 {
 private:
-    VertexArray m_VAO;
     Shader m_shader;
-    Texture m_texture;
     glm::vec3 m_position;
 
 public:
     virtual ~Object() {}
 
     virtual void Draw() const {}
+    virtual void BuildMeshData() {}
     virtual glm::vec3& GetPosition() {}
     virtual glm::mat4 GetModelMatrix() const {}
     virtual Shader& GetShader() {}

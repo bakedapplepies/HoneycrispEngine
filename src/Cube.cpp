@@ -7,15 +7,14 @@
 Cube::Cube(const glm::vec3& position)
     : m_position(position)
 {
-    m_VAO.CreateVAO(m_vertices, sizeof(m_vertices), m_indicies, sizeof(m_indicies), GL_STATIC_DRAW);
-    m_VAO.Bind();
+    BuildMeshData();
+    cubeMesh.ConstructMesh();
     m_shader.CreateShader(
         "resources/shaders/vertex.vert",
         "resources/shaders/fragment.frag"
     );
-    m_texture.CreateTexture("resources/textures/grass_block_side.png");
-    glUniform1i(glGetUniformLocation(m_shader.getID(), "uTexture0"), 0);
 
+    cubeMesh.GetVAO().Bind();
     // Vertex Attributes
     GLCall(glVertexAttribPointer(
         0,
@@ -51,16 +50,19 @@ Cube::Cube(const glm::vec3& position)
 
 Cube::~Cube()
 {
-    m_VAO.Delete();
+    cubeMesh.Delete();
     m_shader.Delete();
-    m_texture.Delete();
+}
+
+void Cube::BuildMeshData()
+{
+
 }
 
 void Cube::Draw() const
 {
     GLCall(glUniform1i(glGetUniformLocation(m_shader.getID(), "uTexture0"), 0));
-    m_texture.Bind(GL_TEXTURE0);
-    m_VAO.Bind();
+    cubeMesh.GetVAO().Bind();
     GLCall(glDrawArrays(GL_TRIANGLES, 0, 36));
     // glDrawElements(GL_TRIANGLES, );
 }
