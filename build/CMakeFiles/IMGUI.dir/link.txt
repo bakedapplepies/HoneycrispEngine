@@ -1,2 +1,0 @@
-C:\MinGW-W64\MinGW-W64\bin\llvm-ar.exe qc libIMGUI.a CMakeFiles/IMGUI.dir/include/imgui/imgui.cpp.obj CMakeFiles/IMGUI.dir/include/imgui/imgui_draw.cpp.obj CMakeFiles/IMGUI.dir/include/imgui/imgui_tables.cpp.obj CMakeFiles/IMGUI.dir/include/imgui/imgui_widgets.cpp.obj CMakeFiles/IMGUI.dir/include/imgui/imgui_impl_glfw.cpp.obj CMakeFiles/IMGUI.dir/include/imgui/imgui_impl_opengl3.cpp.obj
-C:\MinGW-W64\MinGW-W64\bin\llvm-ranlib.exe libIMGUI.a

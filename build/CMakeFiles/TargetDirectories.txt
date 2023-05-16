@@ -1,6 +1,0 @@
-D:/JohnB/Programming/OpenGL/LearnOpenGL2/build/CMakeFiles/GLAD.dir
-D:/JohnB/Programming/OpenGL/LearnOpenGL2/build/CMakeFiles/STB_IMAGE.dir
-D:/JohnB/Programming/OpenGL/LearnOpenGL2/build/CMakeFiles/IMGUI.dir
-D:/JohnB/Programming/OpenGL/LearnOpenGL2/build/CMakeFiles/LearnOpenGL.dir
-D:/JohnB/Programming/OpenGL/LearnOpenGL2/build/CMakeFiles/edit_cache.dir
-D:/JohnB/Programming/OpenGL/LearnOpenGL2/build/CMakeFiles/rebuild_cache.dir
