@@ -3,16 +3,27 @@
 #include "pch/pch.h"
 
 
-class Shader {
+class Shader
+{
 private:
     GLuint m_shaderID;
 
 public:
+
+    /* Copy constructor/assignment has to be Deep Copied-d
+    otherwise shader ID would be deleted twice
+    */
+    Shader() = default;
+    Shader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
+    Shader(const Shader&) = delete;
+    Shader(Shader&& other) noexcept;
+    Shader& operator=(const Shader&) = delete;
+    Shader& operator=(Shader&& other) noexcept;
+    ~Shader() = default;
+
     std::string ParseShader(const std::string& path);
-    void CreateShader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
     
     GLuint getID() const;
-    
     void Use() const;
     void Delete() const;
 

@@ -17,7 +17,9 @@
 #include <memory>
 #include <stdexcept>
 #include <vector>
+#include <unordered_map>
 #include <typeinfo>
+
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 #include <imgui/imconfig.h>

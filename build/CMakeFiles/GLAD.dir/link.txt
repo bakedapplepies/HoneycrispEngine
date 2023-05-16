@@ -1,0 +1,2 @@
+C:\MinGW-W64\MinGW-W64\bin\llvm-ar.exe qc libGLAD.a CMakeFiles/GLAD.dir/include/glad/glad.cpp.obj
+C:\MinGW-W64\MinGW-W64\bin\llvm-ranlib.exe libGLAD.a

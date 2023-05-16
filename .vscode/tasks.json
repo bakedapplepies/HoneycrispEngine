@@ -13,7 +13,7 @@
         {
             "label": "CompileCurrentFile",
             "type": "shell",
-            "command": "g++ -g -c -std=c++17 -I./include -I./src/pch ${file} -o ./bin/intermediates/Window.obj",
+            "command": "g++ -g -c -std=c++17 -I./include -I./src/pch ${file} -o ./bin/intermediates/${fileBasenameNoExtension}.obj",
             "args": [],
             "problemMatcher": []
         },

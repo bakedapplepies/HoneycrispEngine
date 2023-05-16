@@ -1,1 +1,2 @@
-.\bin\main.exe
+cd build
+.\LearnOpenGL.exe

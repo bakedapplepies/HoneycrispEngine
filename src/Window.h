@@ -2,6 +2,8 @@
 
 #include "pch/pch.h"
 
+#include "Cube.h"
+#include "Light.h"
 #include "constants.h"
 #include "Object.h"
 #include "VertexArray.h"
@@ -20,7 +22,7 @@ struct CallbackData  // maybe make private
     float yaw = -90.0f;
     float pitch = 0.0f;
     float fov = 45.0f;
-    glm::vec3 direction;
+    glm::vec3 cameraDirection;
 };
 
 class Window
@@ -29,8 +31,9 @@ private:
     GLFWwindow* glfwWindow;
     CallbackData callbackData;
     Camera camera;
-    Object* currentObject = nullptr;
-    std::vector<Object*> objects;
+    // std::vector<Object> objects;
+    Cube cube;
+    Light light;
     Shader currentShader;
 
     glm::mat4 modelMatrix;

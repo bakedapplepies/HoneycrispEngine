@@ -1,0 +1,2 @@
+C:\MinGW-W64\MinGW-W64\bin\llvm-ar.exe qc libSTB_IMAGE.a CMakeFiles/STB_IMAGE.dir/include/stb/stb_image.cpp.obj
+C:\MinGW-W64\MinGW-W64\bin\llvm-ranlib.exe libSTB_IMAGE.a

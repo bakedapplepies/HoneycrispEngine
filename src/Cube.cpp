@@ -5,81 +5,43 @@
 
 
 Cube::Cube(const glm::vec3& position)
-    : m_position(position)
+    : Mesh(vertices, std::vector<float>(0), normals, uv, indices)
 {
-    BuildMeshData();
-    cubeMesh.ConstructMesh();
-    m_shader.CreateShader(
+    std::cout << "get cubed" << '\n';
+    this->position = position;
+
+    EnableVertexAttribPostion(true);
+    EnableVertexAttribUV(true);
+    EnableVertexAttribNormals(true);
+
+    shader = Shader(
         "resources/shaders/vertex.vert",
         "resources/shaders/fragment.frag"
     );
 
-    cubeMesh.GetVAO().Bind();
-    // Vertex Attributes
-    GLCall(glVertexAttribPointer(
-        0,
-        3,
-        GL_FLOAT,
-        GL_FALSE,
-        8 * sizeof(float),
-        (void*)0
-    ));
-    GLCall(glEnableVertexAttribArray(0));
+    shader.Use();
+    GLCall(glUniform1i(glGetUniformLocation(shader.getID(), "uTexture0"), 0));
+}
 
-    // Texture Coordinates XY (2D)
-    GLCall(glVertexAttribPointer(
-        2,
-        2,
-        GL_FLOAT,
-        GL_FALSE,
-        8 * sizeof(float),
-        (void*)(3 * sizeof(float))
-    ));
-    GLCall(glEnableVertexAttribArray(2));
+Cube::Cube(Cube&& other) noexcept
+{
+    std::cout << "Move constructor of Cube called." << '\n';
 
-    GLCall(glVertexAttribPointer(
-        3,
-        3,
-        GL_FLOAT, 
-        GL_FALSE,
-        8 * sizeof(float),
-        (void*)(5 * sizeof(float))
-    ));
-    GLCall(glEnableVertexAttribArray(3));
+    position = other.position;
+    shader = std::move(other.shader);
+}
+
+Cube& Cube::operator=(Cube&& other) noexcept
+{
+    std::cout << "Move assignment operator of Cube called." << '\n';
+
+    position = other.position;
+    shader = std::move(other.shader);
+
+    return *this;
 }
 
 Cube::~Cube()
 {
-    cubeMesh.Delete();
-    m_shader.Delete();
-}
-
-void Cube::BuildMeshData()
-{
-
-}
-
-void Cube::Draw() const
-{
-    GLCall(glUniform1i(glGetUniformLocation(m_shader.getID(), "uTexture0"), 0));
-    cubeMesh.GetVAO().Bind();
-    GLCall(glDrawArrays(GL_TRIANGLES, 0, 36));
-    // glDrawElements(GL_TRIANGLES, );
-}
-
-glm::vec3& Cube::GetPosition()
-{
-    return m_position;
-}
-
-glm::mat4 Cube::GetModelMatrix() const
-{
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, m_position);
-    return model;
-}
-
-Shader& Cube::GetShader()
-{
-    return m_shader;
+    Delete();
 }

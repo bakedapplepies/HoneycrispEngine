@@ -65,5 +65,8 @@
         "string_view": "cpp",
         "thread": "cpp"
     },
-    "cmake.configureOnOpen": true
+    "cmake.configureOnOpen": true,
+    "C_Cpp.errorSquiggles": "enabled",
+    "C_Cpp.default.compilerPath": "C:\\MinGW\\bin\\g++.exe",
+    "C_Cpp.intelliSenseEngineFallback": "enabled"
 }

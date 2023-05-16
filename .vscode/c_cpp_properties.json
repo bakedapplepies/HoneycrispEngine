@@ -3,7 +3,9 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "include/",
+                "C:/MinGW/**"
             ],
             "defines": [
                 "_DEBUG",
@@ -14,7 +16,7 @@
             "cStandard": "c17",
             "cppStandard": "c++17",
             "intelliSenseMode": "gcc-x64",
-            "compilerPath": "C:/MinGW/bin/g++.exe"
+            "compilerPath": "C:/MinGW/bin/g++.exe -fno-ms-extensions"
         }
     ],
     "version": 4

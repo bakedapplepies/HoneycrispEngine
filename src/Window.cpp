@@ -1,16 +1,12 @@
 #include "pch/pch.h"
+#include <typeinfo>
 
 #include "Debug.h"
-#include "constants.h"
-#include "Cube.h"
-#include "Light.h"
 #include "Window.h"
 #include "Callbacks.h"
-#include "VertexArray.h"
-#include "Shader.h"
-#include "Camera.h"
 
 
+Texture grassTextureMap;
 Window::Window()
 {
     /* Initialize GLFW */
@@ -18,7 +14,11 @@ Window::Window()
     {
         std::cout << "GLFW Initialization failed." << '\n';
         // return -1;
-    };
+    }
+    else
+    {
+        std::cout << "GLFW Initialization success." << '\n';
+    }
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -60,10 +60,16 @@ Window::Window()
     GLCall(glEnable(GL_DEPTH_TEST));
     GLCall(glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT));
 
+    std::cout << "Window config done." << '\n';
 
     /* Textures */
     // Image data
     stbi_set_flip_vertically_on_load(true);
+    grassTextureMap.LoadTexture(
+        "resources/textures/grass_textures.png"
+    );
+    grassTextureMap.Bind(GL_TEXTURE0);
+    std::cout << "Texture loaded." << '\n';
 
 
     // View Matrix
@@ -76,15 +82,24 @@ Window::Window()
         0.1f,
         100.0f
     );
+    std::cout << "Matrices initialized." << '\n';
 
-    for (unsigned int i = 0; i < 2; i++)
-    {
-        objects.push_back(new Cube(glm::vec3(0.0f, 2*(float)i, 0.0f)));
-    }
-    objects.push_back(new Light(
+    // for (unsigned int i = 0; i < 2; i++)
+    // {
+    //     std::cout << "i: " << i << '\n';
+    //     objects.emplace_back(new Cube(glm::vec3(0.0f, 2*(float)i, 0.0f)));
+    // }
+    // objects.emplace_back(new Light(
+    //     glm::vec3(1.0f, 1.0f, 1.0f),
+    //     glm::vec3(1.0f, 1.0f, 1.0f)
+    // ));
+
+    cube = Cube(glm::vec3(0.0f, 0.0f, 0.0f));
+    light = Light(
         glm::vec3(1.0f, 1.0f, 1.0f),
         glm::vec3(1.0f, 1.0f, 1.0f)
-    ));
+    );
+    std::cout << 'l' << '\n';
 
     // ImGUI
     IMGUI_CHECKVERSION();
@@ -92,6 +107,8 @@ Window::Window()
     ImGui_ImplGlfw_InitForOpenGL(glfwWindow, true);
     ImGui::StyleColorsDark();
     ImGui_ImplOpenGL3_Init();
+
+    std::cout << "Window Initialization done." << '\n';
 }
 
 
@@ -99,6 +116,8 @@ void Window::Loop()
 {
     /* Main loop */
     float begin = glfwGetTime();
+
+    std::cout << "Entering loop." << '\n';
 
     while(!glfwWindowShouldClose(glfwWindow))
     {
@@ -120,7 +139,7 @@ void Window::Loop()
         ImGui::NewFrame();
 
         // Update camera
-        camera.SetDirection(glm::normalize(callbackData.direction));
+        camera.SetDirection(glm::normalize(callbackData.cameraDirection));
         viewMatrix = camera.GetViewMatrix();
 
         ImGui::Begin("Demo");
@@ -132,51 +151,49 @@ void Window::Loop()
         ImGui::End();
         
         
-        glm::vec3& color = static_cast<Light*>(objects.back())->GetColor();
+        glm::vec3& color = light.GetColor();
         color.r *= cosf(4*begin)/4 + 0.75f;
         color.g *= -sinf(4*begin)/4 + 0.75f;
         color.b *= -sinf(4*begin)/4 + 0.75f;
 
         // currentShader.Use();
-        for (Object*& object : objects)
-        {
-            object->GetShader().Use();
-            modelMatrix = object->GetModelMatrix();
-            object->GetShader().setMatrix4Uniform("view", viewMatrix);
-            object->GetShader().setMatrix4Uniform("projection", projectionMatrix);
+        cube.GetShader().Use();
+        modelMatrix = cube.GetModelMatrix();
+        cube.GetShader().setMatrix4Uniform("view", viewMatrix);
+        cube.GetShader().setMatrix4Uniform("projection", projectionMatrix);
+
+        cube.GetShader().setMatrix4Uniform("model", modelMatrix);
+        cube.GetShader().setVector3Uniform("lightColor", color);
+        cube.GetShader().setVector3Uniform("lightPos", light.GetPosition());
+        cube.GetShader().setVector3Uniform("viewPos", camera.cameraPos);
+
+        cube.GetShader().setVector3Uniform("material.ambient", glm::vec3(1.0f) * color);
+        cube.GetShader().setVector3Uniform("material.diffuse", glm::vec3(1.0f) * color);
+        cube.GetShader().setVector3Uniform("material.specular", glm::vec3(0.5f) * color);
+        cube.GetShader().setFloatUniform("material.shininess", 32.0f);
+
+        cube.GetShader().setVector3Uniform("light.ambient", glm::vec3(0.2f));
+        cube.GetShader().setVector3Uniform("light.diffuse", glm::vec3(0.5f));
+        cube.GetShader().setVector3Uniform("light.specular", glm::vec3(1.0f));
+        
+        // for Phong shading
+        cube.GetShader().setMatrix3Uniform("normalMatrix", glm::mat4(glm::transpose(glm::inverse(modelMatrix))));
 
 
-            if (typeid(*object) == typeid(Cube))
-            {
-                object->GetShader().setMatrix4Uniform("model", modelMatrix);
-                object->GetShader().setVector3Uniform("lightColor", color);
-                object->GetShader().setVector3Uniform("lightPos", objects.back()->GetPosition());
-                object->GetShader().setVector3Uniform("viewPos", camera.cameraPos);
+        light.GetShader().Use();
+        modelMatrix = light.GetModelMatrix();
+        light.GetShader().setMatrix4Uniform("view", viewMatrix);
+        light.GetShader().setMatrix4Uniform("projection", projectionMatrix);
 
-                object->GetShader().setVector3Uniform("material.ambient", glm::vec3(1.0f) * color);
-                object->GetShader().setVector3Uniform("material.diffuse", glm::vec3(1.0f) * color);
-                object->GetShader().setVector3Uniform("material.specular", glm::vec3(0.5f) * color);
-                object->GetShader().setFloatUniform("material.shininess", 32.0f);
+        modelMatrix = glm::scale(modelMatrix, glm::vec3(lightSizeScale));
+        light.GetShader().setMatrix4Uniform("model", modelMatrix);
+        light.GetPosition().x = 1.5f * cosf(begin*1.5f);
+        light.GetPosition().z = 1.5f * sinf(begin*1.5f);
 
-                object->GetShader().setVector3Uniform("light.ambient", glm::vec3(0.2f));
-                object->GetShader().setVector3Uniform("light.diffuse", glm::vec3(0.5f));
-                object->GetShader().setVector3Uniform("light.specular", glm::vec3(1.0f));
-                
-                // for Phong shading
-                object->GetShader().setMatrix3Uniform("normalMatrix", glm::mat4(glm::transpose(glm::inverse(modelMatrix))));
-            }
-            else if (typeid(*object) == typeid(Light))
-            {
-                modelMatrix = glm::scale(modelMatrix, glm::vec3(lightSizeScale));
-                object->GetShader().setMatrix4Uniform("model", modelMatrix);
-                object->GetPosition().x = 1.5f * cosf(begin*1.5f);
-                object->GetPosition().z = 1.5f * sinf(begin*1.5f);
+        light.GetShader().setVector3Uniform("uColor", color);
 
-                object->GetShader().setVector3Uniform("uColor", color);
-            }
+        light.Draw();
 
-            object->Draw();
-        }
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -189,17 +206,23 @@ void Window::Loop()
 
 Window::~Window()
 {
+    std::cout << "Deallocating resources." << '\n';
+    grassTextureMap.Delete();
+
     // ImGui::Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 
-    for (Object*& object : objects)
-    {
-        delete object;
-    }
+    // for (Object*& object : objects)
+    // {
+    //     std::cout << typeid(*object).name() << '\n';
+    //     delete object;
+    // }
+
     std::cout << "Deleted all objects" << '\n';
 
     glfwTerminate();
+    std::cin.get();
 }
 
 

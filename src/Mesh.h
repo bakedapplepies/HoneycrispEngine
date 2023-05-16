@@ -1,26 +1,48 @@
+#pragma once
+
 #include "pch/pch.h"
+
+#include "Object.h"
 #include "VertexArray.h"
 
 
-class Mesh
+class Mesh : public Object
 {
 public:
-    Mesh() = default;
-    ~Mesh();
+    std::vector<float> vertices;
+    std::vector<float> colors;
+    std::vector<float> normals;
+    std::vector<float> uv;
 
-    std::vector<glm::vec3>& vertices;
-    std::vector<glm::vec3>& normals;
-    std::vector<glm::vec2>& uv;
-    std::vector<unsigned int>& indices;
-
-    VertexArray VAO;
+    std::vector<float> vertData;
+    std::vector<unsigned int> indices;
 
 private:
-    float *m_vertices;
-    unsigned int *m_indices;
+    VertexArray m_VAO;
 
 public:
+    Mesh() = default;
+    Mesh(
+        const std::vector<float>& vertices,
+        const std::vector<float>& colors,
+        const std::vector<float>& normals,
+        const std::vector<float>& uv,
+        const std::vector<unsigned int>& indices
+    );
+    ~Mesh() override;
+
+    void EnableVertexAttribPostion(bool on) const;
+    void EnableVertexAttribColor(bool on) const;
+    void EnableVertexAttribUV(bool on) const;
+    void EnableVertexAttribNormals(bool on) const;
+
+    void Draw() const override;
+    glm::vec3& GetPosition() override;
+    glm::mat4 GetModelMatrix() const override;
+    Shader& GetShader() override;
+
     void ConstructMesh();
+    void Bind();
     VertexArray& GetVAO();
-    void Delete();
+    void Delete() override;
 };

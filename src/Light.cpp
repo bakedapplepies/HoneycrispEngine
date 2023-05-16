@@ -5,68 +5,44 @@
 
 
 Light::Light(const glm::vec3& position, const glm::vec3& color)
-    : m_position(position), m_color(color)
+    : Mesh(vertices, colors, std::vector<float>(), std::vector<float>(), indices)
 {
-    m_VAO.CreateVAO(m_vertices, sizeof(m_vertices), m_indicies, sizeof(m_indicies), GL_STATIC_DRAW);
-    m_VAO.Bind();
-    m_shader.CreateShader(
+    this->position = position;
+    m_color = color;
+    EnableVertexAttribPostion(true);
+    EnableVertexAttribColor(true);
+
+    shader = Shader(
         "resources/shaders/lightvertex.vert",
         "resources/shaders/lightfragment.frag"
     );
 
-    // Vertex Attributes
-    GLCall(glVertexAttribPointer(
-        0,
-        3,
-        GL_FLOAT,
-        GL_FALSE,
-        6 * sizeof(float),
-        (void*)0
-    ));
-    GLCall(glEnableVertexAttribArray(0));
+    shader.Use();
+}
 
-    // Color
-    GLCall(glVertexAttribPointer(
-        1,
-        3,
-        GL_FLOAT,
-        GL_FALSE,
-        6 * sizeof(float),
-        (void*)(3 * sizeof(float))
-    ));
-    GLCall(glEnableVertexAttribArray(1));
+Light::Light(Light&& other) noexcept
+{
+    std::cout << "Move constructor of Light called." << '\n';
+
+    position = other.position;
+    shader = std::move(other.shader);
+}
+
+Light& Light::operator=(Light&& other) noexcept
+{
+    std::cout << "Move assignment operator of Light called." << '\n';
+
+    position = other.position;
+    shader = std::move(other.shader);
+
+    return *this;
 }
 
 Light::~Light()
 {
-    m_VAO.Delete();
-    m_shader.Delete();
-}
-
-void Light::Draw() const
-{
-    m_VAO.Bind();
-    GLCall(glDrawArrays(GL_TRIANGLES, 0, 36));
-}
-
-glm::vec3& Light::GetPosition()
-{
-    return m_position;
 }
 
 glm::vec3& Light::GetColor()
 {
     return m_color;
-}
-
-glm::mat4 Light::GetModelMatrix() const
-{
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, m_position);
-    return model;
-}
-
-Shader& Light::GetShader()
-{
-    return m_shader;
 }

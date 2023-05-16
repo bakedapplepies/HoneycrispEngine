@@ -1,47 +1,224 @@
 #include "Mesh.h"
+#include "Debug.h"
 
+
+Mesh::Mesh(
+    const std::vector<float>& vertices,
+    const std::vector<float>& colors,
+    const std::vector<float>& normals,
+    const std::vector<float>& uv,
+    const std::vector<unsigned int>& indices
+) : vertices(vertices), colors(colors), normals(normals), uv(uv), indices(indices)
+{
+    std::cout << "Mesh Constructor called." << '\n';
+    ConstructMesh();
+}
 
 Mesh::~Mesh()
 {
-    delete[] m_vertices;
+    Delete();
 }
 
 void Mesh::ConstructMesh()
 {
-    unsigned int vertSize = vertices.size()*3 + normals.size()*3 + uv.size()*2;
-    m_vertices = new float[vertSize];
+    unsigned int vertArrayDataSize = vertices.size() + colors.size() + normals.size() + uv.size();
+    vertData.reserve(vertArrayDataSize);
     
-    for (int vertIndex = 0; vertIndex < vertices.size(); vertIndex++)
+    for (int vertIndex = 0; vertIndex < vertices.size()/3; vertIndex++)
     {
-        m_vertices[vertIndex*8 + 0] = vertices[vertIndex*3 + 0].x;
-        m_vertices[vertIndex*8 + 1] = vertices[vertIndex*3 + 1].y;
-        m_vertices[vertIndex*8 + 2] = vertices[vertIndex*3 + 2].z;
+        if (!vertices.empty())
+        {
+            vertData.push_back(vertices[vertIndex*3 + 0]);
+            vertData.push_back(vertices[vertIndex*3 + 1]);
+            vertData.push_back(vertices[vertIndex*3 + 2]);
+        }
 
-        m_vertices[vertIndex*8 + 3] = normals[vertIndex*3 + 0].x;
-        m_vertices[vertIndex*8 + 4] = normals[vertIndex*3 + 0].y;
-        m_vertices[vertIndex*8 + 5] = normals[vertIndex*3 + 0].z;
+        if (!colors.empty())
+        {
+            vertData.push_back(colors[vertIndex*3 + 0]);
+            vertData.push_back(colors[vertIndex*3 + 1]);
+            vertData.push_back(colors[vertIndex*3 + 2]);
+        }
 
-        m_vertices[vertIndex*8 + 6] = uv[vertIndex*2 + 0].x;
-        m_vertices[vertIndex*8 + 7] = uv[vertIndex*2 + 0].y;
+        if (!uv.empty())
+        {
+            vertData.push_back(uv[vertIndex*2 + 0]);
+            vertData.push_back(uv[vertIndex*2 + 1]);
+        }
+
+        if (!normals.empty())
+        {
+            vertData.push_back(normals[vertIndex*3 + 0]);
+            vertData.push_back(normals[vertIndex*3 + 1]);
+            vertData.push_back(normals[vertIndex*3 + 2]);
+        }
     }
 
-    m_indices = new unsigned int[indices.size()];
+
+    m_VAO.CreateVAO(
+        &vertData.front(),
+        vertArrayDataSize * sizeof(float),
+        &indices.front(),
+        indices.size() * sizeof(unsigned int), 
+        GL_STATIC_DRAW
+    );
     
-    for (int index = 0; index < indices.size(); index++)
+    unsigned int numAttribElements = 
+        3 * vertices.empty() +
+        3 * colors.empty()   +
+        2 * uv.empty()       +
+        3 * normals.empty();
+    unsigned int currentStride = 0;
+
+    // Postions XYZ
+    if (!vertices.empty())
     {
-        m_indices[index] = indices[index];
+        GLCall(glVertexAttribPointer(
+            0,
+            3,
+            GL_FLOAT,
+            GL_FALSE,
+            numAttribElements * sizeof(float),
+            (void*)currentStride
+        ));
+        currentStride += 3;
     }
 
+    // Color RGB
+    if (!colors.empty())
+    {
+        GLCall(glVertexAttribPointer(
+            1,
+            3,
+            GL_FLOAT,
+            GL_FALSE,
+            numAttribElements * sizeof(float),
+            (void*)(currentStride * sizeof(float))
+        ));
+        currentStride += 3;
+    }
 
-    VAO.CreateVAO(m_vertices, vertSize, m_indices, indices.size(), GL_STATIC_DRAW);
+    if (!uv.empty())
+    {
+        // Texture Coordinates XY
+        GLCall(glVertexAttribPointer(
+            2,
+            2,
+            GL_FLOAT,
+            GL_FALSE,
+            numAttribElements * sizeof(float),
+            (void*)(currentStride * sizeof(float))
+        ));
+        currentStride += 2;
+    }
+
+    if (!normals.empty())
+    {
+        // Normals XYZ (Normalized vectors)
+        GLCall(glVertexAttribPointer(
+            3,
+            3,
+            GL_FLOAT, 
+            GL_FALSE,
+            numAttribElements * sizeof(float),
+            (void*)(currentStride * sizeof(float))
+        ));
+        currentStride += 3;
+    }
+}
+
+void Mesh::EnableVertexAttribPostion(bool on) const
+{
+    // Becareful of these binds
+    m_VAO.Bind();
+    if (on)
+    {
+        GLCall(glEnableVertexAttribArray(0));
+    }
+    else
+    {
+        GLCall(glDisableVertexAttribArray(0));
+    }
+}
+
+void Mesh::EnableVertexAttribColor(bool on) const
+{
+    m_VAO.Bind();
+    if (on)
+    {
+        GLCall(glEnableVertexAttribArray(1));
+    }
+    else
+    {
+        GLCall(glDisableVertexAttribArray(1));
+    }
+}
+
+void Mesh::EnableVertexAttribUV(bool on) const
+{
+    m_VAO.Bind();
+    if (on)
+    {
+        GLCall(glEnableVertexAttribArray(2));
+    }
+    else
+    {
+        GLCall(glDisableVertexAttribArray(2));
+    }
+}
+
+void Mesh::EnableVertexAttribNormals(bool on) const
+{
+    m_VAO.Bind();
+    if (on)
+    {
+        GLCall(glEnableVertexAttribArray(3));
+    }
+    else
+    {
+        GLCall(glDisableVertexAttribArray(3));
+    }
+}
+
+void Mesh::Bind()
+{
+    m_VAO.Bind();
+}
+
+void Mesh::Draw() const
+{
+    // maybe add use shader here
+    m_VAO.Bind();
+    GLCall( glDrawElements(GL_TRIANGLES, vertices.size(), GL_UNSIGNED_INT, (void*)0) );
+}
+
+glm::vec3& Mesh::GetPosition()
+{
+    return position;
+}
+
+glm::mat4 Mesh::GetModelMatrix() const
+{
+    // maybe add rotation and scale
+
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, position);
+    return model;
+}
+
+Shader& Mesh::GetShader()
+{
+    return shader;
 }
 
 VertexArray& Mesh::GetVAO()
 {
-    return VAO;
+    return m_VAO;
 }
 
 void Mesh::Delete()
 {
-    VAO.Delete();
+    std::cout << "Deleting Mesh [VAO ID: " << m_VAO.getID() << "]\n";
+    m_VAO.Delete();
+    shader.Delete();
 }

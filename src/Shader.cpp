@@ -16,7 +16,7 @@ std::string Shader::ParseShader(const std::string& path)
     return ss.str();
 }
 
-void Shader::CreateShader(
+Shader::Shader(
     const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
 {
     std::string vs = ParseShader(vertexShaderPath);
@@ -88,6 +88,22 @@ void Shader::CreateShader(
     glDeleteShader(fragmentShader);
 }
 
+Shader::Shader(Shader&& other) noexcept
+{
+    std::cout << "Shader Move Constructor called." << '\n';
+    m_shaderID = other.m_shaderID;
+    other.m_shaderID = 0;  // glDeleteProgram(0); will be ignored
+}
+
+Shader& Shader::operator=(Shader&& other) noexcept
+{
+    std::cout << "Shader Move Assignment called." << '\n';
+    m_shaderID = other.m_shaderID;
+    other.m_shaderID = 0;
+
+    return *this;
+}
+
 void Shader::Use() const
 {
     GLCall(glUseProgram(m_shaderID));
@@ -95,6 +111,7 @@ void Shader::Use() const
 
 void Shader::Delete() const
 {
+    std::cout << "Deleting Shader [ID " << m_shaderID << "]\n";
     GLCall(glDeleteProgram(m_shaderID));
 }
 
