@@ -31,10 +31,8 @@ private:
     GLFWwindow* glfwWindow;
     CallbackData callbackData;
     Camera camera;
-    // std::vector<Object> objects;
-    Cube cube;
-    Light light;
-    Shader currentShader;
+    std::unique_ptr<Cube> cube;
+    std::unique_ptr<Light> light;
 
     glm::mat4 modelMatrix;
     glm::mat4 viewMatrix;

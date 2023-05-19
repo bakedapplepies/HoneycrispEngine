@@ -16,7 +16,7 @@
             "cStandard": "c17",
             "cppStandard": "c++17",
             "intelliSenseMode": "gcc-x64",
-            "compilerPath": "C:/MinGW/bin/g++.exe -fno-ms-extensions"
+            "compilerPath": "C:/MinGW-W64/MinGW-W64/bin/g++.exe -fno-ms-extensions"
         }
     ],
     "version": 4

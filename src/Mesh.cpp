@@ -10,20 +10,20 @@ Mesh::Mesh(
     const std::vector<unsigned int>& indices
 ) : vertices(vertices), colors(colors), normals(normals), uv(uv), indices(indices)
 {
+    std::cout << vertices.size() << '\n';
     std::cout << "Mesh Constructor called." << '\n';
     ConstructMesh();
 }
 
 Mesh::~Mesh()
 {
-    Delete();
 }
 
 void Mesh::ConstructMesh()
 {
     unsigned int vertArrayDataSize = vertices.size() + colors.size() + normals.size() + uv.size();
     vertData.reserve(vertArrayDataSize);
-    
+        
     for (int vertIndex = 0; vertIndex < vertices.size()/3; vertIndex++)
     {
         if (!vertices.empty())
@@ -54,21 +54,21 @@ void Mesh::ConstructMesh()
         }
     }
 
-
     m_VAO.CreateVAO(
-        &vertData.front(),
-        vertArrayDataSize * sizeof(float),
-        &indices.front(),
+        vertData.data(),
+        vertData.size() * sizeof(float),
+        indices.data(),
         indices.size() * sizeof(unsigned int), 
         GL_STATIC_DRAW
     );
-    
+
+
     unsigned int numAttribElements = 
-        3 * vertices.empty() +
-        3 * colors.empty()   +
-        2 * uv.empty()       +
-        3 * normals.empty();
-    unsigned int currentStride = 0;
+        3 * !vertices.empty() +
+        3 * !colors.empty()   +
+        2 * !uv.empty()       +
+        3 * !normals.empty();
+    unsigned int currentOffset = 0;
 
     // Postions XYZ
     if (!vertices.empty())
@@ -79,9 +79,9 @@ void Mesh::ConstructMesh()
             GL_FLOAT,
             GL_FALSE,
             numAttribElements * sizeof(float),
-            (void*)currentStride
+            (void*)(currentOffset * sizeof(float))
         ));
-        currentStride += 3;
+        currentOffset += 3;
     }
 
     // Color RGB
@@ -93,9 +93,9 @@ void Mesh::ConstructMesh()
             GL_FLOAT,
             GL_FALSE,
             numAttribElements * sizeof(float),
-            (void*)(currentStride * sizeof(float))
+            (void*)(currentOffset * sizeof(float))
         ));
-        currentStride += 3;
+        currentOffset += 3;
     }
 
     if (!uv.empty())
@@ -107,9 +107,9 @@ void Mesh::ConstructMesh()
             GL_FLOAT,
             GL_FALSE,
             numAttribElements * sizeof(float),
-            (void*)(currentStride * sizeof(float))
+            (void*)(currentOffset * sizeof(float))
         ));
-        currentStride += 2;
+        currentOffset += 2;
     }
 
     if (!normals.empty())
@@ -121,9 +121,9 @@ void Mesh::ConstructMesh()
             GL_FLOAT, 
             GL_FALSE,
             numAttribElements * sizeof(float),
-            (void*)(currentStride * sizeof(float))
+            (void*)(currentOffset * sizeof(float))
         ));
-        currentStride += 3;
+        currentOffset += 3;
     }
 }
 
@@ -189,7 +189,7 @@ void Mesh::Draw() const
 {
     // maybe add use shader here
     m_VAO.Bind();
-    GLCall( glDrawElements(GL_TRIANGLES, vertices.size(), GL_UNSIGNED_INT, (void*)0) );
+    GLCall( glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (GLvoid*)0) );
 }
 
 glm::vec3& Mesh::GetPosition()
@@ -214,11 +214,4 @@ Shader& Mesh::GetShader()
 VertexArray& Mesh::GetVAO()
 {
     return m_VAO;
-}
-
-void Mesh::Delete()
-{
-    std::cout << "Deleting Mesh [VAO ID: " << m_VAO.getID() << "]\n";
-    m_VAO.Delete();
-    shader.Delete();
 }

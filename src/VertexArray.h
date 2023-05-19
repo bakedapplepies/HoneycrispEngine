@@ -15,10 +15,15 @@ private:
 
 public:
     VertexArray() = default;
+    VertexArray(const VertexArray&) = delete;
+    VertexArray(VertexArray&& other) noexcept;
+    VertexArray& operator=(const VertexArray&) = delete;
+    VertexArray& operator=(VertexArray&& other) noexcept;
+    ~VertexArray();
+
     void CreateVAO(float* vboData, unsigned int vboSize, unsigned int* eboData, unsigned int eboSize, GLenum mode);
     void Bind() const;
     void Unbind() const;
-    void Delete() const;
 
     VertexBuffer* getVBO();
     ElementBuffer* getEBO();

@@ -4,7 +4,7 @@
 #include "Shader.h"
 
 
-std::string Shader::ParseShader(const std::string& path)
+std::string Shader::parseShader(const std::string& path)
 {
     std::ifstream file(path);
     std::string line;
@@ -16,12 +16,11 @@ std::string Shader::ParseShader(const std::string& path)
     return ss.str();
 }
 
-Shader::Shader(
-    const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
+Shader::Shader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
 {
-    std::string vs = ParseShader(vertexShaderPath);
+    std::string vs = parseShader(vertexShaderPath);
     const char* vertexShaderSrc = vs.c_str();
-    std::string fs = ParseShader(fragmentShaderPath);
+    std::string fs = parseShader(fragmentShaderPath);
     const char* fragmentShaderSrc = fs.c_str();
 
     /* Vertex Shader */
@@ -31,8 +30,8 @@ Shader::Shader(
 
     int success;
     char infoLog[512];
-    GLCall(glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success));
 
+    GLCall(glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success));
     if (!success)
     {
         GLCall(glGetShaderInfoLog(vertexShader, 512, NULL, infoLog));
@@ -58,7 +57,7 @@ Shader::Shader(
     }
 
     /* Creating Shader Program */
-    GLCall(m_shaderID = glCreateProgram());
+    GLCall(m_shaderID = glCreateProgram();)
     GLCall(glAttachShader(m_shaderID, vertexShader));
     GLCall(glAttachShader(m_shaderID, fragmentShader));
 
@@ -90,29 +89,26 @@ Shader::Shader(
 
 Shader::Shader(Shader&& other) noexcept
 {
-    std::cout << "Shader Move Constructor called." << '\n';
     m_shaderID = other.m_shaderID;
     other.m_shaderID = 0;  // glDeleteProgram(0); will be ignored
 }
 
 Shader& Shader::operator=(Shader&& other) noexcept
 {
-    std::cout << "Shader Move Assignment called." << '\n';
     m_shaderID = other.m_shaderID;
     other.m_shaderID = 0;
 
     return *this;
 }
 
+Shader::~Shader()
+{
+    GLCall(glDeleteProgram(m_shaderID));
+}
+
 void Shader::Use() const
 {
     GLCall(glUseProgram(m_shaderID));
-}
-
-void Shader::Delete() const
-{
-    std::cout << "Deleting Shader [ID " << m_shaderID << "]\n";
-    GLCall(glDeleteProgram(m_shaderID));
 }
 
 GLuint Shader::getID() const

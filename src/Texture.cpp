@@ -3,6 +3,13 @@
 #include "Debug.h"
 #include "Texture.h"
 
+
+Texture::~Texture()
+{
+    std::cout << "Deleting texture" << '\n';
+    GLCall(glDeleteTextures(1, &m_textureID));
+}
+
 void Texture::LoadTexture(const char* texturePath)
 {
     GLCall(glGenTextures(1, &m_textureID));
@@ -21,7 +28,7 @@ void Texture::LoadTexture(const char* texturePath)
         else if (nrChannels == 4)
             format = GL_RGBA;
 
-        // Generate texture
+        // Generate texture | bind -> buffer -> mimmap -> config
         GLCall(glBindTexture(GL_TEXTURE_2D, m_textureID));
         GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_pixelWidth, m_pixelHeight, 0, format, GL_UNSIGNED_BYTE, data));
         GLCall(glGenerateMipmap(GL_TEXTURE_2D));
@@ -58,27 +65,23 @@ void Texture::Unbind() const
     GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
-void Texture::Delete() const
-{
-    GLCall(glDeleteTextures(1, &m_textureID));
-}
-
 void Texture::GenerateTextureCoords()
 {
     int nRow_textures = m_pixelHeight / m_textureResolution;
     int nCol_textures = m_pixelWidth / m_textureResolution;
+    std::cout << "Rows: " << nRow_textures << ", Cols: " << nCol_textures << '\n';
 
     unsigned int textureType = 0;
 
-    for (int row = nRow_textures; row >= 0; row++)
+    for (int row = nRow_textures; row > 0; row++)
     {
         for (int col = 0; col < nCol_textures; col++)
         {
             m_textureCoords[textureType] = {
-                glm::vec2(col/(nCol_textures + 1), row/(nRow_textures + 1)),
-                glm::vec2((col + 1)/(nCol_textures+1), row/(nRow_textures + 1)),
-                glm::vec2(col/(nCol_textures + 1), (row - 1)/(nRow_textures + 1)),
-                glm::vec2((col + 1)/(nCol_textures + 1), (row - 1)/(nRow_textures + 1))
+                glm::vec2((float)col/(nCol_textures)      , (float)row/(nRow_textures)),
+                glm::vec2((float)(col + 1)/(nCol_textures), (float)row/(nRow_textures)),
+                glm::vec2((float)col/(nCol_textures)      , (float)(row - 1)/(nRow_textures)),
+                glm::vec2((float)(col + 1)/(nCol_textures), (float)(row - 1)/(nRow_textures))
             };
             textureType++;
             if (textureType == Textures::END) return;
@@ -86,7 +89,7 @@ void Texture::GenerateTextureCoords()
     }
 }
 
-TextureCoords Texture::GetTextureCoords(unsigned int textureType) const
+TextureCoords& Texture::GetTextureCoords(unsigned int textureType)
 {
-    
+    return m_textureCoords[textureType];
 }

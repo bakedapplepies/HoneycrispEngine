@@ -33,7 +33,7 @@ Debug::~Debug()
 
 Debug& Debug::Get()
 {
-
+    return self;
 }
 
 Debug Debug::self;

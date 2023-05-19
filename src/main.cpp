@@ -7,4 +7,6 @@ int main()
 {
     Window window;
     window.Loop();
+
+    return 0;
 }

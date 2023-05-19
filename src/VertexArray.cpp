@@ -4,6 +4,34 @@
 #include "VertexArray.h"
 
 
+VertexArray::VertexArray(VertexArray&& other) noexcept
+{
+    std::cout << "Vertex Array Move Constructor." << '\n';
+    m_VAO_ID = other.m_VAO_ID;
+    other.m_VAO_ID = 0;
+
+    m_vertexBuffer = std::move(other.m_vertexBuffer);
+    m_elementBuffer = std::move(other.m_elementBuffer);
+}
+
+VertexArray& VertexArray::operator=(VertexArray&& other) noexcept
+{
+    std::cout << "Vertex Array Move assignment." << '\n';
+    m_VAO_ID = other.m_VAO_ID;
+    other.m_VAO_ID = 0;
+
+    m_vertexBuffer = std::move(other.m_vertexBuffer);
+    m_elementBuffer = std::move(other.m_elementBuffer);
+
+    return *this;
+}
+
+VertexArray::~VertexArray()
+{
+    Bind();
+    GLCall(glDeleteVertexArrays(1, &m_VAO_ID));
+}
+
 void VertexArray::CreateVAO(float* vboData, unsigned int vboSize, unsigned int* eboData, unsigned int eboSize, GLenum mode)
 {
     GLCall(glGenVertexArrays(1, &m_VAO_ID));
@@ -20,13 +48,6 @@ void VertexArray::Bind() const
 void VertexArray::Unbind() const
 {
     GLCall(glBindVertexArray(0));
-}
-
-void VertexArray::Delete() const
-{
-    GLCall(glDeleteVertexArrays(1, &m_VAO_ID));
-    m_vertexBuffer.Delete();
-    m_elementBuffer.Delete();
 }
 
 GLuint VertexArray::getID()

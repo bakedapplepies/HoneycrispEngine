@@ -1,1 +1,1 @@
-cmake -S . -B ./build -G "MinGW Makefiles"
+cmake -S . -B ./build -G "MinGW Makefiles" -DCMAKE_CXX_COMPILER=C:/MinGW-W64/MinGW-W64/bin/g++.exe

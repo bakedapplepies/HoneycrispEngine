@@ -7,16 +7,13 @@
 
 class Object
 {
-public:
+protected:
     Shader shader;
     glm::vec3 position;
 
 public:
-    virtual ~Object() {}
-
-    virtual void Draw() const {}
-    virtual glm::vec3& GetPosition() {}
-    virtual glm::mat4 GetModelMatrix() const {}
-    virtual Shader& GetShader() {}
-    virtual void Delete() {}
+    virtual void Draw() const = 0;
+    virtual glm::vec3& GetPosition() = 0;
+    virtual glm::mat4 GetModelMatrix() const = 0;
+    virtual Shader& GetShader() = 0;
 };

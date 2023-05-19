@@ -17,10 +17,11 @@ private:
     int m_textureResolution = 16;
     
     GLuint m_textureID;
-    std::unordered_map<int, TextureCoords> m_textureCoords;
+    std::unordered_map<uint32_t, TextureCoords> m_textureCoords;
 
 public:
     Texture() = default;
+    ~Texture();
 
     void LoadTexture(const char* texturePath);
 
@@ -28,10 +29,9 @@ public:
 
     void Bind(GLenum texture_unit) const;
     void Unbind() const;
-    void Delete() const;
 
     void GenerateTextureCoords();
-    TextureCoords GetTextureCoords(unsigned int textureType) const;
+    TextureCoords& GetTextureCoords(unsigned int textureType);
 };
 
 enum Textures

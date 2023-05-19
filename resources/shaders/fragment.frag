@@ -3,7 +3,7 @@ out vec4 FragColor;
 
 precision mediump float;
 
-in vec3 vertColor;
+in vec3 VertColor;
 in vec2 TexCoord;
 in vec3 Normal;
 in vec3 FragPos;
@@ -54,5 +54,5 @@ void main()
 
     vec3 result = ambient + diffuse + specular;
 
-    FragColor = texture(uTexture0, TexCoord) * vec4(result, 1.0);
+    FragColor = texture(uTexture0, TexCoord) * vec4(result, 1.0) * vec4(VertColor, 1.0);
 }

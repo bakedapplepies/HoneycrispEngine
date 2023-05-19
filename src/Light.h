@@ -8,7 +8,7 @@
 class Light : public Mesh
 {
 private:
-    std::vector<float> vertices = {
+    std::vector<float> m_vertices = {
         // front
         -0.5f,  0.5f, -0.5f,
          0.5f,  0.5f, -0.5f,
@@ -46,7 +46,7 @@ private:
         -0.5f, -0.5f,  0.5f,
     };
 
-    std::vector<float> colors = {
+    std::vector<float> m_colors = {
         1.0f, 1.0f, 1.0f,
         1.0f, 1.0f, 1.0f,
         1.0f, 1.0f, 1.0f,
@@ -78,7 +78,7 @@ private:
         1.0f, 1.0f, 1.0f,
     };
 
-    std::vector<unsigned int> indices = {
+    std::vector<unsigned int> m_indices = {
         // top
         0, 1, 2,
         0, 2, 3,
@@ -109,11 +109,11 @@ private:
 public:
     Light() = default;
     Light(const glm::vec3& position, const glm::vec3& color);
-    Light(const Light& other);
+    Light(const Light& other) = delete;
     Light(Light&& other) noexcept;
-    Light& operator=(const Light& other);
+    Light& operator=(const Light& other) = delete;
     Light& operator=(Light&& other) noexcept;
-    ~Light() override;
+    ~Light();
 
     glm::vec3& GetColor();
 };

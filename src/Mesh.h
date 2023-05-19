@@ -29,7 +29,7 @@ public:
         const std::vector<float>& uv,
         const std::vector<unsigned int>& indices
     );
-    ~Mesh() override;
+    ~Mesh();
 
     void EnableVertexAttribPostion(bool on) const;
     void EnableVertexAttribColor(bool on) const;
@@ -44,5 +44,4 @@ public:
     void ConstructMesh();
     void Bind();
     VertexArray& GetVAO();
-    void Delete() override;
 };

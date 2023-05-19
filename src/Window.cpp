@@ -6,7 +6,7 @@
 #include "Callbacks.h"
 
 
-Texture grassTextureMap;
+std::unique_ptr<Texture> grassTextureMap;
 Window::Window()
 {
     /* Initialize GLFW */
@@ -48,6 +48,7 @@ Window::Window()
     glfwSetFramebufferSizeCallback(glfwWindow, framebuffer_size_callback);
     glfwSetKeyCallback(glfwWindow, key_callback);
 
+
     /* Initialize GLAD */
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
@@ -65,10 +66,11 @@ Window::Window()
     /* Textures */
     // Image data
     stbi_set_flip_vertically_on_load(true);
-    grassTextureMap.LoadTexture(
-        "resources/textures/grass_textures.png"
+    grassTextureMap = std::make_unique<Texture>();
+    grassTextureMap->LoadTexture(
+        "../resources/textures/grass_textures.png"
     );
-    grassTextureMap.Bind(GL_TEXTURE0);
+    grassTextureMap->Bind(GL_TEXTURE0);
     std::cout << "Texture loaded." << '\n';
 
 
@@ -84,22 +86,11 @@ Window::Window()
     );
     std::cout << "Matrices initialized." << '\n';
 
-    // for (unsigned int i = 0; i < 2; i++)
-    // {
-    //     std::cout << "i: " << i << '\n';
-    //     objects.emplace_back(new Cube(glm::vec3(0.0f, 2*(float)i, 0.0f)));
-    // }
-    // objects.emplace_back(new Light(
-    //     glm::vec3(1.0f, 1.0f, 1.0f),
-    //     glm::vec3(1.0f, 1.0f, 1.0f)
-    // ));
-
-    cube = Cube(glm::vec3(0.0f, 0.0f, 0.0f));
-    light = Light(
+    cube = std::make_unique<Cube>(glm::vec3(0.0f, 0.0f, 0.0f));
+    light = std::make_unique<Light>(
         glm::vec3(1.0f, 1.0f, 1.0f),
         glm::vec3(1.0f, 1.0f, 1.0f)
     );
-    std::cout << 'l' << '\n';
 
     // ImGUI
     IMGUI_CHECKVERSION();
@@ -151,48 +142,49 @@ void Window::Loop()
         ImGui::End();
         
         
-        glm::vec3& color = light.GetColor();
-        color.r *= cosf(4*begin)/4 + 0.75f;
-        color.g *= -sinf(4*begin)/4 + 0.75f;
-        color.b *= -sinf(4*begin)/4 + 0.75f;
+        glm::vec3& color = light->GetColor();
+        color.r = cosf(4*begin)/4 + 0.75f;
+        color.g = -sinf(4*begin)/4 + 0.75f;
+        color.b = -sinf(4*begin)/4 + 0.75f;
 
-        // currentShader.Use();
-        cube.GetShader().Use();
-        modelMatrix = cube.GetModelMatrix();
-        cube.GetShader().setMatrix4Uniform("view", viewMatrix);
-        cube.GetShader().setMatrix4Uniform("projection", projectionMatrix);
+        cube->GetShader().Use();
+        modelMatrix = cube->GetModelMatrix();
+        cube->GetShader().setMatrix4Uniform("view", viewMatrix);
+        cube->GetShader().setMatrix4Uniform("projection", projectionMatrix);
 
-        cube.GetShader().setMatrix4Uniform("model", modelMatrix);
-        cube.GetShader().setVector3Uniform("lightColor", color);
-        cube.GetShader().setVector3Uniform("lightPos", light.GetPosition());
-        cube.GetShader().setVector3Uniform("viewPos", camera.cameraPos);
+        cube->GetShader().setMatrix4Uniform("model", modelMatrix);
+        cube->GetShader().setVector3Uniform("lightColor", color);
+        cube->GetShader().setVector3Uniform("lightPos", light->GetPosition());
+        cube->GetShader().setVector3Uniform("viewPos", camera.cameraPos);
 
-        cube.GetShader().setVector3Uniform("material.ambient", glm::vec3(1.0f) * color);
-        cube.GetShader().setVector3Uniform("material.diffuse", glm::vec3(1.0f) * color);
-        cube.GetShader().setVector3Uniform("material.specular", glm::vec3(0.5f) * color);
-        cube.GetShader().setFloatUniform("material.shininess", 32.0f);
+        cube->GetShader().setVector3Uniform("material.ambient", glm::vec3(1.0f) * color);
+        cube->GetShader().setVector3Uniform("material.diffuse", glm::vec3(1.0f) * color);
+        cube->GetShader().setVector3Uniform("material.specular", glm::vec3(0.5f) * color);
+        cube->GetShader().setFloatUniform("material.shininess", 32.0f);
 
-        cube.GetShader().setVector3Uniform("light.ambient", glm::vec3(0.2f));
-        cube.GetShader().setVector3Uniform("light.diffuse", glm::vec3(0.5f));
-        cube.GetShader().setVector3Uniform("light.specular", glm::vec3(1.0f));
+        cube->GetShader().setVector3Uniform("light.ambient", glm::vec3(0.2f));
+        cube->GetShader().setVector3Uniform("light.diffuse", glm::vec3(0.5f));
+        cube->GetShader().setVector3Uniform("light.specular", glm::vec3(1.0f));
         
         // for Phong shading
-        cube.GetShader().setMatrix3Uniform("normalMatrix", glm::mat4(glm::transpose(glm::inverse(modelMatrix))));
+        cube->GetShader().setMatrix3Uniform("normalMatrix", glm::mat4(glm::transpose(glm::inverse(modelMatrix))));
+
+        cube->Draw();
 
 
-        light.GetShader().Use();
-        modelMatrix = light.GetModelMatrix();
-        light.GetShader().setMatrix4Uniform("view", viewMatrix);
-        light.GetShader().setMatrix4Uniform("projection", projectionMatrix);
+        light->GetShader().Use();
+        modelMatrix = light->GetModelMatrix();
+        light->GetShader().setMatrix4Uniform("view", viewMatrix);
+        light->GetShader().setMatrix4Uniform("projection", projectionMatrix);
 
         modelMatrix = glm::scale(modelMatrix, glm::vec3(lightSizeScale));
-        light.GetShader().setMatrix4Uniform("model", modelMatrix);
-        light.GetPosition().x = 1.5f * cosf(begin*1.5f);
-        light.GetPosition().z = 1.5f * sinf(begin*1.5f);
+        light->GetShader().setMatrix4Uniform("model", modelMatrix);
+        light->GetPosition().x = 1.5f * cosf(begin*1.5f);
+        light->GetPosition().z = 1.5f * sinf(begin*1.5f);
 
-        light.GetShader().setVector3Uniform("uColor", color);
+        light->GetShader().setVector3Uniform("uColor", color);
 
-        light.Draw();
+        light->Draw();
 
 
         ImGui::Render();
@@ -207,22 +199,16 @@ void Window::Loop()
 Window::~Window()
 {
     std::cout << "Deallocating resources." << '\n';
-    grassTextureMap.Delete();
 
     // ImGui::Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 
-    // for (Object*& object : objects)
-    // {
-    //     std::cout << typeid(*object).name() << '\n';
-    //     delete object;
-    // }
-
-    std::cout << "Deleted all objects" << '\n';
+    cube.reset();
+    light.reset();
+    grassTextureMap.reset();
 
     glfwTerminate();
-    std::cin.get();
 }
 
 

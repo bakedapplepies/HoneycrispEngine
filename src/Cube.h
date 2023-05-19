@@ -6,49 +6,81 @@
 #include "Mesh.h"
 
 
-extern Texture grassTextureMap;
+extern std::unique_ptr<Texture> grassTextureMap;
 class Cube : public Mesh
 {
 private:
-    const std::vector<float> vertices = {
+    std::vector<float> m_vertices = {
         // front
-        -0.5f,  0.5f, -0.5f,
-         0.5f,  0.5f, -0.5f,
-         0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
+        -0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f, -0.5f,  0.5f,
+        -0.5f, -0.5f,  0.5f,
 
         // right
-         0.5f,  0.5f, -0.5f,
          0.5f,  0.5f,  0.5f,
-         0.5f, -0.5f,  0.5f,
+         0.5f,  0.5f, -0.5f,
          0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f,  0.5f,
 
         // back
-         0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f,  0.5f,
-        -0.5f, -0.5f,  0.5f,
-         0.5f, -0.5f,  0.5f,
-
-        // left
-        -0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f,  0.5f,
-
-        // top
-        -0.5f,  0.5f,  0.5f,
-         0.5f,  0.5f,  0.5f,
          0.5f,  0.5f, -0.5f,
         -0.5f,  0.5f, -0.5f,
-
-        // bottom
         -0.5f, -0.5f, -0.5f,
          0.5f, -0.5f, -0.5f,
-         0.5f, -0.5f,  0.5f,
+
+        // left
+        -0.5f,  0.5f, -0.5f,
+        -0.5f,  0.5f,  0.5f,
         -0.5f, -0.5f,  0.5f,
+        -0.5f, -0.5f, -0.5f,
+
+        // top
+        -0.5f,  0.5f, -0.5f,
+         0.5f,  0.5f, -0.5f,
+         0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f,  0.5f,
+
+        // bottom
+        -0.5f, -0.5f,  0.5f,
+         0.5f, -0.5f,  0.5f,
+         0.5f, -0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,
     };
 
-    std::vector<float> normals = {
+    std::vector<float> m_colors = {
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+
+        0.369f, 0.616f, 0.204f,
+        0.369f, 0.616f, 0.204f,
+        0.369f, 0.616f, 0.204f,
+        0.369f, 0.616f, 0.204f,
+
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+    };
+
+    std::vector<float> m_normals = {
         // front
          0.0f,  0.0f, -1.0f, 
          0.0f,  0.0f, -1.0f, 
@@ -86,11 +118,11 @@ private:
          0.0f, -1.0f,  0.0f, 
     };
 
-    TextureCoords grassSideCoords = grassTextureMap.GetTextureCoords(Textures::GRASS_SIDE);
-    TextureCoords grassTopCoords = grassTextureMap.GetTextureCoords(Textures::GRASS_TOP);
-    TextureCoords dirtCoords = grassTextureMap.GetTextureCoords(Textures::DIRT);
+    TextureCoords& grassSideCoords = grassTextureMap->GetTextureCoords(Textures::GRASS_SIDE);
+    TextureCoords& grassTopCoords = grassTextureMap->GetTextureCoords(Textures::GRASS_TOP);
+    TextureCoords& dirtCoords = grassTextureMap->GetTextureCoords(Textures::DIRT);
 
-    std::vector<float> uv = {
+    std::vector<float> m_uv = {
         // top
         grassSideCoords.tl.x, grassSideCoords.tl.y,
         grassSideCoords.tr.x, grassSideCoords.tr.y,
@@ -128,8 +160,8 @@ private:
         dirtCoords.bl.x, dirtCoords.bl.y,
     };
 
-    std::vector<unsigned int> indices = {
-        // top
+    std::vector<unsigned int> m_indices = {
+        // front
         0, 1, 2,
         0, 2, 3,
 
@@ -161,5 +193,5 @@ public:
     Cube(Cube&& other) noexcept;
     Cube& operator=(const Cube& other) = delete;
     Cube& operator=(Cube&& other) noexcept;
-    ~Cube() override;
+    ~Cube();
 };

@@ -5,22 +5,32 @@
 
 
 Cube::Cube(const glm::vec3& position)
-    : Mesh(vertices, std::vector<float>(0), normals, uv, indices)
 {
-    std::cout << "get cubed" << '\n';
     this->position = position;
+    vertices = m_vertices;
+    colors = m_colors;
+    normals = m_normals;
+    uv = m_uv;
+    indices = m_indices;
+    ConstructMesh();
 
     EnableVertexAttribPostion(true);
+    EnableVertexAttribColor(true);
     EnableVertexAttribUV(true);
     EnableVertexAttribNormals(true);
 
     shader = Shader(
-        "resources/shaders/vertex.vert",
-        "resources/shaders/fragment.frag"
+        "../resources/shaders/vertex.vert",
+        "../resources/shaders/fragment.frag"
     );
 
     shader.Use();
     GLCall(glUniform1i(glGetUniformLocation(shader.getID(), "uTexture0"), 0));
+
+    std::cout << grassTopCoords.tl.x << ' ' << grassTopCoords.tl.y << '\n';
+    std::cout << grassTopCoords.tr.x << ' ' << grassTopCoords.tr.y << '\n';
+    std::cout << grassTopCoords.br.x << ' ' << grassTopCoords.br.y << '\n';
+    std::cout << grassTopCoords.bl.x << ' ' << grassTopCoords.bl.y << '\n';
 }
 
 Cube::Cube(Cube&& other) noexcept
@@ -36,6 +46,7 @@ Cube& Cube::operator=(Cube&& other) noexcept
     std::cout << "Move assignment operator of Cube called." << '\n';
 
     position = other.position;
+    this->GetVAO() = std::move(other.GetVAO());
     shader = std::move(other.shader);
 
     return *this;
@@ -43,5 +54,6 @@ Cube& Cube::operator=(Cube&& other) noexcept
 
 Cube::~Cube()
 {
-    Delete();
+    std::cout << "Deleting cube" << '\n';
 }
+

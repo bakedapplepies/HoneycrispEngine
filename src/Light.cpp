@@ -5,16 +5,19 @@
 
 
 Light::Light(const glm::vec3& position, const glm::vec3& color)
-    : Mesh(vertices, colors, std::vector<float>(), std::vector<float>(), indices)
 {
     this->position = position;
-    m_color = color;
+    vertices = m_vertices;
+    colors = m_colors;
+    indices = m_indices;
+    ConstructMesh();
+
     EnableVertexAttribPostion(true);
     EnableVertexAttribColor(true);
 
     shader = Shader(
-        "resources/shaders/lightvertex.vert",
-        "resources/shaders/lightfragment.frag"
+        "../resources/shaders/lightvertex.vert",
+        "../resources/shaders/lightfragment.frag"
     );
 
     shader.Use();
@@ -25,6 +28,7 @@ Light::Light(Light&& other) noexcept
     std::cout << "Move constructor of Light called." << '\n';
 
     position = other.position;
+    m_color = other.m_color;
     shader = std::move(other.shader);
 }
 
@@ -33,6 +37,7 @@ Light& Light::operator=(Light&& other) noexcept
     std::cout << "Move assignment operator of Light called." << '\n';
 
     position = other.position;
+    m_color = other.m_color;
     shader = std::move(other.shader);
 
     return *this;
@@ -40,6 +45,7 @@ Light& Light::operator=(Light&& other) noexcept
 
 Light::~Light()
 {
+    std::cout << "Deleting light" << '\n';
 }
 
 glm::vec3& Light::GetColor()

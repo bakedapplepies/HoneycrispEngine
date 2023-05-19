@@ -5,8 +5,7 @@
 #include <glad/glad.h>
 
 #define ASSERT(x) if (!(x)) createBreak();
-#define GLCall(x) GLClearError();\
-    x;\
+#define GLCall(x) x;\
     ASSERT(GLLogCall(#x, __FILE__, __LINE__))
 
 
