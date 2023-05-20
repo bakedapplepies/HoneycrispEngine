@@ -23,7 +23,7 @@ void Mesh::ConstructMesh()
 {
     unsigned int vertArrayDataSize = vertices.size() + colors.size() + normals.size() + uv.size();
     vertData.reserve(vertArrayDataSize);
-        
+
     for (int vertIndex = 0; vertIndex < vertices.size()/3; vertIndex++)
     {
         if (!vertices.empty())
@@ -125,6 +125,11 @@ void Mesh::ConstructMesh()
         ));
         currentOffset += 3;
     }
+
+    EnableVertexAttribPostion(true);
+    EnableVertexAttribColor(true);
+    EnableVertexAttribUV(true);
+    EnableVertexAttribNormals(true);
 }
 
 void Mesh::EnableVertexAttribPostion(bool on) const
@@ -192,12 +197,17 @@ void Mesh::Draw() const
     GLCall( glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (GLvoid*)0) );
 }
 
-glm::vec3& Mesh::GetPosition()
+void Mesh::AddPosition(const glm::vec3& position)
 {
-    return position;
+    positions.push_back(position);
 }
 
-glm::mat4 Mesh::GetModelMatrix() const
+std::vector<glm::vec3>& Mesh::GetPositions()
+{
+    return positions;
+}
+
+glm::mat4 Mesh::GetModelMatrix(const glm::vec3& position) const
 {
     // maybe add rotation and scale
 

@@ -28,7 +28,6 @@ VertexArray& VertexArray::operator=(VertexArray&& other) noexcept
 
 VertexArray::~VertexArray()
 {
-    Bind();
     GLCall(glDeleteVertexArrays(1, &m_VAO_ID));
 }
 

@@ -187,8 +187,7 @@ private:
     };
 
 public:
-    Cube() = default;
-    Cube(const glm::vec3& position);
+    Cube();
     Cube(const Cube& other) = delete;
     Cube(Cube&& other) noexcept;
     Cube& operator=(const Cube& other) = delete;

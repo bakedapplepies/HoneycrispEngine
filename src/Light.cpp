@@ -6,14 +6,14 @@
 
 Light::Light(const glm::vec3& position, const glm::vec3& color)
 {
-    this->position = position;
+    this->positions.push_back(position);
     vertices = m_vertices;
     colors = m_colors;
     indices = m_indices;
     ConstructMesh();
 
-    EnableVertexAttribPostion(true);
-    EnableVertexAttribColor(true);
+    EnableVertexAttribUV(false);
+    EnableVertexAttribNormals(false);
 
     shader = Shader(
         "../resources/shaders/lightvertex.vert",
@@ -27,7 +27,7 @@ Light::Light(Light&& other) noexcept
 {
     std::cout << "Move constructor of Light called." << '\n';
 
-    position = other.position;
+    positions = std::move(other.positions);
     m_color = other.m_color;
     shader = std::move(other.shader);
 }
@@ -36,7 +36,7 @@ Light& Light::operator=(Light&& other) noexcept
 {
     std::cout << "Move assignment operator of Light called." << '\n';
 
-    position = other.position;
+    positions = std::move(other.positions);
     m_color = other.m_color;
     shader = std::move(other.shader);
 
@@ -45,7 +45,6 @@ Light& Light::operator=(Light&& other) noexcept
 
 Light::~Light()
 {
-    std::cout << "Deleting light" << '\n';
 }
 
 glm::vec3& Light::GetColor()

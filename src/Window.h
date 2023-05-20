@@ -2,13 +2,11 @@
 
 #include "pch/pch.h"
 
+#include "Mesh.h"
 #include "Cube.h"
 #include "Light.h"
 #include "constants.h"
-#include "Object.h"
-#include "VertexArray.h"
 #include "Texture.h"
-#include "Shader.h"
 #include "Camera.h"
 
 
@@ -33,6 +31,7 @@ private:
     Camera camera;
     std::unique_ptr<Cube> cube;
     std::unique_ptr<Light> light;
+    std::unique_ptr<Mesh> mesh;
 
     glm::mat4 modelMatrix;
     glm::mat4 viewMatrix;

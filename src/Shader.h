@@ -7,6 +7,7 @@ class Shader
 {
 private:
     GLuint m_shaderID;
+    mutable std::unordered_map<std::string, GLint> m_uniformLocationCache;
 
 public:
     Shader() = default;
@@ -22,8 +23,9 @@ public:
     GLuint getID() const;
     void Use() const;
 
-    void setFloatUniform(const char* name, float value) const;
-    void setMatrix4Uniform(const char* name, const glm::mat4& matrix) const;
-    void setMatrix3Uniform(const char* name, const glm::mat3& matrix) const;
-    void setVector3Uniform(const char* name, const glm::vec3& vector) const;
+    GLint getUniformLocation(const std::string& name) const;
+    void setFloatUniform(const std::string& name, float value) const;
+    void setMatrix4Uniform(const std::string& name, const glm::mat4& matrix) const;
+    void setMatrix3Uniform(const std::string& name, const glm::mat3& matrix) const;
+    void setVector3Uniform(const std::string& name, const glm::vec3& vector) const;
 };

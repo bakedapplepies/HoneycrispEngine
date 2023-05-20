@@ -116,39 +116,45 @@ GLuint Shader::getID() const
     return m_shaderID;
 }
 
-void Shader::setFloatUniform(const char* name, float value) const
+GLint Shader::getUniformLocation(const std::string& name) const
 {
-    GLCall(GLuint uFloatLocation = glGetUniformLocation(m_shaderID, name));
-    GLCall(glUniform1f(uFloatLocation, value));
+    if (m_uniformLocationCache.find(name) != m_uniformLocationCache.end())
+        return m_uniformLocationCache[name];
+
+    GLint location = glGetUniformLocation(m_shaderID, name.c_str());
+    m_uniformLocationCache[name] = location;
+    return location;
 }
 
-void Shader::setMatrix4Uniform(const char* name, const glm::mat4& matrix) const
+void Shader::setFloatUniform(const std::string& name, float value) const
 {
-    GLCall(GLuint uMatrixLocation = glGetUniformLocation(m_shaderID, name));
+    GLCall(glUniform1f(getUniformLocation(name), value));
+}
+
+void Shader::setMatrix4Uniform(const std::string& name, const glm::mat4& matrix) const
+{
     GLCall(glUniformMatrix4fv(
-        uMatrixLocation,
+        getUniformLocation(name),
         1,
         GL_FALSE,
         glm::value_ptr(matrix)
     ));
 }
 
-void Shader::setMatrix3Uniform(const char* name, const glm::mat3& matrix) const
+void Shader::setMatrix3Uniform(const std::string& name, const glm::mat3& matrix) const
 {
-    GLCall(GLuint uMatrixLocation = glGetUniformLocation(m_shaderID, name));
     GLCall(glUniformMatrix3fv(
-        uMatrixLocation,
+        getUniformLocation(name),
         1,
         GL_FALSE,
         glm::value_ptr(matrix)
     ));
 }
 
-void Shader::setVector3Uniform(const char* name, const glm::vec3& vector) const
+void Shader::setVector3Uniform(const std::string& name, const glm::vec3& vector) const
 {
-    GLCall(GLuint uVec3Location = glGetUniformLocation(m_shaderID, name));
     GLCall(glUniform3fv(
-        uVec3Location,
+        getUniformLocation(name),
         1,
         glm::value_ptr(vector)
     ));

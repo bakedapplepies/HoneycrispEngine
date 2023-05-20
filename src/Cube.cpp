@@ -4,20 +4,14 @@
 #include "Cube.h"
 
 
-Cube::Cube(const glm::vec3& position)
+Cube::Cube()
 {
-    this->position = position;
     vertices = m_vertices;
     colors = m_colors;
     normals = m_normals;
     uv = m_uv;
     indices = m_indices;
     ConstructMesh();
-
-    EnableVertexAttribPostion(true);
-    EnableVertexAttribColor(true);
-    EnableVertexAttribUV(true);
-    EnableVertexAttribNormals(true);
 
     shader = Shader(
         "../resources/shaders/vertex.vert",
@@ -26,18 +20,13 @@ Cube::Cube(const glm::vec3& position)
 
     shader.Use();
     GLCall(glUniform1i(glGetUniformLocation(shader.getID(), "uTexture0"), 0));
-
-    std::cout << grassTopCoords.tl.x << ' ' << grassTopCoords.tl.y << '\n';
-    std::cout << grassTopCoords.tr.x << ' ' << grassTopCoords.tr.y << '\n';
-    std::cout << grassTopCoords.br.x << ' ' << grassTopCoords.br.y << '\n';
-    std::cout << grassTopCoords.bl.x << ' ' << grassTopCoords.bl.y << '\n';
 }
 
 Cube::Cube(Cube&& other) noexcept
 {
     std::cout << "Move constructor of Cube called." << '\n';
 
-    position = other.position;
+    positions = std::move(other.positions);
     shader = std::move(other.shader);
 }
 
@@ -45,7 +34,7 @@ Cube& Cube::operator=(Cube&& other) noexcept
 {
     std::cout << "Move assignment operator of Cube called." << '\n';
 
-    position = other.position;
+    positions = std::move(other.positions);
     this->GetVAO() = std::move(other.GetVAO());
     shader = std::move(other.shader);
 
@@ -54,6 +43,5 @@ Cube& Cube::operator=(Cube&& other) noexcept
 
 Cube::~Cube()
 {
-    std::cout << "Deleting cube" << '\n';
 }
 

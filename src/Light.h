@@ -79,7 +79,7 @@ private:
     };
 
     std::vector<unsigned int> m_indices = {
-        // top
+        // front
         0, 1, 2,
         0, 2, 3,
 

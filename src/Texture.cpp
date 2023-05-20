@@ -69,7 +69,6 @@ void Texture::GenerateTextureCoords()
 {
     int nRow_textures = m_pixelHeight / m_textureResolution;
     int nCol_textures = m_pixelWidth / m_textureResolution;
-    std::cout << "Rows: " << nRow_textures << ", Cols: " << nCol_textures << '\n';
 
     unsigned int textureType = 0;
 
@@ -78,9 +77,9 @@ void Texture::GenerateTextureCoords()
         for (int col = 0; col < nCol_textures; col++)
         {
             m_textureCoords[textureType] = {
-                glm::vec2((float)col/(nCol_textures)      , (float)row/(nRow_textures)),
-                glm::vec2((float)(col + 1)/(nCol_textures), (float)row/(nRow_textures)),
-                glm::vec2((float)col/(nCol_textures)      , (float)(row - 1)/(nRow_textures)),
+                glm::vec2((float)(col    )/(nCol_textures), (float)(row    )/(nRow_textures)),
+                glm::vec2((float)(col + 1)/(nCol_textures), (float)(row    )/(nRow_textures)),
+                glm::vec2((float)(col    )/(nCol_textures), (float)(row - 1)/(nRow_textures)),
                 glm::vec2((float)(col + 1)/(nCol_textures), (float)(row - 1)/(nRow_textures))
             };
             textureType++;

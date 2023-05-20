@@ -49,7 +49,7 @@ Window::Window()
     glfwSetKeyCallback(glfwWindow, key_callback);
 
 
-    /* Initialize GLAD */
+    /* Initialize GLAD -> Only call OpenGL functions after this */
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         std::cout << "GLAD Initialization failed." << '\n';
@@ -58,7 +58,11 @@ Window::Window()
     std::cout << glGetString(GL_VERSION) << '\n';
 
     glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
     GLCall(glEnable(GL_DEPTH_TEST));
+    GLCall(glEnable(GL_CULL_FACE));
+    GLCall(glFrontFace(GL_CW));
+    GLCall(glCullFace(GL_BACK));
     GLCall(glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT));
 
     std::cout << "Window config done." << '\n';
@@ -84,12 +88,45 @@ Window::Window()
         0.1f,
         100.0f
     );
-    std::cout << "Matrices initialized." << '\n';
 
-    cube = std::make_unique<Cube>(glm::vec3(0.0f, 0.0f, 0.0f));
+    cube = std::make_unique<Cube>();
+    for (int i = -5; i < 5; i++)
+    {
+        for (int j = -5; j < 5; j++)
+        {
+            cube->AddPosition(glm::vec3(j, i, 0.0f));
+        }
+    }
     light = std::make_unique<Light>(
         glm::vec3(1.0f, 1.0f, 1.0f),
         glm::vec3(1.0f, 1.0f, 1.0f)
+    );
+    mesh = std::make_unique<Mesh>(
+        std::vector<float>({
+            -1.0f, -1.0f, -1.0f,
+             1.0f, -1.0f, -1.0f,
+             1.0f, -1.0f,  1.0f,
+            -1.0f, -1.0f,  1.0f,
+        }),
+        std::vector<float>({
+            1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f,
+        }),
+        std::vector<float>({
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f
+        }),
+        std::vector<float>({
+
+        }),
+        std::vector<unsigned int>({
+            0, 2, 1,
+            0, 3, 2
+        })
     );
 
     // ImGUI
@@ -107,8 +144,6 @@ void Window::Loop()
 {
     /* Main loop */
     float begin = glfwGetTime();
-
-    std::cout << "Entering loop." << '\n';
 
     while(!glfwWindowShouldClose(glfwWindow))
     {
@@ -148,13 +183,12 @@ void Window::Loop()
         color.b = -sinf(4*begin)/4 + 0.75f;
 
         cube->GetShader().Use();
-        modelMatrix = cube->GetModelMatrix();
+
         cube->GetShader().setMatrix4Uniform("view", viewMatrix);
         cube->GetShader().setMatrix4Uniform("projection", projectionMatrix);
 
-        cube->GetShader().setMatrix4Uniform("model", modelMatrix);
         cube->GetShader().setVector3Uniform("lightColor", color);
-        cube->GetShader().setVector3Uniform("lightPos", light->GetPosition());
+        cube->GetShader().setVector3Uniform("lightPos", light->GetPositions().back());
         cube->GetShader().setVector3Uniform("viewPos", camera.cameraPos);
 
         cube->GetShader().setVector3Uniform("material.ambient", glm::vec3(1.0f) * color);
@@ -168,24 +202,35 @@ void Window::Loop()
         
         // for Phong shading
         cube->GetShader().setMatrix3Uniform("normalMatrix", glm::mat4(glm::transpose(glm::inverse(modelMatrix))));
+        for (const glm::vec3& i_position : cube->GetPositions())
+        {
+            modelMatrix = cube->GetModelMatrix(i_position);
+            cube->GetShader().setMatrix4Uniform("model", modelMatrix);
 
-        cube->Draw();
+            cube->Draw();
+        }
 
 
         light->GetShader().Use();
-        modelMatrix = light->GetModelMatrix();
         light->GetShader().setMatrix4Uniform("view", viewMatrix);
         light->GetShader().setMatrix4Uniform("projection", projectionMatrix);
+        for (glm::vec3& i_position : light->GetPositions())
+        {
+            modelMatrix = light->GetModelMatrix(i_position);
 
-        modelMatrix = glm::scale(modelMatrix, glm::vec3(lightSizeScale));
-        light->GetShader().setMatrix4Uniform("model", modelMatrix);
-        light->GetPosition().x = 1.5f * cosf(begin*1.5f);
-        light->GetPosition().z = 1.5f * sinf(begin*1.5f);
+            modelMatrix = glm::scale(modelMatrix, glm::vec3(lightSizeScale));
+            light->GetShader().setMatrix4Uniform("model", modelMatrix);
+            i_position.x = 1.5f * cosf(begin*1.5f);
+            i_position.z = 1.5f * sinf(begin*1.5f);
 
-        light->GetShader().setVector3Uniform("uColor", color);
+            light->GetShader().setVector3Uniform("uColor", color);
 
-        light->Draw();
+            light->Draw();
+        }
 
+        mesh->GetShader().Use();
+        mesh->GetShader().setMatrix4Uniform("view", viewMatrix);
+        mesh->GetShader().setMatrix4Uniform("projection", projectionMatrix);
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
