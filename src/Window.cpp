@@ -26,8 +26,8 @@ Window::Window()
     /* Create and assign OpenGL window context */
     glfwSetErrorCallback(error_callback);
     glfwWindow = glfwCreateWindow(
-        WINDOW_WIDTH,
-        WINDOW_HEIGHT,
+        callbackData.windowWidth,
+        callbackData.windowHeight,
         "LearnOpenGL",
         NULL,
         NULL
@@ -63,7 +63,7 @@ Window::Window()
     GLCall(glEnable(GL_CULL_FACE));
     GLCall(glFrontFace(GL_CW));
     GLCall(glCullFace(GL_BACK));
-    GLCall(glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT));
+    GLCall(glViewport(0, 0, callbackData.windowWidth, callbackData.windowHeight));
 
     std::cout << "Window config done." << '\n';
 
@@ -84,7 +84,7 @@ Window::Window()
     // Projection Matrix
     projectionMatrix = glm::perspective(
         glm::radians(45.0f),
-        (float)WINDOW_WIDTH/(float)WINDOW_HEIGHT,
+        (float)callbackData.windowWidth/(float)callbackData.windowHeight,
         0.1f,
         100.0f
     );
@@ -97,16 +97,18 @@ Window::Window()
             cube->AddPosition(glm::vec3(j, i, 0.0f));
         }
     }
+
     light = std::make_unique<Light>(
-        glm::vec3(1.0f, 1.0f, 1.0f),
         glm::vec3(1.0f, 1.0f, 1.0f)
     );
+    light->AddPosition(glm::vec3(1.0f, 1.0f, 1.0f));
+
     mesh = std::make_unique<Mesh>(
         std::vector<float>({
-            -1.0f, -1.0f, -1.0f,
-             1.0f, -1.0f, -1.0f,
-             1.0f, -1.0f,  1.0f,
-            -1.0f, -1.0f,  1.0f,
+            -1.0f,  0.0f, -1.0f,
+             1.0f,  0.0f, -1.0f,
+             1.0f,  0.0f,  1.0f,
+            -1.0f,  0.0f,  1.0f,
         }),
         std::vector<float>({
             1.0f, 1.0f, 1.0f,
@@ -127,6 +129,11 @@ Window::Window()
             0, 2, 1,
             0, 3, 2
         })
+    );
+    mesh->AddPosition(glm::vec3(0.0f, -8.0f, 0.0f));
+    mesh->GetShader() = Shader(
+        "../resources/shaders/vertex.vert",
+        "../resources/shaders/fragment.frag"
     );
 
     // ImGUI
@@ -175,8 +182,14 @@ void Window::Loop()
         ImGui::SliderFloat("Light Size", &lightSizeScale, 0.0f, 1.0f);
 
         ImGui::End();
-        
-        
+
+        projectionMatrix = glm::perspective(
+            glm::radians(45.0f),
+            (float)callbackData.windowWidth/(float)callbackData.windowHeight,
+            0.1f,
+            100.0f
+        );    
+    
         glm::vec3& color = light->GetColor();
         color.r = cosf(4*begin)/4 + 0.75f;
         color.g = -sinf(4*begin)/4 + 0.75f;
@@ -231,6 +244,10 @@ void Window::Loop()
         mesh->GetShader().Use();
         mesh->GetShader().setMatrix4Uniform("view", viewMatrix);
         mesh->GetShader().setMatrix4Uniform("projection", projectionMatrix);
+        for (glm::vec3& i_position : mesh->GetPositions())
+        {
+
+        }
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -251,6 +268,7 @@ Window::~Window()
 
     cube.reset();
     light.reset();
+    mesh.reset();
     grassTextureMap.reset();
 
     glfwTerminate();

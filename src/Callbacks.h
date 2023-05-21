@@ -8,8 +8,10 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
+    CallbackData* callbackData = static_cast<CallbackData*>(glfwGetWindowUserPointer(window));
     glViewport(0, 0, width, height);
-    
+    callbackData->windowWidth = width;
+    callbackData->windowHeight = height;
 }
 
 void error_callback(int error, const char *msg)
@@ -66,8 +68,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             callbackData->showMouse = false;
         }
-        callbackData->lastX = WINDOW_WIDTH/2;
-        callbackData->lastY = WINDOW_HEIGHT/2;
+        callbackData->lastX = callbackData->windowWidth/2;
+        callbackData->lastY = callbackData->windowHeight/2;
     }
 }
 

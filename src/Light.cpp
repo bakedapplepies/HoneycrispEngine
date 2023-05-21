@@ -4,9 +4,8 @@
 #include "Light.h"
 
 
-Light::Light(const glm::vec3& position, const glm::vec3& color)
+Light::Light(const glm::vec3& color)
 {
-    this->positions.push_back(position);
     vertices = m_vertices;
     colors = m_colors;
     indices = m_indices;

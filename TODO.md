@@ -7,3 +7,4 @@
 - runtime vertex attribute change
 - group render calls by shaders
 - batch rendering
+- stop reseting unique pointers for objects

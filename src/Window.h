@@ -15,12 +15,15 @@ struct CallbackData  // maybe make private
     bool capFPS = true;
     bool showMouse = false;
     bool firstMouse = true;
-    float lastX = WINDOW_WIDTH/2;
-    float lastY = WINDOW_HEIGHT/2;
+    int windowHeight = 1200;
+    int windowWidth = 1200;
+    float lastX = windowWidth/2;
+    float lastY = windowHeight/2;
     float yaw = -90.0f;
     float pitch = 0.0f;
     float fov = 45.0f;
     glm::vec3 cameraDirection;
+
 };
 
 class Window

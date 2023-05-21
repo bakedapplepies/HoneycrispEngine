@@ -108,7 +108,7 @@ private:
 
 public:
     Light() = default;
-    Light(const glm::vec3& position, const glm::vec3& color);
+    Light(const glm::vec3& color);
     Light(const Light& other) = delete;
     Light(Light&& other) noexcept;
     Light& operator=(const Light& other) = delete;
