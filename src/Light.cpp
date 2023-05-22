@@ -28,6 +28,7 @@ Light::Light(Light&& other) noexcept
 
     positions = std::move(other.positions);
     m_color = other.m_color;
+    this->GetVAO() = std::move(other.GetVAO());
     shader = std::move(other.shader);
 }
 
@@ -37,6 +38,7 @@ Light& Light::operator=(Light&& other) noexcept
 
     positions = std::move(other.positions);
     m_color = other.m_color;
+    this->GetVAO() = std::move(other.GetVAO());
     shader = std::move(other.shader);
 
     return *this;

@@ -183,12 +183,13 @@ void Window::Loop()
 
         ImGui::End();
 
+        // put in callbackData
         projectionMatrix = glm::perspective(
             glm::radians(45.0f),
             (float)callbackData.windowWidth/(float)callbackData.windowHeight,
             0.1f,
             100.0f
-        );    
+        );
     
         glm::vec3& color = light->GetColor();
         color.r = cosf(4*begin)/4 + 0.75f;
@@ -246,7 +247,11 @@ void Window::Loop()
         mesh->GetShader().setMatrix4Uniform("projection", projectionMatrix);
         for (glm::vec3& i_position : mesh->GetPositions())
         {
-
+            modelMatrix = mesh->GetModelMatrix(i_position);
+            mesh->GetShader().setMatrix4Uniform("model", modelMatrix);
+            
+            std::cout << "Before draw call" << '\n';
+            mesh->Draw();
         }
 
         ImGui::Render();

@@ -3,15 +3,20 @@
 
 
 Mesh::Mesh(
-    const std::vector<float>& vertices,
-    const std::vector<float>& colors,
-    const std::vector<float>& normals,
-    const std::vector<float>& uv,
-    const std::vector<unsigned int>& indices
-) : vertices(vertices), colors(colors), normals(normals), uv(uv), indices(indices)
+    const std::vector<float>& verticesIn,
+    const std::vector<float>& colorsIn,
+    const std::vector<float>& normalsIn,
+    const std::vector<float>& uvIn,
+    const std::vector<unsigned int>& indicesIn
+)// : vertices(verticesIn), colors(colorsIn), normals(normalsIn), uv(uvIn), indices(indicesIn)
 {
     std::cout << vertices.size() << '\n';
     std::cout << "Mesh Constructor called." << '\n';
+    vertices = verticesIn;
+    colors = colorsIn;
+    normals = normalsIn;
+    uv = uvIn;
+    indices = indicesIn;
     ConstructMesh();
 }
 

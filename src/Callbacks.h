@@ -67,8 +67,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             callbackData->showMouse = false;
+            callbackData->firstMouse = true;
         }
-        callbackData->firstMouse = true;
     }
 }
 
@@ -89,8 +89,8 @@ void mouse_callback(GLFWwindow* window, double xpos_double, double ypos_double)
 
         if (callbackData->firstMouse)
         {
-            deltaX = callbackData->lastX;
-            deltaY = callbackData->lastY;
+            // deltaX = callbackData->lastX;
+            // deltaY = callbackData->lastY;
             callbackData->firstMouse = false;
             direction = glm::vec3(0.0f, 0.0f, 1.0f);
             return;

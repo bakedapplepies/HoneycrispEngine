@@ -27,6 +27,7 @@ Cube::Cube(Cube&& other) noexcept
     std::cout << "Move constructor of Cube called." << '\n';
 
     positions = std::move(other.positions);
+    this->GetVAO() = std::move(other.GetVAO());
     shader = std::move(other.shader);
 }
 
