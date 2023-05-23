@@ -122,12 +122,10 @@ Window::Window()
             0.0f, 1.0f, 0.0f,
             0.0f, 1.0f, 0.0f
         }),
-        std::vector<float>({
-
-        }),
+        std::vector<float>(0),
         std::vector<unsigned int>({
-            0, 2, 1,
-            0, 3, 2
+            0, 1, 2,
+            0, 2, 3
         })
     );
     mesh->AddPosition(glm::vec3(0.0f, -8.0f, 0.0f));
@@ -205,8 +203,7 @@ void Window::Loop()
         cube->GetShader().setVector3Uniform("lightPos", light->GetPositions().back());
         cube->GetShader().setVector3Uniform("viewPos", camera.cameraPos);
 
-        cube->GetShader().setVector3Uniform("material.ambient", glm::vec3(1.0f) * color);
-        cube->GetShader().setVector3Uniform("material.diffuse", glm::vec3(1.0f) * color);
+        cube->GetShader().setIntUniform("material.diffuse", 0);
         cube->GetShader().setVector3Uniform("material.specular", glm::vec3(0.5f) * color);
         cube->GetShader().setFloatUniform("material.shininess", 32.0f);
 
@@ -216,6 +213,7 @@ void Window::Loop()
         
         // for Phong shading
         cube->GetShader().setMatrix3Uniform("normalMatrix", glm::mat4(glm::transpose(glm::inverse(modelMatrix))));
+
         for (const glm::vec3& i_position : cube->GetPositions())
         {
             modelMatrix = cube->GetModelMatrix(i_position);
@@ -245,12 +243,27 @@ void Window::Loop()
         mesh->GetShader().Use();
         mesh->GetShader().setMatrix4Uniform("view", viewMatrix);
         mesh->GetShader().setMatrix4Uniform("projection", projectionMatrix);
-        for (glm::vec3& i_position : mesh->GetPositions())
+
+        mesh->GetShader().setVector3Uniform("lightColor", color);
+        mesh->GetShader().setVector3Uniform("lightPos", light->GetPositions().back());
+        mesh->GetShader().setVector3Uniform("viewPos", camera.cameraPos);
+
+        mesh->GetShader().setIntUniform("material.diffuse", 0);
+        mesh->GetShader().setVector3Uniform("material.specular", glm::vec3(0.5f) * color);
+        mesh->GetShader().setFloatUniform("material.shininess", 32.0f);
+
+        mesh->GetShader().setVector3Uniform("light.ambient", glm::vec3(0.2f));
+        mesh->GetShader().setVector3Uniform("light.diffuse", glm::vec3(0.5f));
+        mesh->GetShader().setVector3Uniform("light.specular", glm::vec3(1.0f));
+        
+        // for Phong shading
+        mesh->GetShader().setMatrix3Uniform("normalMatrix", glm::mat4(glm::transpose(glm::inverse(modelMatrix))));
+
+        for (const glm::vec3& i_position : mesh->GetPositions())
         {
             modelMatrix = mesh->GetModelMatrix(i_position);
             mesh->GetShader().setMatrix4Uniform("model", modelMatrix);
             
-            std::cout << "Before draw call" << '\n';
             mesh->Draw();
         }
 
