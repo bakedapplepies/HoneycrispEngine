@@ -4,15 +4,14 @@
 #include "Texture.h"
 
 
-Texture::~Texture()
-{
-    std::cout << "Deleting texture" << '\n';
-    GLCall(glDeleteTextures(1, &m_textureID));
-}
+GLint Texture::sm_textureUnitCounter = GL_TEXTURE0;
+std::unordered_map<GLuint, GLint> Texture::sm_textureUnits;  // key: ID -> texture unit
 
-void Texture::LoadTexture(const char* texturePath)
+Texture::Texture(const char* texturePath, NumTotalTextureInMap numTotalTextures)
 {
     GLCall(glGenTextures(1, &m_textureID));
+    sm_textureUnits[m_textureID] = sm_textureUnitCounter;
+    sm_textureUnitCounter++;
 
     int nrChannels;
     unsigned char* data = stbi_load(
@@ -46,7 +45,41 @@ void Texture::LoadTexture(const char* texturePath)
 
     stbi_image_free(data);
 
-    GenerateTextureCoords();
+    GenerateTextureCoords(numTotalTextures);
+}
+
+Texture::Texture(Texture&& other) noexcept
+{
+    m_pixelWidth = other.m_pixelWidth;
+    m_pixelHeight = other.m_pixelHeight;
+    m_textureResolution = other.m_textureResolution;
+
+    m_textureCoords = std::move(other.m_textureCoords);
+
+    m_textureID = other.m_textureID;
+    other.m_textureID = 0;
+}
+
+Texture& Texture::operator=(Texture&& other) noexcept
+{
+    m_pixelWidth = other.m_pixelWidth;
+    m_pixelHeight = other.m_pixelHeight;
+    m_textureResolution = other.m_textureResolution;
+
+    m_textureCoords = std::move(other.m_textureCoords);
+
+    m_textureID = other.m_textureID;
+    other.m_textureID = 0;
+
+    return *this;
+}
+
+Texture::~Texture()
+{
+    if (m_textureID)
+    {
+        GLCall(glDeleteTextures(1, &m_textureID));
+    }
 }
 
 GLuint Texture::getID() const
@@ -54,9 +87,15 @@ GLuint Texture::getID() const
     return m_textureID;
 }
 
-void Texture::Bind(GLenum texture_unit) const
+// subtract by GL_TEXTURE0 to get uniform index
+GLint Texture::getTextureUnit() const
 {
-    GLCall(glActiveTexture(texture_unit));
+    return sm_textureUnits[m_textureID];
+}
+
+void Texture::Bind() const
+{
+    GLCall(glActiveTexture(sm_textureUnits[m_textureID]));
     GLCall(glBindTexture(GL_TEXTURE_2D, m_textureID));
 }
 
@@ -65,7 +104,36 @@ void Texture::Unbind() const
     GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
-void Texture::GenerateTextureCoords()
+void Texture::Delete()
+{
+    GLCall(glDeleteTextures(1, &m_textureID));
+    m_textureID = 0;
+}
+
+/* texture maps */
+
+Texture Texture::s_mainTextureMap;
+Texture Texture::s_mainTextureSpecularMap;
+void Texture::LoadTextures()
+{
+    s_mainTextureMap = Texture(
+        "../resources/textures/grass_textures.png",
+        NumTotalTextureInMap::MainTextureMap
+    );
+    s_mainTextureSpecularMap = Texture(
+        "../resources/textures/grass_textures_specular_map.png",
+        NumTotalTextureInMap::MainTextureMap
+    );
+}
+
+// Note: Automate this, maybe create a hashmap or sth
+void Texture::UnloadTextures()
+{
+    s_mainTextureMap.Delete();
+    s_mainTextureSpecularMap.Delete();
+}
+
+void Texture::GenerateTextureCoords(NumTotalTextureInMap numTotalTextures)
 {
     int nRow_textures = m_pixelHeight / m_textureResolution;
     int nCol_textures = m_pixelWidth / m_textureResolution;
@@ -83,7 +151,11 @@ void Texture::GenerateTextureCoords()
                 glm::vec2((float)(col + 1)/(nCol_textures), (float)(row - 1)/(nRow_textures))
             };
             textureType++;
-            if (textureType == Textures::END) return;
+            if (textureType >= numTotalTextures)  // not gonna be greater but whatever
+            {
+                // Debug::Get().Log("TEXTURE MAP INPUT DONE.");
+                return;
+            }
         }
     }
 }

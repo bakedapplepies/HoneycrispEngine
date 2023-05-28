@@ -6,7 +6,6 @@
 #include "Mesh.h"
 
 
-extern std::unique_ptr<Texture> grassTextureMap;
 class Cube : public Mesh
 {
 private:
@@ -118,9 +117,9 @@ private:
          0.0f, -1.0f,  0.0f, 
     };
 
-    TextureCoords& grassSideCoords = grassTextureMap->GetTextureCoords(Textures::GRASS_SIDE);
-    TextureCoords& grassTopCoords = grassTextureMap->GetTextureCoords(Textures::GRASS_TOP);
-    TextureCoords& dirtCoords = grassTextureMap->GetTextureCoords(Textures::DIRT);
+    TextureCoords& grassSideCoords = Texture::s_mainTextureMap.GetTextureCoords(MainTextureMap::GRASS_SIDE);
+    TextureCoords& grassTopCoords = Texture::s_mainTextureMap.GetTextureCoords(MainTextureMap::GRASS_TOP);
+    TextureCoords& dirtCoords = Texture::s_mainTextureMap.GetTextureCoords(MainTextureMap::DIRT);
 
     std::vector<float> m_uv = {
         // top

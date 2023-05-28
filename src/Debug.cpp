@@ -20,37 +20,3 @@ bool GLLogCall(const char* function, const char* file, unsigned int line) {
     }
     return true;
 }
-
-Debug::Debug()
-{
-    file.open(filepath);
-}
-
-Debug::~Debug()
-{
-    file.close();
-}
-
-Debug& Debug::Get()
-{
-    return self;
-}
-
-Debug Debug::self;
-// std::ostream Debug::file(self.filepath);
-
-template <typename T>
-void Debug::Log(const T& t)
-{
-    file << t << '\n';
-    std::cout << t << '\n';
-}
-
-template <typename T, typename... Args>
-void Debug::Log(const T& t, Args... args)
-{
-    file << t;
-    std::cout << t;
-
-    Log(args...);
-}

@@ -9,15 +9,15 @@ out vec2 TexCoord;
 out vec3 Normal;
 out vec3 FragPos;
 
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
-uniform mat3 normalMatrix;
+uniform mat4 u_model;
+uniform mat4 u_view;
+uniform mat4 u_projection;
+uniform mat3 u_normalMatrix;
 
 void main() {
-    gl_Position = projection * view * model * vec4(aPos, 1.0);
-    FragPos = vec3(model * vec4(aPos, 1.0));
-    Normal = normalMatrix * aNormal;
+    gl_Position = u_projection * u_view * u_model * vec4(aPos, 1.0);
+    FragPos = vec3(u_model * vec4(aPos, 1.0));
+    Normal = u_normalMatrix * aNormal;
     VertColor = aColor;
     TexCoord = aTexCoord;
 }

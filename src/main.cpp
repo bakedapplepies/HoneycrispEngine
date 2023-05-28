@@ -5,8 +5,11 @@
 
 int main()
 {
-    Window window;
-    window.Loop();
+    {
+        Window window;
+        window.Loop();
+    }
+    glfwTerminate();
 
     return 0;
 }

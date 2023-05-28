@@ -6,18 +6,17 @@
 #include "Callbacks.h"
 
 
-std::unique_ptr<Texture> grassTextureMap;
 Window::Window()
 {
     /* Initialize GLFW */
     if(!glfwInit())
     {
-        std::cout << "GLFW Initialization failed." << '\n';
+        Debug::Log("GLFW Initialization failed.");
         // return -1;
     }
     else
     {
-        std::cout << "GLFW Initialization success." << '\n';
+        Debug::Log("GLFW Initialization success.");
     }
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
@@ -34,7 +33,7 @@ Window::Window()
     );
     if (glfwWindow == NULL)
     {
-        std::cout << "GLFW Window Initialization failed." << '\n';
+        Debug::Log("GLFW Window Initialization failed.");
         glfwTerminate();
         // return -1;
     }
@@ -52,31 +51,26 @@ Window::Window()
     /* Initialize GLAD -> Only call OpenGL functions after this */
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
-        std::cout << "GLAD Initialization failed." << '\n';
+        Debug::Log("GLAD Initialization failed.");
         // return -1;
     }
-    std::cout << glGetString(GL_VERSION) << '\n';
+    Debug::Log(glGetString(GL_VERSION));
 
     glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    GLCall(glEnable(GL_DEPTH_TEST));
-    GLCall(glEnable(GL_CULL_FACE));
+    GLCall(glEnable(GL_DEPTH_TEST));  // depth test
+    GLCall(glEnable(GL_CULL_FACE));  // face-culling
     GLCall(glFrontFace(GL_CW));
     GLCall(glCullFace(GL_BACK));
+    // GLCall(glEnable(GL_BLEND));  // 
     GLCall(glViewport(0, 0, callbackData.windowWidth, callbackData.windowHeight));
 
-    std::cout << "Window config done." << '\n';
+    Debug::Log("Window config done.");
 
     /* Textures */
     // Image data
     stbi_set_flip_vertically_on_load(true);
-    grassTextureMap = std::make_unique<Texture>();
-    grassTextureMap->LoadTexture(
-        "../resources/textures/grass_textures.png"
-    );
-    grassTextureMap->Bind(GL_TEXTURE0);
-    std::cout << "Texture loaded." << '\n';
-
+    Texture::LoadTextures();
 
     // View Matrix
     viewMatrix = camera.GetViewMatrix();
@@ -101,14 +95,14 @@ Window::Window()
     light = std::make_unique<Light>(
         glm::vec3(1.0f, 1.0f, 1.0f)
     );
-    light->AddPosition(glm::vec3(1.0f, 1.0f, 1.0f));
+    light->AddPosition(glm::vec3(1.0f, 1.0f, 3.0f));
 
     mesh = std::make_unique<Mesh>(
         std::vector<float>({
-            -1.0f,  0.0f, -1.0f,
-             1.0f,  0.0f, -1.0f,
-             1.0f,  0.0f,  1.0f,
-            -1.0f,  0.0f,  1.0f,
+            -8.0f,  0.0f, -8.0f,
+             8.0f,  0.0f, -8.0f,
+             8.0f,  0.0f,  8.0f,
+            -8.0f,  0.0f,  8.0f,
         }),
         std::vector<float>({
             1.0f, 1.0f, 1.0f,
@@ -141,7 +135,8 @@ Window::Window()
     ImGui::StyleColorsDark();
     ImGui_ImplOpenGL3_Init();
 
-    std::cout << "Window Initialization done." << '\n';
+    // Debug::Log("Window Initialization done.");
+    Debug::Log("Window Initialization done.");
 }
 
 
@@ -188,6 +183,10 @@ void Window::Loop()
             0.1f,
             100.0f
         );
+
+        // texture bindings
+        Texture::s_mainTextureMap.Bind();
+        Texture::s_mainTextureSpecularMap.Bind();
     
         glm::vec3& color = light->GetColor();
         color.r = cosf(4*begin)/4 + 0.75f;
@@ -196,30 +195,40 @@ void Window::Loop()
 
         cube->GetShader().Use();
 
-        cube->GetShader().setMatrix4Uniform("view", viewMatrix);
-        cube->GetShader().setMatrix4Uniform("projection", projectionMatrix);
+        cube->GetShader().setMatrix4Uniform("u_view", viewMatrix);
+        cube->GetShader().setMatrix4Uniform("u_projection", projectionMatrix);
 
-        cube->GetShader().setVector3Uniform("lightColor", color);
-        cube->GetShader().setVector3Uniform("lightPos", light->GetPositions().back());
-        cube->GetShader().setVector3Uniform("viewPos", camera.cameraPos);
+        cube->GetShader().setVector3Uniform("u_lightPos", light->GetPositions().back());
+        cube->GetShader().setVector3Uniform("u_viewPos", camera.cameraPos);
 
-        cube->GetShader().setIntUniform("material.diffuse", 0);
-        cube->GetShader().setVector3Uniform("material.specular", glm::vec3(0.5f) * color);
-        cube->GetShader().setFloatUniform("material.shininess", 32.0f);
+        cube->GetShader().setIntUniform("u_material.diffuse", Texture::s_mainTextureMap.getTextureUnit() - GL_TEXTURE0);
+        cube->GetShader().setIntUniform("u_material.specular", Texture::s_mainTextureSpecularMap.getTextureUnit() - GL_TEXTURE0);
+        cube->GetShader().setFloatUniform("u_material.shininess", 32.0f);
 
-        cube->GetShader().setVector3Uniform("light.ambient", glm::vec3(0.2f));
-        cube->GetShader().setVector3Uniform("light.diffuse", glm::vec3(0.5f));
-        cube->GetShader().setVector3Uniform("light.specular", glm::vec3(1.0f));
+        cube->GetShader().setVector3Uniform("u_light.ambient", 0.2f * color);
+        cube->GetShader().setVector3Uniform("u_light.diffuse", 0.5f * color);
+        cube->GetShader().setVector3Uniform("u_light.specular", 1.0f * color);
         
         // for Phong shading
-        cube->GetShader().setMatrix3Uniform("normalMatrix", glm::mat4(glm::transpose(glm::inverse(modelMatrix))));
+        cube->GetShader().setMatrix3Uniform("u_normalMatrix", glm::mat4(glm::transpose(glm::inverse(modelMatrix))));
 
         for (const glm::vec3& i_position : cube->GetPositions())
         {
             modelMatrix = cube->GetModelMatrix(i_position);
-            cube->GetShader().setMatrix4Uniform("model", modelMatrix);
+            cube->GetShader().setMatrix4Uniform("u_model", modelMatrix);
 
             cube->Draw();
+        }
+
+        // cube and mesh have the same shader so maybe stop including shader inside objects
+        // or somehow group them (static shader members inside the shader class?)
+
+        for (const glm::vec3& i_position : mesh->GetPositions())
+        {
+            modelMatrix = mesh->GetModelMatrix(i_position);
+            mesh->GetShader().setMatrix4Uniform("u_model", modelMatrix);
+            
+            mesh->Draw();
         }
 
 
@@ -232,39 +241,12 @@ void Window::Loop()
 
             modelMatrix = glm::scale(modelMatrix, glm::vec3(lightSizeScale));
             light->GetShader().setMatrix4Uniform("model", modelMatrix);
-            i_position.x = 1.5f * cosf(begin*1.5f);
-            i_position.z = 1.5f * sinf(begin*1.5f);
+            // i_position.x = 1.5f * cosf(begin*1.5f);
+            // i_position.z = 1.5f * sinf(begin*1.5f);
 
             light->GetShader().setVector3Uniform("uColor", color);
 
             light->Draw();
-        }
-
-        mesh->GetShader().Use();
-        mesh->GetShader().setMatrix4Uniform("view", viewMatrix);
-        mesh->GetShader().setMatrix4Uniform("projection", projectionMatrix);
-
-        mesh->GetShader().setVector3Uniform("lightColor", color);
-        mesh->GetShader().setVector3Uniform("lightPos", light->GetPositions().back());
-        mesh->GetShader().setVector3Uniform("viewPos", camera.cameraPos);
-
-        mesh->GetShader().setIntUniform("material.diffuse", 0);
-        mesh->GetShader().setVector3Uniform("material.specular", glm::vec3(0.5f) * color);
-        mesh->GetShader().setFloatUniform("material.shininess", 32.0f);
-
-        mesh->GetShader().setVector3Uniform("light.ambient", glm::vec3(0.2f));
-        mesh->GetShader().setVector3Uniform("light.diffuse", glm::vec3(0.5f));
-        mesh->GetShader().setVector3Uniform("light.specular", glm::vec3(1.0f));
-        
-        // for Phong shading
-        mesh->GetShader().setMatrix3Uniform("normalMatrix", glm::mat4(glm::transpose(glm::inverse(modelMatrix))));
-
-        for (const glm::vec3& i_position : mesh->GetPositions())
-        {
-            modelMatrix = mesh->GetModelMatrix(i_position);
-            mesh->GetShader().setMatrix4Uniform("model", modelMatrix);
-            
-            mesh->Draw();
         }
 
         ImGui::Render();
@@ -278,18 +260,13 @@ void Window::Loop()
 
 Window::~Window()
 {
-    std::cout << "Deallocating resources." << '\n';
+    Debug::Log("Deallocating resources.");
 
     // ImGui::Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 
-    cube.reset();
-    light.reset();
-    mesh.reset();
-    grassTextureMap.reset();
-
-    glfwTerminate();
+    Texture::UnloadTextures();
 }
 
 

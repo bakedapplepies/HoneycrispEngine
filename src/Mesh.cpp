@@ -8,15 +8,8 @@ Mesh::Mesh(
     const std::vector<float>& normalsIn,
     const std::vector<float>& uvIn,
     const std::vector<unsigned int>& indicesIn
-)// : vertices(verticesIn), colors(colorsIn), normals(normalsIn), uv(uvIn), indices(indicesIn)
+) : vertices(verticesIn), colors(colorsIn), normals(normalsIn), uv(uvIn), indices(indicesIn)
 {
-    std::cout << vertices.size() << '\n';
-    std::cout << "Mesh Constructor called." << '\n';
-    vertices = verticesIn;
-    colors = colorsIn;
-    normals = normalsIn;
-    uv = uvIn;
-    indices = indicesIn;
     ConstructMesh();
 }
 
@@ -86,8 +79,10 @@ void Mesh::ConstructMesh()
             numAttribElements * sizeof(float),
             (void*)(currentOffset * sizeof(float))
         ));
+        EnableVertexAttribPosition(true);
         currentOffset += 3;
     }
+    else { EnableVertexAttribPosition(false); }
 
     // Color RGB
     if (!colors.empty())
@@ -100,8 +95,10 @@ void Mesh::ConstructMesh()
             numAttribElements * sizeof(float),
             (void*)(currentOffset * sizeof(float))
         ));
+        EnableVertexAttribColor(true);
         currentOffset += 3;
     }
+    else { EnableVertexAttribColor(false); }
 
     if (!uv.empty())
     {
@@ -114,8 +111,10 @@ void Mesh::ConstructMesh()
             numAttribElements * sizeof(float),
             (void*)(currentOffset * sizeof(float))
         ));
+        EnableVertexAttribUV(true);
         currentOffset += 2;
     }
+    else { EnableVertexAttribUV(false); }
 
     if (!normals.empty())
     {
@@ -128,16 +127,13 @@ void Mesh::ConstructMesh()
             numAttribElements * sizeof(float),
             (void*)(currentOffset * sizeof(float))
         ));
+        EnableVertexAttribNormals(true);
         currentOffset += 3;
     }
-
-    EnableVertexAttribPostion(true);
-    EnableVertexAttribColor(true);
-    EnableVertexAttribUV(true);
-    EnableVertexAttribNormals(true);
+    else { EnableVertexAttribNormals(false); }
 }
 
-void Mesh::EnableVertexAttribPostion(bool on) const
+void Mesh::EnableVertexAttribPosition(bool on) const
 {
     // Becareful of these binds
     m_VAO.Bind();

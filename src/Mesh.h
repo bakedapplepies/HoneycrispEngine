@@ -31,7 +31,7 @@ public:
     );
     ~Mesh();
 
-    void EnableVertexAttribPostion(bool on) const;
+    void EnableVertexAttribPosition(bool on) const;
     void EnableVertexAttribColor(bool on) const;
     void EnableVertexAttribUV(bool on) const;
     void EnableVertexAttribNormals(bool on) const;
