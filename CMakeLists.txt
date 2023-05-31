@@ -4,7 +4,6 @@ set(CMAKE_CXX_STANDARD 17)
 # Compiler Options
 # add_compile_options(-v -g)
 # add_link_options(-v -g)
-message("Hi: ${CMAKE_SOURCE_DIR}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fsanitize=address -ffile-prefix-map=${CMAKE_SOURCE_DIR}=.")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -g -fsanitize=address")
 
@@ -77,8 +76,9 @@ add_executable(${CMAKE_PROJECT_NAME}
 )
 
 # -I
-target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC ./include)
-target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC ./src)
+# target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC .)
+# target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC ./include)
+message("\n-- Project root: ${CMAKE_CURRENT_SOURCE_DIR}")
 
 # What to link
 set(LIBS

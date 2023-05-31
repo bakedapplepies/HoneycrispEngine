@@ -191,10 +191,10 @@ void Mesh::Bind()
     m_VAO.Bind();
 }
 
-void Mesh::Draw() const
+void Mesh::Draw()
 {
-    // maybe add use shader here
     m_VAO.Bind();
+    uv[0] += 0.01f;
     GLCall( glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (GLvoid*)0) );
 }
 

@@ -10,7 +10,7 @@
 #include "Camera.h"
 
 
-struct CallbackData  // maybe make private
+struct CallbackData
 {
     bool capFPS = true;
     bool showMouse = false;
@@ -23,7 +23,6 @@ struct CallbackData  // maybe make private
     float pitch = 0.0f;
     float fov = 45.0f;
     glm::vec3 cameraDirection;
-
 };
 
 class Window

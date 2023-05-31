@@ -18,7 +18,7 @@ enum MainTextureMap
     END
 };
 
-enum NumTotalTextureInMap
+enum NumTexturesInMap
 {
     MainTextureMap = MainTextureMap::END,
 };
@@ -44,12 +44,14 @@ public:
 
 private:
     Texture() = default;
-    Texture(const char* texturePath, NumTotalTextureInMap numTextures);
+    Texture(const char* texturePath, NumTexturesInMap numTextures);
     Texture(const Texture&) = delete;
     Texture(Texture&& other) noexcept;
     Texture& operator=(const Texture&) = delete;
     Texture& operator=(Texture&& other) noexcept;
     ~Texture();
+
+    void GenerateTextureCoords(NumTexturesInMap numTotalTextures);
 
 public:
     GLuint getID() const;
@@ -61,6 +63,5 @@ public:
 
     static void LoadTextures();
     static void UnloadTextures();
-    void GenerateTextureCoords(NumTotalTextureInMap numTotalTextures);
     TextureCoords& GetTextureCoords(unsigned int textureType);
 };

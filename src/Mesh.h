@@ -36,7 +36,7 @@ public:
     void EnableVertexAttribUV(bool on) const;
     void EnableVertexAttribNormals(bool on) const;
 
-    void Draw() const override;
+    void Draw() override;
     void AddPosition(const glm::vec3& position) override;
     std::vector<glm::vec3>& GetPositions() override;
     glm::mat4 GetModelMatrix(const glm::vec3& position) const override;

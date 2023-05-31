@@ -7,7 +7,7 @@
 GLint Texture::sm_textureUnitCounter = GL_TEXTURE0;
 std::unordered_map<GLuint, GLint> Texture::sm_textureUnits;  // key: ID -> texture unit
 
-Texture::Texture(const char* texturePath, NumTotalTextureInMap numTotalTextures)
+Texture::Texture(const char* texturePath, NumTexturesInMap numTotalTextures)
 {
     GLCall(glGenTextures(1, &m_textureID));
     sm_textureUnits[m_textureID] = sm_textureUnitCounter;
@@ -118,11 +118,11 @@ void Texture::LoadTextures()
 {
     s_mainTextureMap = Texture(
         "../resources/textures/grass_textures.png",
-        NumTotalTextureInMap::MainTextureMap
+        NumTexturesInMap::MainTextureMap
     );
     s_mainTextureSpecularMap = Texture(
         "../resources/textures/grass_textures_specular_map.png",
-        NumTotalTextureInMap::MainTextureMap
+        NumTexturesInMap::MainTextureMap
     );
 }
 
@@ -133,7 +133,7 @@ void Texture::UnloadTextures()
     s_mainTextureSpecularMap.Delete();
 }
 
-void Texture::GenerateTextureCoords(NumTotalTextureInMap numTotalTextures)
+void Texture::GenerateTextureCoords(NumTexturesInMap numTotalTextures)
 {
     int nRow_textures = m_pixelHeight / m_textureResolution;
     int nCol_textures = m_pixelWidth / m_textureResolution;

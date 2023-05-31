@@ -11,19 +11,17 @@ Window::Window()
     /* Initialize GLFW */
     if(!glfwInit())
     {
-        Debug::Log("GLFW Initialization failed.");
+        Debug::Error("GLFW Initialization failed.");
         // return -1;
-    }
-    else
-    {
-        Debug::Log("GLFW Initialization success.");
     }
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     /* Create and assign OpenGL window context */
-    glfwSetErrorCallback(error_callback);
+    const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    callbackData.windowWidth = mode->width * 0.75f;
+    callbackData.windowHeight = mode->height * 0.75f;
     glfwWindow = glfwCreateWindow(
         callbackData.windowWidth,
         callbackData.windowHeight,
@@ -31,9 +29,10 @@ Window::Window()
         NULL,
         NULL
     );
+
     if (glfwWindow == NULL)
     {
-        Debug::Log("GLFW Window Initialization failed.");
+        Debug::Error("GLFW Window Initialization failed.");
         glfwTerminate();
         // return -1;
     }
@@ -43,6 +42,7 @@ Window::Window()
     /* Callbacks */
     glfwSetWindowUserPointer(glfwWindow, &callbackData);
 
+    glfwSetErrorCallback(error_callback);
     glfwSetCursorPosCallback(glfwWindow, mouse_callback);
     glfwSetFramebufferSizeCallback(glfwWindow, framebuffer_size_callback);
     glfwSetKeyCallback(glfwWindow, key_callback);
@@ -51,10 +51,11 @@ Window::Window()
     /* Initialize GLAD -> Only call OpenGL functions after this */
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
-        Debug::Log("GLAD Initialization failed.");
+        Debug::Error("GLAD Initialization failed.");
         // return -1;
     }
-    Debug::Log(glGetString(GL_VERSION));
+    Debug::Log("Version: ", glGetString(GL_VERSION));
+
 
     glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -97,6 +98,7 @@ Window::Window()
     );
     light->AddPosition(glm::vec3(1.0f, 1.0f, 3.0f));
 
+    TextureCoords& grassUV = Texture::s_mainTextureMap.GetTextureCoords(MainTextureMap::GRASS_TOP);
     mesh = std::make_unique<Mesh>(
         std::vector<float>({
             -8.0f,  0.0f, -8.0f,
@@ -116,7 +118,12 @@ Window::Window()
             0.0f, 1.0f, 0.0f,
             0.0f, 1.0f, 0.0f
         }),
-        std::vector<float>(0),
+        std::vector<float>({
+            grassUV.tl.x, grassUV.tl.y,
+            grassUV.tr.x, grassUV.tr.y,
+            grassUV.br.x, grassUV.br.y,
+            grassUV.bl.x, grassUV.bl.y
+        }),
         std::vector<unsigned int>({
             0, 1, 2,
             0, 2, 3
@@ -135,7 +142,6 @@ Window::Window()
     ImGui::StyleColorsDark();
     ImGui_ImplOpenGL3_Init();
 
-    // Debug::Log("Window Initialization done.");
     Debug::Log("Window Initialization done.");
 }
 
@@ -155,7 +161,6 @@ void Window::Loop()
         processInput();
 
         // Set background
-        // GLCall(glClearColor(0.53, 0.81f, 0.92f, 1.0f));
         GLCall(glClearColor(0.09f, 0.09f, 0.09f, 1.0f));
         GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
@@ -168,7 +173,7 @@ void Window::Loop()
         camera.SetDirection(glm::normalize(callbackData.cameraDirection));
         viewMatrix = camera.GetViewMatrix();
 
-        ImGui::Begin("Demo");
+        ImGui::Begin("Settings");
         
         static float lightSizeScale = 0.2f;
         
@@ -198,16 +203,24 @@ void Window::Loop()
         cube->GetShader().setMatrix4Uniform("u_view", viewMatrix);
         cube->GetShader().setMatrix4Uniform("u_projection", projectionMatrix);
 
-        cube->GetShader().setVector3Uniform("u_lightPos", light->GetPositions().back());
         cube->GetShader().setVector3Uniform("u_viewPos", camera.cameraPos);
 
         cube->GetShader().setIntUniform("u_material.diffuse", Texture::s_mainTextureMap.getTextureUnit() - GL_TEXTURE0);
         cube->GetShader().setIntUniform("u_material.specular", Texture::s_mainTextureSpecularMap.getTextureUnit() - GL_TEXTURE0);
         cube->GetShader().setFloatUniform("u_material.shininess", 32.0f);
 
-        cube->GetShader().setVector3Uniform("u_light.ambient", 0.2f * color);
+        cube->GetShader().setVector3Uniform("u_light.position", camera.cameraPos);
+        cube->GetShader().setVector3Uniform("u_light.direction", camera.cameraDirection);
+        cube->GetShader().setFloatUniform("u_light.cutOff", glm::cos(glm::radians(15.0f)));
+        cube->GetShader().setFloatUniform("u_light.outerCutOff", glm::cos(glm::radians(25.0f)));
+
+        cube->GetShader().setVector3Uniform("u_light.ambient", 0.1f * color);
         cube->GetShader().setVector3Uniform("u_light.diffuse", 0.5f * color);
         cube->GetShader().setVector3Uniform("u_light.specular", 1.0f * color);
+
+        cube->GetShader().setFloatUniform("u_light.constant", 1.0f);
+        cube->GetShader().setFloatUniform("u_light.linear", 0.045f);
+        cube->GetShader().setFloatUniform("u_light.quadratic", 0.0075f);
         
         // for Phong shading
         cube->GetShader().setMatrix3Uniform("u_normalMatrix", glm::mat4(glm::transpose(glm::inverse(modelMatrix))));
@@ -232,22 +245,22 @@ void Window::Loop()
         }
 
 
-        light->GetShader().Use();
-        light->GetShader().setMatrix4Uniform("view", viewMatrix);
-        light->GetShader().setMatrix4Uniform("projection", projectionMatrix);
-        for (glm::vec3& i_position : light->GetPositions())
-        {
-            modelMatrix = light->GetModelMatrix(i_position);
+        // light->GetShader().Use();
+        // light->GetShader().setMatrix4Uniform("view", viewMatrix);
+        // light->GetShader().setMatrix4Uniform("projection", projectionMatrix);
+        // for (glm::vec3& i_position : light->GetPositions())
+        // {
+        //     modelMatrix = light->GetModelMatrix(i_position);
 
-            modelMatrix = glm::scale(modelMatrix, glm::vec3(lightSizeScale));
-            light->GetShader().setMatrix4Uniform("model", modelMatrix);
-            // i_position.x = 1.5f * cosf(begin*1.5f);
-            // i_position.z = 1.5f * sinf(begin*1.5f);
+        //     modelMatrix = glm::scale(modelMatrix, glm::vec3(lightSizeScale));
+        //     light->GetShader().setMatrix4Uniform("model", modelMatrix);
+        //     i_position.x = 1.5f * cosf(begin*1.5f);
+        //     i_position.z = 1.5f * sinf(begin*1.5f);
 
-            light->GetShader().setVector3Uniform("uColor", color);
+        //     light->GetShader().setVector3Uniform("uColor", color);
 
-            light->Draw();
-        }
+        //     light->Draw();
+        // }
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

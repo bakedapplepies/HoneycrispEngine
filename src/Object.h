@@ -12,7 +12,7 @@ protected:
     std::vector<glm::vec3> positions;
 
 public:
-    virtual void Draw() const = 0;
+    virtual void Draw() = 0;
     virtual void AddPosition(const glm::vec3& position) = 0;
     virtual std::vector<glm::vec3>& GetPositions() = 0;
     virtual glm::mat4 GetModelMatrix(const glm::vec3& position) const = 0;
