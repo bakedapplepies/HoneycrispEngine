@@ -24,8 +24,6 @@ Light::Light(const glm::vec3& color)
 
 Light::Light(Light&& other) noexcept
 {
-    std::cout << "Move constructor of Light called." << '\n';
-
     positions = std::move(other.positions);
     m_color = other.m_color;
     this->GetVAO() = std::move(other.GetVAO());
@@ -34,8 +32,6 @@ Light::Light(Light&& other) noexcept
 
 Light& Light::operator=(Light&& other) noexcept
 {
-    std::cout << "Move assignment operator of Light called." << '\n';
-
     positions = std::move(other.positions);
     m_color = other.m_color;
     this->GetVAO() = std::move(other.GetVAO());

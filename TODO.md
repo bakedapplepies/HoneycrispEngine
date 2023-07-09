@@ -7,6 +7,4 @@
 - group render calls by shaders
 - batch rendering
 - stop reseting unique pointers for objects
-- when creating textures, add them to a static vector or sth to easily automatically delete them
-    + maybe use glDeleteTextures(numTexture, textureVector.data());
 - static VAO in each object type

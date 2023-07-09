@@ -23,9 +23,6 @@ enum NumTexturesInMap
     MainTextureMap = MainTextureMap::END,
 };
 
-// Could have define Texture class as namespace, but class is better as
-// it allows for different map attributes
-
 class Texture
 {
 private:
@@ -33,23 +30,23 @@ private:
     int m_textureResolution = 16;
     
     GLuint m_textureID;
-    static GLint sm_textureUnitCounter;
+    static GLuint sm_textureUnitCounter;
     std::unordered_map<GLuint, TextureCoords> m_textureCoords;  // key: enum (int) -> tex coords for 4 corners
     static std::unordered_map<GLuint, GLint> sm_textureUnits;
+    static std::vector<Texture*> s_textureRefs;
 
-// shaders
 public:
-    static Texture s_mainTextureMap;
-    static Texture s_mainTextureSpecularMap;
+    Texture();
+    ~Texture();
 
 private:
-    Texture() = default;
     Texture(const char* texturePath, NumTexturesInMap numTextures);
+    
+    // Move constructor/assigntment are private so it's safe
     Texture(const Texture&) = delete;
     Texture(Texture&& other) noexcept;
     Texture& operator=(const Texture&) = delete;
     Texture& operator=(Texture&& other) noexcept;
-    ~Texture();
 
     void GenerateTextureCoords(NumTexturesInMap numTotalTextures);
 
@@ -65,3 +62,8 @@ public:
     static void UnloadTextures();
     TextureCoords& GetTextureCoords(unsigned int textureType);
 };
+
+namespace Textures {
+    extern Texture mainTextureMap;
+    extern Texture mainTextureSpecularMap;
+}

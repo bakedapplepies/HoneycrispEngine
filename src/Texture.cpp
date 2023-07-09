@@ -4,8 +4,14 @@
 #include "Texture.h"
 
 
-GLint Texture::sm_textureUnitCounter = GL_TEXTURE0;
+GLuint Texture::sm_textureUnitCounter = 0;
 std::unordered_map<GLuint, GLint> Texture::sm_textureUnits;  // key: ID -> texture unit
+std::vector<Texture*> Texture::s_textureRefs;
+
+Texture::Texture()
+{
+    s_textureRefs.push_back(this);
+}
 
 Texture::Texture(const char* texturePath, NumTexturesInMap numTotalTextures)
 {
@@ -39,8 +45,8 @@ Texture::Texture(const char* texturePath, NumTexturesInMap numTotalTextures)
     }
     else
     {
-        std::cout << "Texture failed to load." << '\n';
-        std::cout << stbi_failure_reason() << '\n';
+        Debug::Log("Texture failed to load.");
+        Debug::Log(stbi_failure_reason());
     }
 
     stbi_image_free(data);
@@ -87,7 +93,6 @@ GLuint Texture::getID() const
     return m_textureID;
 }
 
-// subtract by GL_TEXTURE0 to get uniform index
 GLint Texture::getTextureUnit() const
 {
     return sm_textureUnits[m_textureID];
@@ -95,11 +100,11 @@ GLint Texture::getTextureUnit() const
 
 void Texture::Bind() const
 {
-    GLCall(glActiveTexture(sm_textureUnits[m_textureID]));
+    GLCall(glActiveTexture(GL_TEXTURE0 + sm_textureUnits[m_textureID]));
     GLCall(glBindTexture(GL_TEXTURE_2D, m_textureID));
 }
 
-void Texture::Unbind() const
+void Texture::Unbind() const  // could be static
 {
     GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 }
@@ -107,30 +112,31 @@ void Texture::Unbind() const
 void Texture::Delete()
 {
     GLCall(glDeleteTextures(1, &m_textureID));
-    m_textureID = 0;
+    m_textureID = 0;  // so OpenGL deletes 0 when exiting stack
+    sm_textureUnitCounter--;
 }
 
 /* texture maps */
-
-Texture Texture::s_mainTextureMap;
-Texture Texture::s_mainTextureSpecularMap;
+Texture Textures::mainTextureMap;
+Texture Textures::mainTextureSpecularMap;
 void Texture::LoadTextures()
 {
-    s_mainTextureMap = Texture(
+    Textures::mainTextureMap = Texture(
         "../resources/textures/grass_textures.png",
         NumTexturesInMap::MainTextureMap
     );
-    s_mainTextureSpecularMap = Texture(
+    Textures::mainTextureSpecularMap = Texture(
         "../resources/textures/grass_textures_specular_map.png",
         NumTexturesInMap::MainTextureMap
     );
 }
 
-// Note: Automate this, maybe create a hashmap or sth
 void Texture::UnloadTextures()
 {
-    s_mainTextureMap.Delete();
-    s_mainTextureSpecularMap.Delete();
+    for (Texture* texture : s_textureRefs)
+    {
+        texture->Delete();
+    }
 }
 
 void Texture::GenerateTextureCoords(NumTexturesInMap numTotalTextures)

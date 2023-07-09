@@ -2,6 +2,7 @@
 
 #include "Debug.h"
 #include "Cube.h"
+#include "Texture.h"
 
 
 Cube::Cube()
@@ -19,13 +20,11 @@ Cube::Cube()
     );
 
     shader.Use();
-    GLCall(glUniform1i(glGetUniformLocation(shader.getID(), "uTexture0"), 0));
+    shader.setIntUniform("uTexture", Textures::mainTextureMap.getTextureUnit());
 }
 
 Cube::Cube(Cube&& other) noexcept
 {
-    std::cout << "Move constructor of Cube called." << '\n';
-
     positions = std::move(other.positions);
     this->GetVAO() = std::move(other.GetVAO());
     shader = std::move(other.shader);
@@ -33,8 +32,6 @@ Cube::Cube(Cube&& other) noexcept
 
 Cube& Cube::operator=(Cube&& other) noexcept
 {
-    std::cout << "Move assignment operator of Cube called." << '\n';
-
     positions = std::move(other.positions);
     this->GetVAO() = std::move(other.GetVAO());
     shader = std::move(other.shader);

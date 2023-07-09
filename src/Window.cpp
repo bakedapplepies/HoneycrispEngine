@@ -59,11 +59,11 @@ Window::Window()
 
     glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    GLCall(glEnable(GL_DEPTH_TEST));  // depth test
-    GLCall(glEnable(GL_CULL_FACE));  // face-culling
+    GLCall(glEnable(GL_DEPTH_TEST));
+    GLCall(glEnable(GL_CULL_FACE));
     GLCall(glFrontFace(GL_CW));
     GLCall(glCullFace(GL_BACK));
-    // GLCall(glEnable(GL_BLEND));  // 
+    // GLCall(glEnable(GL_BLEND));
     GLCall(glViewport(0, 0, callbackData.windowWidth, callbackData.windowHeight));
 
     Debug::Log("Window config done.");
@@ -98,7 +98,7 @@ Window::Window()
     );
     light->AddPosition(glm::vec3(1.0f, 1.0f, 3.0f));
 
-    TextureCoords& grassUV = Texture::s_mainTextureMap.GetTextureCoords(MainTextureMap::GRASS_TOP);
+    TextureCoords& grassUV = Textures::mainTextureMap.GetTextureCoords(MainTextureMap::GRASS_TOP);
     mesh = std::make_unique<Mesh>(
         std::vector<float>({
             -8.0f,  0.0f, -8.0f,
@@ -190,8 +190,8 @@ void Window::Loop()
         );
 
         // texture bindings
-        Texture::s_mainTextureMap.Bind();
-        Texture::s_mainTextureSpecularMap.Bind();
+        Textures::mainTextureMap.Bind();
+        Textures::mainTextureSpecularMap.Bind();
     
         glm::vec3& color = light->GetColor();
         color.r = cosf(4*begin)/4 + 0.75f;
@@ -205,8 +205,8 @@ void Window::Loop()
 
         cube->GetShader().setVector3Uniform("u_viewPos", camera.cameraPos);
 
-        cube->GetShader().setIntUniform("u_material.diffuse", Texture::s_mainTextureMap.getTextureUnit() - GL_TEXTURE0);
-        cube->GetShader().setIntUniform("u_material.specular", Texture::s_mainTextureSpecularMap.getTextureUnit() - GL_TEXTURE0);
+        cube->GetShader().setIntUniform("u_material.diffuse", Textures::mainTextureMap.getTextureUnit());
+        cube->GetShader().setIntUniform("u_material.specular", Textures::mainTextureSpecularMap.getTextureUnit());
         cube->GetShader().setFloatUniform("u_material.shininess", 32.0f);
 
         cube->GetShader().setVector3Uniform("u_light.position", camera.cameraPos);
