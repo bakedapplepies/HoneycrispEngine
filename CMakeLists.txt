@@ -43,6 +43,7 @@ set_target_properties(IMGUI PROPERTIES LINKER_LANGUAGE CXX)
 add_executable(${CMAKE_PROJECT_NAME}
     # Sources
     ./include/glad/glad.cpp
+    ./lib/format.cc
     ./src/Debug.cpp
     ./src/main.cpp
     ./src/pch/pch.cpp

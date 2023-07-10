@@ -71,5 +71,5 @@ void main()
 
     vec3 result = ambient + diffuse + specular;
 
-    FragColor = texture(u_Texture, TexCoord) * vec4(VertColor, 1.0) * vec4(result, 1.0);
+    FragColor = vec4(VertColor, 1.0) * vec4(result, 1.0);
 }
