@@ -103,6 +103,7 @@ Shader& Shader::operator=(Shader&& other) noexcept
 
 Shader::~Shader()
 {
+    Debug::Log("Deleted Shader.");
     GLCall(glDeleteProgram(m_shaderID));
 }
 

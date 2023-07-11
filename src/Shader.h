@@ -30,3 +30,7 @@ public:
     void setMatrix3Uniform(const std::string& name, const glm::mat3& matrix) const;
     void setVector3Uniform(const std::string& name, const glm::vec3& vector) const;
 };
+
+namespace Shaders {
+    Shader mainShader;
+}

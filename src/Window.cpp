@@ -289,9 +289,8 @@ void Window::calcFPS()
     frames++;
     if (totalTime >= 1.0f)
     {
-        auto out = fmt::memory_buffer();
-        fmt::format_to(std::back_inserter(out), "LearnOpenGL - FPS: {}", frames);
-        glfwSetWindowTitle(glfwWindow, out.data());
+        std::string title = "LearnOpenGL - FPS: " + fmt::to_string(frames);
+        glfwSetWindowTitle(glfwWindow, title.c_str());
         frames = 0;
         totalTime = 0.0f;
     }
