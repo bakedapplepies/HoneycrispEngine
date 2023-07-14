@@ -6,7 +6,8 @@
 
 
 #define ASSERT(x) if (!(x)) createBreak();
-#define GLCall(x) x;\
+#define GLCall(x) GLClearError();\
+    x;\
     ASSERT(GLLogCall(#x, __BASE_FILE__, __LINE__))
 
 

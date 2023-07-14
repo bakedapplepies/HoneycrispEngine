@@ -1,11 +1,9 @@
 #include <iostream>
 #include "Debug.h"
 
-bool err = false;
+static bool err = false;
 void createBreak() {
     err = true;
-    // After temporary breakpoint is created, create
-    // another breakpoint at point of error
 }
 
 void GLClearError() {

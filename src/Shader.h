@@ -31,6 +31,6 @@ public:
     void setVector3Uniform(const std::string& name, const glm::vec3& vector) const;
 };
 
-namespace Shaders {
-    Shader mainShader;
-}
+// namespace Shaders {
+//     extern Shader mainShader;
+// }
