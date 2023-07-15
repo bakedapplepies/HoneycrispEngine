@@ -6,4 +6,3 @@ imgui.ini
 **/imgui.ini
 **/*.lib
 *.a
-*.gch

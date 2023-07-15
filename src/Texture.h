@@ -59,7 +59,7 @@ public:
     void Delete();
 
     static void LoadTextures();
-    static void UnloadTextures();
+    static void DeleteAllTextures();
     TextureCoords& GetTextureCoords(unsigned int textureType);
 };
 

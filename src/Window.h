@@ -22,7 +22,7 @@ struct CallbackData
     float yaw = -90.0f;
     float pitch = 0.0f;
     float fov = 45.0f;
-    glm::vec3 cameraDirection;
+    glm::vec3 cameraDirection = glm::vec3(0, 0, -1.0f);  // initial camera direction
 };
 
 class Window
@@ -30,7 +30,7 @@ class Window
 private:
     GLFWwindow* glfwWindow;
     CallbackData callbackData;
-    Camera camera;
+    Camera camera;  // set initial direction in CallbackData
     std::unique_ptr<Cube> cube;
     std::unique_ptr<Light> light;
     std::unique_ptr<Mesh> mesh;

@@ -18,8 +18,6 @@ Light::Light(const glm::vec3& color)
         "../resources/shaders/lightvertex.vert",
         "../resources/shaders/lightfragment.frag"
     );
-
-    shader.Use();
 }
 
 Light::Light(Light&& other) noexcept

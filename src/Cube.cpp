@@ -18,9 +18,6 @@ Cube::Cube()
         "../resources/shaders/vertex.vert",
         "../resources/shaders/fragment.frag"
     );
-
-    shader.Use();
-    shader.setIntUniform("uTexture", Textures::mainTextureMap.getTextureUnit());
 }
 
 Cube::Cube(Cube&& other) noexcept

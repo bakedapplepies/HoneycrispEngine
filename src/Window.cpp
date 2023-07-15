@@ -8,6 +8,9 @@
 
 Window::Window()
 {
+    std::ios_base::sync_with_stdio(false);
+    std::cin.tie(0);
+    
     /* Initialize GLFW */
     if(!glfwInit())
     {
@@ -34,7 +37,6 @@ Window::Window()
     {
         Debug::Error("GLFW Window Initialization failed.");
         glfwTerminate();
-        // return -1;
     }
     glfwMakeContextCurrent(glfwWindow);
     glfwSwapInterval(1);  // vsync
@@ -52,7 +54,7 @@ Window::Window()
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         Debug::Error("GLAD Initialization failed.");
-        // return -1;
+        glfwTerminate();
     }
     Debug::Log("Version: ", glGetString(GL_VERSION));
 
@@ -193,10 +195,13 @@ void Window::Loop()
         Textures::mainTextureMap.Bind();
         Textures::mainTextureSpecularMap.Bind();
     
-        glm::vec3& color = light->GetColor();
-        color.r = cosf(4*begin)/4 + 0.75f;
-        color.g = -sinf(4*begin)/4 + 0.75f;
-        color.b = -sinf(4*begin)/4 + 0.75f;
+        glm::vec3& lightColor =
+        light->GetColor();
+        // std::string light = fmt::format("({}, {}, {})", lightColor.r, lightColor.g, lightColor.b);
+        // Debug::Log(light.c_str());
+        lightColor.r = cosf(4*begin)/4 + 0.75f;
+        lightColor.g = -sinf(4*begin)/4 + 0.75f;
+        lightColor.b = -sinf(4*begin)/4 + 0.75f;
 
         cube->GetShader().Use();
 
@@ -214,9 +219,9 @@ void Window::Loop()
         cube->GetShader().setFloatUniform("u_light.cutOff", glm::cos(glm::radians(15.0f)));
         cube->GetShader().setFloatUniform("u_light.outerCutOff", glm::cos(glm::radians(25.0f)));
 
-        cube->GetShader().setVector3Uniform("u_light.ambient", 0.1f * color);
-        cube->GetShader().setVector3Uniform("u_light.diffuse", 0.5f * color);
-        cube->GetShader().setVector3Uniform("u_light.specular", 1.0f * color);
+        cube->GetShader().setVector3Uniform("u_light.ambient", 0.1f * lightColor);
+        cube->GetShader().setVector3Uniform("u_light.diffuse", 0.5f * lightColor);
+        cube->GetShader().setVector3Uniform("u_light.specular", 1.0f * lightColor);
 
         cube->GetShader().setFloatUniform("u_light.constant", 1.0f);
         cube->GetShader().setFloatUniform("u_light.linear", 0.045f);
@@ -279,7 +284,7 @@ Window::~Window()
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 
-    Texture::UnloadTextures();
+    Texture::DeleteAllTextures();
 }
 
 

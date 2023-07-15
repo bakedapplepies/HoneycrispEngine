@@ -2,8 +2,8 @@
 
 #include "pch/pch.h"
 
-#include "constants.h"
 #include "Window.h"
+#include "Debug.h"
 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -11,14 +11,13 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     CallbackData* callbackData = static_cast<CallbackData*>(glfwGetWindowUserPointer(window));
     glViewport(0, 0, width, height);
     callbackData->windowWidth = width;
-    callbackData->windowHeight = height;
+    callbackData->windowHeight = height;  // to reconstruct perspective matrix
 }
 
-void error_callback(int error, const char *msg)
+void error_callback(int error, const char* msg)
 {
-    std::string s;
-    s = " [" + std::to_string(error) + "]: " + msg + '\n';
-    std::cerr << s << '\n';
+    std::string errorMsg = fmt::format("({}): {}", error, msg);
+    Debug::Error(errorMsg);
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -75,6 +74,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void mouse_callback(GLFWwindow* window, double xpos_double, double ypos_double)
 {
     CallbackData* callbackData = static_cast<CallbackData*>(glfwGetWindowUserPointer(window));
+    static float offsetX, offsetY;
 
     if (!callbackData->showMouse)
     {
@@ -89,10 +89,9 @@ void mouse_callback(GLFWwindow* window, double xpos_double, double ypos_double)
 
         if (callbackData->firstMouse)
         {
-            // deltaX = callbackData->lastX;
-            // deltaY = callbackData->lastY;
+            callbackData->lastX = xpos;
+            callbackData->lastY = ypos;
             callbackData->firstMouse = false;
-            direction = glm::vec3(0.0f, 0.0f, 1.0f);
             return;
         }
 
@@ -101,7 +100,7 @@ void mouse_callback(GLFWwindow* window, double xpos_double, double ypos_double)
         callbackData->lastX = xpos;
         callbackData->lastY = ypos;
 
-        float sensitivity = 0.065f;
+        float sensitivity = 0.065f;  // adjust in settings later -> put in CallbackData
         deltaX *= sensitivity;
         deltaY *= sensitivity;
 
@@ -114,7 +113,7 @@ void mouse_callback(GLFWwindow* window, double xpos_double, double ypos_double)
             pitch = -89.0f;
 
         direction.x = cosf(glm::radians(yaw)) * cosf(glm::radians(pitch));
-        direction.y = sinf(glm::radians(-pitch));
+        direction.y = sinf(glm::radians(-pitch));  // since going up means Y is going down
         direction.z = sinf(glm::radians(yaw)) * cosf(glm::radians(pitch));
     }
 }

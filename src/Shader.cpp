@@ -35,7 +35,7 @@ Shader::Shader(const std::string& vertexShaderPath, const std::string& fragmentS
     if (!success)
     {
         GLCall(glGetShaderInfoLog(vertexShader, 512, NULL, infoLog));
-        std::cout << "Vertex Shader compilation failed:\n\t" << infoLog << '\n';
+        Debug::Error("Vertex Shader compilation failed:\n\t", infoLog);
 
         GLCall(glDeleteShader(vertexShader));
         m_shaderID = 0;
@@ -50,7 +50,7 @@ Shader::Shader(const std::string& vertexShaderPath, const std::string& fragmentS
     if (!success)
     {
         GLCall(glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog));
-        std::cout << "Fragment Shader compilation failed:\n\t" << infoLog << '\n';
+        Debug::Error("Fragment Shader compilation failed:\n\t", infoLog);
 
         GLCall(glDeleteShader(fragmentShader));
         m_shaderID = 0;
@@ -66,7 +66,7 @@ Shader::Shader(const std::string& vertexShaderPath, const std::string& fragmentS
     if (!success)
     {
         GLCall(glGetProgramInfoLog(m_shaderID, 512, NULL, infoLog));
-        std::cout << "Shader Program Linking failed:\n\t" << infoLog << '\n';
+        Debug::Error("Shader Program Linking failed:\n\t", infoLog);
 
         glDeleteProgram(m_shaderID);
         m_shaderID = 0;
@@ -77,7 +77,7 @@ Shader::Shader(const std::string& vertexShaderPath, const std::string& fragmentS
     if (!success)
     {
         GLCall(glGetProgramInfoLog(m_shaderID, 512, NULL, infoLog));
-        std::cout << "Shader Program Validation failed:\n\t" << infoLog << '\n';
+        Debug::Error("Shader Program Validation failed:\n\t", infoLog);
 
         glDeleteProgram(m_shaderID);
         m_shaderID = 0;

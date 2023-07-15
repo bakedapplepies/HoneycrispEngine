@@ -45,8 +45,8 @@ Texture::Texture(const char* texturePath, NumTexturesInMap numTotalTextures)
     }
     else
     {
-        Debug::Log("Texture failed to load.");
-        Debug::Log(stbi_failure_reason());
+        Debug::Error("Texture failed to load.");
+        Debug::Error(stbi_failure_reason());
     }
 
     stbi_image_free(data);
@@ -131,7 +131,7 @@ void Texture::LoadTextures()
     );
 }
 
-void Texture::UnloadTextures()
+void Texture::DeleteAllTextures()
 {
     for (Texture* texture : s_textureRefs)
     {
@@ -159,7 +159,6 @@ void Texture::GenerateTextureCoords(NumTexturesInMap numTotalTextures)
             textureType++;
             if (textureType >= numTotalTextures)  // not gonna be greater but whatever
             {
-                // Debug::Get().Log("TEXTURE MAP INPUT DONE.");
                 return;
             }
         }

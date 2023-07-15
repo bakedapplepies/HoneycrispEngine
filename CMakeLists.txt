@@ -45,7 +45,6 @@ add_executable(${CMAKE_PROJECT_NAME}
     ./lib/format.cc
     ./src/Debug.cpp
     ./src/main.cpp
-    ./src/pch/pch.cpp
     ./src/Camera.cpp
     ./src/Cube.cpp
     ./src/Light.cpp
@@ -95,6 +94,11 @@ set(LIBS
 
 # Linking
 target_link_libraries(${CMAKE_PROJECT_NAME}
-    PUBLIC
+    PRIVATE
         ${LIBS}
+)
+
+target_precompile_headers( ${CMAKE_PROJECT_NAME}
+    PRIVATE
+        ./src/pch/pch.h
 )

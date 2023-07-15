@@ -82,7 +82,8 @@
         "mutex": "cpp",
         "optional": "cpp",
         "queue": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "__std_stream": "cpp"
     },
     "cmake.configureOnOpen": true,
     "C_Cpp.errorSquiggles": "enabled",
