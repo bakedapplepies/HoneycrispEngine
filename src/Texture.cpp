@@ -13,7 +13,7 @@ Texture::Texture()
     s_textureRefs.push_back(this);
 }
 
-Texture::Texture(const char* texturePath, NumTexturesInMap numTotalTextures)
+Texture::Texture(const char* texturePath)
 {
     GLCall(glGenTextures(1, &m_textureID));
     sm_textureUnits[m_textureID] = sm_textureUnitCounter;
@@ -51,7 +51,7 @@ Texture::Texture(const char* texturePath, NumTexturesInMap numTotalTextures)
 
     stbi_image_free(data);
 
-    GenerateTextureCoords(numTotalTextures);
+    GenerateTextureCoords();
 }
 
 Texture::Texture(Texture&& other) noexcept
@@ -122,12 +122,10 @@ Texture Textures::mainTextureSpecularMap;
 void Texture::LoadTextures()
 {
     Textures::mainTextureMap = Texture(
-        "../resources/textures/grass_textures.png",
-        NumTexturesInMap::MainTextureMap
+        "../resources/textures/grass_textures.png"
     );
     Textures::mainTextureSpecularMap = Texture(
-        "../resources/textures/grass_textures_specular_map.png",
-        NumTexturesInMap::MainTextureMap
+        "../resources/textures/grass_textures_specular_map.png"
     );
 }
 
@@ -139,33 +137,30 @@ void Texture::DeleteAllTextures()
     }
 }
 
-void Texture::GenerateTextureCoords(NumTexturesInMap numTotalTextures)
+void Texture::GenerateTextureCoords()
 {
     int nRow_textures = m_pixelHeight / m_textureResolution;
     int nCol_textures = m_pixelWidth / m_textureResolution;
+    m_textureCoords.reserve(nRow_textures);
 
-    unsigned int textureType = 0;
-
-    for (int row = nRow_textures; row > 0; row++)
+    // Reminder: OpenGL has (0, 0) at Bottom left
+    for (int row = 0; row < nRow_textures; row++)
     {
+        m_textureCoords.push_back(std::vector<TextureCoords>(nCol_textures));
         for (int col = 0; col < nCol_textures; col++)
         {
-            m_textureCoords[textureType] = {
-                glm::vec2((float)(col    )/(nCol_textures), (float)(row    )/(nRow_textures)),
-                glm::vec2((float)(col + 1)/(nCol_textures), (float)(row    )/(nRow_textures)),
-                glm::vec2((float)(col    )/(nCol_textures), (float)(row - 1)/(nRow_textures)),
-                glm::vec2((float)(col + 1)/(nCol_textures), (float)(row - 1)/(nRow_textures))
-            };
-            textureType++;
-            if (textureType >= numTotalTextures)  // not gonna be greater but whatever
-            {
-                return;
-            }
+            Debug::Log((float)(col + 1)/(nCol_textures));
+            m_textureCoords[row].push_back({
+                glm::vec2((float)(col    )/(nCol_textures), (float)(row + 1)/(nRow_textures)),  // tl
+                glm::vec2((float)(col + 1)/(nCol_textures), (float)(row + 1)/(nRow_textures)),  // tr
+                glm::vec2((float)(col    )/(nCol_textures), (float)(row    )/(nRow_textures)),  // bl
+                glm::vec2((float)(col + 1)/(nCol_textures), (float)(row    )/(nRow_textures))   // br
+            });
         }
     }
 }
 
-TextureCoords& Texture::GetTextureCoords(unsigned int textureType)
+TextureCoords& Texture::GetTextureCoords(int row, int col)
 {
-    return m_textureCoords[textureType];
+    return m_textureCoords[row][col];
 }

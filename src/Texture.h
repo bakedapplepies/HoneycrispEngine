@@ -10,19 +10,6 @@ struct TextureCoords
     glm::vec2 br;  // bottom right
 };
 
-enum MainTextureMap
-{
-    GRASS_TOP,
-    GRASS_SIDE,
-    DIRT,
-    END
-};
-
-enum NumTexturesInMap
-{
-    MainTextureMap = MainTextureMap::END,
-};
-
 class Texture
 {
 private:
@@ -30,8 +17,8 @@ private:
     int m_textureResolution = 16;
     
     GLuint m_textureID;
+    std::vector<std::vector<TextureCoords>> m_textureCoords;
     static GLuint sm_textureUnitCounter;
-    std::unordered_map<GLuint, TextureCoords> m_textureCoords;  // key: enum (int) -> tex coords for 4 corners
     static std::unordered_map<GLuint, GLint> sm_textureUnits;
     static std::vector<Texture*> s_textureRefs;
 
@@ -40,7 +27,7 @@ public:
     ~Texture();
 
 private:
-    Texture(const char* texturePath, NumTexturesInMap numTextures);
+    Texture(const char* texturePath);
     
     // Move constructor/assigntment are private so it's safe
     Texture(const Texture&) = delete;
@@ -48,7 +35,7 @@ private:
     Texture& operator=(const Texture&) = delete;
     Texture& operator=(Texture&& other) noexcept;
 
-    void GenerateTextureCoords(NumTexturesInMap numTotalTextures);
+    void GenerateTextureCoords();
 
 public:
     GLuint getID() const;
@@ -60,7 +47,7 @@ public:
 
     static void LoadTextures();
     static void DeleteAllTextures();
-    TextureCoords& GetTextureCoords(unsigned int textureType);
+    TextureCoords& GetTextureCoords(int row, int col);
 };
 
 namespace Textures {

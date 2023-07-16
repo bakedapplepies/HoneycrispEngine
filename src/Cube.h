@@ -117,9 +117,9 @@ private:
          0.0f, -1.0f,  0.0f, 
     };
 
-    TextureCoords& grassSideCoords = Textures::mainTextureMap.GetTextureCoords(MainTextureMap::GRASS_SIDE);
-    TextureCoords& grassTopCoords = Textures::mainTextureMap.GetTextureCoords(MainTextureMap::GRASS_TOP);
-    TextureCoords& dirtCoords = Textures::mainTextureMap.GetTextureCoords(MainTextureMap::DIRT);
+    TextureCoords& grassSideCoords = Textures::mainTextureMap.GetTextureCoords(0, 1);
+    TextureCoords& grassTopCoords = Textures::mainTextureMap.GetTextureCoords(0, 0);
+    TextureCoords& dirtCoords = Textures::mainTextureMap.GetTextureCoords(0, 2);
 
     std::vector<float> m_uv = {
         // top

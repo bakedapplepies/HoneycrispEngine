@@ -7,11 +7,11 @@
 
 Cube::Cube()
 {
-    vertices = m_vertices;
-    colors = m_colors;
-    normals = m_normals;
-    uv = m_uv;
-    indices = m_indices;
+    static_cast<Mesh*>(this)->vertices = m_vertices;
+    static_cast<Mesh*>(this)->colors = m_colors;
+    static_cast<Mesh*>(this)->normals = m_normals;
+    static_cast<Mesh*>(this)->uv = m_uv;
+    static_cast<Mesh*>(this)->indices = m_indices;
     ConstructMesh();
 
     shader = Shader(

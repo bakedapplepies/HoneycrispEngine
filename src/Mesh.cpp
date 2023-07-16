@@ -13,10 +13,6 @@ Mesh::Mesh(
     ConstructMesh();
 }
 
-Mesh::~Mesh()
-{
-}
-
 void Mesh::ConstructMesh()
 {
     unsigned int vertArrayDataSize = vertices.size() + colors.size() + normals.size() + uv.size();
@@ -57,7 +53,7 @@ void Mesh::ConstructMesh()
         vertData.size() * sizeof(float),
         indices.data(),
         indices.size() * sizeof(unsigned int), 
-        GL_DYNAMIC_DRAW
+        GL_STATIC_DRAW
     );
 
 

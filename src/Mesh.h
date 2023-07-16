@@ -29,7 +29,7 @@ public:
         const std::vector<float>& uv,
         const std::vector<unsigned int>& indices
     );
-    ~Mesh();
+    ~Mesh() = default;
 
     void EnableVertexAttribPosition(bool on) const;
     void EnableVertexAttribColor(bool on) const;

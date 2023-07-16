@@ -74,6 +74,7 @@ Window::Window()
     // Image data
     stbi_set_flip_vertically_on_load(true);
     Texture::LoadTextures();
+    Debug::Log("Texture loaded.");
 
     // View Matrix
     viewMatrix = camera.GetViewMatrix();
@@ -100,7 +101,7 @@ Window::Window()
     );
     light->AddPosition(glm::vec3(1.0f, 1.0f, 3.0f));
 
-    TextureCoords& grassUV = Textures::mainTextureMap.GetTextureCoords(MainTextureMap::GRASS_TOP);
+    TextureCoords& grassUV = Textures::mainTextureMap.GetTextureCoords(0, 0);
     mesh = std::make_unique<Mesh>(
         std::vector<float>({
             -8.0f,  0.0f, -8.0f,

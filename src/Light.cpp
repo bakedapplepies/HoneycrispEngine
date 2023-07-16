@@ -6,9 +6,9 @@
 
 Light::Light(const glm::vec3& color)
 {
-    vertices = m_vertices;
-    colors = m_colors;
-    indices = m_indices;
+    static_cast<Mesh*>(this)->vertices = m_vertices;
+    static_cast<Mesh*>(this)->colors = m_colors;
+    static_cast<Mesh*>(this)->indices = m_indices;
     ConstructMesh();
 
     EnableVertexAttribUV(false);
