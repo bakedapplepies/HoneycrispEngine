@@ -8,7 +8,7 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-    CallbackData* callbackData = static_cast<CallbackData*>(glfwGetWindowUserPointer(window));
+    static CallbackData* callbackData = static_cast<CallbackData*>(glfwGetWindowUserPointer(window));
     glViewport(0, 0, width, height);
     callbackData->windowWidth = width;
     callbackData->windowHeight = height;  // to reconstruct perspective matrix
@@ -22,7 +22,7 @@ void error_callback(int error, const char* msg)
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    CallbackData* callbackData = static_cast<CallbackData*>(glfwGetWindowUserPointer(window));
+    static CallbackData* callbackData = static_cast<CallbackData*>(glfwGetWindowUserPointer(window));
 
     // Exit window
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
@@ -73,8 +73,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 void mouse_callback(GLFWwindow* window, double xpos_double, double ypos_double)
 {
-    CallbackData* callbackData = static_cast<CallbackData*>(glfwGetWindowUserPointer(window));
-    static float offsetX, offsetY;
+    static CallbackData* callbackData = static_cast<CallbackData*>(glfwGetWindowUserPointer(window));
 
     if (!callbackData->showMouse)
     {

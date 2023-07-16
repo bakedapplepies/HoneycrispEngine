@@ -57,7 +57,7 @@ void Mesh::ConstructMesh()
         vertData.size() * sizeof(float),
         indices.data(),
         indices.size() * sizeof(unsigned int), 
-        GL_STATIC_DRAW
+        GL_DYNAMIC_DRAW
     );
 
 
