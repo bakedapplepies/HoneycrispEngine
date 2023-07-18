@@ -14,7 +14,8 @@ class Texture
 {
 private:
     int m_pixelWidth, m_pixelHeight;
-    int m_textureResolution = 16;
+    int m_textureResolutionWidth;
+    int m_textureResolutionHeight;
     
     GLuint m_textureID;
     std::vector<std::vector<TextureCoords>> m_textureCoords;
@@ -27,7 +28,7 @@ public:
     ~Texture();
 
 private:
-    Texture(const char* texturePath);
+    Texture(const char* texturePath, uint32_t textureResolutionWidth, uint32_t textureResolutionHeight);
     
     // Move constructor/assigntment are private so it's safe
     Texture(const Texture&) = delete;
@@ -47,7 +48,7 @@ public:
 
     static void LoadTextures();
     static void DeleteAllTextures();
-    TextureCoords& GetTextureCoords(int row, int col);
+    TextureCoords& GetTextureCoords(uint32_t x, uint32_t y);
 };
 
 namespace Textures {

@@ -2,17 +2,6 @@
 #include "Debug.h"
 
 
-Mesh::Mesh(
-    const std::vector<float>& verticesIn,
-    const std::vector<float>& colorsIn,
-    const std::vector<float>& normalsIn,
-    const std::vector<float>& uvIn,
-    const std::vector<unsigned int>& indicesIn
-) : vertices(verticesIn), colors(colorsIn), normals(normalsIn), uv(uvIn), indices(indicesIn)
-{
-    ConstructMesh();
-}
-
 void Mesh::ConstructMesh()
 {
     unsigned int vertArrayDataSize = vertices.size() + colors.size() + normals.size() + uv.size();

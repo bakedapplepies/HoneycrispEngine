@@ -13,9 +13,11 @@ Texture::Texture()
     s_textureRefs.push_back(this);
 }
 
-Texture::Texture(const char* texturePath)
+Texture::Texture(const char* texturePath, uint32_t textureResolutionWidth, uint32_t textureResolutionHeight)
+    : m_textureResolutionWidth(textureResolutionWidth), m_textureResolutionHeight(textureResolutionHeight)
 {
     GLCall(glGenTextures(1, &m_textureID));
+
     sm_textureUnits[m_textureID] = sm_textureUnitCounter;
     sm_textureUnitCounter++;
 
@@ -58,7 +60,8 @@ Texture::Texture(Texture&& other) noexcept
 {
     m_pixelWidth = other.m_pixelWidth;
     m_pixelHeight = other.m_pixelHeight;
-    m_textureResolution = other.m_textureResolution;
+    m_textureResolutionWidth = other.m_textureResolutionWidth;
+    m_textureResolutionHeight = other.m_textureResolutionHeight;
 
     m_textureCoords = std::move(other.m_textureCoords);
 
@@ -70,7 +73,8 @@ Texture& Texture::operator=(Texture&& other) noexcept
 {
     m_pixelWidth = other.m_pixelWidth;
     m_pixelHeight = other.m_pixelHeight;
-    m_textureResolution = other.m_textureResolution;
+    m_textureResolutionWidth = other.m_textureResolutionWidth;
+    m_textureResolutionHeight = other.m_textureResolutionHeight;
 
     m_textureCoords = std::move(other.m_textureCoords);
 
@@ -122,10 +126,12 @@ Texture Textures::mainTextureSpecularMap;
 void Texture::LoadTextures()
 {
     Textures::mainTextureMap = Texture(
-        "../resources/textures/grass_textures.png"
+        "../resources/textures/grass_textures.png",
+        16, 16
     );
     Textures::mainTextureSpecularMap = Texture(
-        "../resources/textures/grass_textures_specular_map.png"
+        "../resources/textures/grass_textures_specular_map.png",
+        16, 16
     );
 }
 
@@ -139,8 +145,8 @@ void Texture::DeleteAllTextures()
 
 void Texture::GenerateTextureCoords()
 {
-    int nRow_textures = m_pixelHeight / m_textureResolution;
-    int nCol_textures = m_pixelWidth / m_textureResolution;
+    int nRow_textures = m_pixelHeight / m_textureResolutionHeight;
+    int nCol_textures = m_pixelWidth / m_textureResolutionWidth;
     m_textureCoords.reserve(nRow_textures);
 
     // Reminder: OpenGL has (0, 0) at Bottom left
@@ -149,18 +155,22 @@ void Texture::GenerateTextureCoords()
         m_textureCoords.push_back(std::vector<TextureCoords>(nCol_textures));
         for (int col = 0; col < nCol_textures; col++)
         {
-            Debug::Log((float)(col + 1)/(nCol_textures));
-            m_textureCoords[row].push_back({
-                glm::vec2((float)(col    )/(nCol_textures), (float)(row + 1)/(nRow_textures)),  // tl
-                glm::vec2((float)(col + 1)/(nCol_textures), (float)(row + 1)/(nRow_textures)),  // tr
-                glm::vec2((float)(col    )/(nCol_textures), (float)(row    )/(nRow_textures)),  // bl
-                glm::vec2((float)(col + 1)/(nCol_textures), (float)(row    )/(nRow_textures))   // br
-            });
+            float topRow = (float)(row)/(nRow_textures);
+            topRow += (topRow - 0.5f) * -2.0f;
+            float bottomRow = (float)(row + 1)/(nRow_textures);
+            bottomRow += (bottomRow - 0.5f) * -2.0f;
+            
+            m_textureCoords[row][col] = {
+                glm::vec2((float)(col    )/(nCol_textures), topRow),  // tl
+                glm::vec2((float)(col + 1)/(nCol_textures), topRow),  // tr
+                glm::vec2((float)(col    )/(nCol_textures), bottomRow),  // bl
+                glm::vec2((float)(col + 1)/(nCol_textures), bottomRow)   // br
+            };
         }
     }
 }
 
-TextureCoords& Texture::GetTextureCoords(int row, int col)
+TextureCoords& Texture::GetTextureCoords(uint32_t x, uint32_t y)
 {
-    return m_textureCoords[row][col];
+    return m_textureCoords[y][x];
 }

@@ -56,7 +56,7 @@ Window::Window()
         Debug::Error("GLAD Initialization failed.");
         glfwTerminate();
     }
-    Debug::Log("Version: ", glGetString(GL_VERSION));
+    Debug::Log("OpenGL (Core) ", glGetString(GL_VERSION));
 
 
     glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -102,38 +102,38 @@ Window::Window()
     light->AddPosition(glm::vec3(1.0f, 1.0f, 3.0f));
 
     TextureCoords& grassUV = Textures::mainTextureMap.GetTextureCoords(0, 0);
-    mesh = std::make_unique<Mesh>(
-        std::vector<float>({
-            -8.0f,  0.0f, -8.0f,
-             8.0f,  0.0f, -8.0f,
-             8.0f,  0.0f,  8.0f,
-            -8.0f,  0.0f,  8.0f,
-        }),
-        std::vector<float>({
-            1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f,
-        }),
-        std::vector<float>({
-            0.0f, 1.0f, 0.0f,
-            0.0f, 1.0f, 0.0f,
-            0.0f, 1.0f, 0.0f,
-            0.0f, 1.0f, 0.0f
-        }),
-        std::vector<float>({
-            grassUV.tl.x, grassUV.tl.y,
-            grassUV.tr.x, grassUV.tr.y,
-            grassUV.br.x, grassUV.br.y,
-            grassUV.bl.x, grassUV.bl.y
-        }),
-        std::vector<unsigned int>({
-            0, 1, 2,
-            0, 2, 3
-        })
-    );
+    mesh = std::make_unique<Mesh>();
+    mesh->vertices = {
+        -8.0f,  1.1f, -8.0f,
+         8.0f,  0.9f, -8.0f,
+         8.0f, -3.6f,  8.0f,
+        -8.0f,  2.5f,  8.0f,
+    };
+    mesh->colors = {
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+    };
+    mesh->normals = {
+        0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f
+    };
+    mesh->uv = {
+        grassUV.tl.x, grassUV.tl.y,
+        grassUV.tr.x, grassUV.tr.y,
+        grassUV.br.x, grassUV.br.y,
+        grassUV.bl.x, grassUV.bl.y
+    };
+    mesh->indices = {
+        0, 1, 2,
+        0, 2, 3
+    };
+    mesh->ConstructMesh();
     mesh->AddPosition(glm::vec3(0.0f, -8.0f, 0.0f));
-    mesh->GetShader() = Shader(
+    mesh->shader = Shader(
         "../resources/shaders/vertex.vert",
         "../resources/shaders/fragment.frag"
     );
@@ -196,13 +196,10 @@ void Window::Loop()
         Textures::mainTextureMap.Bind();
         Textures::mainTextureSpecularMap.Bind();
     
-        glm::vec3& lightColor =
-        light->GetColor();
-        // std::string light = fmt::format("({}, {}, {})", lightColor.r, lightColor.g, lightColor.b);
-        // Debug::Log(light.c_str());
-        lightColor.r = cosf(4*begin)/4 + 0.75f;
-        lightColor.g = -sinf(4*begin)/4 + 0.75f;
-        lightColor.b = -sinf(4*begin)/4 + 0.75f;
+        glm::vec3& lightColor = light->GetColor();
+        // lightColor.r = cosf(4*begin)/4 + 0.75f;
+        // lightColor.g = -sinf(4*begin)/4 + 0.75f;
+        // lightColor.b = -sinf(4*begin)/4 + 0.75f;
 
         cube->GetShader().Use();
 
@@ -217,6 +214,7 @@ void Window::Loop()
 
         cube->GetShader().setVector3Uniform("u_light.position", camera.cameraPos);
         cube->GetShader().setVector3Uniform("u_light.direction", camera.cameraDirection);
+
         cube->GetShader().setFloatUniform("u_light.cutOff", glm::cos(glm::radians(15.0f)));
         cube->GetShader().setFloatUniform("u_light.outerCutOff", glm::cos(glm::radians(25.0f)));
 

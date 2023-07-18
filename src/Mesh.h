@@ -13,22 +13,16 @@ public:
     std::vector<float> colors;
     std::vector<float> normals;
     std::vector<float> uv;
-
-    std::vector<float> vertData;
     std::vector<unsigned int> indices;
 
+    Shader shader;
+
 private:
+    std::vector<float> vertData;
     VertexArray m_VAO;
 
 public:
     Mesh() = default;
-    Mesh(
-        const std::vector<float>& vertices,
-        const std::vector<float>& colors,
-        const std::vector<float>& normals,
-        const std::vector<float>& uv,
-        const std::vector<unsigned int>& indices
-    );
     ~Mesh() = default;
 
     void EnableVertexAttribPosition(bool on) const;
@@ -36,11 +30,11 @@ public:
     void EnableVertexAttribUV(bool on) const;
     void EnableVertexAttribNormals(bool on) const;
 
-    void Draw() override;
+    void Draw();
     void AddPosition(const glm::vec3& position) override;
     std::vector<glm::vec3>& GetPositions() override;
-    glm::mat4 GetModelMatrix(const glm::vec3& position) const override;
-    Shader& GetShader() override;
+    glm::mat4 GetModelMatrix(const glm::vec3& position) const;
+    Shader& GetShader();
 
     void ConstructMesh();
     void Bind();
