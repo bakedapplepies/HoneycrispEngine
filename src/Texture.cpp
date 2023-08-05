@@ -155,14 +155,12 @@ void Texture::GenerateTextureCoords()
         m_textureCoords.push_back(std::vector<TextureCoords>(nCol_textures));
         for (int col = 0; col < nCol_textures; col++)
         {
-            float topRow = (float)(row)/(nRow_textures);
-            topRow += (topRow - 0.5f) * -2.0f;
-            float bottomRow = (float)(row + 1)/(nRow_textures);
-            bottomRow += (bottomRow - 0.5f) * -2.0f;
+            float topRow = 1.0f - (float)(row)/(nRow_textures);         // flipping y-coords
+            float bottomRow = 1.0f - (float)(row + 1)/(nRow_textures);
             
             m_textureCoords[row][col] = {
-                glm::vec2((float)(col    )/(nCol_textures), topRow),  // tl
-                glm::vec2((float)(col + 1)/(nCol_textures), topRow),  // tr
+                glm::vec2((float)(col    )/(nCol_textures), topRow),     // tl
+                glm::vec2((float)(col + 1)/(nCol_textures), topRow),     // tr
                 glm::vec2((float)(col    )/(nCol_textures), bottomRow),  // bl
                 glm::vec2((float)(col + 1)/(nCol_textures), bottomRow)   // br
             };
