@@ -104,22 +104,26 @@ Window::Window()
     TextureCoords& grassUV = Textures::mainTextureMap.GetTextureCoords(0, 0);
     mesh = std::make_unique<Mesh>();
     mesh->vertices = {
-        -8.0f,  0.0f, -8.0f,
-         8.0f,  0.0f, -8.0f,
-         8.0f,  0.0f,  8.0f,
-        -8.0f,  0.0f,  8.0f,
+        -8.0f,  1.1f, -8.0f,
+         8.0f,  0.9f, -8.0f,
+         8.0f, -3.6f,  8.0f,
+        -8.0f,  2.5f,  8.0f,
     };
     mesh->colors = {
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
+        0.369f, 0.616f, 0.204f,
+        0.369f, 0.616f, 0.204f,
+        0.369f, 0.616f, 0.204f,
+        0.369f, 0.616f, 0.204f,
+        // 0.369f, 0.616f, 0.204f,
+        // 0.369f, 0.616f, 0.204f,
     };
     mesh->normals = {
-        0.0f, 1.0f, 0.0f,
-        0.0f, 1.0f, 0.0f,
-        0.0f, 1.0f, 0.0f,
-        0.0f, 1.0f, 0.0f
+         0.0f,  1.0f,  0.0f,
+         0.0f,  1.0f,  0.0f,
+         0.0f,  1.0f,  0.0f,
+         0.0f,  1.0f,  0.0f,
+        // -1.0f,  0.0f,  0.0f,
+        // -1.0f,  0.0f,  0.0f,
     };
     mesh->uv = {
         grassUV.tl.x, grassUV.tl.y,
@@ -140,10 +144,12 @@ Window::Window()
 
     // ImGUI
     IMGUI_CHECKVERSION();
+
     ImGui::CreateContext();
-    ImGui_ImplGlfw_InitForOpenGL(glfwWindow, true);
-    ImGui::StyleColorsDark();
     ImGui_ImplOpenGL3_Init();
+    ImGui_ImplGlfw_InitForOpenGL(glfwWindow, true);
+
+    ImGui::StyleColorsDark();
 
     Debug::Log("Window Initialization done.");
 }
@@ -202,7 +208,7 @@ void Window::Loop()
         // lightColor.b = -sinf(4*begin)/4 + 0.75f;
 
         cube->GetShader().Use();
-
+        
         cube->GetShader().setMatrix4Uniform("u_view", viewMatrix);
         cube->GetShader().setMatrix4Uniform("u_projection", projectionMatrix);
 

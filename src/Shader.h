@@ -32,5 +32,5 @@ public:
 };
 
 // namespace Shaders {
-//     extern Shader mainShader;
+//     extern Shader* mainShader;
 // }

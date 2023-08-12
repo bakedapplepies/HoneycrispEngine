@@ -11,6 +11,6 @@ protected:
     std::vector<glm::vec3> positions;
 
 public:
-    virtual void AddPosition(const glm::vec3& position) = 0;
-    virtual std::vector<glm::vec3>& GetPositions() = 0;
+    virtual inline void AddPosition(const glm::vec3& position) { positions.push_back(position); };
+    virtual inline std::vector<glm::vec3>& GetPositions() { return positions; };
 };

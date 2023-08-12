@@ -31,10 +31,8 @@ public:
     void EnableVertexAttribNormals(bool on) const;
 
     void Draw();
-    void AddPosition(const glm::vec3& position) override;
-    std::vector<glm::vec3>& GetPositions() override;
     glm::mat4 GetModelMatrix(const glm::vec3& position) const;
-    Shader& GetShader();
+    inline Shader& GetShader() { return shader; };
 
     void ConstructMesh();
     void Bind();
