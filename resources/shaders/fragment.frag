@@ -56,8 +56,8 @@ void main()
     vec3 diffuse = u_light.diffuse * diff * vec3(texture(u_material.diffuse, TexCoord));
 
     // specular
-    vec3 viewDir = normalize(u_viewPos - FragPos);
-    vec3 reflectDir = reflect(-lightDir, norm);
+    vec3 viewDir = normalize(u_viewPos - FragPos);  // frag to view
+    vec3 reflectDir = reflect(-lightDir, norm);  // points in general direction of viewDir
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_material.shininess);
     vec3 specular = u_light.specular * spec * vec3(texture(u_material.specular, TexCoord));
 

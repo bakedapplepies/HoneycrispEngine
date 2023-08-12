@@ -88,13 +88,13 @@ Window::Window()
     );
 
     cube = std::make_unique<Cube>();
-    for (int i = -5; i < 5; i++)
-    {
-        for (int j = -5; j < 5; j++)
-        {
-            cube->AddPosition(glm::vec3(j, i, 0.0f));
-        }
-    }
+    // for (int i = -5; i < 5; i++)
+    // {
+    //     for (int j = -5; j < 5; j++)
+    //     {
+    //         cube->AddPosition(glm::vec3(j, i, 0.0f));
+    //     }
+    // }
 
     light = std::make_unique<Light>(
         glm::vec3(1.0f, 1.0f, 1.0f)
@@ -104,10 +104,10 @@ Window::Window()
     TextureCoords& grassUV = Textures::mainTextureMap.GetTextureCoords(0, 0);
     mesh = std::make_unique<Mesh>();
     mesh->vertices = {
-        -8.0f,  1.1f, -8.0f,
-         8.0f,  0.9f, -8.0f,
-         8.0f, -3.6f,  8.0f,
-        -8.0f,  2.5f,  8.0f,
+        -8.0f,  0.0f, -8.0f,
+         8.0f,  0.0f, -8.0f,
+         8.0f,  0.0f,  8.0f,
+        -8.0f,  0.0f,  8.0f,
     };
     mesh->colors = {
         1.0f, 1.0f, 1.0f,
