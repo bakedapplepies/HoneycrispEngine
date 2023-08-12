@@ -8,8 +8,6 @@
 
 class Cube : public Mesh
 {
-private:
-
 public:
     Cube();
     Cube(const Cube& other) = delete;

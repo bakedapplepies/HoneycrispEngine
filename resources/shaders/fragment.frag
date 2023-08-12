@@ -19,7 +19,7 @@ struct Material
     float shininess;
 };
 
-struct Light
+struct SpotLight
 {
     vec3 position;
     vec3 direction;
@@ -35,13 +35,13 @@ struct Light
     float quadratic;
 };
 
-uniform Light u_light;
+uniform SpotLight u_light;
 uniform Material u_material;
 
 
 void main()
 {
-    vec3 lightDir = normalize(u_light.position - FragPos);
+    vec3 lightDir = normalize(u_light.position - FragPos);  // frag to lightPos
 
     float theta = dot(lightDir, normalize(-u_light.direction));
     float epsilon = u_light.cutOff - u_light.outerCutOff;

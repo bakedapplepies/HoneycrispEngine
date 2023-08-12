@@ -179,18 +179,7 @@ void Mesh::Bind()
 void Mesh::Draw()
 {
     m_VAO.Bind();
-    uv[0] += 0.01f;
     GLCall( glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (GLvoid*)0) );
-}
-
-void Mesh::AddPosition(const glm::vec3& position)
-{
-    positions.push_back(position);
-}
-
-std::vector<glm::vec3>& Mesh::GetPositions()
-{
-    return positions;
 }
 
 glm::mat4 Mesh::GetModelMatrix(const glm::vec3& position) const
@@ -202,10 +191,10 @@ glm::mat4 Mesh::GetModelMatrix(const glm::vec3& position) const
     return model;
 }
 
-Shader& Mesh::GetShader()
-{
-    return shader;
-}
+// Shader& Mesh::GetShader()
+// {
+//     return shader;
+// }
 
 VertexArray& Mesh::GetVAO()
 {
