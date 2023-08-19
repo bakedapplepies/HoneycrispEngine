@@ -50,72 +50,72 @@ void Light::InitializeAttributeData()
 {
     static_cast<Mesh*>(this)->vertices = {
         // front
-        -0.5f,  0.5f, -0.5f,
-         0.5f,  0.5f, -0.5f,
-         0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
+        glm::vec3(-0.5f,  0.5f, -0.5f),
+        glm::vec3( 0.5f,  0.5f, -0.5f),
+        glm::vec3( 0.5f, -0.5f, -0.5f),
+        glm::vec3(-0.5f, -0.5f, -0.5f),
 
         // right
-         0.5f,  0.5f, -0.5f,
-         0.5f,  0.5f,  0.5f,
-         0.5f, -0.5f,  0.5f,
-         0.5f, -0.5f, -0.5f,
+        glm::vec3( 0.5f,  0.5f, -0.5f),
+        glm::vec3( 0.5f,  0.5f,  0.5f),
+        glm::vec3( 0.5f, -0.5f,  0.5f),
+        glm::vec3( 0.5f, -0.5f, -0.5f),
 
         // back
-         0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f,  0.5f,
-        -0.5f, -0.5f,  0.5f,
-         0.5f, -0.5f,  0.5f,
+        glm::vec3( 0.5f,  0.5f,  0.5f),
+        glm::vec3(-0.5f,  0.5f,  0.5f),
+        glm::vec3(-0.5f, -0.5f,  0.5f),
+        glm::vec3( 0.5f, -0.5f,  0.5f),
 
         // left
-        -0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f,  0.5f,
+        glm::vec3(-0.5f,  0.5f,  0.5f),
+        glm::vec3(-0.5f,  0.5f, -0.5f),
+        glm::vec3(-0.5f, -0.5f, -0.5f),
+        glm::vec3(-0.5f, -0.5f,  0.5f),
 
         // top
-        -0.5f,  0.5f,  0.5f,
-         0.5f,  0.5f,  0.5f,
-         0.5f,  0.5f, -0.5f,
-        -0.5f,  0.5f, -0.5f,
+        glm::vec3(-0.5f,  0.5f,  0.5f),
+        glm::vec3( 0.5f,  0.5f,  0.5f),
+        glm::vec3( 0.5f,  0.5f, -0.5f),
+        glm::vec3(-0.5f,  0.5f, -0.5f),
 
         // bottom
-        -0.5f, -0.5f, -0.5f,
-         0.5f, -0.5f, -0.5f,
-         0.5f, -0.5f,  0.5f,
-        -0.5f, -0.5f,  0.5f,
+        glm::vec3(-0.5f, -0.5f, -0.5f),
+        glm::vec3( 0.5f, -0.5f, -0.5f),
+        glm::vec3( 0.5f, -0.5f,  0.5f),
+        glm::vec3(-0.5f, -0.5f,  0.5f),
     };
 
     static_cast<Mesh*>(this)->colors = {
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
         
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
 
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
 
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
 
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
 
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
     };
 
     static_cast<Mesh*>(this)->indices = {

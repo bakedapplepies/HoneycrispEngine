@@ -4,36 +4,36 @@
 
 void Mesh::ConstructMesh()
 {
-    unsigned int vertArrayDataSize = vertices.size() + colors.size() + normals.size() + uv.size();
+    unsigned int vertArrayDataSize = vertices.size()*3 + colors.size()*3 + normals.size()*3 + uv.size()*2;
     vertData.reserve(vertArrayDataSize);
 
-    for (int vertIndex = 0; vertIndex < vertices.size()/3; vertIndex++)
+    for (int vertIndex = 0; vertIndex < vertices.size(); vertIndex++)
     {
         if (!vertices.empty())
         {
-            vertData.push_back(vertices[vertIndex*3 + 0]);
-            vertData.push_back(vertices[vertIndex*3 + 1]);
-            vertData.push_back(vertices[vertIndex*3 + 2]);
+            vertData.push_back(vertices[vertIndex].x);
+            vertData.push_back(vertices[vertIndex].y);
+            vertData.push_back(vertices[vertIndex].z);
         }
 
         if (!colors.empty())
         {
-            vertData.push_back(colors[vertIndex*3 + 0]);
-            vertData.push_back(colors[vertIndex*3 + 1]);
-            vertData.push_back(colors[vertIndex*3 + 2]);
+            vertData.push_back(colors[vertIndex].x);
+            vertData.push_back(colors[vertIndex].y);
+            vertData.push_back(colors[vertIndex].z);
         }
 
         if (!uv.empty())
         {
-            vertData.push_back(uv[vertIndex*2 + 0]);
-            vertData.push_back(uv[vertIndex*2 + 1]);
+            vertData.push_back(uv[vertIndex].x);
+            vertData.push_back(uv[vertIndex].y);
         }
 
         if (!normals.empty())
         {
-            vertData.push_back(normals[vertIndex*3 + 0]);
-            vertData.push_back(normals[vertIndex*3 + 1]);
-            vertData.push_back(normals[vertIndex*3 + 2]);
+            vertData.push_back(normals[vertIndex].x);
+            vertData.push_back(normals[vertIndex].y);
+            vertData.push_back(normals[vertIndex].z);
         }
     }
 

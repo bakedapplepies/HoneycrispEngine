@@ -103,38 +103,70 @@ Window::Window()
 
     TextureCoords& grassUV = Textures::mainTextureMap.GetTextureCoords(0, 0);
     mesh = std::make_unique<Mesh>();
-    mesh->vertices = {
-        -8.0f,  1.1f, -8.0f,
-         8.0f,  0.9f, -8.0f,
-         8.0f, -3.6f,  8.0f,
-        -8.0f,  2.5f,  8.0f,
-    };
-    mesh->colors = {
-        0.369f, 0.616f, 0.204f,
-        0.369f, 0.616f, 0.204f,
-        0.369f, 0.616f, 0.204f,
-        0.369f, 0.616f, 0.204f,
-        // 0.369f, 0.616f, 0.204f,
-        // 0.369f, 0.616f, 0.204f,
-    };
-    mesh->normals = {
-         0.0f,  1.0f,  0.0f,
-         0.0f,  1.0f,  0.0f,
-         0.0f,  1.0f,  0.0f,
-         0.0f,  1.0f,  0.0f,
-        // -1.0f,  0.0f,  0.0f,
-        // -1.0f,  0.0f,  0.0f,
-    };
-    mesh->uv = {
-        grassUV.tl.x, grassUV.tl.y,
-        grassUV.tr.x, grassUV.tr.y,
-        grassUV.br.x, grassUV.br.y,
-        grassUV.bl.x, grassUV.bl.y
-    };
-    mesh->indices = {
-        0, 1, 2,
-        0, 2, 3
-    };
+    int width = 8, height = 8;
+    int vertW = width+1, vertH = height+1;
+    int totalVerts = vertW * vertH;
+    glm::vec2 uvDistVertical = grassUV.tl - grassUV.bl;
+    glm::vec2 uvDistHorizontal = grassUV.br - grassUV.bl;
+
+    std::vector<glm::vec3> vertices;
+    vertices.reserve(totalVerts);
+    for (int i = 0; i < vertH; i++)
+    {
+        for (int j = 0; j < vertW; j++)
+        {
+            vertices.emplace_back(glm::vec3((float)i, 0.0f, (float)j));
+        }
+    }
+
+    std::vector<glm::vec3> colors;
+    colors.reserve(totalVerts);
+    for (int i = 0; i < totalVerts; i++)
+    {
+        colors.emplace_back(glm::vec3(0.369f, 0.616f, 0.204f));
+    }
+
+    std::vector<glm::vec3> normals;
+    normals.reserve(totalVerts);
+    for (int i = 0; i < totalVerts; i++)
+    {
+        normals.emplace_back(glm::vec3(0.0f, 1.0f, 0.0f));
+    }
+
+    std::vector<glm::vec2> uvs;
+    uvs.reserve(totalVerts);
+    for (int i = 0; i < vertW; i++)
+    {
+        for (int j = 0; j < vertH; j++)
+        {
+            uvs.emplace_back(grassUV.bl + 
+            uvDistHorizontal * ((float)i/(float)(vertW-1)) +
+            uvDistVertical * ((float)j/(float)(vertH-1)));
+        }
+    }
+
+    std::vector<unsigned int> indices;
+    indices.reserve(width*height*6);
+    for (int h = 0; h < height; h++)
+    {
+        for (int w = 0; w < width; w++)
+        {
+            indices.emplace_back(h*vertW + w);
+            indices.emplace_back((h+1)*vertW + w);
+            indices.emplace_back(h*vertW + w+1);
+
+            indices.emplace_back((h+1)*vertW + w+1);
+            indices.emplace_back(h*vertW + w+1);
+            indices.emplace_back((h+1)*vertW + w);
+        }
+    }
+
+    mesh->vertices = vertices;
+    mesh->colors = colors;
+    mesh->normals = normals;
+    mesh->uv = uvs;
+    mesh->indices = indices;
+
     mesh->ConstructMesh();
     mesh->AddPosition(glm::vec3(0.0f, -8.0f, 0.0f));
     mesh->shader = Shader(
@@ -213,6 +245,7 @@ void Window::Loop()
         cube->GetShader().setMatrix4Uniform("u_projection", projectionMatrix);
 
         cube->GetShader().setVector3Uniform("u_viewPos", camera.cameraPos);
+        cube->GetShader().setFloatUniform("u_time", begin);
 
         cube->GetShader().setIntUniform("u_material.diffuse", Textures::mainTextureMap.getTextureUnit());
         cube->GetShader().setIntUniform("u_material.specular", Textures::mainTextureSpecularMap.getTextureUnit());
@@ -231,6 +264,11 @@ void Window::Loop()
         cube->GetShader().setFloatUniform("u_light.constant", 1.0f);
         cube->GetShader().setFloatUniform("u_light.linear", 0.045f);
         cube->GetShader().setFloatUniform("u_light.quadratic", 0.0075f);
+
+        cube->GetShader().setVector3Uniform("u_dirLight.direction", glm::vec3(0, -1, 0));
+        cube->GetShader().setVector3Uniform("u_dirLight.ambient", glm::vec3(1, 1, 1) * 0.7f);
+        cube->GetShader().setVector3Uniform("u_dirLight.diffuse", glm::vec3(1, 1, 1) * 0.1f);
+        cube->GetShader().setVector3Uniform("u_dirLight.specular", glm::vec3(1, 1, 1));
         
         // for Phong shading
         cube->GetShader().setMatrix3Uniform("u_normalMatrix", glm::mat4(glm::transpose(glm::inverse(modelMatrix))));

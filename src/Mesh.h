@@ -9,10 +9,10 @@
 class Mesh : public Object
 {
 public:
-    std::vector<float> vertices;
-    std::vector<float> colors;
-    std::vector<float> normals;
-    std::vector<float> uv;
+    std::vector<glm::vec3> vertices;
+    std::vector<glm::vec3> colors;
+    std::vector<glm::vec3> normals;
+    std::vector<glm::vec2> uv;
     std::vector<unsigned int> indices;
 
     Shader shader;

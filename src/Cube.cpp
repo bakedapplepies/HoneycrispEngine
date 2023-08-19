@@ -36,110 +36,110 @@ void Cube::InitializeAttributeData()
 {
     static_cast<Mesh*>(this)->vertices = {
         // front
-        -0.5f,  0.5f,  0.5f,
-         0.5f,  0.5f,  0.5f,
-         0.5f, -0.5f,  0.5f,
-        -0.5f, -0.5f,  0.5f,
+        glm::vec3(-0.5f,  0.5f,  0.5f),
+        glm::vec3( 0.5f,  0.5f,  0.5f),
+        glm::vec3( 0.5f, -0.5f,  0.5f),
+        glm::vec3(-0.5f, -0.5f,  0.5f),
 
         // right
-         0.5f,  0.5f,  0.5f,
-         0.5f,  0.5f, -0.5f,
-         0.5f, -0.5f, -0.5f,
-         0.5f, -0.5f,  0.5f,
+        glm::vec3(0.5f,  0.5f,  0.5f),
+        glm::vec3(0.5f,  0.5f, -0.5f),
+        glm::vec3(0.5f, -0.5f, -0.5f),
+        glm::vec3(0.5f, -0.5f,  0.5f),
 
         // back
-         0.5f,  0.5f, -0.5f,
-        -0.5f,  0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-         0.5f, -0.5f, -0.5f,
+        glm::vec3( 0.5f,  0.5f, -0.5f),
+        glm::vec3(-0.5f,  0.5f, -0.5f),
+        glm::vec3(-0.5f, -0.5f, -0.5f),
+        glm::vec3( 0.5f, -0.5f, -0.5f),
 
         // left
-        -0.5f,  0.5f, -0.5f,
-        -0.5f,  0.5f,  0.5f,
-        -0.5f, -0.5f,  0.5f,
-        -0.5f, -0.5f, -0.5f,
+        glm::vec3(-0.5f,  0.5f, -0.5f),
+        glm::vec3(-0.5f,  0.5f,  0.5f),
+        glm::vec3(-0.5f, -0.5f,  0.5f),
+        glm::vec3(-0.5f, -0.5f, -0.5f),
 
         // top
-        -0.5f,  0.5f, -0.5f,
-         0.5f,  0.5f, -0.5f,
-         0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f,  0.5f,
+        glm::vec3(-0.5f,  0.5f, -0.5f),
+        glm::vec3( 0.5f,  0.5f, -0.5f),
+        glm::vec3( 0.5f,  0.5f,  0.5f),
+        glm::vec3(-0.5f,  0.5f,  0.5f),
 
         // bottom
-        -0.5f, -0.5f,  0.5f,
-         0.5f, -0.5f,  0.5f,
-         0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
+        glm::vec3(-0.5f, -0.5f,  0.5f),
+        glm::vec3( 0.5f, -0.5f,  0.5f),
+        glm::vec3( 0.5f, -0.5f, -0.5f),
+        glm::vec3(-0.5f, -0.5f, -0.5f),
     };
 
     static_cast<Mesh*>(this)->colors = {
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
         
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
         
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
 
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
 
-        0.369f, 0.616f, 0.204f,
-        0.369f, 0.616f, 0.204f,
-        0.369f, 0.616f, 0.204f,
-        0.369f, 0.616f, 0.204f,
+        glm::vec3(0.369f, 0.616f, 0.204f),
+        glm::vec3(0.369f, 0.616f, 0.204f),
+        glm::vec3(0.369f, 0.616f, 0.204f),
+        glm::vec3(0.369f, 0.616f, 0.204f),
 
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
     };
 
     static_cast<Mesh*>(this)->normals = {
         // front
-         0.0f,  0.0f,  1.0f, 
-         0.0f,  0.0f,  1.0f, 
-         0.0f,  0.0f,  1.0f, 
-         0.0f,  0.0f,  1.0f, 
+        glm::vec3(0.0f,  0.0f,  1.0f), 
+        glm::vec3(0.0f,  0.0f,  1.0f), 
+        glm::vec3(0.0f,  0.0f,  1.0f), 
+        glm::vec3(0.0f,  0.0f,  1.0f), 
         
         // right
-         1.0f,  0.0f,  0.0f, 
-         1.0f,  0.0f,  0.0f, 
-         1.0f,  0.0f,  0.0f, 
-         1.0f,  0.0f,  0.0f, 
+        glm::vec3(1.0f,  0.0f,  0.0f), 
+        glm::vec3(1.0f,  0.0f,  0.0f), 
+        glm::vec3(1.0f,  0.0f,  0.0f), 
+        glm::vec3(1.0f,  0.0f,  0.0f), 
 
         // back
-         0.0f,  0.0f, -1.0f, 
-         0.0f,  0.0f, -1.0f, 
-         0.0f,  0.0f, -1.0f, 
-         0.0f,  0.0f, -1.0f, 
+        glm::vec3(0.0f,  0.0f, -1.0f), 
+        glm::vec3(0.0f,  0.0f, -1.0f), 
+        glm::vec3(0.0f,  0.0f, -1.0f), 
+        glm::vec3(0.0f,  0.0f, -1.0f), 
 
         // right
-        -1.0f,  0.0f,  0.0f, 
-        -1.0f,  0.0f,  0.0f, 
-        -1.0f,  0.0f,  0.0f, 
-        -1.0f,  0.0f,  0.0f, 
+        glm::vec3(-1.0f,  0.0f,  0.0f), 
+        glm::vec3(-1.0f,  0.0f,  0.0f), 
+        glm::vec3(-1.0f,  0.0f,  0.0f), 
+        glm::vec3(-1.0f,  0.0f,  0.0f), 
 
         // top
-         0.0f,  1.0f,  0.0f, 
-         0.0f,  1.0f,  0.0f, 
-         0.0f,  1.0f,  0.0f, 
-         0.0f,  1.0f,  0.0f, 
+        glm::vec3(0.0f,  1.0f,  0.0f), 
+        glm::vec3(0.0f,  1.0f,  0.0f), 
+        glm::vec3(0.0f,  1.0f,  0.0f), 
+        glm::vec3(0.0f,  1.0f,  0.0f), 
 
         // bottom
-         0.0f, -1.0f,  0.0f, 
-         0.0f, -1.0f,  0.0f, 
-         0.0f, -1.0f,  0.0f, 
-         0.0f, -1.0f,  0.0f, 
+        glm::vec3(0.0f, -1.0f,  0.0f), 
+        glm::vec3(0.0f, -1.0f,  0.0f), 
+        glm::vec3(0.0f, -1.0f,  0.0f), 
+        glm::vec3(0.0f, -1.0f,  0.0f), 
     };
 
     TextureCoords& grassSideCoords = Textures::mainTextureMap.GetTextureCoords(1, 0);
@@ -148,40 +148,40 @@ void Cube::InitializeAttributeData()
 
     static_cast<Mesh*>(this)->uv = {
         // top
-        grassSideCoords.tl.x, grassSideCoords.tl.y,
-        grassSideCoords.tr.x, grassSideCoords.tr.y,
-        grassSideCoords.br.x, grassSideCoords.br.y,
-        grassSideCoords.bl.x, grassSideCoords.bl.y,
+        glm::vec2(grassSideCoords.tl.x, grassSideCoords.tl.y),
+        glm::vec2(grassSideCoords.tr.x, grassSideCoords.tr.y),
+        glm::vec2(grassSideCoords.br.x, grassSideCoords.br.y),
+        glm::vec2(grassSideCoords.bl.x, grassSideCoords.bl.y),
 
         // right
-        grassSideCoords.tl.x, grassSideCoords.tl.y,
-        grassSideCoords.tr.x, grassSideCoords.tr.y,
-        grassSideCoords.br.x, grassSideCoords.br.y,
-        grassSideCoords.bl.x, grassSideCoords.bl.y,
+        glm::vec2(grassSideCoords.tl.x, grassSideCoords.tl.y),
+        glm::vec2(grassSideCoords.tr.x, grassSideCoords.tr.y),
+        glm::vec2(grassSideCoords.br.x, grassSideCoords.br.y),
+        glm::vec2(grassSideCoords.bl.x, grassSideCoords.bl.y),
 
         // back
-        grassSideCoords.tl.x, grassSideCoords.tl.y,
-        grassSideCoords.tr.x, grassSideCoords.tr.y,
-        grassSideCoords.br.x, grassSideCoords.br.y,
-        grassSideCoords.bl.x, grassSideCoords.bl.y,
+        glm::vec2(grassSideCoords.tl.x, grassSideCoords.tl.y),
+        glm::vec2(grassSideCoords.tr.x, grassSideCoords.tr.y),
+        glm::vec2(grassSideCoords.br.x, grassSideCoords.br.y),
+        glm::vec2(grassSideCoords.bl.x, grassSideCoords.bl.y),
 
         // left
-        grassSideCoords.tl.x, grassSideCoords.tl.y,
-        grassSideCoords.tr.x, grassSideCoords.tr.y,
-        grassSideCoords.br.x, grassSideCoords.br.y,
-        grassSideCoords.bl.x, grassSideCoords.bl.y,
+        glm::vec2(grassSideCoords.tl.x, grassSideCoords.tl.y),
+        glm::vec2(grassSideCoords.tr.x, grassSideCoords.tr.y),
+        glm::vec2(grassSideCoords.br.x, grassSideCoords.br.y),
+        glm::vec2(grassSideCoords.bl.x, grassSideCoords.bl.y),
 
         // top
-        grassTopCoords.tl.x, grassTopCoords.tl.y,
-        grassTopCoords.tr.x, grassTopCoords.tr.y,
-        grassTopCoords.br.x, grassTopCoords.br.y,
-        grassTopCoords.bl.x, grassTopCoords.bl.y,
+        glm::vec2(grassTopCoords.tl.x, grassTopCoords.tl.y),
+        glm::vec2(grassTopCoords.tr.x, grassTopCoords.tr.y),
+        glm::vec2(grassTopCoords.br.x, grassTopCoords.br.y),
+        glm::vec2(grassTopCoords.bl.x, grassTopCoords.bl.y),
 
         // bottom
-        dirtCoords.tl.x, dirtCoords.tl.y,
-        dirtCoords.tr.x, dirtCoords.tr.y,
-        dirtCoords.br.x, dirtCoords.br.y,
-        dirtCoords.bl.x, dirtCoords.bl.y,
+        glm::vec2(dirtCoords.tl.x, dirtCoords.tl.y),
+        glm::vec2(dirtCoords.tr.x, dirtCoords.tr.y),
+        glm::vec2(dirtCoords.br.x, dirtCoords.br.y),
+        glm::vec2(dirtCoords.bl.x, dirtCoords.bl.y),
     };
 
     static_cast<Mesh*>(this)->indices = {
