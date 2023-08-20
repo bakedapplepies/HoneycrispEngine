@@ -66,13 +66,13 @@ void main()
     vec3 ambient = u_dirLight.ambient * vec3(texture(u_material.diffuse, TexCoord));
 
     // diffuse
-    vec3 norm = normalize(Normal);
-    float diff = max(dot(norm, lightDir), 0.0);
+    // vec3 norm = normalize(Normal);
+    float diff = max(dot(Normal, u_dirLight.direction), 0.0);
     vec3 diffuse = u_dirLight.diffuse * diff * vec3(texture(u_material.diffuse, TexCoord));
 
     // specular
     vec3 viewDir = normalize(u_viewPos - FragPos);  // frag to view
-    vec3 reflectDir = reflect(-lightDir, norm);  // points in general direction of viewDir
+    vec3 reflectDir = reflect(u_dirLight.direction, Normal);  // points in general direction of viewDir
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_material.shininess);
     vec3 specular = u_dirLight.specular * spec * vec3(texture(u_material.specular, TexCoord));
 

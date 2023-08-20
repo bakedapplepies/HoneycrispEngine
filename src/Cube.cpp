@@ -9,25 +9,18 @@ Cube::Cube()
 {
     InitializeAttributeData();
     ConstructMesh();
-
-    shader = Shader(
-        "../resources/shaders/vertex.vert",
-        "../resources/shaders/fragment.frag"
-    );
 }
 
 Cube::Cube(Cube&& other) noexcept
 {
     positions = std::move(other.positions);
     this->GetVAO() = std::move(other.GetVAO());
-    shader = std::move(other.shader);
 }
 
 Cube& Cube::operator=(Cube&& other) noexcept
 {
     positions = std::move(other.positions);
     this->GetVAO() = std::move(other.GetVAO());
-    shader = std::move(other.shader);
 
     return *this;
 }

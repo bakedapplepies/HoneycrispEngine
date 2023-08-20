@@ -8,17 +8,22 @@ class Shader
 private:
     GLuint m_shaderID;
     mutable std::unordered_map<std::string, GLint> m_uniformLocationCache;
+    static std::vector<Shader*> sm_shaderRefs;
 
-public:
-    Shader() = default;
+private:
     Shader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
     Shader(const Shader&) = delete;
     Shader(Shader&& other) noexcept;
     Shader& operator=(const Shader&) = delete;
     Shader& operator=(Shader&& other) noexcept;
+
+public:
+    Shader();
     ~Shader();
+    static void DeleteAllShaders();
 
     std::string parseShader(const std::string& path);
+    static void LoadShaders();
     
     GLuint getID() const;
     void Use() const;
@@ -31,6 +36,6 @@ public:
     void setVector3Uniform(const std::string& name, const glm::vec3& vector) const;
 };
 
-// namespace Shaders {
-//     extern Shader* mainShader;
-// }
+namespace Shaders {
+    extern Shader mainShader;
+}

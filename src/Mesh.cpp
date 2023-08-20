@@ -4,6 +4,10 @@
 
 void Mesh::ConstructMesh()
 {
+    if (!vertData.empty())
+    {
+        assert(!vertData.empty());
+    }
     unsigned int vertArrayDataSize = vertices.size()*3 + colors.size()*3 + normals.size()*3 + uv.size()*2;
     vertData.reserve(vertArrayDataSize);
 

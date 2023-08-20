@@ -4,6 +4,8 @@
 #include "Shader.h"
 
 
+std::vector<Shader*> Shader::sm_shaderRefs;
+
 std::string Shader::parseShader(const std::string& path)
 {
     std::ifstream file(path);
@@ -14,6 +16,11 @@ std::string Shader::parseShader(const std::string& path)
     }
 
     return ss.str();
+}
+
+Shader::Shader()
+{
+    sm_shaderRefs.push_back(this);
 }
 
 Shader::Shader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
@@ -103,7 +110,29 @@ Shader& Shader::operator=(Shader&& other) noexcept
 
 Shader::~Shader()
 {
-    GLCall(glDeleteProgram(m_shaderID));
+    if (m_shaderID)
+    {
+        GLCall(glDeleteProgram(m_shaderID));
+    }
+}
+
+Shader Shaders::mainShader;
+void Shader::LoadShaders()
+{
+    Shaders::mainShader = Shader(
+        "../resources/shaders/vertex.vert",
+        "../resources/shaders/fragment.frag"
+    );
+}
+
+void Shader::DeleteAllShaders()
+{
+    for (Shader* shader : sm_shaderRefs)
+    {
+        GLCall(glDeleteProgram(shader->m_shaderID));
+        shader->m_shaderID = 0;
+    }
+    Debug::Log("Deleted all shaders.");
 }
 
 void Shader::Use() const

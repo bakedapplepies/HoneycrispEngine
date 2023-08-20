@@ -12,11 +12,6 @@ Light::Light(const glm::vec3& color)
 
     EnableVertexAttribUV(false);
     EnableVertexAttribNormals(false);
-
-    shader = Shader(
-        "../resources/shaders/lightvertex.vert",
-        "../resources/shaders/lightfragment.frag"
-    );
 }
 
 Light::Light(Light&& other) noexcept
@@ -24,7 +19,6 @@ Light::Light(Light&& other) noexcept
     positions = std::move(other.positions);
     m_colorEmit = other.m_colorEmit;
     this->GetVAO() = std::move(other.GetVAO());
-    shader = std::move(other.shader);
 }
 
 Light& Light::operator=(Light&& other) noexcept
@@ -32,13 +26,8 @@ Light& Light::operator=(Light&& other) noexcept
     positions = std::move(other.positions);
     m_colorEmit = other.m_colorEmit;
     this->GetVAO() = std::move(other.GetVAO());
-    shader = std::move(other.shader);
 
     return *this;
-}
-
-Light::~Light()
-{
 }
 
 glm::vec3& Light::GetColor()

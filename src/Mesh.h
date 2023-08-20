@@ -15,8 +15,6 @@ public:
     std::vector<glm::vec2> uv;
     std::vector<unsigned int> indices;
 
-    Shader shader;
-
 private:
     std::vector<float> vertData;
     VertexArray m_VAO;
@@ -32,7 +30,6 @@ public:
 
     void Draw();
     glm::mat4 GetModelMatrix(const glm::vec3& position) const;
-    inline Shader& GetShader() { return shader; };
 
     void ConstructMesh();
     void Bind();

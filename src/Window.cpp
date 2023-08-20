@@ -62,19 +62,21 @@ Window::Window()
     glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     GLCall(glEnable(GL_DEPTH_TEST));
-    GLCall(glEnable(GL_CULL_FACE));
-    GLCall(glFrontFace(GL_CW));
-    GLCall(glCullFace(GL_BACK));
+    // GLCall(glEnable(GL_CULL_FACE));
+    // GLCall(glFrontFace(GL_CW));
+    // GLCall(glCullFace(GL_BACK));
     // GLCall(glEnable(GL_BLEND));
     GLCall(glViewport(0, 0, callbackData.windowWidth, callbackData.windowHeight));
 
     Debug::Log("Window config done.");
 
     /* Textures */
-    // Image data
     stbi_set_flip_vertically_on_load(true);
     Texture::LoadTextures();
     Debug::Log("Texture loaded.");
+
+    /* Shaders */
+    Shader::LoadShaders();
 
     // View Matrix
     viewMatrix = camera.GetViewMatrix();
@@ -103,7 +105,7 @@ Window::Window()
 
     TextureCoords& grassUV = Textures::mainTextureMap.GetTextureCoords(0, 0);
     mesh = std::make_unique<Mesh>();
-    int width = 8, height = 8;
+    int width = 50, height = 50;
     int vertW = width+1, vertH = height+1;
     int totalVerts = vertW * vertH;
     glm::vec2 uvDistVertical = grassUV.tl - grassUV.bl;
@@ -168,11 +170,8 @@ Window::Window()
     mesh->indices = indices;
 
     mesh->ConstructMesh();
-    mesh->AddPosition(glm::vec3(0.0f, -8.0f, 0.0f));
-    mesh->shader = Shader(
-        "../resources/shaders/vertex.vert",
-        "../resources/shaders/fragment.frag"
-    );
+    mesh->ConstructMesh();
+    mesh->AddPosition(glm::vec3(0.0f, -6.0f, 0.0f));
 
     // ImGUI
     IMGUI_CHECKVERSION();
@@ -191,6 +190,9 @@ void Window::Loop()
 {
     /* Main loop */
     float begin = glfwGetTime();
+    Textures::mainTextureMap.Bind();
+    Textures::mainTextureSpecularMap.Bind();
+    camera.SetPos(camera.cameraPos + glm::vec3(0, 10, 0));
 
     while(!glfwWindowShouldClose(glfwWindow))
     {
@@ -217,8 +219,10 @@ void Window::Loop()
         ImGui::Begin("Settings");
         
         static float lightSizeScale = 0.2f;
+        static float waveSpeed = 1.0f;
         
         ImGui::SliderFloat("Light Size", &lightSizeScale, 0.0f, 1.0f);
+        ImGui::SliderFloat("Wave Speed", &waveSpeed, 0.0f, 10.0f);
 
         ImGui::End();
 
@@ -229,54 +233,47 @@ void Window::Loop()
             0.1f,
             100.0f
         );
-
-        // texture bindings
-        Textures::mainTextureMap.Bind();
-        Textures::mainTextureSpecularMap.Bind();
     
         glm::vec3& lightColor = light->GetColor();
-        // lightColor.r = cosf(4*begin)/4 + 0.75f;
-        // lightColor.g = -sinf(4*begin)/4 + 0.75f;
-        // lightColor.b = -sinf(4*begin)/4 + 0.75f;
 
-        cube->GetShader().Use();
+        Shaders::mainShader.Use();
         
-        cube->GetShader().setMatrix4Uniform("u_view", viewMatrix);
-        cube->GetShader().setMatrix4Uniform("u_projection", projectionMatrix);
+        Shaders::mainShader.setMatrix4Uniform("u_view", viewMatrix);
+        Shaders::mainShader.setMatrix4Uniform("u_projection", projectionMatrix);
 
-        cube->GetShader().setVector3Uniform("u_viewPos", camera.cameraPos);
-        cube->GetShader().setFloatUniform("u_time", begin);
+        Shaders::mainShader.setVector3Uniform("u_viewPos", camera.cameraPos);
+        Shaders::mainShader.setFloatUniform("u_time", begin*waveSpeed);
 
-        cube->GetShader().setIntUniform("u_material.diffuse", Textures::mainTextureMap.getTextureUnit());
-        cube->GetShader().setIntUniform("u_material.specular", Textures::mainTextureSpecularMap.getTextureUnit());
-        cube->GetShader().setFloatUniform("u_material.shininess", 32.0f);
+        Shaders::mainShader.setIntUniform("u_material.diffuse", Textures::mainTextureMap.getTextureUnit());
+        Shaders::mainShader.setIntUniform("u_material.specular", Textures::mainTextureSpecularMap.getTextureUnit());
+        Shaders::mainShader.setFloatUniform("u_material.shininess", 32.0f);
 
-        cube->GetShader().setVector3Uniform("u_light.position", camera.cameraPos);
-        cube->GetShader().setVector3Uniform("u_light.direction", camera.cameraDirection);
+        Shaders::mainShader.setVector3Uniform("u_light.position", camera.cameraPos);
+        Shaders::mainShader.setVector3Uniform("u_light.direction", camera.cameraDirection);
 
-        cube->GetShader().setFloatUniform("u_light.cutOff", glm::cos(glm::radians(15.0f)));
-        cube->GetShader().setFloatUniform("u_light.outerCutOff", glm::cos(glm::radians(25.0f)));
+        Shaders::mainShader.setFloatUniform("u_light.cutOff", glm::cos(glm::radians(15.0f)));
+        Shaders::mainShader.setFloatUniform("u_light.outerCutOff", glm::cos(glm::radians(25.0f)));
 
-        cube->GetShader().setVector3Uniform("u_light.ambient", 0.1f * lightColor);
-        cube->GetShader().setVector3Uniform("u_light.diffuse", 0.5f * lightColor);
-        cube->GetShader().setVector3Uniform("u_light.specular", 1.0f * lightColor);
+        Shaders::mainShader.setVector3Uniform("u_light.ambient", 0.1f * lightColor);
+        Shaders::mainShader.setVector3Uniform("u_light.diffuse", 0.5f * lightColor);
+        Shaders::mainShader.setVector3Uniform("u_light.specular", 1.0f * lightColor);
 
-        cube->GetShader().setFloatUniform("u_light.constant", 1.0f);
-        cube->GetShader().setFloatUniform("u_light.linear", 0.045f);
-        cube->GetShader().setFloatUniform("u_light.quadratic", 0.0075f);
+        Shaders::mainShader.setFloatUniform("u_light.constant", 1.0f);
+        Shaders::mainShader.setFloatUniform("u_light.linear", 0.045f);
+        Shaders::mainShader.setFloatUniform("u_light.quadratic", 0.0075f);
 
-        cube->GetShader().setVector3Uniform("u_dirLight.direction", glm::vec3(0, -1, 0));
-        cube->GetShader().setVector3Uniform("u_dirLight.ambient", glm::vec3(1, 1, 1) * 0.7f);
-        cube->GetShader().setVector3Uniform("u_dirLight.diffuse", glm::vec3(1, 1, 1) * 0.1f);
-        cube->GetShader().setVector3Uniform("u_dirLight.specular", glm::vec3(1, 1, 1));
+        Shaders::mainShader.setVector3Uniform("u_dirLight.direction", glm::normalize(glm::vec3(0, -1, 0)));
+        Shaders::mainShader.setVector3Uniform("u_dirLight.ambient", glm::vec3(1, 1, 1) * 0.7f);
+        Shaders::mainShader.setVector3Uniform("u_dirLight.diffuse", glm::vec3(1, 1, 1) * 0.1f);
+        Shaders::mainShader.setVector3Uniform("u_dirLight.specular", glm::vec3(1, 1, 1));
         
         // for Phong shading
-        cube->GetShader().setMatrix3Uniform("u_normalMatrix", glm::mat4(glm::transpose(glm::inverse(modelMatrix))));
 
         for (const glm::vec3& i_position : cube->GetPositions())
         {
             modelMatrix = cube->GetModelMatrix(i_position);
-            cube->GetShader().setMatrix4Uniform("u_model", modelMatrix);
+            Shaders::mainShader.setMatrix3Uniform("u_normalMatrix", glm::mat4(glm::transpose(glm::inverse(modelMatrix))));
+            Shaders::mainShader.setMatrix4Uniform("u_model", modelMatrix);
 
             cube->Draw();
         }
@@ -287,7 +284,8 @@ void Window::Loop()
         for (const glm::vec3& i_position : mesh->GetPositions())
         {
             modelMatrix = mesh->GetModelMatrix(i_position);
-            mesh->GetShader().setMatrix4Uniform("u_model", modelMatrix);
+            Shaders::mainShader.setMatrix3Uniform("u_normalMatrix", glm::mat4(glm::transpose(glm::inverse(modelMatrix))));
+            Shaders::mainShader.setMatrix4Uniform("u_model", modelMatrix);
             
             mesh->Draw();
         }
@@ -328,6 +326,7 @@ Window::~Window()
     ImGui::DestroyContext();
 
     Texture::DeleteAllTextures();
+    Shader::DeleteAllShaders();
 }
 
 

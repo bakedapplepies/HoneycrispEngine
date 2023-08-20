@@ -17,7 +17,7 @@ public:
     Light(Light&& other) noexcept;
     Light& operator=(const Light& other) = delete;
     Light& operator=(Light&& other) noexcept;
-    ~Light();
+    ~Light() = default;
 
     glm::vec3& GetColor();
 

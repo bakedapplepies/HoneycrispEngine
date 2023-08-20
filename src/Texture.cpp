@@ -116,7 +116,7 @@ void Texture::Unbind() const  // could be static
 void Texture::Delete()
 {
     GLCall(glDeleteTextures(1, &m_textureID));
-    m_textureID = 0;  // so OpenGL deletes 0 when exiting stack
+    m_textureID = 0;
     sm_textureUnitCounter--;
 }
 
@@ -141,6 +141,7 @@ void Texture::DeleteAllTextures()
     {
         texture->Delete();
     }
+    Debug::Log("Deleted all textures.");
 }
 
 void Texture::GenerateTextureCoords()
