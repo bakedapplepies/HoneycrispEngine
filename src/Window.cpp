@@ -244,30 +244,34 @@ void Window::Loop()
         Shaders::mainShader.setVector3Uniform("u_viewPos", camera.cameraPos);
         Shaders::mainShader.setFloatUniform("u_time", begin*waveSpeed);
 
-        Shaders::mainShader.setIntUniform("u_material.diffuse", Textures::mainTextureMap.getTextureUnit());
+        Shaders::mainShader.setIntUniform("u_material.albedo", Textures::mainTextureMap.getTextureUnit());
         Shaders::mainShader.setIntUniform("u_material.specular", Textures::mainTextureSpecularMap.getTextureUnit());
         Shaders::mainShader.setFloatUniform("u_material.shininess", 32.0f);
 
-        Shaders::mainShader.setVector3Uniform("u_light.position", camera.cameraPos);
-        Shaders::mainShader.setVector3Uniform("u_light.direction", camera.cameraDirection);
-
-        Shaders::mainShader.setFloatUniform("u_light.cutOff", glm::cos(glm::radians(15.0f)));
-        Shaders::mainShader.setFloatUniform("u_light.outerCutOff", glm::cos(glm::radians(25.0f)));
-
-        Shaders::mainShader.setVector3Uniform("u_light.ambient", 0.1f * lightColor);
-        Shaders::mainShader.setVector3Uniform("u_light.diffuse", 0.5f * lightColor);
-        Shaders::mainShader.setVector3Uniform("u_light.specular", 1.0f * lightColor);
-
-        Shaders::mainShader.setFloatUniform("u_light.constant", 1.0f);
-        Shaders::mainShader.setFloatUniform("u_light.linear", 0.045f);
-        Shaders::mainShader.setFloatUniform("u_light.quadratic", 0.0075f);
-
         Shaders::mainShader.setVector3Uniform("u_dirLight.direction", glm::normalize(glm::vec3(0, -1, 0)));
-        Shaders::mainShader.setVector3Uniform("u_dirLight.ambient", glm::vec3(1, 1, 1) * 0.7f);
-        Shaders::mainShader.setVector3Uniform("u_dirLight.diffuse", glm::vec3(1, 1, 1) * 0.1f);
+        Shaders::mainShader.setVector3Uniform("u_dirLight.ambient", glm::vec3(1, 1, 1) * 0.1f);
+        Shaders::mainShader.setVector3Uniform("u_dirLight.diffuse", glm::vec3(1, 1, 1) * 0.7f);
         Shaders::mainShader.setVector3Uniform("u_dirLight.specular", glm::vec3(1, 1, 1));
-        
-        // for Phong shading
+
+        Shaders::mainShader.setVector3Uniform("u_pointLight.position", glm::vec3(10, 2, 10));
+        Shaders::mainShader.setVector3Uniform("u_pointLight.ambient", 0.1f * lightColor);
+        Shaders::mainShader.setVector3Uniform("u_pointLight.diffuse", 0.5f * lightColor);
+        Shaders::mainShader.setVector3Uniform("u_pointLight.specular", 1.0f * lightColor);
+        Shaders::mainShader.setFloatUniform("u_pointLight.constant", 1.0f);
+        Shaders::mainShader.setFloatUniform("u_pointLight.linear", 0.045f);
+        Shaders::mainShader.setFloatUniform("u_pointLight.quadratic", 0.0075f);
+
+        Shaders::mainShader.setVector3Uniform("u_spotLight.position", camera.cameraPos);
+        Shaders::mainShader.setVector3Uniform("u_spotLight.direction", camera.direction);
+        Shaders::mainShader.setFloatUniform("u_spotLight.cutOff", glm::cos(glm::radians(15.0f)));
+        Shaders::mainShader.setFloatUniform("u_spotLight.outerCutOff", glm::cos(glm::radians(25.0f)));
+        Shaders::mainShader.setVector3Uniform("u_spotLight.ambient", 0.1f * lightColor);
+        Shaders::mainShader.setVector3Uniform("u_spotLight.diffuse", 0.5f * lightColor);
+        Shaders::mainShader.setVector3Uniform("u_spotLight.specular", 1.0f * lightColor);
+        Shaders::mainShader.setFloatUniform("u_spotLight.constant", 1.0f);
+        Shaders::mainShader.setFloatUniform("u_spotLight.linear", 0.007f);
+        Shaders::mainShader.setFloatUniform("u_spotLight.quadratic", 0.0002f);
+
 
         for (const glm::vec3& i_position : cube->GetPositions())
         {
@@ -347,23 +351,23 @@ void Window::processInput()
 {
     if (glfwGetKey(glfwWindow, GLFW_KEY_W) == GLFW_PRESS)
     {
-        camera.ChangePos(glm::normalize(glm::vec3(camera.cameraDirection.x, 0.0f, camera.cameraDirection.z)) * camera.speed * deltaTime);
+        camera.ChangePos(glm::normalize(glm::vec3(camera.direction.x, 0.0f, camera.direction.z)) * camera.speed * deltaTime);
     }
 
     if (glfwGetKey(glfwWindow, GLFW_KEY_S) == GLFW_PRESS)
     {
-        camera.ChangePos(-glm::normalize(glm::vec3(camera.cameraDirection.x, 0.0f, camera.cameraDirection.z)) * camera.speed * deltaTime);
+        camera.ChangePos(-glm::normalize(glm::vec3(camera.direction.x, 0.0f, camera.direction.z)) * camera.speed * deltaTime);
     }
 
     if (glfwGetKey(glfwWindow, GLFW_KEY_A) == GLFW_PRESS)
     {
-        glm::vec3 direction = glm::normalize(glm::cross(camera.cameraDirection, camera.cameraUp));
+        glm::vec3 direction = glm::normalize(glm::cross(camera.direction, camera.cameraUp));
         camera.ChangePos(-glm::vec3(direction.x, 0.0f, direction.z) * camera.speed * deltaTime);
     }
 
     if (glfwGetKey(glfwWindow, GLFW_KEY_D) == GLFW_PRESS)
     {
-        glm::vec3 direction = glm::normalize(glm::cross(camera.cameraDirection, camera.cameraUp));
+        glm::vec3 direction = glm::normalize(glm::cross(camera.direction, camera.cameraUp));
         camera.ChangePos(glm::vec3(direction.x, 0.0f, direction.z) * camera.speed * deltaTime);
     }
 

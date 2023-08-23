@@ -15,14 +15,14 @@ void Camera::ChangePos(const glm::vec3& posOffset)
 
 void Camera::SetDirection(const glm::vec3& newDirection)
 {
-    cameraDirection = newDirection;
+    direction = newDirection;
 }
 
 glm::mat4 Camera::GetViewMatrix()
 {
     return glm::lookAt(
         cameraPos,
-        cameraPos + cameraDirection,
+        cameraPos + direction,
         cameraUp
     );
 }
