@@ -15,7 +15,7 @@ Window::Window()
     if(!glfwInit())
     {
         Debug::Error("GLFW Initialization failed.");
-        // return -1;
+        continueProgram = false;
     }
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
@@ -62,9 +62,9 @@ Window::Window()
     glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     GLCall(glEnable(GL_DEPTH_TEST));
-    // GLCall(glEnable(GL_CULL_FACE));
-    // GLCall(glFrontFace(GL_CW));
-    // GLCall(glCullFace(GL_BACK));
+    GLCall(glEnable(GL_CULL_FACE));
+    GLCall(glFrontFace(GL_CW));
+    GLCall(glCullFace(GL_BACK));
     // GLCall(glEnable(GL_BLEND));
     GLCall(glViewport(0, 0, callbackData.windowWidth, callbackData.windowHeight));
 
@@ -76,7 +76,10 @@ Window::Window()
     Debug::Log("Texture loaded.");
 
     /* Shaders */
-    Shader::LoadShaders();
+    mainShader = Shader(
+        "../resources/shaders/vertex.vert",
+        "../resources/shaders/fragment.frag"
+    );
 
     // View Matrix
     viewMatrix = camera.GetViewMatrix();
@@ -104,7 +107,6 @@ Window::Window()
     light->AddPosition(glm::vec3(1.0f, 1.0f, 3.0f));
 
     TextureCoords& grassUV = Textures::mainTextureMap.GetTextureCoords(0, 0);
-    mesh = std::make_unique<Mesh>();
     int width = 50, height = 50;
     int vertW = width+1, vertH = height+1;
     int totalVerts = vertW * vertH;
@@ -163,15 +165,14 @@ Window::Window()
         }
     }
 
-    mesh->vertices = vertices;
-    mesh->colors = colors;
-    mesh->normals = normals;
-    mesh->uv = uvs;
-    mesh->indices = indices;
+    mesh.vertices = vertices;
+    mesh.colors = colors;
+    mesh.normals = normals;
+    mesh.uv = uvs;
+    mesh.indices = indices;
 
-    mesh->ConstructMesh();
-    mesh->ConstructMesh();
-    mesh->AddPosition(glm::vec3(0.0f, -6.0f, 0.0f));
+    mesh.ConstructMesh();
+    mesh.AddPosition(glm::vec3(0.0f, -6.0f, 0.0f));
 
     // ImGUI
     IMGUI_CHECKVERSION();
@@ -188,11 +189,42 @@ Window::Window()
 
 void Window::Loop()
 {
+    if (!continueProgram) return;
+
     /* Main loop */
     float begin = glfwGetTime();
     Textures::mainTextureMap.Bind();
     Textures::mainTextureSpecularMap.Bind();
     camera.SetPos(camera.cameraPos + glm::vec3(0, 10, 0));
+
+    mainShader.Use();
+
+    // lighting
+    mainShader.setIntUniform("u_material.albedo", Textures::mainTextureMap.getTextureUnit());
+    mainShader.setIntUniform("u_material.specular", Textures::mainTextureSpecularMap.getTextureUnit());
+    mainShader.setFloatUniform("u_material.shininess", 32.0f);
+
+    mainShader.setVector3Uniform("u_dirLight.direction", glm::normalize(glm::vec3(0, -1, 0)));
+    mainShader.setVector3Uniform("u_dirLight.ambient", glm::vec3(1, 1, 1) * 0.1f);
+    mainShader.setVector3Uniform("u_dirLight.diffuse", glm::vec3(1, 1, 1) * 0.7f);
+    mainShader.setVector3Uniform("u_dirLight.specular", glm::vec3(1, 1, 1));
+
+    mainShader.setVector3Uniform("u_pointLight.position", glm::vec3(10, 2, 10));
+    mainShader.setVector3Uniform("u_pointLight.ambient", 0.1f * glm::vec3(1.0));
+    mainShader.setVector3Uniform("u_pointLight.diffuse", 0.5f * glm::vec3(1.0));
+    mainShader.setVector3Uniform("u_pointLight.specular", 1.0f * glm::vec3(1.0));
+    mainShader.setFloatUniform("u_pointLight.constant", 1.0f);
+    mainShader.setFloatUniform("u_pointLight.linear", 0.001f);
+    mainShader.setFloatUniform("u_pointLight.quadratic", 0.0002f);
+
+    mainShader.setFloatUniform("u_spotLight.cutOff", glm::cos(glm::radians(15.0f)));
+    mainShader.setFloatUniform("u_spotLight.outerCutOff", glm::cos(glm::radians(25.0f)));
+    mainShader.setVector3Uniform("u_spotLight.ambient", 0.1f * glm::vec3(1.0));
+    mainShader.setVector3Uniform("u_spotLight.diffuse", 0.5f * glm::vec3(1.0));
+    mainShader.setVector3Uniform("u_spotLight.specular", 1.0f * glm::vec3(1.0));
+    mainShader.setFloatUniform("u_spotLight.constant", 1.0f);
+    mainShader.setFloatUniform("u_spotLight.linear", 0.007f);
+    mainShader.setFloatUniform("u_spotLight.quadratic", 0.0002f);
 
     while(!glfwWindowShouldClose(glfwWindow))
     {
@@ -212,19 +244,21 @@ void Window::Loop()
         ImGui_ImplOpenGL3_NewFrame(); 
         ImGui::NewFrame();
 
-        // Update camera
-        camera.SetDirection(glm::normalize(callbackData.cameraDirection));
-        viewMatrix = camera.GetViewMatrix();
-
         ImGui::Begin("Settings");
-        
         static float lightSizeScale = 0.2f;
         static float waveSpeed = 1.0f;
+        static float renderingTime = 0.0f;
         
         ImGui::SliderFloat("Light Size", &lightSizeScale, 0.0f, 1.0f);
         ImGui::SliderFloat("Wave Speed", &waveSpeed, 0.0f, 10.0f);
+        ImGui::Text("Rendering time: %fms (%f%%)", renderingTime * 1000, renderingTime/deltaTime*100);
+        ImGui::Text("Total time: %fms", deltaTime * 1000);
 
         ImGui::End();
+
+        // Update camera
+        camera.SetDirection(glm::normalize(callbackData.cameraDirection));
+        viewMatrix = camera.GetViewMatrix();
 
         // put in callbackData
         projectionMatrix = glm::perspective(
@@ -234,83 +268,23 @@ void Window::Loop()
             100.0f
         );
     
-        glm::vec3& lightColor = light->GetColor();
+        // glm::vec3& lightColor = light->GetColor();
 
-        Shaders::mainShader.Use();
+        mainShader.Use();
         
-        Shaders::mainShader.setMatrix4Uniform("u_view", viewMatrix);
-        Shaders::mainShader.setMatrix4Uniform("u_projection", projectionMatrix);
+        mainShader.setMatrix4Uniform("u_view", viewMatrix);
+        mainShader.setMatrix4Uniform("u_projection", projectionMatrix);
 
-        Shaders::mainShader.setVector3Uniform("u_viewPos", camera.cameraPos);
-        Shaders::mainShader.setFloatUniform("u_time", begin*waveSpeed);
+        mainShader.setVector3Uniform("u_viewPos", camera.cameraPos);
+        mainShader.setFloatUniform("u_time", begin*waveSpeed);
 
-        Shaders::mainShader.setIntUniform("u_material.albedo", Textures::mainTextureMap.getTextureUnit());
-        Shaders::mainShader.setIntUniform("u_material.specular", Textures::mainTextureSpecularMap.getTextureUnit());
-        Shaders::mainShader.setFloatUniform("u_material.shininess", 32.0f);
+        mainShader.setVector3Uniform("u_spotLight.position", camera.cameraPos);
+        mainShader.setVector3Uniform("u_spotLight.direction", camera.direction);
 
-        Shaders::mainShader.setVector3Uniform("u_dirLight.direction", glm::normalize(glm::vec3(0, -1, 0)));
-        Shaders::mainShader.setVector3Uniform("u_dirLight.ambient", glm::vec3(1, 1, 1) * 0.1f);
-        Shaders::mainShader.setVector3Uniform("u_dirLight.diffuse", glm::vec3(1, 1, 1) * 0.7f);
-        Shaders::mainShader.setVector3Uniform("u_dirLight.specular", glm::vec3(1, 1, 1));
-
-        Shaders::mainShader.setVector3Uniform("u_pointLight.position", glm::vec3(10, 2, 10));
-        Shaders::mainShader.setVector3Uniform("u_pointLight.ambient", 0.1f * lightColor);
-        Shaders::mainShader.setVector3Uniform("u_pointLight.diffuse", 0.5f * lightColor);
-        Shaders::mainShader.setVector3Uniform("u_pointLight.specular", 1.0f * lightColor);
-        Shaders::mainShader.setFloatUniform("u_pointLight.constant", 1.0f);
-        Shaders::mainShader.setFloatUniform("u_pointLight.linear", 0.045f);
-        Shaders::mainShader.setFloatUniform("u_pointLight.quadratic", 0.0075f);
-
-        Shaders::mainShader.setVector3Uniform("u_spotLight.position", camera.cameraPos);
-        Shaders::mainShader.setVector3Uniform("u_spotLight.direction", camera.direction);
-        Shaders::mainShader.setFloatUniform("u_spotLight.cutOff", glm::cos(glm::radians(15.0f)));
-        Shaders::mainShader.setFloatUniform("u_spotLight.outerCutOff", glm::cos(glm::radians(25.0f)));
-        Shaders::mainShader.setVector3Uniform("u_spotLight.ambient", 0.1f * lightColor);
-        Shaders::mainShader.setVector3Uniform("u_spotLight.diffuse", 0.5f * lightColor);
-        Shaders::mainShader.setVector3Uniform("u_spotLight.specular", 1.0f * lightColor);
-        Shaders::mainShader.setFloatUniform("u_spotLight.constant", 1.0f);
-        Shaders::mainShader.setFloatUniform("u_spotLight.linear", 0.007f);
-        Shaders::mainShader.setFloatUniform("u_spotLight.quadratic", 0.0002f);
-
-
-        for (const glm::vec3& i_position : cube->GetPositions())
-        {
-            modelMatrix = cube->GetModelMatrix(i_position);
-            Shaders::mainShader.setMatrix3Uniform("u_normalMatrix", glm::mat4(glm::transpose(glm::inverse(modelMatrix))));
-            Shaders::mainShader.setMatrix4Uniform("u_model", modelMatrix);
-
-            cube->Draw();
-        }
-
-        // cube and mesh have the same shader so maybe stop including shader inside objects
-        // or somehow group them (static shader members inside the shader class?)
-
-        for (const glm::vec3& i_position : mesh->GetPositions())
-        {
-            modelMatrix = mesh->GetModelMatrix(i_position);
-            Shaders::mainShader.setMatrix3Uniform("u_normalMatrix", glm::mat4(glm::transpose(glm::inverse(modelMatrix))));
-            Shaders::mainShader.setMatrix4Uniform("u_model", modelMatrix);
-            
-            mesh->Draw();
-        }
-
-
-        // light->GetShader().Use();
-        // light->GetShader().setMatrix4Uniform("view", viewMatrix);
-        // light->GetShader().setMatrix4Uniform("projection", projectionMatrix);
-        // for (glm::vec3& i_position : light->GetPositions())
-        // {
-        //     modelMatrix = light->GetModelMatrix(i_position);
-
-        //     modelMatrix = glm::scale(modelMatrix, glm::vec3(lightSizeScale));
-        //     light->GetShader().setMatrix4Uniform("model", modelMatrix);
-        //     i_position.x = 1.5f * cosf(begin*1.5f);
-        //     i_position.z = 1.5f * sinf(begin*1.5f);
-
-        //     light->GetShader().setVector3Uniform("uColor", color);
-
-        //     light->Draw();
-        // }
+        renderingTime = glfwGetTime();
+        cube->Draw(mainShader);
+        mesh.Draw(mainShader);
+        renderingTime = glfwGetTime() - renderingTime;
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -325,10 +299,11 @@ Window::~Window()
 {
     Debug::Log("Deallocating resources.");
 
-    // ImGui::Shutdown();
+    ImGui::Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 
+    // Delete these while OpenGL is still in context
     Texture::DeleteAllTextures();
     Shader::DeleteAllShaders();
 }

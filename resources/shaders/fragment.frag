@@ -128,18 +128,6 @@ void main()
     vec3 textureFrag = vec3(texture(u_material.albedo, TexCoord));
     vec3 specularFrag = vec3(texture(u_material.specular, TexCoord));
 
-    // float theta = dot(lightDir, normalize(-u_light.direction));
-    // float epsilon = u_light.cutOff - u_light.outerCutOff;
-    // float intensity = clamp((theta - u_light.outerCutOff) / epsilon, 0.0, 1.0);
-
-    // attenuation
-    // float dist = length(u_light.position - FragPos);
-    // float attenuation = 1.0 / (u_light.constant + u_light.linear * dist + u_light.quadratic * dist * dist);
-
-    // ambient *= attenuation;
-    // diffuse *= attenuation * intensity;
-    // specular *= attenuation * intensity;
-
     result += CalcDirLight(u_dirLight, Normal, dirToView, textureFrag, specularFrag);
     result += CalcPointLight(u_pointLight, Normal, dirToView, textureFrag, specularFrag);
     result += CalcSpotLight(u_spotLight, Normal, dirToView, textureFrag, specularFrag);

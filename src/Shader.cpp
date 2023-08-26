@@ -116,15 +116,6 @@ Shader::~Shader()
     }
 }
 
-Shader Shaders::mainShader;
-void Shader::LoadShaders()
-{
-    Shaders::mainShader = Shader(
-        "../resources/shaders/vertex.vert",
-        "../resources/shaders/fragment.frag"
-    );
-}
-
 void Shader::DeleteAllShaders()
 {
     for (Shader* shader : sm_shaderRefs)

@@ -21,6 +21,10 @@ private:
 
 public:
     Mesh() = default;
+    Mesh(const Mesh& other) = delete;
+    Mesh(Mesh&& other) noexcept = delete;
+    Mesh operator=(const Mesh& other) = delete;
+    Mesh operator=(Mesh&& other) noexcept = delete;
     ~Mesh() = default;
 
     void EnableVertexAttribPosition(bool on) const;
@@ -28,7 +32,10 @@ public:
     void EnableVertexAttribUV(bool on) const;
     void EnableVertexAttribNormals(bool on) const;
 
-    void Draw();
+    void Draw(const Shader& shader);
+    void Translate(const glm::vec3& vec);
+    void Scale(const float& multiplier);
+    void Rotate(const float& rX, const float& rY, const float& rZ);
     glm::mat4 GetModelMatrix(const glm::vec3& position) const;
 
     void ConstructMesh();

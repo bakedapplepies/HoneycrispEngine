@@ -11,19 +11,18 @@ private:
     static std::vector<Shader*> sm_shaderRefs;
 
 private:
-    Shader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
     Shader(const Shader&) = delete;
-    Shader(Shader&& other) noexcept;
     Shader& operator=(const Shader&) = delete;
-    Shader& operator=(Shader&& other) noexcept;
 
 public:
     Shader();
+    Shader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
+    Shader(Shader&& other) noexcept;
+    Shader& operator=(Shader&& other) noexcept;
     ~Shader();
     static void DeleteAllShaders();
 
     std::string parseShader(const std::string& path);
-    static void LoadShaders();
     
     GLuint getID() const;
     void Use() const;
@@ -35,7 +34,3 @@ public:
     void setMatrix3Uniform(const std::string& name, const glm::mat3& matrix) const;
     void setVector3Uniform(const std::string& name, const glm::vec3& vector) const;
 };
-
-namespace Shaders {
-    extern Shader mainShader;
-}

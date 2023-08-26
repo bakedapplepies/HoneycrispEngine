@@ -15,10 +15,10 @@ struct CallbackData
     bool capFPS = true;
     bool showMouse = false;
     bool firstMouse = true;
-    int windowHeight = 1200;
-    int windowWidth = 1200;
-    float lastX = windowWidth/2;
-    float lastY = windowHeight/2;
+    int windowHeight;
+    int windowWidth;
+    float lastX;
+    float lastY;
     float yaw = -90.0f;
     float pitch = 0.0f;
     float fov = 45.0f;
@@ -33,12 +33,13 @@ private:
     Camera camera;  // set initial direction in CallbackData
     std::unique_ptr<Cube> cube;
     std::unique_ptr<Light> light;
-    std::unique_ptr<Mesh> mesh;
+    Mesh mesh;
+    Shader mainShader;
 
-    glm::mat4 modelMatrix;
     glm::mat4 viewMatrix;
     glm::mat4 projectionMatrix;
 
+    bool continueProgram = true;
     float deltaTime;
     float totalTime = 0;
     unsigned int frames = 0;

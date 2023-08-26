@@ -10,7 +10,7 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -g -fsanitize=address")
 project(LearnOpenGL CXX C)
 
 # -L
-link_directories(./lib)
+link_directories(./lib ./lib/assimp)
 
 # Sub-Dirs
 # add_subdirectory(src)
@@ -85,6 +85,7 @@ set(LIBS
     STB_IMAGE
     IMGUI
     libglfw3.a
+    libassimp.dll.a
     opengl32
     gdi32
     user32
@@ -98,7 +99,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         ${LIBS}
 )
 
-target_precompile_headers( ${CMAKE_PROJECT_NAME}
+target_precompile_headers(${CMAKE_PROJECT_NAME}
     PRIVATE
         ./src/pch/pch.h
 )

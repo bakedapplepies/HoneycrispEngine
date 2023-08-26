@@ -6,7 +6,8 @@ void Mesh::ConstructMesh()
 {
     if (!vertData.empty())
     {
-        assert(!vertData.empty());
+        Debug::Warn("Mesh constructed twice. [ConstructMesh() x2]");
+        return;
     }
     unsigned int vertArrayDataSize = vertices.size()*3 + colors.size()*3 + normals.size()*3 + uv.size()*2;
     vertData.reserve(vertArrayDataSize);
@@ -180,10 +181,17 @@ void Mesh::Bind()
     m_VAO.Bind();
 }
 
-void Mesh::Draw()
+void Mesh::Draw(const Shader& shader)
 {
     m_VAO.Bind();
-    GLCall( glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (GLvoid*)0) );
+
+    for (const glm::vec3& i_position : positions)
+    {
+        glm::mat4 modelMatrix = GetModelMatrix(i_position);
+        shader.setMatrix3Uniform("u_normalMatrix", glm::mat4(glm::transpose(glm::inverse(modelMatrix))));
+        shader.setMatrix4Uniform("u_model", modelMatrix);
+        GLCall( glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (GLvoid*)0) );
+    }
 }
 
 glm::mat4 Mesh::GetModelMatrix(const glm::vec3& position) const
@@ -194,11 +202,6 @@ glm::mat4 Mesh::GetModelMatrix(const glm::vec3& position) const
     model = glm::translate(model, position);
     return model;
 }
-
-// Shader& Mesh::GetShader()
-// {
-//     return shader;
-// }
 
 VertexArray& Mesh::GetVAO()
 {

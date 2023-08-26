@@ -20,7 +20,4 @@ public:
     ~Light() = default;
 
     glm::vec3& GetColor();
-
-private:
-    void InitializeAttributeData();
 };

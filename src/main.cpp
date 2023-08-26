@@ -1,5 +1,3 @@
-// #define FMT_HEADER_ONLY
-
 #include "Window.h"
 
 
