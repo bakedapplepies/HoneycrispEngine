@@ -21,7 +21,7 @@ void main() {
     gl_Position = u_projection * u_view * localPos;
     FragPos = vec3(localPos);
     Normal = u_normalMatrix * aNormal;
-    Normal = normalize(Normal);
+    // Normal = normalize(Normal);
     VertColor = aColor;
     TexCoord = aTexCoord;
 }
