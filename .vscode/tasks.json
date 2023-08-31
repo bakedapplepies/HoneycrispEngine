@@ -6,14 +6,7 @@
         {
             "label": "BuildDebug",
             "type": "shell",
-            "command": ".\\build.bat",
-            "args": [],
-            "problemMatcher": []
-        },
-        {
-            "label": "CompileCurrentFile",
-            "type": "shell",
-            "command": "g++ -g -c -std=c++17 -I./include -I./src/pch ${file} -o ./bin/intermediates/${fileBasenameNoExtension}.obj",
+            "command": ".\\buildrun.bat",
             "args": [],
             "problemMatcher": []
         },

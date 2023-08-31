@@ -116,16 +116,6 @@ Shader::~Shader()
     }
 }
 
-void Shader::DeleteAllShaders()
-{
-    for (Shader* shader : sm_shaderRefs)
-    {
-        GLCall(glDeleteProgram(shader->m_shaderID));
-        shader->m_shaderID = 0;
-    }
-    Debug::Log("Deleted all shaders.");
-}
-
 void Shader::Use() const
 {
     GLCall(glUseProgram(m_shaderID));

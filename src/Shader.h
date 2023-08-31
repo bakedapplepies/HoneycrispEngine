@@ -20,7 +20,6 @@ public:
     Shader(Shader&& other) noexcept;
     Shader& operator=(Shader&& other) noexcept;
     ~Shader();
-    static void DeleteAllShaders();
 
     std::string parseShader(const std::string& path);
     

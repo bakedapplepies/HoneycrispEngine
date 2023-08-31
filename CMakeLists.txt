@@ -4,13 +4,13 @@ set(CMAKE_CXX_STANDARD 17)
 # Compiler Options
 # add_compile_options(-v -g)
 # add_link_options(-v -g)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fsanitize=address -ffile-prefix-map=${CMAKE_SOURCE_DIR}=. -O3")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -g -fsanitize=address")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -ffile-prefix-map=${CMAKE_SOURCE_DIR}=. -O3")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
 
 project(LearnOpenGL CXX C)
 
 # -L
-link_directories(./lib ./lib/assimp)
+link_directories(./lib)
 
 # Sub-Dirs
 # add_subdirectory(src)
@@ -41,7 +41,6 @@ set_target_properties(IMGUI PROPERTIES LINKER_LANGUAGE CXX)
 
 # Executable
 add_executable(${CMAKE_PROJECT_NAME}
-    # Sources
     ./lib/format.cc
     ./src/Debug.cpp
     ./src/main.cpp
@@ -55,29 +54,13 @@ add_executable(${CMAKE_PROJECT_NAME}
     ./src/Shader.cpp
     ./src/Texture.cpp
     ./src/Window.cpp
-
-    # Headers
-    ./src/pch/pch.h
-    ./src/Callbacks.h
-    ./src/constants.h
-    ./src/Object.h
-    ./src/Camera.h
-    ./src/Cube.h
-    ./src/Light.h
-    ./src/Debug.h
-    ./src/VertexBuffer.h
-    ./src/ElementBuffer.h
-    ./src/VertexArray.h
-    ./src/Mesh.h
-    ./src/Shader.h
-    ./src/Texture.h
-    ./src/Window.h
+    ./src/OGLWrapper.cpp
+    ./src/Model.cpp
 )
 
 # -I
-# target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC .)
-# target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC ./include)
-message("\n-- Project root: ${CMAKE_CURRENT_SOURCE_DIR}")
+target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC include include/assimp)
+message("\n-- Project root: ${PROJECT_SOURCE_DIR}")
 
 # What to link
 set(LIBS
@@ -102,4 +85,11 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 target_precompile_headers(${CMAKE_PROJECT_NAME}
     PRIVATE
         ./src/pch/pch.h
+)
+
+# add dll(s)
+add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${PROJECT_SOURCE_DIR}/lib/libassimp-5.dll"
+    $<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>
 )

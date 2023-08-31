@@ -1,13 +1,7 @@
-#include "Window.h"
+#include "OGLWrapper.h"
 
 
 int main()
 {
-    {
-        Window window;
-        window.Loop();
-    }
-    glfwTerminate();
-
-    return 0;
+    return OGLWrapper::Get()->Run();
 }

@@ -5,18 +5,14 @@
 #include "Window.h"
 #include "Callbacks.h"
 
+#include "Model.h"
+
 
 Window::Window()
 {
     std::ios_base::sync_with_stdio(false);
     std::cin.tie(0);
     
-    /* Initialize GLFW */
-    if(!glfwInit())
-    {
-        Debug::Error("GLFW Initialization failed.");
-        continueProgram = false;
-    }
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -73,7 +69,6 @@ Window::Window()
     /* Textures */
     stbi_set_flip_vertically_on_load(true);
     Texture::LoadTextures();
-    Debug::Log("Texture loaded.");
 
     /* Shaders */
     mainShader = Shader(
@@ -173,6 +168,8 @@ Window::Window()
 
     mesh.ConstructMesh();
     mesh.AddPosition(glm::vec3(0.0f, -6.0f, 0.0f));
+
+    Model backpack("../resources/models/backpack/backpack.obj");
 
     // ImGUI
     IMGUI_CHECKVERSION();
@@ -297,15 +294,14 @@ void Window::Loop()
 
 Window::~Window()
 {
-    Debug::Log("Deallocating resources.");
-
     ImGui::Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 
     // Delete these while OpenGL is still in context
     Texture::DeleteAllTextures();
-    Shader::DeleteAllShaders();
+
+    Debug::Log("Deallocated all resources.");
 }
 
 
