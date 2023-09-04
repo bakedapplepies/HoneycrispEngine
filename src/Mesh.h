@@ -36,6 +36,7 @@ public:
     void Translate(const glm::vec3& vec);
     void Scale(const float& multiplier);
     void Rotate(const float& rX, const float& rY, const float& rZ);
+    void AddPosition(const glm::vec3& position);
     glm::mat4 GetModelMatrix(const glm::vec3& position) const;
 
     void ConstructMesh();

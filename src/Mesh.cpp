@@ -184,6 +184,7 @@ void Mesh::Bind()
 void Mesh::Draw(const Shader& shader)
 {
     m_VAO.Bind();
+    shader.Use();
 
     for (const glm::vec3& i_position : positions)
     {
@@ -201,6 +202,11 @@ glm::mat4 Mesh::GetModelMatrix(const glm::vec3& position) const
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, position);
     return model;
+}
+
+void Mesh::AddPosition(const glm::vec3& position)  // add batching
+{
+    positions.push_back(position);
 }
 
 VertexArray& Mesh::GetVAO()

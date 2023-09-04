@@ -2,8 +2,6 @@
 
 #include "pch/pch.h"
 
-#include <glad/glad.h>
-
 
 #define ASSERT(x) if (!(x)) createBreak();
 #define GLCall(x) GLClearError();\

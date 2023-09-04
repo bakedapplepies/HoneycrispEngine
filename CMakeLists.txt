@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22.1)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 # Compiler Options
 # add_compile_options(-v -g)
@@ -54,7 +54,7 @@ add_executable(${CMAKE_PROJECT_NAME}
     ./src/Shader.cpp
     ./src/Texture.cpp
     ./src/Window.cpp
-    ./src/OGLWrapper.cpp
+    ./src/Application.cpp
     ./src/Model.cpp
 )
 

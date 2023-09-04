@@ -1,7 +1,7 @@
-#include "OGLWrapper.h"
+#include "Application.h"
 
 
 int main()
 {
-    return OGLWrapper::Get()->Run();
+    return Application::Get()->Run();
 }

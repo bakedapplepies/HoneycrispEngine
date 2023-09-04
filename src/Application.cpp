@@ -1,26 +1,26 @@
-#include "OGLWrapper.h"
+#include "Application.h"
 #include "Debug.h"
 
 
-OGLWrapper* OGLWrapper::ContextWrap = nullptr;
+Application* Application::ContextWrap = nullptr;
 
-OGLWrapper::~OGLWrapper()
+Application::~Application()
 {
     delete window;
     glfwTerminate();
     Debug::Log("GLFW terminated safely.");
 }
 
-OGLWrapper* OGLWrapper::Get()
+Application* Application::Get()
 {
     if (!ContextWrap)
     {
-        ContextWrap = new OGLWrapper();
+        ContextWrap = new Application();
     }
     return ContextWrap;
 }
 
-int OGLWrapper::Run()
+int Application::Run()
 {
     if(!glfwInit())
     {

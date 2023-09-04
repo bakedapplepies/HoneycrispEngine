@@ -129,7 +129,7 @@ void main()
     vec3 specularFrag = vec3(texture(u_material.specular, TexCoord));
 
     // result += CalcDirLight(u_dirLight, Normal, dirToView, textureFrag, specularFrag);
-    // result += CalcPointLight(u_pointLight, Normal, dirToView, textureFrag, specularFrag);
+    result += CalcPointLight(u_pointLight, Normal, dirToView, textureFrag, specularFrag);
     result += CalcSpotLight(u_spotLight, Normal, dirToView, textureFrag, specularFrag);
 
     FragColor = vec4(VertColor, 1.0) * vec4(result, 1.0);

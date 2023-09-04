@@ -4,8 +4,6 @@
 #include "Shader.h"
 
 
-std::vector<Shader*> Shader::sm_shaderRefs;
-
 std::string Shader::parseShader(const std::string& path)
 {
     std::ifstream file(path);
@@ -16,11 +14,6 @@ std::string Shader::parseShader(const std::string& path)
     }
 
     return ss.str();
-}
-
-Shader::Shader()
-{
-    sm_shaderRefs.push_back(this);
 }
 
 Shader::Shader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
