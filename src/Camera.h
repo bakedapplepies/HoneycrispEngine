@@ -6,17 +6,16 @@
 class Camera
 {
 public:
-    glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 5.0f);
-    glm::vec3 target = glm::vec3(0.0f, 0.0f, 0.0f);
-
-    glm::vec3 direction = cameraPos - glm::vec3(0.0f, 0.0f, 0.0f);
-
+    glm::vec3 cameraPos;
+    glm::vec3 direction;
     glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f,  0.0f);
-    glm::vec3 cameraRight = glm::normalize(glm::cross(cameraUp, direction));
 
     float speed = 6.0f;
 
 public:
+    Camera(const glm::vec3& initialPos);
+    ~Camera() = default;
+
     void SetPos(const glm::vec3& newPos);
     void ChangePos(const glm::vec3& posOffset);
     void SetDirection(const glm::vec3& direction);

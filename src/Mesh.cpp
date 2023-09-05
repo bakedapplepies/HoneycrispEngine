@@ -6,7 +6,7 @@ void Mesh::ConstructMesh()
 {
     if (!vertData.empty())
     {
-        Debug::Warn("Mesh constructed twice. [ConstructMesh() x2]");
+        Debug::Warn("Mesh already constructed.");
         return;
     }
     unsigned int vertArrayDataSize = vertices.size()*3 + colors.size()*3 + normals.size()*3 + uv.size()*2;

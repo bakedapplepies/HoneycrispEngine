@@ -5,7 +5,6 @@
 #include "Mesh.h"
 #include "Cube.h"
 #include "Light.h"
-#include "constants.h"
 #include "Texture.h"
 #include "Camera.h"
 
@@ -22,7 +21,7 @@ struct CallbackData
     float yaw = -90.0f;
     float pitch = 0.0f;
     float fov = 45.0f;
-    glm::vec3 cameraDirection = glm::vec3(0, 0, -1.0f);  // initial camera direction
+    glm::vec3 cameraDirection = glm::vec3(0, 0, -1.0f);  // initial camera direction or it would look at origin by default
 };
 
 class Window
@@ -30,7 +29,7 @@ class Window
 private:
     GLFWwindow* glfwWindow;
     CallbackData callbackData;
-    Camera camera;  // set initial direction in CallbackData
+    Camera camera = Camera(glm::vec3(0.0f, 5.0f, 0.0f));  // set initial direction in CallbackData
     std::unique_ptr<Cube> cube;
     std::unique_ptr<Light> light;
     Mesh mesh;

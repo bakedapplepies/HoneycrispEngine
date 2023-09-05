@@ -76,10 +76,7 @@ Window::Window()
         "../resources/shaders/fragment.frag"
     );
 
-    // View Matrix
     viewMatrix = camera.GetViewMatrix();
-
-    // Projection Matrix
     projectionMatrix = glm::perspective(
         glm::radians(45.0f),
         (float)callbackData.windowWidth/(float)callbackData.windowHeight,
