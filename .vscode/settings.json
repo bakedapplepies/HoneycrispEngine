@@ -88,7 +88,11 @@
         "list": "cpp",
         "map": "cpp",
         "set": "cpp",
-        "__availability": "cpp"
+        "__availability": "cpp",
+        "any": "cpp",
+        "regex": "cpp",
+        "stack": "cpp",
+        "unordered_set": "cpp"
     },
     "cmake.configureOnOpen": true,
     "C_Cpp.errorSquiggles": "enabled",

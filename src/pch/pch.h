@@ -15,11 +15,10 @@
 #include <sstream>
 #include <cmath>
 #include <memory>
-#include <stdexcept>
 #include <vector>
 #include <unordered_map>
-#include <typeinfo>
 #include <random>
+#include <thread>
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
@@ -32,6 +31,6 @@
 
 #include <fmt/format.h>
 
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
+#include "assimp/Importer.hpp"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"

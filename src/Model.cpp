@@ -10,6 +10,12 @@ Model::Model(const std::string& path)
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
         Debug::Error("ASSIMP: ", import.GetErrorString());
-    }
+    }   
     Debug::Log(fmt::format("Time took to load {}: {}s", path, glfwGetTime() - beginTime));
+    processNode(scene->mRootNode, scene);
+}
+
+void Model::processNode(aiNode* node, const aiScene* scene)
+{
+
 }

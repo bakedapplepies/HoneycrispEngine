@@ -4,8 +4,8 @@ set(CMAKE_CXX_STANDARD 20)
 # Compiler Options
 # add_compile_options(-v -g)
 # add_link_options(-v -g)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -ffile-prefix-map=${CMAKE_SOURCE_DIR}=. -O3")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -fsanitize=address -ffile-prefix-map=${CMAKE_SOURCE_DIR}=. -O3")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pthread -fsanitize=address")
 
 project(LearnOpenGL CXX C)
 

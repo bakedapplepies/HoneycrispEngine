@@ -14,7 +14,7 @@ Window::Window()
     std::cin.tie(0);
     
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     /* Create and assign OpenGL window context */
@@ -141,11 +141,11 @@ Window::Window()
         }
     }
 
-    std::vector<unsigned int> indices;
+    std::vector<GLuint> indices;
     indices.reserve(width*height*6);
-    for (int h = 0; h < height; h++)
+    for (GLuint h = 0; h < height; h++)
     {
-        for (int w = 0; w < width; w++)
+        for (GLuint w = 0; w < width; w++)
         {
             indices.emplace_back(h*vertW + w);
             indices.emplace_back((h+1)*vertW + w);
@@ -157,16 +157,16 @@ Window::Window()
         }
     }
 
-    mesh.vertices = vertices;
-    mesh.colors = colors;
-    mesh.normals = normals;
-    mesh.uv = uvs;
-    mesh.indices = indices;
+    mesh.vertices = std::move(vertices);
+    mesh.colors = std::move(colors);
+    mesh.normals = std::move(normals);
+    mesh.uvs = std::move(uvs);
+    mesh.indices = std::move(indices);
 
     mesh.ConstructMesh();
     mesh.AddPosition(glm::vec3(0.0f, -6.0f, 0.0f));
 
-    Model backpack("../resources/models/backpack/backpack.obj");
+    // Model backpack("../resources/models/backpack/backpack.obj");
 
     // ImGUI
     IMGUI_CHECKVERSION();

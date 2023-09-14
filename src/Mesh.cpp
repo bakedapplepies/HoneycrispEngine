@@ -9,36 +9,42 @@ void Mesh::ConstructMesh()
         Debug::Warn("Mesh already constructed.");
         return;
     }
-    unsigned int vertArrayDataSize = vertices.size()*3 + colors.size()*3 + normals.size()*3 + uv.size()*2;
+    else if (vertices.empty())
+    {
+        Debug::Error("No data to construct mesh.");
+        return;
+    }
+    
+    unsigned int vertArrayDataSize = vertices.size()*3 + colors.size()*3 + normals.size()*3 + uvs.size()*2;
     vertData.reserve(vertArrayDataSize);
 
     for (int vertIndex = 0; vertIndex < vertices.size(); vertIndex++)
     {
         if (!vertices.empty())
         {
-            vertData.push_back(vertices[vertIndex].x);
-            vertData.push_back(vertices[vertIndex].y);
-            vertData.push_back(vertices[vertIndex].z);
+            vertData.push_back(vertices.at(vertIndex).x);
+            vertData.push_back(vertices.at(vertIndex).y);
+            vertData.push_back(vertices.at(vertIndex).z);
         }
 
         if (!colors.empty())
         {
-            vertData.push_back(colors[vertIndex].x);
-            vertData.push_back(colors[vertIndex].y);
-            vertData.push_back(colors[vertIndex].z);
+            vertData.push_back(colors.at(vertIndex).x);
+            vertData.push_back(colors.at(vertIndex).y);
+            vertData.push_back(colors.at(vertIndex).z);
         }
 
-        if (!uv.empty())
+        if (!uvs.empty())
         {
-            vertData.push_back(uv[vertIndex].x);
-            vertData.push_back(uv[vertIndex].y);
+            vertData.push_back(uvs.at(vertIndex).x);
+            vertData.push_back(uvs.at(vertIndex).y);
         }
 
         if (!normals.empty())
         {
-            vertData.push_back(normals[vertIndex].x);
-            vertData.push_back(normals[vertIndex].y);
-            vertData.push_back(normals[vertIndex].z);
+            vertData.push_back(normals.at(vertIndex).x);
+            vertData.push_back(normals.at(vertIndex).y);
+            vertData.push_back(normals.at(vertIndex).z);
         }
     }
 
@@ -54,7 +60,7 @@ void Mesh::ConstructMesh()
     unsigned int numAttribElements = 
         3 * !vertices.empty() +
         3 * !colors.empty()   +
-        2 * !uv.empty()       +
+        2 * !uvs.empty()       +
         3 * !normals.empty();
     unsigned int currentOffset = 0;
 
@@ -90,7 +96,7 @@ void Mesh::ConstructMesh()
     }
     else { EnableVertexAttribColor(false); }
 
-    if (!uv.empty())
+    if (!uvs.empty())
     {
         // Texture Coordinates XY
         GLCall(glVertexAttribPointer(

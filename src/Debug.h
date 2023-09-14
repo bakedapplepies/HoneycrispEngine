@@ -14,6 +14,18 @@ void createBreak();
 void GLClearError();
 bool GLLogCall(const char* function, const char* file, unsigned int line);
 
+static std::ostream& operator<<(std::ostream& stream, const glm::vec2& vec2)
+{
+    std::cout << fmt::format("[{}, {}]", vec2.x, vec2.y);
+    return stream;
+}
+
+static std::ostream& operator<<(std::ostream& stream, const glm::vec3& vec3)
+{
+    std::cout << fmt::format("[{}, {}, {}]", vec3.x, vec3.y, vec3.z);
+    return stream;
+}
+
 namespace Debug
 {
     namespace

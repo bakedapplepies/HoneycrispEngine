@@ -18,4 +18,11 @@ public:
 
 private:
     void InitializeAttributeData();
+
+private:
+    std::vector<glm::vec3> _verticesPos;
+    std::vector<glm::vec3> _colors;
+    std::vector<glm::vec3> _normals;
+    std::vector<glm::vec2> _uvs;
+    std::vector<GLuint> _indices;
 };

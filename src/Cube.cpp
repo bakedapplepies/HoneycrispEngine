@@ -27,7 +27,7 @@ Cube& Cube::operator=(Cube&& other) noexcept
 
 void Cube::InitializeAttributeData()
 {
-    static_cast<Mesh*>(this)->vertices = {
+    _verticesPos = std::vector<glm::vec3> {
         // front
         glm::vec3(-0.5f,  0.5f,  0.5f),
         glm::vec3( 0.5f,  0.5f,  0.5f),
@@ -65,7 +65,7 @@ void Cube::InitializeAttributeData()
         glm::vec3(-0.5f, -0.5f, -0.5f),
     };
 
-    static_cast<Mesh*>(this)->colors = {
+    _colors = std::vector<glm::vec3> {
         glm::vec3(1.0f, 1.0f, 1.0f),
         glm::vec3(1.0f, 1.0f, 1.0f),
         glm::vec3(1.0f, 1.0f, 1.0f),
@@ -97,7 +97,7 @@ void Cube::InitializeAttributeData()
         glm::vec3(1.0f, 1.0f, 1.0f),
     };
 
-    static_cast<Mesh*>(this)->normals = {
+    _normals = std::vector<glm::vec3> {
         // front
         glm::vec3(0.0f,  0.0f,  1.0f), 
         glm::vec3(0.0f,  0.0f,  1.0f), 
@@ -139,7 +139,7 @@ void Cube::InitializeAttributeData()
     TextureCoords& grassTopCoords = Textures::mainTextureMap.GetTextureCoords(0, 0);
     TextureCoords& dirtCoords = Textures::mainTextureMap.GetTextureCoords(2, 0);
 
-    static_cast<Mesh*>(this)->uv = {
+    _uvs = std::vector<glm::vec2> {
         // top
         glm::vec2(grassSideCoords.tl.x, grassSideCoords.tl.y),
         glm::vec2(grassSideCoords.tr.x, grassSideCoords.tr.y),
@@ -177,7 +177,7 @@ void Cube::InitializeAttributeData()
         glm::vec2(dirtCoords.bl.x, dirtCoords.bl.y),
     };
 
-    static_cast<Mesh*>(this)->indices = {
+    _indices = std::vector<GLuint> {
         // front
         0, 1, 2,
         0, 2, 3,
@@ -202,4 +202,10 @@ void Cube::InitializeAttributeData()
         20, 21, 22,
         20, 22, 23
     };
+
+    this->vertices = std::move(_verticesPos);
+    this->colors = std::move(_colors);
+    this->normals = std::move(_normals);
+    this->uvs = std::move(_uvs);
+    this->indices = std::move(_indices);
 }
