@@ -182,7 +182,33 @@ void Mesh::EnableVertexAttribNormals(bool on) const
     }
 }
 
-void Mesh::Bind()
+Mesh::Mesh(Mesh&& other) noexcept
+{
+    vertices = std::move(other.vertices);
+    colors = std::move(other.colors);
+    normals = std::move(other.normals);
+    uvs = std::move(other.uvs);
+    indices = std::move(other.indices);
+
+    vertData = std::move(other.vertData);
+    m_VAO = std::move(other.m_VAO);
+}
+
+Mesh& Mesh::operator=(Mesh&& other) noexcept
+{
+    vertices = std::move(other.vertices);
+    colors = std::move(other.colors);
+    normals = std::move(other.normals);
+    uvs = std::move(other.uvs);
+    indices = std::move(other.indices);
+
+    vertData = std::move(other.vertData);
+    m_VAO = std::move(other.m_VAO);
+
+    return *this;
+}
+
+void Mesh::Bind() const
 {
     m_VAO.Bind();
 }

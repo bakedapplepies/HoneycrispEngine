@@ -12,10 +12,9 @@
                 "_UNICODE"
             ],
             "windowsSdkVersion": "10.0.20348.0",
-            "cStandard": "c17",
-            "cppStandard": "c++17",
+            "cppStandard": "c++20",
             "intelliSenseMode": "gcc-x64",
-            "compilerPath": "C:/MinGW-W64/MinGW-W64/bin/g++.exe -fno-ms-extensions"
+            "compilerPath": "C:/MinGW-W64/MinGW-W64/bin/g++.exe"
         }
     ],
     "version": 4

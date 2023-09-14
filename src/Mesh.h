@@ -22,9 +22,9 @@ private:
 public:
     Mesh() = default;
     Mesh(const Mesh& other) = delete;
-    Mesh(Mesh&& other) noexcept = delete;
-    Mesh operator=(const Mesh& other) = delete;
-    Mesh operator=(Mesh&& other) noexcept = delete;
+    Mesh(Mesh&& other) noexcept;
+    Mesh& operator=(const Mesh& other) = delete;
+    Mesh& operator=(Mesh&& other) noexcept;
     ~Mesh() = default;
 
     void EnableVertexAttribPosition(bool on) const;
@@ -40,6 +40,6 @@ public:
     glm::mat4 GetModelMatrix(const glm::vec3& position) const;
 
     void ConstructMesh();
-    void Bind();
+    void Bind() const;
     VertexArray& GetVAO();
 };

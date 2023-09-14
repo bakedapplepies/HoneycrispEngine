@@ -84,19 +84,19 @@ Window::Window()
         100.0f
     );
 
-    cube = std::make_unique<Cube>();
+    // Cube
     for (int i = -5; i < 5; i++)
     {
         for (int j = -5; j < 5; j++)
         {
-            cube->AddPosition(glm::vec3(j, i, 0.0f));
+            cube.AddPosition(glm::vec3(j, i, 0.0f));
         }
     }
 
-    light = std::make_unique<Light>(
+    light = Light(
         glm::vec3(1.0f, 1.0f, 1.0f)
     );
-    light->AddPosition(glm::vec3(1.0f, 1.0f, 3.0f));
+    light.AddPosition(glm::vec3(1.0f, 1.0f, 3.0f));
 
     TextureCoords& grassUV = Textures::mainTextureMap.GetTextureCoords(0, 0);
     int width = 50, height = 50;
@@ -279,7 +279,7 @@ void Window::Loop()
         mainShader.setVector3Uniform("u_spotLight.direction", camera.direction);
 
         renderingTime = glfwGetTime();
-        cube->Draw(mainShader);
+        cube.Draw(mainShader);
         mesh.Draw(mainShader);
         renderingTime = glfwGetTime() - renderingTime;
 

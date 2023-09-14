@@ -5,3 +5,4 @@
 - batch rendering (check if object is STATIC, if it moves then batch rendering is impossible)
 - instance rendering
 - push all draw calls to renderer and sort by shader
+- ShaderConfig object to pass into draw calls?

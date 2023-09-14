@@ -15,5 +15,5 @@ private:
 
 private:
     void processNode(aiNode* node, const aiScene*);
-    void processMesh(aiNode* node, const aiScene*);
+    Mesh processMesh(aiMesh* node, const aiScene*);
 };
