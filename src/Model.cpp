@@ -1,7 +1,7 @@
 #include "Model.h"
 
 
-Model::Model(const std::string& path)
+Model::Model(const std::string& path) : modelDirectory(path)
 {
     float beginTime = glfwGetTime();
     Assimp::Importer import;
@@ -35,6 +35,61 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     std::vector<glm::vec3> verticesPos;
     std::vector<glm::vec3> normals;
     std::vector<glm::vec2> uvs;
+    std::vector<unsigned int> indices;
+
+    for (unsigned int i = 0; i < mesh->mNumVertices; i++)
+    {
+        verticesPos.push_back(glm::vec3(
+            mesh->mVertices[i].x,
+            mesh->mVertices[i].x,
+            mesh->mVertices[i].z
+        ));
+        normals.push_back(glm::vec3(
+            mesh->mNormals[i].x,
+            mesh->mNormals[i].x,
+            mesh->mNormals[i].z
+        ));
+        if (mesh->mTextureCoords[0])
+        {
+            uvs.push_back(glm::vec2(
+                mesh->mTextureCoords[0][i].x,
+                mesh->mTextureCoords[0][i].y
+            ));
+        }
+        else { uvs.push_back(glm::vec2(0.0f, 0.0f)); }
+    }
+
+    for (unsigned int i = 0; i < mesh->mNumFaces; i++)
+    {
+        aiFace face = mesh->mFaces[i];
+        for (unsigned int j = 0; j < face.mNumIndices; j++)
+        {
+            indices.push_back(face.mIndices[j]);
+        }
+    }
+
+    resultMesh.vertices = verticesPos;
+    resultMesh.normals = normals;
+    resultMesh.uvs = uvs;
+    resultMesh.indices = indices;
+
+    if (mesh->mMaterialIndex >= 0)
+    {
+        aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+        std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, ETextureType::DIFFUSE);
+    }
 
     return resultMesh;
+}
+
+std::vector<Texture> Model::loadMaterialTextures(aiMaterial* material, aiTextureType assimp_texture_type, ETextureType texture_type)
+{
+    std::vector<Texture> textures;
+    for (unsigned int i = 0; i < material->GetTextureCount(assimp_texture_type); i++)
+    {
+        aiString str;
+        material->GetTexture(assimp_texture_type, i, &str);
+        Texture texture;
+
+    }
 }
