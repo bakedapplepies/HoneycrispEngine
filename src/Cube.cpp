@@ -7,6 +7,7 @@
 
 Cube::Cube()
 {
+    Debug::Log("hoo");
     InitializeAttributeData();
     ConstructMesh();
 }
@@ -203,9 +204,9 @@ void Cube::InitializeAttributeData()
         20, 22, 23
     };
 
-    this->vertices = std::move(_verticesPos);
-    this->colors = std::move(_colors);
-    this->normals = std::move(_normals);
-    this->uvs = std::move(_uvs);
-    this->indices = std::move(_indices);
+    static_cast<Mesh*>(this)->vertices = _verticesPos;
+    static_cast<Mesh*>(this)->colors = _colors;
+    static_cast<Mesh*>(this)->normals = _normals;
+    static_cast<Mesh*>(this)->uvs = _uvs;
+    static_cast<Mesh*>(this)->indices = _indices;
 }

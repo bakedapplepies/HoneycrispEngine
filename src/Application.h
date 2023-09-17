@@ -19,5 +19,7 @@ public:
 	Application operator=(const Application&) = delete;
 
 	static Application* Get();
+	void OnUpdate();
+	void OnImGUI();
 	int Run();
 };

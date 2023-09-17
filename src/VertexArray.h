@@ -21,7 +21,7 @@ public:
     VertexArray& operator=(VertexArray&& other) noexcept;
     ~VertexArray();
 
-    void CreateVAO(float* vboData, unsigned int vboSize, unsigned int* eboData, unsigned int eboSize, GLenum mode);
+    void CreateVAO(float* vboData, size_t vboSize, GLuint* eboData, size_t eboSize, GLenum mode);
     void Bind() const;
     void Unbind() const;
 

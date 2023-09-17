@@ -15,10 +15,10 @@ void Mesh::ConstructMesh()
         return;
     }
     
-    unsigned int vertArrayDataSize = vertices.size()*3 + colors.size()*3 + normals.size()*3 + uvs.size()*2;
+    size_t vertArrayDataSize = vertices.size()*3 + colors.size()*3 + normals.size()*3 + uvs.size()*2;
     vertData.reserve(vertArrayDataSize);
 
-    for (int vertIndex = 0; vertIndex < vertices.size(); vertIndex++)
+    for (size_t vertIndex = 0; vertIndex < vertices.size(); vertIndex++)
     {
         if (!vertices.empty())
         {
@@ -48,16 +48,33 @@ void Mesh::ConstructMesh()
         }
     }
 
+    for (int i = 0; i < vertData.size(); i+=11)
+    {
+        Debug::Log(fmt::format("[{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]",
+            vertData[i + 0],
+            vertData[i + 1],
+            vertData[i + 2],
+            vertData[i + 3],
+            vertData[i + 4],
+            vertData[i + 5],
+            vertData[i + 6],
+            vertData[i + 7],
+            vertData[i + 8],
+            vertData[i + 9],
+            vertData[i + 10]
+        ));
+    }
+
     m_VAO.CreateVAO(
         vertData.data(),
         vertData.size() * sizeof(float),
         indices.data(),
-        indices.size() * sizeof(unsigned int), 
+        indices.size() * sizeof(GLuint), 
         GL_STATIC_DRAW
     );
 
 
-    unsigned int numAttribElements = 
+    size_t numAttribElements = 
         3 * !vertices.empty() +
         3 * !colors.empty()   +
         2 * !uvs.empty()       +
@@ -215,6 +232,7 @@ void Mesh::Bind() const
 
 void Mesh::Draw(const Shader& shader)
 {
+    Debug::Log(m_VAO.getID());
     m_VAO.Bind();
     shader.Use();
 

@@ -6,14 +6,12 @@
 
 ElementBuffer::ElementBuffer(ElementBuffer&& other) noexcept
 {
-    std::cout << "Element Buffer Move constructor." << '\n';
     m_EBO_ID = other.m_EBO_ID;
     other.m_EBO_ID = 0;
 }
 
 ElementBuffer& ElementBuffer::operator=(ElementBuffer&& other) noexcept
 {
-    std::cout << "Element Buffer Move assignment." << '\n';
     m_EBO_ID = other.m_EBO_ID;
     other.m_EBO_ID = 0;
 
@@ -25,7 +23,7 @@ ElementBuffer::~ElementBuffer()
     GLCall(glDeleteBuffers(1, &m_EBO_ID));
 }
 
-void ElementBuffer::CreateEBO(unsigned int* data, unsigned int& dataSize, GLenum mode)
+void ElementBuffer::CreateEBO(GLuint* data, size_t& dataSize, GLenum mode)
 {
     GLCall(glGenBuffers(1, &m_EBO_ID));
     Bind();

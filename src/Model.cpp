@@ -76,20 +76,21 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     if (mesh->mMaterialIndex >= 0)
     {
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-        std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, ETextureType::DIFFUSE);
+        std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, ETextureType::DIFFUSE, "texture_diffuse1");
     }
 
     return resultMesh;
 }
 
-std::vector<Texture> Model::loadMaterialTextures(aiMaterial* material, aiTextureType assimp_texture_type, ETextureType texture_type)
+std::vector<Texture> Model::loadMaterialTextures(aiMaterial* material, aiTextureType assimp_texture_type, ETextureType texture_type, const std::string& sampler_name)
 {
     std::vector<Texture> textures;
     for (unsigned int i = 0; i < material->GetTextureCount(assimp_texture_type); i++)
     {
         aiString str;
         material->GetTexture(assimp_texture_type, i, &str);
-        Texture texture;
-
+        Texture texture();
+        Debug::Log(str.C_Str());
     }
+    return {};
 }

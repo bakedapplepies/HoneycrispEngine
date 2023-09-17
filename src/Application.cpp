@@ -27,7 +27,18 @@ int Application::Run()
         Debug::Error("GLFW Initialization failed.");
         return -1;
     }
+    
     window = new Window();
-    window->Loop();
+    window->Loop(ContextWrap);
     return 0;
+}
+
+void Application::OnUpdate()
+{
+
+}
+
+void Application::OnImGUI()
+{
+
 }

@@ -6,7 +6,6 @@
 
 VertexArray::VertexArray(VertexArray&& other) noexcept
 {
-    std::cout << "Vertex Array Move Constructor." << '\n';
     m_VAO_ID = other.m_VAO_ID;
     other.m_VAO_ID = 0;
 
@@ -16,7 +15,6 @@ VertexArray::VertexArray(VertexArray&& other) noexcept
 
 VertexArray& VertexArray::operator=(VertexArray&& other) noexcept
 {
-    std::cout << "Vertex Array Move assignment." << '\n';
     m_VAO_ID = other.m_VAO_ID;
     other.m_VAO_ID = 0;
 
@@ -31,7 +29,7 @@ VertexArray::~VertexArray()
     GLCall(glDeleteVertexArrays(1, &m_VAO_ID));
 }
 
-void VertexArray::CreateVAO(float* vboData, unsigned int vboSize, unsigned int* eboData, unsigned int eboSize, GLenum mode)
+void VertexArray::CreateVAO(float* vboData, size_t vboSize, GLuint* eboData, size_t eboSize, GLenum mode)
 {
     GLCall(glGenVertexArrays(1, &m_VAO_ID));
     Bind();

@@ -37,14 +37,6 @@ Window::Window()
     glfwMakeContextCurrent(glfwWindow);
     glfwSwapInterval(1);  // vsync
 
-    /* Callbacks */
-    glfwSetWindowUserPointer(glfwWindow, &callbackData);
-
-    glfwSetErrorCallback(error_callback);
-    glfwSetCursorPosCallback(glfwWindow, mouse_callback);
-    glfwSetFramebufferSizeCallback(glfwWindow, framebuffer_size_callback);
-    glfwSetKeyCallback(glfwWindow, key_callback);
-
 
     /* Initialize GLAD -> Only call OpenGL functions after this */
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -55,7 +47,15 @@ Window::Window()
     Debug::Log("OpenGL (Core) ", glGetString(GL_VERSION));
 
 
-    glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    /* Callbacks */
+    glfwSetWindowUserPointer(glfwWindow, &callbackData);
+
+    glfwSetErrorCallback(error_callback);
+    glfwSetCursorPosCallback(glfwWindow, mouse_callback);
+    glfwSetFramebufferSizeCallback(glfwWindow, framebuffer_size_callback);
+    glfwSetKeyCallback(glfwWindow, key_callback);
+
+    glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  // disable cursor
 
     GLCall(glEnable(GL_DEPTH_TEST));
     GLCall(glEnable(GL_CULL_FACE));
@@ -85,11 +85,13 @@ Window::Window()
     );
 
     // Cube
+    cube = std::make_unique<Cube>();
+    Debug::Log("hi");
     for (int i = -5; i < 5; i++)
     {
         for (int j = -5; j < 5; j++)
         {
-            cube.AddPosition(glm::vec3(j, i, 0.0f));
+            cube->AddPosition(glm::vec3(j, i, 0.0f));
         }
     }
 
@@ -157,16 +159,17 @@ Window::Window()
         }
     }
 
-    mesh.vertices = std::move(vertices);
-    mesh.colors = std::move(colors);
-    mesh.normals = std::move(normals);
-    mesh.uvs = std::move(uvs);
-    mesh.indices = std::move(indices);
+    // std::move keeps showing errors
+    mesh.vertices = vertices;
+    mesh.colors = colors;
+    mesh.normals = normals;
+    mesh.uvs = uvs;
+    mesh.indices = indices;
 
     mesh.ConstructMesh();
     mesh.AddPosition(glm::vec3(0.0f, -6.0f, 0.0f));
 
-    // Model backpack("../resources/models/backpack/backpack.obj");
+    Model backpack("../resources/models/backpack/backpack.obj");
 
     // ImGUI
     IMGUI_CHECKVERSION();
@@ -181,7 +184,7 @@ Window::Window()
 }
 
 
-void Window::Loop()
+void Window::Loop(Application* app)
 {
     if (!continueProgram) return;
 
@@ -279,7 +282,9 @@ void Window::Loop()
         mainShader.setVector3Uniform("u_spotLight.direction", camera.direction);
 
         renderingTime = glfwGetTime();
-        cube.Draw(mainShader);
+        Debug::Log("1");
+        cube->Draw(mainShader);
+        Debug::Log("2");
         mesh.Draw(mainShader);
         renderingTime = glfwGetTime() - renderingTime;
 
