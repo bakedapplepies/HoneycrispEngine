@@ -3,5 +3,6 @@
 
 int main()
 {
-    return Application::Get()->Run();
+    Application::Get()->Run();
+    return 0;
 }

@@ -8,18 +8,20 @@ class Application
 {
 private:
 	Application() = default;
-	~Application();
+	Application(const Application&) = delete;
+	Application(Application&&) = delete;
+	Application operator=(const Application&) = delete;
+	Application operator=(Application&&) = delete;
 
 private:
-	static Application* ContextWrap;
+	static std::shared_ptr<Application> ContextWrap;
 	Window* window;
 
 public:
-	Application(const Application&) = delete;
-	Application operator=(const Application&) = delete;
+	~Application();
 
-	static Application* Get();
+	static std::shared_ptr<Application> Get();
 	void OnUpdate();
 	void OnImGUI();
-	int Run();
+	void Run();
 };

@@ -2,7 +2,7 @@
 #include "Debug.h"
 
 
-Application* Application::ContextWrap = nullptr;
+std::shared_ptr<Application> Application::ContextWrap = nullptr;
 
 Application::~Application()
 {
@@ -11,26 +11,25 @@ Application::~Application()
     Debug::Log("GLFW terminated safely.");
 }
 
-Application* Application::Get()
+std::shared_ptr<Application> Application::Get()
 {
     if (!ContextWrap)
     {
-        ContextWrap = new Application();
+        ContextWrap = std::make_shared<Application>();
     }
     return ContextWrap;
 }
 
-int Application::Run()
+void Application::Run()
 {
     if(!glfwInit())
     {
         Debug::Error("GLFW Initialization failed.");
-        return -1;
+        return;
     }
     
     window = new Window();
     window->Loop(ContextWrap);
-    return 0;
 }
 
 void Application::OnUpdate()

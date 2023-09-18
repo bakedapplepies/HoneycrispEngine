@@ -184,7 +184,7 @@ Window::Window()
 }
 
 
-void Window::Loop(Application* app)
+void Window::Loop(std::shared_ptr<Application> app)
 {
     if (!continueProgram) return;
 
@@ -282,9 +282,7 @@ void Window::Loop(Application* app)
         mainShader.setVector3Uniform("u_spotLight.direction", camera.direction);
 
         renderingTime = glfwGetTime();
-        Debug::Log("1");
         cube->Draw(mainShader);
-        Debug::Log("2");
         mesh.Draw(mainShader);
         renderingTime = glfwGetTime() - renderingTime;
 

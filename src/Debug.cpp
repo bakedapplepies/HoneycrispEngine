@@ -13,7 +13,6 @@ void GLClearError() {
 bool GLLogCall(const char* function, const char* file, unsigned int line) {
     while (GLenum error = glGetError()) {
         std::string errorType;
-        Debug::Log((error == GL_INVALID_OPERATION) + 10);
         switch (error)
         {
             case GL_INVALID_ENUM:                  errorType = "INVALID ENUM"; break;
@@ -26,7 +25,7 @@ bool GLLogCall(const char* function, const char* file, unsigned int line) {
             case GL_CONTEXT_LOST:                  errorType = "CONTEXT LOST"; break;
             default:                               errorType = "OPENGL ERROR ENUM UNRECOGNIZED"; break;
         }
-        std::cout << fmt::format("[OPENGL ERROR: {} | {}] At: {} Ln: {}, File: {}\n",
+        std::cout << fmt::format("[OPENGL ERROR: {} | {}]\n    At: {} Ln: {}, File: {}\n",
             error, errorType, function, line, file
         );
         return false;

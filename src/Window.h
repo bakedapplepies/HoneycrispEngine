@@ -52,5 +52,5 @@ public:
     Window();
     ~Window();
 
-    void Loop(Application* app);
+    void Loop(std::shared_ptr<Application> app);
 };

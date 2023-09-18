@@ -14,7 +14,7 @@ public:
     Cube(Cube&& other) noexcept;
     Cube& operator=(const Cube& other) = delete;
     Cube& operator=(Cube&& other) noexcept;
-    ~Cube() = default;
+    ~Cube();
 
 private:
     void InitializeAttributeData();

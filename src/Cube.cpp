@@ -12,6 +12,11 @@ Cube::Cube()
     ConstructMesh();
 }
 
+Cube::~Cube()
+{
+    // Debug::Log("why am i deleted?");
+}
+
 Cube::Cube(Cube&& other) noexcept
 {
     positions = std::move(other.positions);

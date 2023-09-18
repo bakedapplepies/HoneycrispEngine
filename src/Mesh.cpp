@@ -22,48 +22,48 @@ void Mesh::ConstructMesh()
     {
         if (!vertices.empty())
         {
-            vertData.push_back(vertices.at(vertIndex).x);
-            vertData.push_back(vertices.at(vertIndex).y);
-            vertData.push_back(vertices.at(vertIndex).z);
+            vertData.push_back(vertices[vertIndex].x);
+            vertData.push_back(vertices[vertIndex].y);
+            vertData.push_back(vertices[vertIndex].z);
         }
 
         if (!colors.empty())
         {
-            vertData.push_back(colors.at(vertIndex).x);
-            vertData.push_back(colors.at(vertIndex).y);
-            vertData.push_back(colors.at(vertIndex).z);
+            vertData.push_back(colors[vertIndex].x);
+            vertData.push_back(colors[vertIndex].y);
+            vertData.push_back(colors[vertIndex].z);
         }
 
         if (!uvs.empty())
         {
-            vertData.push_back(uvs.at(vertIndex).x);
-            vertData.push_back(uvs.at(vertIndex).y);
+            vertData.push_back(uvs[vertIndex].x);
+            vertData.push_back(uvs[vertIndex].y);
         }
 
         if (!normals.empty())
         {
-            vertData.push_back(normals.at(vertIndex).x);
-            vertData.push_back(normals.at(vertIndex).y);
-            vertData.push_back(normals.at(vertIndex).z);
+            vertData.push_back(normals[vertIndex].x);
+            vertData.push_back(normals[vertIndex].y);
+            vertData.push_back(normals[vertIndex].z);
         }
     }
 
-    for (int i = 0; i < vertData.size(); i+=11)
-    {
-        Debug::Log(fmt::format("[{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]",
-            vertData[i + 0],
-            vertData[i + 1],
-            vertData[i + 2],
-            vertData[i + 3],
-            vertData[i + 4],
-            vertData[i + 5],
-            vertData[i + 6],
-            vertData[i + 7],
-            vertData[i + 8],
-            vertData[i + 9],
-            vertData[i + 10]
-        ));
-    }
+    // for (int i = 0; i < vertData.size(); i+=11)
+    // {
+    //     Debug::Log(fmt::format("[{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]",
+    //         vertData[i + 0],
+    //         vertData[i + 1],
+    //         vertData[i + 2],
+    //         vertData[i + 3],
+    //         vertData[i + 4],
+    //         vertData[i + 5],
+    //         vertData[i + 6],
+    //         vertData[i + 7],
+    //         vertData[i + 8],
+    //         vertData[i + 9],
+    //         vertData[i + 10]
+    //     ));
+    // }
 
     m_VAO.CreateVAO(
         vertData.data(),
