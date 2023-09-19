@@ -89,7 +89,7 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* material, aiTexture
     {
         aiString str;
         material->GetTexture(assimp_texture_type, i, &str);
-        Texture texture();
+        Texture texture;
         // Debug::Log(str.C_Str());
     }
     return {};

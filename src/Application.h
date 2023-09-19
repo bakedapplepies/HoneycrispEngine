@@ -14,14 +14,12 @@ private:
 	Application operator=(Application&&) = delete;
 
 private:
-	static std::shared_ptr<Application> ContextWrap;
-	Window* window;
+	static Application* ContextWrap;
+	std::unique_ptr<Window> window;
 
 public:
 	~Application();
 
-	static std::shared_ptr<Application> Get();
-	void OnUpdate();
-	void OnImGUI();
+	static Application& Get();
 	void Run();
 };

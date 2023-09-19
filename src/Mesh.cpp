@@ -232,7 +232,6 @@ void Mesh::Bind() const
 
 void Mesh::Draw(const Shader& shader)
 {
-    Debug::Log(m_VAO.getID());
     m_VAO.Bind();
     shader.Use();
 

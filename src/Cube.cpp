@@ -7,14 +7,13 @@
 
 Cube::Cube()
 {
-    Debug::Log("hoo");
     InitializeAttributeData();
     ConstructMesh();
 }
 
 Cube::~Cube()
 {
-    // Debug::Log("why am i deleted?");
+
 }
 
 Cube::Cube(Cube&& other) noexcept

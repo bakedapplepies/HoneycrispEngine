@@ -24,7 +24,6 @@ struct CallbackData
     glm::vec3 cameraDirection = glm::vec3(0, 0, -1.0f);  // initial camera direction or it would look at origin by default
 };
 
-class Application;
 class Window
 {
 private:
@@ -52,5 +51,5 @@ public:
     Window();
     ~Window();
 
-    void Loop(std::shared_ptr<Application> app);
+    void Loop();
 };

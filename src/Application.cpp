@@ -2,22 +2,22 @@
 #include "Debug.h"
 
 
-std::shared_ptr<Application> Application::ContextWrap = nullptr;
+Application* Application::ContextWrap = nullptr;
 
 Application::~Application()
 {
-    delete window;
+    window.reset();
     glfwTerminate();
     Debug::Log("GLFW terminated safely.");
 }
 
-std::shared_ptr<Application> Application::Get()
+Application& Application::Get()
 {
     if (!ContextWrap)
     {
-        ContextWrap = std::make_shared<Application>();
+        ContextWrap = new Application();
     }
-    return ContextWrap;
+    return *ContextWrap;
 }
 
 void Application::Run()
@@ -28,16 +28,6 @@ void Application::Run()
         return;
     }
     
-    window = new Window();
-    window->Loop(ContextWrap);
-}
-
-void Application::OnUpdate()
-{
-
-}
-
-void Application::OnImGUI()
-{
-
+    window = std::make_unique<Window>();
+    window->Loop();
 }

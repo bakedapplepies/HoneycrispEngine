@@ -86,7 +86,6 @@ Window::Window()
 
     // Cube
     cube = std::make_unique<Cube>();
-    Debug::Log("hi");
     for (int i = -5; i < 5; i++)
     {
         for (int j = -5; j < 5; j++)
@@ -169,7 +168,7 @@ Window::Window()
     mesh.ConstructMesh();
     mesh.AddPosition(glm::vec3(0.0f, -6.0f, 0.0f));
 
-    Model backpack("../resources/models/backpack/backpack.obj");
+    // Model backpack("../resources/models/backpack/backpack.obj");
 
     // ImGUI
     IMGUI_CHECKVERSION();
@@ -184,7 +183,7 @@ Window::Window()
 }
 
 
-void Window::Loop(std::shared_ptr<Application> app)
+void Window::Loop()
 {
     if (!continueProgram) return;
 
