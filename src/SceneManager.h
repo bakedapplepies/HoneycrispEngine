@@ -1,20 +1,24 @@
 #pragma once
 
 #include "pch/pch.h"
+#include "Scene.h"
 
 
 class SceneManager
 {
 private:
-    SceneManager();
+    SceneManager() = default;
     SceneManager(const SceneManager&) = delete;
     SceneManager(SceneManager&&) = delete;
     SceneManager& operator=(const SceneManager&) = delete;
     SceneManager& operator=(SceneManager&&) = delete;
-    SceneManager* sceneManager;
+    static SceneManager* sceneManager;
 
-    static SceneManager& Get()
-    {
-        return *instance;
-    }
+    static SceneManager& Get();
 };
+
+// namespace SceneManager
+// {
+//     std::vector<Scene> scenes;
+
+// }
