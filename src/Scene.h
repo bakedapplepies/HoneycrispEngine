@@ -12,9 +12,19 @@ enum EObjectRenderType
 class Scene
 {
 protected:
-    std::vector<Object> objectRefs;
+    std::vector<std::shared_ptr<Object>> objectPtrs;
     // glm::vec3 bgColor;
     
 protected:
-    Object CreateObject(Object&&, EObjectRenderType render_type);
+    template <typename T>
+    std::shared_ptr<T> CreateObject(T&& obj, EObjectRenderType render_type)
+    {
+        static_assert(std::is_same<T, Object>::value == false,
+            fmt::format("Type {} is not derived from the Object base class.")
+        );
+
+        std::shared_ptr<T> temp_ptr = std::make_shared<T>(obj);
+        objectPtrs.push_back(temp_ptr);
+        return temp_ptr;
+    }
 };
