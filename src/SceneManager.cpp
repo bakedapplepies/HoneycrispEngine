@@ -1,11 +1,11 @@
 #include "SceneManager.h"
 
-
+SceneManager* SceneManager::m_sceneManager = nullptr;
 SceneManager& SceneManager::Get()
 {
-    if (!sceneManager)
+    if (!m_sceneManager)
     {
-        sceneManager = new SceneManager();
+        m_sceneManager = new SceneManager();
     }
-    return *sceneManager;
+    return *m_sceneManager;
 }

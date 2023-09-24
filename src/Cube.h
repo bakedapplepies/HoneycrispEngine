@@ -10,9 +10,7 @@ class Cube : public Mesh
 {
 public:
     Cube();
-    Cube(const Cube& other) = delete;
     Cube(Cube&& other) noexcept;
-    Cube& operator=(const Cube& other) = delete;
     Cube& operator=(Cube&& other) noexcept;
     ~Cube();
 

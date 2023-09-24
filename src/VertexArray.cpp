@@ -26,7 +26,6 @@ VertexArray& VertexArray::operator=(VertexArray&& other) noexcept
 
 VertexArray::~VertexArray()
 {
-    Debug::Log("oops: ", m_VAO_ID);
     GLCall(glDeleteVertexArrays(1, &m_VAO_ID));
 }
 

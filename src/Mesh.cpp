@@ -48,23 +48,6 @@ void Mesh::ConstructMesh()
         }
     }
 
-    // for (int i = 0; i < vertData.size(); i+=11)
-    // {
-    //     Debug::Log(fmt::format("[{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]",
-    //         vertData[i + 0],
-    //         vertData[i + 1],
-    //         vertData[i + 2],
-    //         vertData[i + 3],
-    //         vertData[i + 4],
-    //         vertData[i + 5],
-    //         vertData[i + 6],
-    //         vertData[i + 7],
-    //         vertData[i + 8],
-    //         vertData[i + 9],
-    //         vertData[i + 10]
-    //     ));
-    // }
-
     m_VAO.CreateVAO(
         vertData.data(),
         vertData.size() * sizeof(float),
@@ -201,6 +184,8 @@ void Mesh::EnableVertexAttribNormals(bool on) const
 
 Mesh::Mesh(Mesh&& other) noexcept
 {
+    positions = std::move(other.positions);
+
     vertices = std::move(other.vertices);
     colors = std::move(other.colors);
     normals = std::move(other.normals);
@@ -209,10 +194,13 @@ Mesh::Mesh(Mesh&& other) noexcept
 
     vertData = std::move(other.vertData);
     m_VAO = std::move(other.m_VAO);
+
 }
 
 Mesh& Mesh::operator=(Mesh&& other) noexcept
 {
+    positions = std::move(other.positions);
+
     vertices = std::move(other.vertices);
     colors = std::move(other.colors);
     normals = std::move(other.normals);

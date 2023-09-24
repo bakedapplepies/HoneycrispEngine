@@ -56,6 +56,8 @@ add_executable(${CMAKE_PROJECT_NAME}
     ./src/Window.cpp
     ./src/Application.cpp
     ./src/Model.cpp
+    ./src/SceneManager.cpp
+    ./src/Scene.cpp
 )
 
 # -I

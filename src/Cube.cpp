@@ -17,9 +17,9 @@ Cube::~Cube()
 }
 
 Cube::Cube(Cube&& other) noexcept
+    : Mesh(std::move(other))
 {
-    positions = std::move(other.positions);
-    this->GetVAO() = std::move(other.GetVAO());
+    
 }
 
 Cube& Cube::operator=(Cube&& other) noexcept
