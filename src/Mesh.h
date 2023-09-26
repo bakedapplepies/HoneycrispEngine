@@ -3,7 +3,7 @@
 #include "pch/pch.h"
 
 #include "Object.h"
-#include "VertexArray.h"
+#include "core/VertexArray.h"
 
 
 class Mesh : public Object

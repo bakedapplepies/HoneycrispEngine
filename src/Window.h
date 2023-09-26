@@ -5,7 +5,7 @@
 #include "Mesh.h"
 #include "Cube.h"
 #include "Light.h"
-#include "Texture.h"
+#include "core/Texture.h"
 #include "Camera.h"
 
 

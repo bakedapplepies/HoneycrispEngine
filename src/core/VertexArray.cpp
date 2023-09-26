@@ -1,6 +1,4 @@
-#include "pch/pch.h"
-
-#include "Debug.h"
+#include "../Debug.h"
 #include "VertexArray.h"
 
 

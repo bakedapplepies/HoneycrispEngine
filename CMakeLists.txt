@@ -39,6 +39,14 @@ add_library(IMGUI STATIC
 target_include_directories(IMGUI PUBLIC include include/imgui)
 set_target_properties(IMGUI PROPERTIES LINKER_LANGUAGE CXX)
 
+set(CORE
+    ./src/core/ElementBuffer.cpp
+    ./src/core/VertexBuffer.cpp
+    ./src/core/VertexArray.cpp
+    ./src/core/Texture.cpp
+    ./src/core/Shader.cpp
+)
+
 # Executable
 add_executable(${CMAKE_PROJECT_NAME}
     ./lib/format.cc
@@ -48,17 +56,14 @@ add_executable(${CMAKE_PROJECT_NAME}
     ./src/SceneManager.cpp
     ./src/Scene.cpp
     ./src/scenes/DefaultScene.cpp
+    ./src/Mesh.cpp
     ./src/Cube.cpp
     ./src/Light.cpp
-    ./src/VertexBuffer.cpp
-    ./src/ElementBuffer.cpp
-    ./src/VertexArray.cpp
-    ./src/Mesh.cpp
-    ./src/Shader.cpp
-    ./src/Texture.cpp
     ./src/Window.cpp
     ./src/Application.cpp
     ./src/Model.cpp
+
+    ${CORE}
 )
 
 # -I

@@ -3,7 +3,7 @@
 #include "pch/pch.h"
 #include "Mesh.h"
 #include "Debug.h"
-#include "Texture.h"
+#include "core/Texture.h"
 
 
 enum ETextureType {

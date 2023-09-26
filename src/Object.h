@@ -2,7 +2,7 @@
 
 #include "pch/pch.h"
 
-#include "Shader.h"
+#include "core/Shader.h"
 
 
 class Object

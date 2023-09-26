@@ -187,10 +187,8 @@ void Window::Loop()
 {
     if (!continueProgram) return;
 
-    // Scene scene;
-    // std::shared_ptr<Cube> test = scene.CreateObject(Cube(), EObjectRenderType::STATIC);
-    // test->AddPosition(glm::vec3(-1.0f, -3.0f, -1.0f));
-    SceneManager::CreateScene(DefaultScene());
+    SceneManager::Get().CreateScene(DefaultScene(), 0);
+    SceneManager::Get().SetActiveScene(0);
 
 
     float begin = glfwGetTime();
@@ -293,7 +291,7 @@ void Window::Loop()
         renderingTime = glfwGetTime();
         // cube->Draw(mainShader);
         // mesh.Draw(mainShader);
-        SceneManager::Update(mainShader);
+        SceneManager::Get().Update(mainShader);
         renderingTime = glfwGetTime() - renderingTime;
 
         ImGui::Render();
@@ -312,7 +310,7 @@ Window::~Window()
     ImGui::DestroyContext();
 
     // Delete these while OpenGL is still in context
-    SceneManager::ClearAllScenes();
+    SceneManager::Get().ClearAllScenes();
     Texture::DeleteAllTextures();
 
     Debug::Log("Deallocated all resources.");

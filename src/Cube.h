@@ -2,7 +2,7 @@
 
 #include "pch/pch.h"
 
-#include "Texture.h"
+#include "core/Texture.h"
 #include "Mesh.h"
 
 
