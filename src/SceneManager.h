@@ -4,30 +4,21 @@
 #include "Scene.h"
 
 
-class SceneManager
+namespace SceneManager
 {
-private:
-    std::vector<Scene> m_scenes;
-    static SceneManager* m_sceneManager;
-    
-private:
-    SceneManager() = default;
-    SceneManager(const SceneManager&) = delete;
-    SceneManager(SceneManager&&) = delete;
-    SceneManager& operator=(const SceneManager&) = delete;
-    SceneManager& operator=(SceneManager&&) = delete;
-
-    static SceneManager& Get();
-
-public:
-    void Update() const
+    namespace
     {
-        // for ()
+        std::unordered_map< size_t, std::shared_ptr<Scene> > _scenesMap;
+        size_t _sceneIndex;
     }
-};
+    extern std::vector< std::shared_ptr<Scene> > _scenes;
 
-// namespace SceneManager
-// {
-//     std::vector<Scene> scenes;
-
-// }
+    template <typename T>
+    extern void CreateScene(T&& t)
+    {
+        std::shared_ptr<T> temp_ptr = std::make_shared<T>(std::move(t));
+        _scenes.push_back(temp_ptr);
+    }
+    extern void Update(Shader& shader);
+    extern void ClearAllScenes();
+}

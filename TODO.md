@@ -7,3 +7,5 @@
 - push all draw calls to renderer and sort by shader
 - ShaderConfig object to pass into draw calls?
 - move all enums to a separate file
+- cache texture (ktx)
+- check if shared_ptr in SceneManager is necessary

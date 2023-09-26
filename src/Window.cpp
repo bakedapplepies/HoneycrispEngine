@@ -1,11 +1,10 @@
 #include "pch/pch.h"
-#include <typeinfo>
 
 #include "Debug.h"
 #include "Window.h"
-#include "Scene.h"
+#include "SceneManager.h"
+#include "./scenes/DefaultScene.h"
 #include "Callbacks.h"
-
 #include "Model.h"
 
 
@@ -191,8 +190,9 @@ void Window::Loop()
     // Scene scene;
     // std::shared_ptr<Cube> test = scene.CreateObject(Cube(), EObjectRenderType::STATIC);
     // test->AddPosition(glm::vec3(-1.0f, -3.0f, -1.0f));
+    SceneManager::CreateScene(DefaultScene());
 
-    /* Main loop */
+
     float begin = glfwGetTime();
     Textures::mainTextureMap.Bind();
     Textures::mainTextureSpecularMap.Bind();
@@ -248,9 +248,9 @@ void Window::Loop()
         ImGui_ImplOpenGL3_NewFrame(); 
         ImGui::NewFrame();
 
-        float old_font_size = ImGui::GetFont()->Scale;
-        ImGui::GetFont()->Scale *= 1.5;
-        ImGui::PushFont(ImGui::GetFont());
+        // float old_font_size = ImGui::GetFont()->Scale;
+        // ImGui::GetFont()->Scale *= 1.5;
+        // ImGui::PushFont(ImGui::GetFont());
         ImGui::Begin("Settings");
         static float lightSizeScale = 0.2f;
         static float waveSpeed = 1.0f;
@@ -262,8 +262,8 @@ void Window::Loop()
         ImGui::Text("Total time: %fms", deltaTime * 1000);
 
         ImGui::End();
-        ImGui::GetFont()->Scale = old_font_size;
-        ImGui::TreePop();
+        // ImGui::GetFont()->Scale = old_font_size;
+        // ImGui::TreePop();
 
         // Update camera
         camera.SetDirection(glm::normalize(callbackData.cameraDirection));
@@ -291,9 +291,9 @@ void Window::Loop()
         mainShader.setVector3Uniform("u_spotLight.direction", camera.direction);
 
         renderingTime = glfwGetTime();
-        cube->Draw(mainShader);
-        mesh.Draw(mainShader);
-        // test->Draw(mainShader);
+        // cube->Draw(mainShader);
+        // mesh.Draw(mainShader);
+        SceneManager::Update(mainShader);
         renderingTime = glfwGetTime() - renderingTime;
 
         ImGui::Render();
@@ -312,6 +312,7 @@ Window::~Window()
     ImGui::DestroyContext();
 
     // Delete these while OpenGL is still in context
+    SceneManager::ClearAllScenes();
     Texture::DeleteAllTextures();
 
     Debug::Log("Deallocated all resources.");

@@ -45,6 +45,9 @@ add_executable(${CMAKE_PROJECT_NAME}
     ./src/Debug.cpp
     ./src/main.cpp
     ./src/Camera.cpp
+    ./src/SceneManager.cpp
+    ./src/Scene.cpp
+    ./src/scenes/DefaultScene.cpp
     ./src/Cube.cpp
     ./src/Light.cpp
     ./src/VertexBuffer.cpp
@@ -56,8 +59,6 @@ add_executable(${CMAKE_PROJECT_NAME}
     ./src/Window.cpp
     ./src/Application.cpp
     ./src/Model.cpp
-    ./src/SceneManager.cpp
-    ./src/Scene.cpp
 )
 
 # -I

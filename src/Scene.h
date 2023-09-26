@@ -4,6 +4,7 @@
 #include "Debug.h"
 #include "Object.h"
 #include "Cube.h"
+#include "types/types_index.h"
 
 enum EObjectRenderType
 {
@@ -15,21 +16,15 @@ enum EObjectRenderType
 class Scene
 {
 protected:
-    std::vector<std::shared_ptr<Object>> m_staticObjectPtrs;
-    std::vector<std::shared_ptr<Object>> m_dynamicObjectPtrs;
-    std::vector<std::shared_ptr<Object>> m_nonRenderObjectPtrs;
-    static Scene* m_sceneInstance;
+    std::vector< std::shared_ptr<Object> > m_staticObjectPtrs;
+    std::vector< std::shared_ptr<Object> > m_dynamicObjectPtrs;
+    std::vector< std::shared_ptr<Object> > m_nonRenderObjectPtrs;
+    // static Scene* m_sceneInstance;
     // glm::vec3 bgColor;
-
-protected:
-    Scene()
-    {
-
-    }
     
 public: // protected
     template <typename T>
-    std::shared_ptr<T> CreateObject(T&& obj, EObjectRenderType render_type)
+    SceneObject<T> CreateObject(T&& obj, EObjectRenderType render_type)
     {
         Object test_obj = static_cast<Object>(obj);
         
@@ -54,5 +49,5 @@ public: // protected
         return temp_ptr;
     }
 
-    virtual void OnUpdate() = 0;
+    virtual void OnUpdate(Shader& shader) = 0;
 };

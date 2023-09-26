@@ -2,7 +2,7 @@
 #include "Debug.h"
 
 
-Application* Application::ContextWrap = nullptr;
+Application* Application::m_ContextWrap = nullptr;
 
 Application::~Application()
 {
@@ -13,11 +13,17 @@ Application::~Application()
 
 Application& Application::Get()
 {
-    if (!ContextWrap)
+    if (!m_ContextWrap)
     {
-        ContextWrap = new Application();
+        m_ContextWrap = new Application();
     }
-    return *ContextWrap;
+    return *m_ContextWrap;
+}
+
+void Application::DeleteInstance()
+{
+    delete m_ContextWrap;
+    m_ContextWrap = nullptr;
 }
 
 void Application::Run()

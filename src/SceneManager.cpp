@@ -1,11 +1,18 @@
 #include "SceneManager.h"
+#include "Debug.h"
 
-SceneManager* SceneManager::m_sceneManager = nullptr;
-SceneManager& SceneManager::Get()
+
+std::vector< std::shared_ptr<Scene> > SceneManager::_scenes;
+
+void SceneManager::Update(Shader& shader)
 {
-    if (!m_sceneManager)
+    for (std::shared_ptr<Scene> scene : _scenes)
     {
-        m_sceneManager = new SceneManager();
+        scene->OnUpdate(shader);
     }
-    return *m_sceneManager;
+}
+
+void SceneManager::ClearAllScenes()
+{
+    _scenes.clear();
 }
