@@ -3,7 +3,6 @@
 #include "pch/pch.h"
 #include "Debug.h"
 #include "Object.h"
-#include "Cube.h"
 #include "types/types_index.h"
 
 enum EObjectRenderType

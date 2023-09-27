@@ -1,8 +1,6 @@
-#include "pch/pch.h"
-
 #include "Debug.h"
 #include "Cube.h"
-#include "Texture.h"
+#include "core/Texture.h"
 
 
 Cube::Cube()
@@ -11,15 +9,9 @@ Cube::Cube()
     ConstructMesh();
 }
 
-Cube::~Cube()
-{
-
-}
-
 Cube::Cube(Cube&& other) noexcept
     : Mesh(std::move(other))
 {
-    
 }
 
 Cube& Cube::operator=(Cube&& other) noexcept

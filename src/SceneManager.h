@@ -25,6 +25,11 @@ public:
     template <typename T>
     void CreateScene(T&& t, size_t index)
     {
+        if (_scenesMap[index])
+        {
+            Debug::Error("Scene index already occupied.");
+            return;
+        }
         std::shared_ptr<T> temp_ptr = std::make_shared<T>(std::move(t));
         _scenesMap[index] = temp_ptr;
     }

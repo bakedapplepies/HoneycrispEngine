@@ -7,6 +7,9 @@
 #define GLCall(x) GLClearError();\
     x;\
     ASSERT(GLLogCall(#x, __BASE_FILE__, __LINE__))
+#define GRAY(x) system("Color 08");\
+    x;\
+    system("Color 07");\
 
 
 void createBreak();

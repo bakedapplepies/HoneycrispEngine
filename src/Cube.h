@@ -12,7 +12,7 @@ public:
     Cube();
     Cube(Cube&& other) noexcept;
     Cube& operator=(Cube&& other) noexcept;
-    ~Cube();
+    ~Cube() = default;
 
 private:
     void InitializeAttributeData();

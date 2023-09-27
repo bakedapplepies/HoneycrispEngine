@@ -19,6 +19,7 @@
 #include <unordered_map>
 #include <random>
 #include <thread>
+#include <windows.h>
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>

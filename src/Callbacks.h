@@ -24,49 +24,66 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 {
     static CallbackData* callbackData = static_cast<CallbackData*>(glfwGetWindowUserPointer(window));
 
-    // Exit window
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    if (action == GLFW_PRESS)
     {
-        glfwSetWindowShouldClose(window, true);
-    }
+        switch (key)
+        {
+            // Exit windows
+            case GLFW_KEY_ESCAPE:
+                glfwSetWindowShouldClose(window, true);
+                break;
 
-    // Toggle wireframes
-    else if (key == GLFW_KEY_M && action == GLFW_PRESS)
-    {
-        GLint front_back_mode[2];
-        glGetIntegerv(GL_POLYGON_MODE, front_back_mode);
-        if (front_back_mode[0] == GL_FILL)
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        else
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    }
+            // Toggle wireframes
+            case GLFW_KEY_M:
+                GLint front_back_mode[2];
+                glGetIntegerv(GL_POLYGON_MODE, front_back_mode);
+                if (front_back_mode[0] == GL_FILL)
+                    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+                else
+                    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+                break;
 
-    else if (key == GLFW_KEY_RIGHT_ALT && action == GLFW_PRESS)
-    {
-        if (!callbackData->capFPS)
-        {
-            glfwSwapInterval(1);
-            callbackData->capFPS = true;
-        }
-        else
-        {
-            glfwSwapInterval(0);
-            callbackData->capFPS = false;
-        }
-    }
+            // Toggle FPS-cap
+            case GLFW_KEY_RIGHT_ALT:
+                if (!callbackData->capFPS)
+                {
+                    glfwSwapInterval(1);
+                    callbackData->capFPS = true;
+                }
+                else
+                {
+                    glfwSwapInterval(0);
+                    callbackData->capFPS = false;
+                }
+                break;
 
-    else if (key == GLFW_KEY_LEFT_ALT && action == GLFW_PRESS)
-    {   
-        if (!callbackData->showMouse)
-        {
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-            callbackData->showMouse = true;
-        }
-        else
-        {
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-            callbackData->showMouse = false;
-            callbackData->firstMouse = true;
+            // Toggle cursor
+            case GLFW_KEY_LEFT_ALT:
+                if (!callbackData->showMouse)
+                {
+                    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+                    callbackData->showMouse = true;
+                }
+                else
+                {
+                    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                    callbackData->showMouse = false;
+                    callbackData->firstMouse = true;
+                }
+                break;
+
+            // Switch scene #1
+            case GLFW_KEY_1:
+                SceneManager::Get().SetActiveScene(0);
+                break;
+
+            // Switch scene #2
+            case GLFW_KEY_2:
+                SceneManager::Get().SetActiveScene(1);
+                break;
+
+            default:
+                break;
         }
     }
 }
@@ -74,7 +91,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void mouse_callback(GLFWwindow* window, double xpos_double, double ypos_double)
 {
     static CallbackData* callbackData = static_cast<CallbackData*>(glfwGetWindowUserPointer(window));
-
+    
     if (!callbackData->showMouse)
     {
         float xpos = static_cast<float>(xpos_double);

@@ -4,6 +4,7 @@
 #include "Window.h"
 #include "SceneManager.h"
 #include "./scenes/DefaultScene.h"
+#include "./scenes/DefaultSceneTwo.h"
 #include "Callbacks.h"
 #include "Model.h"
 
@@ -84,89 +85,10 @@ Window::Window()
         100.0f
     );
 
-    // Cube
-    cube = std::make_unique<Cube>();
-    for (int i = -5; i < 5; i++)
-    {
-        for (int j = -5; j < 5; j++)
-        {
-            cube->AddPosition(glm::vec3(j, i, 0.0f));
-        }
-    }
-
     light = Light(
         glm::vec3(1.0f, 1.0f, 1.0f)
     );
     light.AddPosition(glm::vec3(1.0f, 1.0f, 3.0f));
-
-    TextureCoords& grassUV = Textures::mainTextureMap.GetTextureCoords(0, 0);
-    int width = 50, height = 50;
-    int vertW = width+1, vertH = height+1;
-    int totalVerts = vertW * vertH;
-    glm::vec2 uvDistVertical = grassUV.tl - grassUV.bl;
-    glm::vec2 uvDistHorizontal = grassUV.br - grassUV.bl;
-
-    std::vector<glm::vec3> vertices;
-    vertices.reserve(totalVerts);
-    for (int i = 0; i < vertH; i++)
-    {
-        for (int j = 0; j < vertW; j++)
-        {
-            vertices.emplace_back(glm::vec3((float)i, 0.0f, (float)j));
-        }
-    }
-
-    std::vector<glm::vec3> colors;
-    colors.reserve(totalVerts);
-    for (int i = 0; i < totalVerts; i++)
-    {
-        colors.emplace_back(glm::vec3(0.369f, 0.616f, 0.204f));
-    }
-
-    std::vector<glm::vec3> normals;
-    normals.reserve(totalVerts);
-    for (int i = 0; i < totalVerts; i++)
-    {
-        normals.emplace_back(glm::vec3(0.0f, 1.0f, 0.0f));
-    }
-
-    std::vector<glm::vec2> uvs;
-    uvs.reserve(totalVerts);
-    for (int i = 0; i < vertW; i++)
-    {
-        for (int j = 0; j < vertH; j++)
-        {
-            uvs.emplace_back(grassUV.bl + 
-            uvDistHorizontal * ((float)i/(float)(vertW-1)) +
-            uvDistVertical * ((float)j/(float)(vertH-1)));
-        }
-    }
-
-    std::vector<GLuint> indices;
-    indices.reserve(width*height*6);
-    for (GLuint h = 0; h < height; h++)
-    {
-        for (GLuint w = 0; w < width; w++)
-        {
-            indices.emplace_back(h*vertW + w);
-            indices.emplace_back((h+1)*vertW + w);
-            indices.emplace_back(h*vertW + w+1);
-
-            indices.emplace_back((h+1)*vertW + w+1);
-            indices.emplace_back(h*vertW + w+1);
-            indices.emplace_back((h+1)*vertW + w);
-        }
-    }
-
-    // std::move keeps showing errors
-    mesh.vertices = vertices;
-    mesh.colors = colors;
-    mesh.normals = normals;
-    mesh.uvs = uvs;
-    mesh.indices = indices;
-
-    mesh.ConstructMesh();
-    mesh.AddPosition(glm::vec3(0.0f, -6.0f, 0.0f));
 
     // Model backpack("../resources/models/backpack/backpack.obj");
 
@@ -188,6 +110,7 @@ void Window::Loop()
     if (!continueProgram) return;
 
     SceneManager::Get().CreateScene(DefaultScene(), 0);
+    SceneManager::Get().CreateScene(DefaultSceneTwo(), 1);
     SceneManager::Get().SetActiveScene(0);
 
 
@@ -289,8 +212,6 @@ void Window::Loop()
         mainShader.setVector3Uniform("u_spotLight.direction", camera.direction);
 
         renderingTime = glfwGetTime();
-        // cube->Draw(mainShader);
-        // mesh.Draw(mainShader);
         SceneManager::Get().Update(mainShader);
         renderingTime = glfwGetTime() - renderingTime;
 

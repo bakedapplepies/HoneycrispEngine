@@ -97,4 +97,8 @@
     "C_Cpp.errorSquiggles": "enabled",
     "C_Cpp.default.compilerPath": "C:\\MinGW-W64\\MinGW-W64\\bin\\g++.exe",
     "C_Cpp.intelliSenseEngineFallback": "enabled",
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.autopep8"
+    },
+    "python.formatting.provider": "none",
 }

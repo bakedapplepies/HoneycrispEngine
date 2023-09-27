@@ -30,9 +30,7 @@ private:
     GLFWwindow* glfwWindow;
     CallbackData callbackData;
     Camera camera = Camera(glm::vec3(0.0f, 5.0f, 0.0f));  // set initial direction in CallbackData
-    std::unique_ptr<Cube> cube;
     Light light;
-    Mesh mesh;
     Shader mainShader;
 
     glm::mat4 viewMatrix;

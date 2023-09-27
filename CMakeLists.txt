@@ -39,31 +39,44 @@ add_library(IMGUI STATIC
 target_include_directories(IMGUI PUBLIC include include/imgui)
 set_target_properties(IMGUI PROPERTIES LINKER_LANGUAGE CXX)
 
+add_library(FMT STATIC
+    ./lib/format.cc
+)
+target_include_directories(FMT PUBLIC include include/fmt)
+set_target_properties(FMT PROPERTIES LINKER_LANGUAGE CXX)
+
 set(CORE
-    ./src/core/ElementBuffer.cpp
-    ./src/core/VertexBuffer.cpp
-    ./src/core/VertexArray.cpp
-    ./src/core/Texture.cpp
-    ./src/core/Shader.cpp
+	./src/core/VertexBuffer.cpp
+	./src/core/VertexArray.cpp
+	./src/core/Texture.cpp
+	./src/core/Shader.cpp
+	./src/core/ElementBuffer.cpp
+)
+
+set(SCENES
+	./src/scenes/DefaultSceneTwo.cpp
+	./src/scenes/DefaultScene.cpp
+)
+
+set(APPLICATION
+	./src/Window.cpp
+	./src/SceneManager.cpp
+	./src/Scene.cpp
+	./src/Model.cpp
+	./src/Mesh.cpp
+	./src/main.cpp
+	./src/Light.cpp
+	./src/Debug.cpp
+	./src/Cube.cpp
+	./src/Camera.cpp
+	./src/Application.cpp
 )
 
 # Executable
 add_executable(${CMAKE_PROJECT_NAME}
-    ./lib/format.cc
-    ./src/Debug.cpp
-    ./src/main.cpp
-    ./src/Camera.cpp
-    ./src/SceneManager.cpp
-    ./src/Scene.cpp
-    ./src/scenes/DefaultScene.cpp
-    ./src/Mesh.cpp
-    ./src/Cube.cpp
-    ./src/Light.cpp
-    ./src/Window.cpp
-    ./src/Application.cpp
-    ./src/Model.cpp
-
+    ${APPLICATION}
     ${CORE}
+    ${SCENES}
 )
 
 # -I
@@ -75,6 +88,7 @@ set(LIBS
     GLAD
     STB_IMAGE
     IMGUI
+    FMT
     libglfw3.a
     libassimp.dll.a
     opengl32
