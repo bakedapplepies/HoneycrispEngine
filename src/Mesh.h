@@ -16,14 +16,15 @@ public:
     std::vector<GLuint> indices;
 
 private:
-    std::vector<float> vertData;
-    VertexArray m_VAO;
+    glm::mat4 m_modelMatrix;
+    std::vector<float> m_vertData;
+    std::shared_ptr<VertexArray> m_VAO;
 
 public:
-    Mesh() = default;
-    Mesh(const Mesh& other) = delete;
+    Mesh();
+    Mesh(const Mesh& other);
+    Mesh& operator=(const Mesh& other);  // TODO
     Mesh(Mesh&& other) noexcept;
-    Mesh& operator=(const Mesh& other) = delete;
     Mesh& operator=(Mesh&& other) noexcept;
     ~Mesh() = default;
 
@@ -41,5 +42,5 @@ public:
 
     void ConstructMesh();
     void Bind() const;
-    VertexArray& GetVAO();
+    std::weak_ptr<VertexArray> GetVAO();
 };

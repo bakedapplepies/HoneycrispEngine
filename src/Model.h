@@ -6,7 +6,8 @@
 #include "core/Texture.h"
 
 
-enum ETextureType {
+enum ETextureType
+{
     DIFFUSE,
     SPECULAR
 };

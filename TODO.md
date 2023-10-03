@@ -6,6 +6,7 @@
 - instance rendering
 - push all draw calls to renderer and sort by shader
 - ShaderConfig object to pass into draw calls?
+- optimize shader system
 - move all enums to a separate file
-- cache texture (ktx)
+- cache texture (ktx) & store model in reuseable binary format
 - check if shared_ptr in SceneManager is necessary

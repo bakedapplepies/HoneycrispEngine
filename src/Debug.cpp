@@ -1,9 +1,10 @@
-#include <iostream>
+#include "pch/pch.h"
 #include "Debug.h"
 
 static bool err = false;
 void createBreak() {
     err = true;
+    assert(err);
 }
 
 void GLClearError() {

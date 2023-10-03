@@ -2,9 +2,14 @@
 #include "Debug.h"
 
 
+Mesh::Mesh()
+{
+    m_VAO = std::make_shared<VertexArray>();
+}
+
 void Mesh::ConstructMesh()
 {
-    if (!vertData.empty())
+    if (!m_vertData.empty())
     {
         Debug::Warn("Mesh already constructed.");
         return;
@@ -16,41 +21,41 @@ void Mesh::ConstructMesh()
     }
     
     size_t vertArrayDataSize = vertices.size()*3 + colors.size()*3 + normals.size()*3 + uvs.size()*2;
-    vertData.reserve(vertArrayDataSize);
+    m_vertData.reserve(vertArrayDataSize);
 
     for (size_t vertIndex = 0; vertIndex < vertices.size(); vertIndex++)
     {
         if (!vertices.empty())
         {
-            vertData.push_back(vertices[vertIndex].x);
-            vertData.push_back(vertices[vertIndex].y);
-            vertData.push_back(vertices[vertIndex].z);
+            m_vertData.push_back(vertices[vertIndex].x);
+            m_vertData.push_back(vertices[vertIndex].y);
+            m_vertData.push_back(vertices[vertIndex].z);
         }
 
         if (!colors.empty())
         {
-            vertData.push_back(colors[vertIndex].x);
-            vertData.push_back(colors[vertIndex].y);
-            vertData.push_back(colors[vertIndex].z);
+            m_vertData.push_back(colors[vertIndex].x);
+            m_vertData.push_back(colors[vertIndex].y);
+            m_vertData.push_back(colors[vertIndex].z);
         }
 
         if (!uvs.empty())
         {
-            vertData.push_back(uvs[vertIndex].x);
-            vertData.push_back(uvs[vertIndex].y);
+            m_vertData.push_back(uvs[vertIndex].x);
+            m_vertData.push_back(uvs[vertIndex].y);
         }
 
         if (!normals.empty())
         {
-            vertData.push_back(normals[vertIndex].x);
-            vertData.push_back(normals[vertIndex].y);
-            vertData.push_back(normals[vertIndex].z);
+            m_vertData.push_back(normals[vertIndex].x);
+            m_vertData.push_back(normals[vertIndex].y);
+            m_vertData.push_back(normals[vertIndex].z);
         }
     }
 
-    m_VAO.CreateVAO(
-        vertData.data(),
-        vertData.size() * sizeof(float),
+    m_VAO->CreateVAO(
+        m_vertData.data(),
+        m_vertData.size() * sizeof(float),
         indices.data(),
         indices.size() * sizeof(GLuint), 
         GL_STATIC_DRAW
@@ -127,12 +132,14 @@ void Mesh::ConstructMesh()
         currentOffset += 3;
     }
     else { EnableVertexAttribNormals(false); }
+
+    m_modelMatrix = glm::mat4(1.0f);
 }
 
 void Mesh::EnableVertexAttribPosition(bool on) const
 {
     // Becareful of these binds
-    m_VAO.Bind();
+    m_VAO->Bind();
     if (on)
     {
         GLCall(glEnableVertexAttribArray(0));
@@ -145,7 +152,7 @@ void Mesh::EnableVertexAttribPosition(bool on) const
 
 void Mesh::EnableVertexAttribColor(bool on) const
 {
-    m_VAO.Bind();
+    m_VAO->Bind();
     if (on)
     {
         GLCall(glEnableVertexAttribArray(1));
@@ -158,7 +165,7 @@ void Mesh::EnableVertexAttribColor(bool on) const
 
 void Mesh::EnableVertexAttribUV(bool on) const
 {
-    m_VAO.Bind();
+    m_VAO->Bind();
     if (on)
     {
         GLCall(glEnableVertexAttribArray(2));
@@ -171,7 +178,7 @@ void Mesh::EnableVertexAttribUV(bool on) const
 
 void Mesh::EnableVertexAttribNormals(bool on) const
 {
-    m_VAO.Bind();
+    m_VAO->Bind();
     if (on)
     {
         GLCall(glEnableVertexAttribArray(3));
@@ -180,6 +187,12 @@ void Mesh::EnableVertexAttribNormals(bool on) const
     {
         GLCall(glDisableVertexAttribArray(3));
     }
+}
+
+Mesh::Mesh(const Mesh& other)
+{
+    m_VAO = other.m_VAO;
+    // m_vertData = other.m_vertData;  // will see if this line is needed
 }
 
 Mesh::Mesh(Mesh&& other) noexcept
@@ -192,9 +205,8 @@ Mesh::Mesh(Mesh&& other) noexcept
     uvs = std::move(other.uvs);
     indices = std::move(other.indices);
 
-    vertData = std::move(other.vertData);
+    m_vertData = std::move(other.m_vertData);
     m_VAO = std::move(other.m_VAO);
-
 }
 
 Mesh& Mesh::operator=(Mesh&& other) noexcept
@@ -207,7 +219,7 @@ Mesh& Mesh::operator=(Mesh&& other) noexcept
     uvs = std::move(other.uvs);
     indices = std::move(other.indices);
 
-    vertData = std::move(other.vertData);
+    m_vertData = std::move(other.m_vertData);
     m_VAO = std::move(other.m_VAO);
 
     return *this;
@@ -215,12 +227,12 @@ Mesh& Mesh::operator=(Mesh&& other) noexcept
 
 void Mesh::Bind() const
 {
-    m_VAO.Bind();
+    m_VAO->Bind();
 }
 
 void Mesh::Draw(const Shader& shader)
 {
-    m_VAO.Bind();
+    m_VAO->Bind();
     shader.Use();
 
     for (const glm::vec3& i_position : positions)
@@ -246,7 +258,12 @@ void Mesh::AddPosition(const glm::vec3& position)  // add batching
     positions.push_back(position);
 }
 
-VertexArray& Mesh::GetVAO()
+std::weak_ptr<VertexArray> Mesh::GetVAO()
 {
-    return m_VAO;
+    return std::weak_ptr<VertexArray>(m_VAO);
+}
+
+void Mesh::Rotate(const float& rX, const float& rY, const float& rZ)
+{
+    // m_rotation = 
 }

@@ -4,6 +4,13 @@
 
 std::string Shader::parseShader(const std::string& path)
 {
+    struct stat buffer;
+    if (stat(path.c_str(), &buffer))
+    {
+        Debug::Error("Shader file not found: ", path);
+        assert(false);
+    }
+
     std::ifstream file(path);
     std::string line;
     std::stringstream ss;
@@ -99,6 +106,16 @@ Shader& Shader::operator=(Shader&& other) noexcept
     return *this;
 }
 
+Shader::Shader(const Shader& other)
+{
+
+}
+
+Shader& Shader::operator=(const Shader& other)
+{
+    return *this;
+}
+
 Shader::~Shader()
 {
     if (m_shaderID)
@@ -106,6 +123,19 @@ Shader::~Shader()
         GLCall(glDeleteProgram(m_shaderID));
     }
 }
+
+// template <>
+// struct std::hash<Shader>
+// {
+//     size_t operator()(std::weak_ptr<Shader> shader) const
+//     {
+//         if (auto sp = shader.lock())
+//         {
+//             return sp->getID();
+//         }
+//         assert(false);
+//     }
+// };
 
 void Shader::Use() const
 {
@@ -131,17 +161,18 @@ GLint Shader::getUniformLocation(const std::string& name) const
 
 void Shader::setIntUniform(const std::string& name, int value) const
 {
-    GLCall(glUniform1i(getUniformLocation(name), value));
+    GLCall(glProgramUniform1i(m_shaderID, getUniformLocation(name), value));
 }
 
 void Shader::setFloatUniform(const std::string& name, float value) const
 {
-    GLCall(glUniform1f(getUniformLocation(name), value));
+    GLCall(glProgramUniform1f(m_shaderID, getUniformLocation(name), value));
 }
 
 void Shader::setMatrix4Uniform(const std::string& name, const glm::mat4& matrix) const
 {
-    GLCall(glUniformMatrix4fv(
+    GLCall(glProgramUniformMatrix4fv(
+        m_shaderID,
         getUniformLocation(name),
         1,
         GL_FALSE,
@@ -151,7 +182,8 @@ void Shader::setMatrix4Uniform(const std::string& name, const glm::mat4& matrix)
 
 void Shader::setMatrix3Uniform(const std::string& name, const glm::mat3& matrix) const
 {
-    GLCall(glUniformMatrix3fv(
+    GLCall(glProgramUniformMatrix3fv(
+        m_shaderID,
         getUniformLocation(name),
         1,
         GL_FALSE,
@@ -161,7 +193,8 @@ void Shader::setMatrix3Uniform(const std::string& name, const glm::mat3& matrix)
 
 void Shader::setVector3Uniform(const std::string& name, const glm::vec3& vector) const
 {
-    GLCall(glUniform3fv(
+    GLCall(glProgramUniform3fv(
+        m_shaderID,
         getUniformLocation(name),
         1,
         glm::value_ptr(vector)

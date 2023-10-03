@@ -20,7 +20,7 @@ void Model::processNode(aiNode* node, const aiScene* scene)
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        meshes.push_back(processMesh(mesh, scene));
+        meshes.push_back(std::move(processMesh(mesh, scene)));
     }
 
     for (unsigned int i = 0; i < node->mNumChildren; i++)

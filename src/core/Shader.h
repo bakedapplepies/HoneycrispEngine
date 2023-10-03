@@ -9,13 +9,11 @@ private:
     GLuint m_shaderID;
     mutable std::unordered_map<std::string, GLint> m_uniformLocationCache;
 
-private:
-    Shader(const Shader&) = delete;
-    Shader& operator=(const Shader&) = delete;
-
 public:
     Shader() = default;
     Shader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
+    Shader(const Shader& other);
+    Shader& operator=(const Shader& other);
     Shader(Shader&& other) noexcept;
     Shader& operator=(Shader&& other) noexcept;
     ~Shader();

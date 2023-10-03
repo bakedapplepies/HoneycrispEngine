@@ -32,3 +32,13 @@ void SceneManager::SetActiveScene(size_t index)
     }
     _activeSceneIndex = index;
 }
+
+void SceneManager::SetSceneBgColor(const glm::vec3& bgColor)
+{
+    _scenesMap[_activeSceneIndex]->bgColor = bgColor;
+}
+
+glm::vec3 SceneManager::GetSceneBgColor()
+{
+    return _scenesMap[_activeSceneIndex]->bgColor;
+}

@@ -12,6 +12,7 @@ Cube::Cube()
 Cube::Cube(Cube&& other) noexcept
     : Mesh(std::move(other))
 {
+    
 }
 
 Cube& Cube::operator=(Cube&& other) noexcept

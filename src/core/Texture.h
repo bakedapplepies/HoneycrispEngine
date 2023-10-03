@@ -10,6 +10,8 @@ struct TextureCoords
     glm::vec2 br;  // bottom right
 };
 
+// static std::vector<Texture> a[32];
+
 class Texture
 {
 private:
@@ -17,8 +19,10 @@ private:
     int m_textureResolutionWidth;
     int m_textureResolutionHeight;
     
+    
     GLuint m_textureID;
     std::vector<std::vector<TextureCoords>> m_textureCoords;
+    static GLint m_maxTextureUnits;
     static GLuint sm_textureUnitCounter;
     static std::unordered_map<GLuint, GLint> sm_textureUnits;
     static std::vector<Texture*> s_textureRefs;

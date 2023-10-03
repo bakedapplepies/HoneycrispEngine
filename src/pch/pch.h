@@ -20,6 +20,8 @@
 #include <random>
 #include <thread>
 #include <windows.h>
+#include <cassert>
+#include <sys/stat.h>
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>

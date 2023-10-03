@@ -7,7 +7,7 @@
 class SceneManager
 {
 private:
-    size_t _activeSceneIndex;
+    size_t _activeSceneIndex = 0;
     std::unordered_map< size_t, std::shared_ptr<Scene> > _scenesMap;
     static SceneManager* _instance;
 
@@ -20,6 +20,8 @@ private:
 
 public:
     ~SceneManager() = default;
+    void SetSceneBgColor(const glm::vec3& bgColor);
+    glm::vec3 GetSceneBgColor();
 
 public:
     template <typename T>

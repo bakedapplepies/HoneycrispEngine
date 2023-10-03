@@ -1,7 +1,9 @@
 #include "../Debug.h"
 #include "Texture.h"
+#include <sys/stat.h>
 
 
+GLint Texture::m_maxTextureUnits;
 GLuint Texture::sm_textureUnitCounter = 0;
 std::unordered_map<GLuint, GLint> Texture::sm_textureUnits;  // key: ID -> texture unit
 std::vector<Texture*> Texture::s_textureRefs;
@@ -17,7 +19,7 @@ Texture::Texture(const char* texturePath, uint32_t textureResolutionWidth, uint3
     GLCall(glGenTextures(1, &m_textureID));
 
     sm_textureUnits[m_textureID] = sm_textureUnitCounter;
-    sm_textureUnitCounter++;
+    sm_textureUnitCounter = (sm_textureUnitCounter + 1) % 32;
 
     int nrChannels;
     unsigned char* data = stbi_load(

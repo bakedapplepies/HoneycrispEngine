@@ -3,7 +3,12 @@
 
 DefaultSceneTwo::DefaultSceneTwo()
 {
-    cube = CreateObject(Cube(), EObjectRenderType::STATIC);
+    shader = std::make_shared<Shader>(
+        "../resources/shaders/vertex.glsl",
+        "../resources/shaders/fragment.glsl"
+    );
+
+    cube = CreateObject(Cube(), EObjectRenderType::STATIC, shader);
     cube->AddPosition(glm::vec3(1.0f, 3.0f ,5.0f));
     cube->AddPosition(glm::vec3(3.0f, 2.0f ,1.0f));
     cube->AddPosition(glm::vec3(-5.0f, -2.0f ,3.0f));
@@ -67,7 +72,7 @@ DefaultSceneTwo::DefaultSceneTwo()
         }
     }
 
-    mesh = CreateObject(Mesh(), EObjectRenderType::STATIC);
+    mesh = CreateObject(Mesh(), EObjectRenderType::STATIC, shader);
     mesh->vertices = vertices;
     mesh->colors = colors;
     mesh->normals = normals;
@@ -76,10 +81,15 @@ DefaultSceneTwo::DefaultSceneTwo()
 
     mesh->ConstructMesh();
     mesh->AddPosition(glm::vec3(0.0f, -6.0f, 0.0f));
+
+    // model = CreateObject(Model("../../resources/models/packbck"), EObjectRenderType::STATIC);
 }
 
 void DefaultSceneTwo::OnUpdate(Shader& shader)
 {
-    cube->Draw(shader);
-    mesh->Draw(shader);
+    // cube->Draw(shader);
+    // // cube->Rotate();
+    // mesh->Draw(shader);
+    Draw();
+    bgColor = glm::sin(glm::vec3(glfwGetTime()) * glm::vec3(0.2f, 0.4f, 0.1f));
 }

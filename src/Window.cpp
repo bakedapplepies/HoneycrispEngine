@@ -73,8 +73,8 @@ Window::Window()
 
     /* Shaders */
     mainShader = Shader(
-        "../resources/shaders/vertex.vert",
-        "../resources/shaders/fragment.frag"
+        "../resources/shaders/vertex.glsl",
+        "../resources/shaders/fragment.glsl"
     );
 
     viewMatrix = camera.GetViewMatrix();
@@ -161,7 +161,8 @@ void Window::Loop()
         processInput();
 
         // Set background
-        GLCall(glClearColor(0.09f, 0.09f, 0.09f, 1.0f));
+        glm::vec3 bgColor = SceneManager::Get().GetSceneBgColor();
+        GLCall(glClearColor(bgColor.r, bgColor.g, bgColor.b, 1.0f));
         GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
         // ImGui
@@ -197,8 +198,6 @@ void Window::Loop()
             0.1f,
             100.0f
         );
-    
-        // glm::vec3& lightColor = light->GetColor();
 
         mainShader.Use();
         
