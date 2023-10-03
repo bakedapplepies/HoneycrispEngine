@@ -10,3 +10,4 @@
 - move all enums to a separate file
 - cache texture (ktx) & store model in reuseable binary format
 - check if shared_ptr in SceneManager is necessary
+- GL_STATIC_DRAW OR GL_DYNAMIC_DRAW

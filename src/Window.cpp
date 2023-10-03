@@ -119,37 +119,16 @@ void Window::Loop()
     Textures::mainTextureSpecularMap.Bind();
     camera.SetPos(camera.cameraPos + glm::vec3(0, 10, 0));
 
-    mainShader.Use();
+    GLuint ubo[2];
+    GLCall(glGenBuffers(2, ubo));
 
-    // lighting
-    mainShader.setIntUniform("u_material.albedo", Textures::mainTextureMap.getTextureUnit());
-    mainShader.setIntUniform("u_material.specular", Textures::mainTextureSpecularMap.getTextureUnit());
-    mainShader.setFloatUniform("u_material.shininess", 32.0f);
+    GLCall(glBindBuffer(GL_UNIFORM_BUFFER, ubo[0]));
+    GLCall(glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4) + sizeof(GLfloat), nullptr, GL_STATIC_DRAW));
+    GLCall(glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo[0], 0, 2 * sizeof(glm::mat4) + sizeof(float)));
 
-    // dir light
-    mainShader.setVector3Uniform("u_dirLight.direction", glm::normalize(glm::vec3(0, -1, 0)));
-    mainShader.setVector3Uniform("u_dirLight.ambient", glm::vec3(1, 1, 1) * 0.1f);
-    mainShader.setVector3Uniform("u_dirLight.diffuse", glm::vec3(1, 1, 1) * 0.7f);
-    mainShader.setVector3Uniform("u_dirLight.specular", glm::vec3(1, 1, 1));
-
-    // point light
-    mainShader.setVector3Uniform("u_pointLight.position", glm::vec3(10, 2, 10));
-    mainShader.setVector3Uniform("u_pointLight.ambient", 0.1f * glm::vec3(1.0));
-    mainShader.setVector3Uniform("u_pointLight.diffuse", 0.5f * glm::vec3(1.0));
-    mainShader.setVector3Uniform("u_pointLight.specular", 1.0f * glm::vec3(1.0));
-    mainShader.setFloatUniform("u_pointLight.constant", 1.0f);
-    mainShader.setFloatUniform("u_pointLight.linear", 0.001f);
-    mainShader.setFloatUniform("u_pointLight.quadratic", 0.0002f);
-
-    // spot light
-    mainShader.setFloatUniform("u_spotLight.cutOff", glm::cos(glm::radians(15.0f)));
-    mainShader.setFloatUniform("u_spotLight.outerCutOff", glm::cos(glm::radians(25.0f)));
-    mainShader.setVector3Uniform("u_spotLight.ambient", 0.1f * glm::vec3(1.0));
-    mainShader.setVector3Uniform("u_spotLight.diffuse", 0.5f * glm::vec3(1.0));
-    mainShader.setVector3Uniform("u_spotLight.specular", 1.0f * glm::vec3(1.0));
-    mainShader.setFloatUniform("u_spotLight.constant", 1.0f);
-    mainShader.setFloatUniform("u_spotLight.linear", 0.07f);
-    mainShader.setFloatUniform("u_spotLight.quadratic", 0.0045f);
+    GLCall(glBindBuffer(GL_UNIFORM_BUFFER, ubo[1]));
+    GLCall(glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::vec3), nullptr, GL_STATIC_DRAW));
+    GLCall(glBindBufferRange(GL_UNIFORM_BUFFER, 1, ubo[1], 0, 2 * sizeof(glm::vec3)));
 
     while(!glfwWindowShouldClose(glfwWindow))
     {
@@ -199,16 +178,17 @@ void Window::Loop()
             100.0f
         );
 
-        mainShader.Use();
-        
-        mainShader.setMatrix4Uniform("u_view", viewMatrix);
-        mainShader.setMatrix4Uniform("u_projection", projectionMatrix);
+        // Global uniforms
+        GLCall(glBindBuffer(GL_UNIFORM_BUFFER, ubo[0]));
+        GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(viewMatrix)));
+        GLCall(glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(projectionMatrix)));
+        float u_time = begin*waveSpeed;
+        GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), sizeof(GLfloat), &u_time));
+        GLCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
 
-        mainShader.setVector3Uniform("u_viewPos", camera.cameraPos);
-        mainShader.setFloatUniform("u_time", begin*waveSpeed);
-
-        mainShader.setVector3Uniform("u_spotLight.position", camera.cameraPos);
-        mainShader.setVector3Uniform("u_spotLight.direction", camera.direction);
+        GLCall(glBindBuffer(GL_UNIFORM_BUFFER, ubo[1]));
+        GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::vec3), glm::value_ptr(camera.cameraPos)));
+        GLCall(glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::vec3), sizeof(glm::vec3), glm::value_ptr(camera.direction)));
 
         renderingTime = glfwGetTime();
         SceneManager::Get().Update(mainShader);

@@ -9,7 +9,13 @@ in vec3 Normal;
 in vec3 FragPos;
 
 uniform sampler2D u_Texture;
-uniform vec3 u_viewPos;
+
+layout(std140, binding = 1) uniform GlobUniforms
+{
+    vec3 u_viewPos;
+    vec3 spotLightPos;
+    vec3 spotLightDir;
+};
 
 struct Material
 {
@@ -43,8 +49,6 @@ struct PointLight
 
 struct SpotLight
 {
-    vec3 position;
-    vec3 direction;
     float cutOff;
     float outerCutOff;
     
@@ -98,10 +102,10 @@ vec3 CalcPointLight(PointLight pointLight, vec3 normal, vec3 dirToView, vec3 tex
 
 vec3 CalcSpotLight(SpotLight spotLight, vec3 normal, vec3 dirToView, vec3 textureFrag, vec3 specularFrag)
 {
-    vec3 fragToLight = spotLight.position - FragPos;
+    vec3 fragToLight = u_viewPos - FragPos;
     vec3 dirToLight = normalize(fragToLight);
 
-    float theta = dot(dirToLight, normalize(-spotLight.direction));
+    float theta = dot(dirToLight, normalize(-spotLightDir));
     float epsilon = spotLight.cutOff - spotLight.outerCutOff;
     float intensity = clamp((theta - spotLight.outerCutOff) / epsilon, 0.0, 1.0);
 

@@ -9,11 +9,15 @@ out vec2 TexCoord;
 out vec3 Normal;
 out vec3 FragPos;
 
+layout (std140, binding = 0) uniform Matrices
+{ 
+    mat4 u_view;
+    mat4 u_projection;
+    float u_time;
+};
+
 uniform mat4 u_model;
-uniform mat4 u_view;
-uniform mat4 u_projection;
 uniform mat3 u_normalMatrix;
-uniform float u_time;
 
 void main() {
     vec4 localPos = u_model * vec4(aPos, 1.0);

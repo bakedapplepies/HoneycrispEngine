@@ -55,7 +55,7 @@ public: // protected
     {
         for (auto iter = m_renderObjectPtrs.begin(); iter != m_renderObjectPtrs.end(); iter++)
         {
-            GLCall(iter->first->Use());
+            iter->first->Use();
             for (SceneObject<Mesh> obj : iter->second)
             {
                 obj->Draw(*(iter->first));
