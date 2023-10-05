@@ -13,8 +13,12 @@ enum EObjectRenderType
     DYNAMIC
 };
 
+
 class Scene
 {
+private:
+    static std::shared_ptr<Shader> basicShader;
+
 protected:
     std::unordered_map< std::shared_ptr<Shader>, std::vector< std::shared_ptr<Mesh> > > m_renderObjectPtrs;
     std::vector< std::shared_ptr<Object> > m_nonRenderObjectPtrs;
@@ -26,7 +30,15 @@ public: // protected
     template <typename T>
     SceneObject<T> CreateObject(T&& obj, EObjectRenderType render_type, std::shared_ptr<Shader> shader = nullptr)
     {
-        Object test_obj = static_cast<Object>(obj);
+        Object* test_obj = static_cast<Object*>(&obj);
+        assert(test_obj != nullptr);
+        if (!basicShader)
+        {
+            basicShader = std::make_shared<Shader>(
+                std::ifstream("../resources/shaders/defaultvertex.glsl"),
+                std::ifstream("../resources/shaders/defaultfragment.glsl")
+            );
+        }
         
         SceneObject<T> temp_ptr = std::make_shared<T>(std::move(obj));
         switch (render_type)
@@ -36,11 +48,17 @@ public: // protected
                 break;
             case EObjectRenderType::STATIC:
                 // TODO: batching
-                m_renderObjectPtrs[shader].push_back(temp_ptr);
+                if (shader)
+                    m_renderObjectPtrs[shader].push_back(temp_ptr);
+                else
+                    m_renderObjectPtrs[basicShader].push_back(temp_ptr);
                 break;
             case EObjectRenderType::DYNAMIC:
                 // TODO: instancing
-                m_renderObjectPtrs[shader].push_back(temp_ptr);
+                if (shader)
+                    m_renderObjectPtrs[shader].push_back(temp_ptr);
+                else
+                    m_renderObjectPtrs[basicShader].push_back(temp_ptr);
                 break;
             default:
                 Debug::Error("Check object type (EObjectRenderType enum not valid.)");
@@ -63,7 +81,7 @@ public: // protected
         }
     }
 
-    virtual void OnUpdate(Shader& shader) = 0;
+    virtual void OnUpdate() = 0;
 };
 
 /*  Binary search-insert

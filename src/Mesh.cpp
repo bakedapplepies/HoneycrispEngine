@@ -17,7 +17,13 @@ void Mesh::ConstructMesh()
     else if (vertices.empty())
     {
         Debug::Error("No data to construct mesh.");
-        return;
+        assert(false);
+    }
+
+    if (indices.empty())
+    {
+        Debug::Error("No indices to draw mesh.");
+        assert(false);
     }
     
     size_t vertArrayDataSize = vertices.size()*3 + colors.size()*3 + normals.size()*3 + uvs.size()*2;
@@ -238,7 +244,7 @@ void Mesh::Draw(const Shader& shader)
     for (const glm::vec3& i_position : positions)
     {
         glm::mat4 modelMatrix = GetModelMatrix(i_position);
-        shader.setMatrix3Uniform("u_normalMatrix", glm::mat4(glm::transpose(glm::inverse(modelMatrix))));
+        shader.setMatrix3Uniform("u_normalMatrix", glm::mat3(glm::transpose(glm::inverse(modelMatrix))));
         shader.setMatrix4Uniform("u_model", modelMatrix);
         GLCall( glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (GLvoid*)0) );
     }

@@ -2,30 +2,23 @@
 #include "Shader.h"
 
 
-std::string Shader::parseShader(const std::string& path)
+std::string Shader::parseShader(std::ifstream& infile)
 {
-    struct stat buffer;
-    if (stat(path.c_str(), &buffer))
-    {
-        Debug::Error("Shader file not found: ", path);
-        assert(false);
-    }
-
-    std::ifstream file(path);
     std::string line;
     std::stringstream ss;
-    while (getline(file, line)) {
+    while (std::getline(infile, line))
+    {
         ss << line << '\n';
     }
 
     return ss.str();
 }
 
-Shader::Shader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
+Shader::Shader(std::ifstream&& vertexFile, std::ifstream&& fragmentFile)
 {
-    std::string vs = parseShader(vertexShaderPath);
+    std::string vs = parseShader(vertexFile);
     const char* vertexShaderSrc = vs.c_str();
-    std::string fs = parseShader(fragmentShaderPath);
+    std::string fs = parseShader(fragmentFile);
     const char* fragmentShaderSrc = fs.c_str();
 
     /* Vertex Shader */

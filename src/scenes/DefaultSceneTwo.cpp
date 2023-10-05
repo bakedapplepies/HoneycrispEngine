@@ -4,8 +4,8 @@
 DefaultSceneTwo::DefaultSceneTwo()
 {
     shader = std::make_shared<Shader>(
-        "../resources/shaders/vertex.glsl",
-        "../resources/shaders/fragment.glsl"
+        std::ifstream("../resources/shaders/vertex.glsl"),
+        std::ifstream("../resources/shaders/fragment.glsl")
     );
 
     cube = CreateObject(Cube(), EObjectRenderType::STATIC, shader);
@@ -87,7 +87,7 @@ DefaultSceneTwo::DefaultSceneTwo()
     SetInitialUniforms();
 }
 
-void DefaultSceneTwo::OnUpdate(Shader& shader)
+void DefaultSceneTwo::OnUpdate()
 {
     // cube->Draw(shader);
     // // cube->Rotate();

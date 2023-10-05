@@ -19,6 +19,6 @@ private:
 
 public:
     DefaultSceneTwo();
-    virtual void OnUpdate(Shader& shader);
+    virtual void OnUpdate();
     void SetInitialUniforms(void);  // TODO
 };

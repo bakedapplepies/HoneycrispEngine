@@ -2,11 +2,13 @@
 #include "../Debug.h"
 
 
+#define RAND rand()/double(RAND_MAX)
+
 DefaultScene::DefaultScene()
 {
     shader = std::make_shared<Shader>(
-        "../resources/shaders/vertex.glsl",
-        "../resources/shaders/fragment.glsl"
+        std::ifstream("../resources/shaders/vertex.glsl"),
+        std::ifstream("../resources/shaders/fragment.glsl")
     );
 
     cube = CreateObject(Cube(), EObjectRenderType::STATIC, shader);
@@ -14,10 +16,149 @@ DefaultScene::DefaultScene()
     cube->AddPosition(glm::vec3(2.0f, 0.0f, 2.0f));
     cube->AddPosition(glm::vec3(-3.0f, 3.0f, 4.0f));
 
+    customMesh = CreateObject(Mesh(), EObjectRenderType::STATIC);
+
+    customMesh->vertices = std::vector<glm::vec3> {
+        // front
+        glm::vec3(-0.5f,  0.5f,  0.5f),
+        glm::vec3( 0.5f,  0.5f,  0.5f),
+        glm::vec3( 0.5f, -0.5f,  0.5f),
+        glm::vec3(-0.5f, -0.5f,  0.5f),
+
+        // right
+        glm::vec3(0.5f,  0.5f,  0.5f),
+        glm::vec3(0.5f,  0.5f, -0.5f),
+        glm::vec3(0.5f, -0.5f, -0.5f),
+        glm::vec3(0.5f, -0.5f,  0.5f),
+
+        // back
+        glm::vec3( 0.5f,  0.5f, -0.5f),
+        glm::vec3(-0.5f,  0.5f, -0.5f),
+        glm::vec3(-0.5f, -0.5f, -0.5f),
+        glm::vec3( 0.5f, -0.5f, -0.5f),
+
+        // left
+        glm::vec3(-0.5f,  0.5f, -0.5f),
+        glm::vec3(-0.5f,  0.5f,  0.5f),
+        glm::vec3(-0.5f, -0.5f,  0.5f),
+        glm::vec3(-0.5f, -0.5f, -0.5f),
+
+        // top
+        glm::vec3(-0.5f,  0.5f, -0.5f),
+        glm::vec3( 0.5f,  0.5f, -0.5f),
+        glm::vec3( 0.5f,  0.5f,  0.5f),
+        glm::vec3(-0.5f,  0.5f,  0.5f),
+
+        // bottom
+        glm::vec3(-0.5f, -0.5f,  0.5f),
+        glm::vec3( 0.5f, -0.5f,  0.5f),
+        glm::vec3( 0.5f, -0.5f, -0.5f),
+        glm::vec3(-0.5f, -0.5f, -0.5f),
+    };
+
+    customMesh->colors = std::vector<glm::vec3> {
+        glm::vec3(RAND, RAND, RAND),
+        glm::vec3(RAND, RAND, RAND),
+        glm::vec3(RAND, RAND, RAND),
+        glm::vec3(RAND, RAND, RAND),
+
+        glm::vec3(RAND, RAND, RAND),
+        glm::vec3(RAND, RAND, RAND),
+        glm::vec3(RAND, RAND, RAND),
+        glm::vec3(RAND, RAND, RAND),
+
+        glm::vec3(RAND, RAND, RAND),
+        glm::vec3(RAND, RAND, RAND),
+        glm::vec3(RAND, RAND, RAND),
+        glm::vec3(RAND, RAND, RAND),
+
+        glm::vec3(RAND, RAND, RAND),
+        glm::vec3(RAND, RAND, RAND),
+        glm::vec3(RAND, RAND, RAND),
+        glm::vec3(RAND, RAND, RAND),
+
+        glm::vec3(RAND, RAND, RAND),
+        glm::vec3(RAND, RAND, RAND),
+        glm::vec3(RAND, RAND, RAND),
+        glm::vec3(RAND, RAND, RAND),
+
+        glm::vec3(RAND, RAND, RAND),
+        glm::vec3(RAND, RAND, RAND),
+        glm::vec3(RAND, RAND, RAND),
+        glm::vec3(RAND, RAND, RAND),
+    };
+
+    customMesh->normals = std::vector<glm::vec3> {
+        // front
+        glm::vec3(0.0f,  0.0f,  1.0f), 
+        glm::vec3(0.0f,  0.0f,  1.0f), 
+        glm::vec3(0.0f,  0.0f,  1.0f), 
+        glm::vec3(0.0f,  0.0f,  1.0f), 
+        
+        // right
+        glm::vec3(1.0f,  0.0f,  0.0f), 
+        glm::vec3(1.0f,  0.0f,  0.0f), 
+        glm::vec3(1.0f,  0.0f,  0.0f), 
+        glm::vec3(1.0f,  0.0f,  0.0f), 
+
+        // back
+        glm::vec3(0.0f,  0.0f, -1.0f), 
+        glm::vec3(0.0f,  0.0f, -1.0f), 
+        glm::vec3(0.0f,  0.0f, -1.0f), 
+        glm::vec3(0.0f,  0.0f, -1.0f), 
+
+        // right
+        glm::vec3(-1.0f,  0.0f,  0.0f), 
+        glm::vec3(-1.0f,  0.0f,  0.0f), 
+        glm::vec3(-1.0f,  0.0f,  0.0f), 
+        glm::vec3(-1.0f,  0.0f,  0.0f), 
+
+        // top
+        glm::vec3(0.0f,  1.0f,  0.0f), 
+        glm::vec3(0.0f,  1.0f,  0.0f), 
+        glm::vec3(0.0f,  1.0f,  0.0f), 
+        glm::vec3(0.0f,  1.0f,  0.0f), 
+
+        // bottom
+        glm::vec3(0.0f, -1.0f,  0.0f), 
+        glm::vec3(0.0f, -1.0f,  0.0f), 
+        glm::vec3(0.0f, -1.0f,  0.0f), 
+        glm::vec3(0.0f, -1.0f,  0.0f), 
+    };
+
+    customMesh->indices = std::vector<GLuint> {
+        // front
+        0, 1, 2,
+        0, 2, 3,
+
+        // right
+        4, 5, 6,
+        4, 6, 7,
+
+        // back
+        8, 9, 10,
+        8, 10, 11,
+
+        // left
+        12, 13, 14,
+        12, 14, 15,
+
+        // top
+        16, 17, 18,
+        16, 18, 19,
+
+        // back
+        20, 21, 22,
+        20, 22, 23
+    };
+
+    customMesh->ConstructMesh();
+    customMesh->AddPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+
     SetInitialUniforms();
 }
 
-void DefaultScene::OnUpdate(Shader& shader)
+void DefaultScene::OnUpdate()
 {
     Draw();
 }
@@ -53,4 +194,5 @@ void DefaultScene::SetInitialUniforms(void)
     shader->setFloatUniform("u_spotLight.constant", 1.0f);
     shader->setFloatUniform("u_spotLight.linear", 0.07f);
     shader->setFloatUniform("u_spotLight.quadratic", 0.0045f);
+    
 }

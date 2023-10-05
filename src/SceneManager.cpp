@@ -13,9 +13,9 @@ SceneManager& SceneManager::Get()
     return *_instance;
 }
 
-void SceneManager::Update(Shader& shader)
+void SceneManager::Update()
 {
-    _scenesMap[_activeSceneIndex]->OnUpdate(shader);
+    _scenesMap[_activeSceneIndex]->OnUpdate();
 }
 
 void SceneManager::ClearAllScenes()

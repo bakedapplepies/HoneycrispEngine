@@ -71,12 +71,6 @@ Window::Window()
     stbi_set_flip_vertically_on_load(true);
     Texture::LoadTextures();
 
-    /* Shaders */
-    mainShader = Shader(
-        "../resources/shaders/vertex.glsl",
-        "../resources/shaders/fragment.glsl"
-    );
-
     viewMatrix = camera.GetViewMatrix();
     projectionMatrix = glm::perspective(
         glm::radians(45.0f),
@@ -184,14 +178,13 @@ void Window::Loop()
         GLCall(glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(projectionMatrix)));
         float u_time = begin*waveSpeed;
         GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), sizeof(GLfloat), &u_time));
-        GLCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
 
         GLCall(glBindBuffer(GL_UNIFORM_BUFFER, ubo[1]));
         GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::vec3), glm::value_ptr(camera.cameraPos)));
         GLCall(glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::vec3), sizeof(glm::vec3), glm::value_ptr(camera.direction)));
 
         renderingTime = glfwGetTime();
-        SceneManager::Get().Update(mainShader);
+        SceneManager::Get().Update();
         renderingTime = glfwGetTime() - renderingTime;
 
         ImGui::Render();

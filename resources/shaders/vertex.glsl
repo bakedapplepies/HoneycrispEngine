@@ -20,10 +20,10 @@ uniform mat4 u_model;
 uniform mat3 u_normalMatrix;
 
 void main() {
-    vec4 localPos = u_model * vec4(aPos, 1.0);
-    localPos += vec4(0, sin(dot(normalize(vec3(1, 0, 1)), vec3(localPos.x, 0, localPos.z))/5 + u_time*2), 0, 0);
-    gl_Position = u_projection * u_view * localPos;
-    FragPos = vec3(localPos);
+    vec4 worldPos = u_model * vec4(aPos, 1.0);
+    worldPos += vec4(0, sin(dot(normalize(vec3(1, 0, 1)), vec3(worldPos.x, 0, worldPos.z))/5 + u_time*2), 0, 0);
+    gl_Position = u_projection * u_view * worldPos;
+    FragPos = vec3(worldPos);
     Normal = u_normalMatrix * aNormal;
     // Normal = normalize(Normal);
     VertColor = aColor;

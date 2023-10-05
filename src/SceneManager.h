@@ -37,7 +37,7 @@ public:
     }
 
     static SceneManager& Get();
-    void Update(Shader& shader);
+    void Update();
     void ClearAllScenes();
     void SetActiveScene(size_t index);
 };

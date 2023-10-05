@@ -11,14 +11,14 @@ private:
 
 public:
     Shader() = default;
-    Shader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
+    Shader(std::ifstream&& vertexShaderPath, std::ifstream&& fragmentShaderPath);
     Shader(const Shader& other);
     Shader& operator=(const Shader& other);
     Shader(Shader&& other) noexcept;
     Shader& operator=(Shader&& other) noexcept;
     ~Shader();
 
-    std::string parseShader(const std::string& path);
+    std::string parseShader(std::ifstream& infile);
     
     GLuint getID() const;
     void Use() const;

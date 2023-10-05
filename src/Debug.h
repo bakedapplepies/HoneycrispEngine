@@ -3,10 +3,17 @@
 #include "pch/pch.h"
 
 
+// #define DEBUG
 #define ASSERT(x) if (!(x)) createBreak();
+#ifdef DEBUG
 #define GLCall(x) GLClearError();\
     x;\
     ASSERT(GLLogCall(#x, __BASE_FILE__, __LINE__))
+#endif
+#ifndef DEBUG
+#define GLCall(x) x;
+#endif
+
 #define GRAY(x) system("Color 08");\
     x;\
     system("Color 07");\

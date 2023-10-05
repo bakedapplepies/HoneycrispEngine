@@ -12,9 +12,10 @@ class DefaultScene : public Scene
 private:
     std::shared_ptr<Shader> shader;
     SceneObject<Cube> cube;
+    SceneObject<Mesh> customMesh;
 
 public:
     DefaultScene();
-    virtual void OnUpdate(Shader& shader);
+    virtual void OnUpdate();
     void SetInitialUniforms(void);
 };

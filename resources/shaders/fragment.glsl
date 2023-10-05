@@ -8,8 +8,6 @@ in vec2 TexCoord;
 in vec3 Normal;
 in vec3 FragPos;
 
-uniform sampler2D u_Texture;
-
 layout(std140, binding = 1) uniform GlobUniforms
 {
     vec3 u_viewPos;
