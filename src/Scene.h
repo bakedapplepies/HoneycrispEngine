@@ -31,7 +31,7 @@ public: // protected
     SceneObject<T> CreateObject(T&& obj, EObjectRenderType render_type, std::shared_ptr<Shader> shader = nullptr)
     {
         Object* test_obj = static_cast<Object*>(&obj);
-        assert(test_obj != nullptr);
+        assert(test_obj != nullptr);  // TODO: Actually test with an invalid call
         if (!basicShader)
         {
             basicShader = std::make_shared<Shader>(

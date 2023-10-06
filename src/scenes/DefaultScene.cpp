@@ -7,7 +7,7 @@
 DefaultScene::DefaultScene()
 {
     shader = std::make_shared<Shader>(
-        std::ifstream("../resources/shaders/vertex.glsl"),
+        std::ifstream("../resources/shaders/defaultvertex.glsl"),
         std::ifstream("../resources/shaders/fragment.glsl")
     );
 

@@ -22,6 +22,7 @@
 #include <windows.h>
 #include <cassert>
 #include <sys/stat.h>
+#include <source_location>
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>

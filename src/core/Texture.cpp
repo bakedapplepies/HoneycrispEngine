@@ -14,7 +14,7 @@ Texture::Texture()
 }
 
 Texture::Texture(const char* texturePath, uint32_t textureResolutionWidth, uint32_t textureResolutionHeight)
-    : m_textureResolutionWidth(textureResolutionWidth), m_textureResolutionHeight(textureResolutionHeight)
+    : m_textureWidth(textureResolutionWidth), m_textureHeight(textureResolutionHeight)
 {
     GLCall(glGenTextures(1, &m_textureID));
 
@@ -44,11 +44,14 @@ Texture::Texture(const char* texturePath, uint32_t textureResolutionWidth, uint3
         GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
         GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
         GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+        
+        path = texturePath;
     }
     else
     {
         Debug::Error("Texture failed to load.");
         Debug::Error(stbi_failure_reason());
+        assert(false);
     }
 
     stbi_image_free(data);
@@ -60,8 +63,8 @@ Texture::Texture(Texture&& other) noexcept
 {
     m_pixelWidth = other.m_pixelWidth;
     m_pixelHeight = other.m_pixelHeight;
-    m_textureResolutionWidth = other.m_textureResolutionWidth;
-    m_textureResolutionHeight = other.m_textureResolutionHeight;
+    m_textureWidth = other.m_textureWidth;
+    m_textureHeight = other.m_textureHeight;
 
     m_textureCoords = std::move(other.m_textureCoords);
 
@@ -73,8 +76,8 @@ Texture& Texture::operator=(Texture&& other) noexcept
 {
     m_pixelWidth = other.m_pixelWidth;
     m_pixelHeight = other.m_pixelHeight;
-    m_textureResolutionWidth = other.m_textureResolutionWidth;
-    m_textureResolutionHeight = other.m_textureResolutionHeight;
+    m_textureWidth = other.m_textureWidth;
+    m_textureHeight = other.m_textureHeight;
 
     m_textureCoords = std::move(other.m_textureCoords);
 
@@ -127,11 +130,11 @@ void Texture::LoadTextures()
 {
     Textures::mainTextureMap = Texture(
         "../resources/textures/grass_textures.png",
-        16, 16
+        3, 1
     );
     Textures::mainTextureSpecularMap = Texture(
         "../resources/textures/grass_textures_specular_map.png",
-        16, 16
+        3, 1
     );
 }
 
@@ -146,24 +149,22 @@ void Texture::DeleteAllTextures()
 
 void Texture::GenerateTextureCoords()
 {
-    int nRow_textures = m_pixelHeight / m_textureResolutionHeight;
-    int nCol_textures = m_pixelWidth / m_textureResolutionWidth;
-    m_textureCoords.reserve(nRow_textures);
+    m_textureCoords.reserve(m_textureHeight);
 
     // Reminder: OpenGL has (0, 0) at Bottom left
-    for (int row = 0; row < nRow_textures; row++)
+    for (int row = 0; row < m_textureHeight; row++)
     {
-        m_textureCoords.push_back(std::vector<TextureCoords>(nCol_textures));
-        for (int col = 0; col < nCol_textures; col++)
+        m_textureCoords.push_back(std::vector<TextureCoords>(m_textureWidth));
+        for (int col = 0; col < m_textureWidth; col++)
         {
-            float topRow = 1.0f - (float)(row)/(nRow_textures);         // flipping y-coords
-            float bottomRow = 1.0f - (float)(row + 1)/(nRow_textures);
+            float topRow = 1.0f - (float)(row)/(m_textureHeight);         // flipping y-coords
+            float bottomRow = 1.0f - (float)(row + 1)/(m_textureHeight);
             
             m_textureCoords[row][col] = {
-                glm::vec2((float)(col    )/(nCol_textures), topRow),     // tl
-                glm::vec2((float)(col + 1)/(nCol_textures), topRow),     // tr
-                glm::vec2((float)(col    )/(nCol_textures), bottomRow),  // bl
-                glm::vec2((float)(col + 1)/(nCol_textures), bottomRow)   // br
+                glm::vec2((float)(col    )/(m_textureWidth), topRow),     // tl
+                glm::vec2((float)(col + 1)/(m_textureWidth), topRow),     // tr
+                glm::vec2((float)(col    )/(m_textureWidth), bottomRow),  // bl
+                glm::vec2((float)(col + 1)/(m_textureWidth), bottomRow)   // br
             };
         }
     }

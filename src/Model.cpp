@@ -1,7 +1,7 @@
 #include "Model.h"
 
 
-Model::Model(const std::string& path) : modelDirectory(path)
+Model::Model(const std::string& path, const std::source_location& location) : modelDirectory(path)
 {
     float beginTime = glfwGetTime();
     Assimp::Importer import;
@@ -10,6 +10,7 @@ Model::Model(const std::string& path) : modelDirectory(path)
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
         Debug::Error("ASSIMP: ", import.GetErrorString());
+        assert(false);
     }   
     Debug::Log(fmt::format("Time took to load {}: {}s", path, glfwGetTime() - beginTime));
     processNode(scene->mRootNode, scene);
@@ -89,8 +90,8 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* material, aiTexture
     {
         aiString str;
         material->GetTexture(assimp_texture_type, i, &str);
-        Texture texture;
-        // Debug::Log(str.C_Str());
+        textures.push_back(Texture(str.C_Str(), 1, 1));
+        Debug::Log(str.C_Str());
     }
-    return {};
+    return textures;
 }

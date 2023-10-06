@@ -15,7 +15,7 @@ enum ETextureType
 class Model : public Mesh
 {
 public:
-    Model(const std::string& path);
+    Model(const std::string& path, const std::source_location& location = std::source_location::current());
     std::string modelDirectory;
 
 private:

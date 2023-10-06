@@ -16,25 +16,21 @@ class Texture
 {
 private:
     int m_pixelWidth, m_pixelHeight;
-    int m_textureResolutionWidth;
-    int m_textureResolutionHeight;
-    
+    int m_textureWidth;
+    int m_textureHeight;
     
     GLuint m_textureID;
     std::vector<std::vector<TextureCoords>> m_textureCoords;
+    std::string path;
     static GLint m_maxTextureUnits;
     static GLuint sm_textureUnitCounter;
-    static std::unordered_map<GLuint, GLint> sm_textureUnits;
+    static std::unordered_map<GLuint, GLint> sm_textureUnits;  // TODO: Convert GLint to vector to reuse texture units
     static std::vector<Texture*> s_textureRefs;
 
 public:
     Texture();
     ~Texture();
-
-private:
-    Texture(const char* texturePath, uint32_t textureResolutionWidth, uint32_t textureResolutionHeight);
-    
-    // Move constructor/assigntment are private so it's safe
+    Texture(const char* texturePath, uint32_t textureResolutionWidth, uint32_t textureResolutionHeight);    
     Texture(const Texture&) = delete;
     Texture(Texture&& other) noexcept;
     Texture& operator=(const Texture&) = delete;
