@@ -15,7 +15,7 @@ private:
     std::shared_ptr<Shader> shader;
     SceneObject<Cube> cube;
     SceneObject<Mesh> mesh;
-    // SceneObject<Model> model;
+    SceneObject<Model> model;
 
 public:
     DefaultSceneTwo();

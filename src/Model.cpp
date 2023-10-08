@@ -3,17 +3,47 @@
 
 Model::Model(const std::string& path, const std::source_location& location) : modelDirectory(path)
 {
-    float beginTime = glfwGetTime();
-    Assimp::Importer import;
-    const aiScene *scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+    // float beginTime = glfwGetTime();
+    // Assimp::Importer import;
+    // const aiScene *scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
 
-    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+    // if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+    // {
+    //     Debug::Error("ASSIMP: ", import.GetErrorString());
+    //     assert(false);
+    // }   
+    // Debug::Log(fmt::format("Time took to load {}: {}s", path, glfwGetTime() - beginTime));
+    // processNode(scene->mRootNode, scene);
+
+    Debug::Log(path);
+    Debug::Log(location.file_name());
+
+    std::string fileNameStr = std::string(location.file_name());
+
+    size_t lastSlash = fileNameStr.find_last_of("/\\");
+    fileNameStr.erase(lastSlash, fileNameStr.length() - lastSlash + 1);
+    Debug::Log(fileNameStr);
+
+    size_t pos = 0;
+    size_t next = 0;
+    while ((next = path.find_first_of("/\\", pos)) != std::string::npos)
     {
-        Debug::Error("ASSIMP: ", import.GetErrorString());
-        assert(false);
-    }   
-    Debug::Log(fmt::format("Time took to load {}: {}s", path, glfwGetTime() - beginTime));
-    processNode(scene->mRootNode, scene);
+        std::string_view sv(path.c_str() + pos, next - pos);
+        Debug::Log(sv);
+        if (sv == "..")
+        {
+            lastSlash = fileNameStr.find_last_of("/\\");
+            if (lastSlash == std::string::npos)
+            {
+
+            }
+            fileNameStr.erase(lastSlash + 1, fileNameStr.length() - lastSlash + 1);
+        }
+
+        pos = next + 1;
+    }
+
+    Debug::Log("Final: ", fileNameStr);
 }
 
 void Model::processNode(aiNode* node, const aiScene* scene)

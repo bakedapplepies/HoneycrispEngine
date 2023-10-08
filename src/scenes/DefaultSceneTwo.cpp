@@ -82,7 +82,7 @@ DefaultSceneTwo::DefaultSceneTwo()
     mesh->ConstructMesh();
     mesh->AddPosition(glm::vec3(0.0f, -6.0f, 0.0f));
 
-    // model = CreateObject(Model("../../resources/models/backpack.obj"), EObjectRenderType::STATIC);
+    model = CreateObject(Model("../../resources/models/backpack.obj"), EObjectRenderType::STATIC);
 
     SetInitialUniforms();
 }
