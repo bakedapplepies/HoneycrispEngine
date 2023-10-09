@@ -3,27 +3,50 @@
 #include <sys/stat.h>
 
 
-GLint Texture::m_maxTextureUnits;
 GLuint Texture::sm_textureUnitCounter = 0;
+std::unordered_map<std::string, Texture*> Texture::sm_initiatedTextures;
 std::unordered_map<GLuint, GLint> Texture::sm_textureUnits;  // key: ID -> texture unit
-std::vector<Texture*> Texture::s_textureRefs;
+std::unordered_map<GLuint, unsigned int> Texture::sm_textureIDCount;
+std::vector< std::shared_ptr<Texture> > Texture::sm_textureRefs;
 
-Texture::Texture()
+Texture::Texture(const std::string& texturePath, uint32_t textureResolutionWidth, uint32_t textureResolutionHeight,
+    const std::source_location& location
+) : m_textureWidth(textureResolutionWidth), m_textureHeight(textureResolutionHeight)
 {
-    s_textureRefs.push_back(this);
-}
+    sm_textureRefs.push_back(std::shared_ptr<Texture>(this));
 
-Texture::Texture(const char* texturePath, uint32_t textureResolutionWidth, uint32_t textureResolutionHeight)
-    : m_textureWidth(textureResolutionWidth), m_textureHeight(textureResolutionHeight)
-{
+    /* texture in absolute forms to ensure no paths are repeated */
+    std::filesystem::path textureRelativePath("../");  // project root
+    textureRelativePath /= std::filesystem::path(location.file_name()).remove_filename();  // where the file is
+    textureRelativePath /= texturePath;  // add relative path relative to the above path <---------
+                                         // in case this is absolute, it will replace everything  |
+    textureRelativePath = std::filesystem::absolute(textureRelativePath);  // make absolute ------
+    textureRelativePath.make_preferred();
+    
+    Debug::Log("hey there");
+    if (sm_initiatedTextures[textureRelativePath.string()])
+    {
+        Debug::Log("i shouldn't be logged");
+        GLuint id = sm_initiatedTextures[textureRelativePath.string()]->getID();
+        if (id)
+        {
+            m_textureID = id;
+            m_textureCoords = sm_initiatedTextures[textureRelativePath.string()]->m_textureCoords;
+
+            return;
+        }
+    }
+
     GLCall(glGenTextures(1, &m_textureID));
+    sm_initiatedTextures[textureRelativePath.string()] = this;  // there should only be one pointer
 
     sm_textureUnits[m_textureID] = sm_textureUnitCounter;
     sm_textureUnitCounter = (sm_textureUnitCounter + 1) % 32;
+    sm_textureIDCount[m_textureID]++;
 
     int nrChannels;
     unsigned char* data = stbi_load(
-        texturePath, &m_pixelWidth, &m_pixelHeight, &nrChannels, 4);
+        textureRelativePath.string().c_str(), &m_pixelWidth, &m_pixelHeight, &nrChannels, 4);
     
     if (data)
     {
@@ -49,8 +72,7 @@ Texture::Texture(const char* texturePath, uint32_t textureResolutionWidth, uint3
     }
     else
     {
-        Debug::Error("Texture failed to load.");
-        Debug::Error(stbi_failure_reason());
+        Debug::Error(fmt::format("Texture failed to load: {}", stbi_failure_reason()));
         assert(false);
     }
 
@@ -89,10 +111,7 @@ Texture& Texture::operator=(Texture&& other) noexcept
 
 Texture::~Texture()
 {
-    if (m_textureID)
-    {
-        GLCall(glDeleteTextures(1, &m_textureID));
-    }
+    Delete();
 }
 
 GLuint Texture::getID() const
@@ -118,9 +137,12 @@ void Texture::Unbind() const  // could be static
 
 void Texture::Delete()
 {
-    GLCall(glDeleteTextures(1, &m_textureID));
-    m_textureID = 0;
-    sm_textureUnitCounter--;
+    if (--sm_textureIDCount[m_textureID] == 0)  // only all textures with the same ID are gone then do this
+    {
+        if (m_textureID) GLCall(glDeleteTextures(1, &m_textureID));
+        m_textureID = 0;
+        sm_textureUnitCounter--;
+    }
 }
 
 /* texture maps */
@@ -129,20 +151,24 @@ Texture Textures::mainTextureSpecularMap;
 void Texture::LoadTextures()
 {
     Textures::mainTextureMap = Texture(
-        "../resources/textures/grass_textures.png",
+        "../../resources/textures/grass_textures.png",
         3, 1
     );
     Textures::mainTextureSpecularMap = Texture(
-        "../resources/textures/grass_textures_specular_map.png",
+        "../../resources/textures/grass_textures_specular_map.png",
         3, 1
     );
 }
 
-void Texture::DeleteAllTextures()
+// we are storing textures in static lists so that must be deleted before going out of context
+void Texture::DeleteAllTextures()  // static
 {
-    for (Texture* texture : s_textureRefs)
+    for (std::weak_ptr<Texture> texture : sm_textureRefs)
     {
-        texture->Delete();
+        if (std::shared_ptr<Texture> sp = texture.lock())
+        {
+            sp->Delete();
+        }
     }
     Debug::Log("Deleted all textures.");
 }

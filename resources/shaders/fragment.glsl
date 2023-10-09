@@ -18,6 +18,9 @@ layout(std140, binding = 1) uniform GlobUniforms
 struct Material
 {
     sampler2D albedo;
+    sampler2D roughness;
+    sampler2D ao;
+    sampler2D normal;
     sampler2D specular;
 
     float shininess;

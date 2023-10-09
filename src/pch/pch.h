@@ -23,6 +23,7 @@
 #include <cassert>
 #include <sys/stat.h>
 #include <source_location>
+#include <filesystem>
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>

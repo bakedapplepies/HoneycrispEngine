@@ -88,7 +88,7 @@ namespace Debug
         }
         std::cout << t;
 
-        Log(args...);
+        Warn(args...);
     }
 
     template <typename T>
@@ -112,6 +112,6 @@ namespace Debug
         }
         std::cout << t;
 
-        Log(args...);
+        Error(args...);
     }
 };

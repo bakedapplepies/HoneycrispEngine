@@ -16,7 +16,7 @@ class Model : public Mesh
 {
 public:
     Model(const std::string& path, const std::source_location& location = std::source_location::current());
-    std::string modelDirectory;
+    std::filesystem::path modelDirectory;
 
 private:
     std::vector<Mesh> meshes;
@@ -24,5 +24,5 @@ private:
 private:
     void processNode(aiNode* node, const aiScene*);
     Mesh processMesh(aiMesh* node, const aiScene*);
-    std::vector<Texture> loadMaterialTextures(aiMaterial* material, aiTextureType assimp_texture_type, ETextureType texture_type, const std::string& sampler_name);
+    std::vector< std::shared_ptr<Texture> > loadMaterialTextures(aiMaterial* material, aiTextureType assimp_texture_type, ETextureType texture_type, const std::string& sampler_name);
 };

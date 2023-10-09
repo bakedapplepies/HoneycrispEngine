@@ -20,17 +20,18 @@ private:
     int m_textureHeight;
     
     GLuint m_textureID;
-    std::vector<std::vector<TextureCoords>> m_textureCoords;
+    std::vector< std::vector<TextureCoords> > m_textureCoords;
     std::string path;
-    static GLint m_maxTextureUnits;
     static GLuint sm_textureUnitCounter;
+    static std::unordered_map<std::string, Texture*> sm_initiatedTextures;
     static std::unordered_map<GLuint, GLint> sm_textureUnits;  // TODO: Convert GLint to vector to reuse texture units
-    static std::vector<Texture*> s_textureRefs;
+    static std::unordered_map<GLuint, unsigned int> sm_textureIDCount;
+    static std::vector< std::shared_ptr<Texture> > sm_textureRefs;
 
 public:
-    Texture();
+    Texture() = default;
     ~Texture();
-    Texture(const char* texturePath, uint32_t textureResolutionWidth, uint32_t textureResolutionHeight);    
+    Texture(const std::string& texturePath, uint32_t textureResolutionWidth, uint32_t textureResolutionHeight, const std::source_location& location = std::source_location::current());    
     Texture(const Texture&) = delete;
     Texture(Texture&& other) noexcept;
     Texture& operator=(const Texture&) = delete;

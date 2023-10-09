@@ -1,9 +1,5 @@
-- better object hierarchy abstraction
-- more efficient use of VAOs and shaders and textures:
-    + make bind checks
 - runtime vertex attribute change (GL_DYNAMIC_DRAW)
-- batch rendering (check if object is STATIC, if it moves then batch rendering is impossible)
-- instance rendering
+- batch/instance rendering
 - push all draw calls to renderer and sort by shader
 - ShaderConfig object to pass into draw calls?
 - optimize shader system
@@ -11,3 +7,6 @@
 - cache texture (ktx) & store model in reuseable binary format
 - check if shared_ptr in SceneManager is necessary
 - GL_STATIC_DRAW OR GL_DYNAMIC_DRAW
+- Add a macro for false-asserting + glfwTerminate();
+- Keep track of already used texture ids in a map with texture count, then only delete the id when texture counts
+reduce to 0.
