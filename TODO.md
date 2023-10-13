@@ -8,5 +8,6 @@
 - check if shared_ptr in SceneManager is necessary
 - GL_STATIC_DRAW OR GL_DYNAMIC_DRAW
 - Add a macro for false-asserting + glfwTerminate();
-- Keep track of already used texture ids in a map with texture count, then only delete the id when texture counts
+- Keep track of already used shader ids in a map with shader count, then only delete the id when shader counts
 reduce to 0.
+- Model texture grouping

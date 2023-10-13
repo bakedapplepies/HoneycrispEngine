@@ -2,11 +2,12 @@
 
 #include "pch/pch.h"
 
-#include "Object.h"
+#include "Renderable.h"
 #include "core/VertexArray.h"
+#include "core/Texture.h"
 
 
-class Mesh : public Object
+class Mesh : public Renderable
 {
 public:
     std::vector<glm::vec3> vertices;
@@ -14,6 +15,7 @@ public:
     std::vector<glm::vec3> normals;
     std::vector<glm::vec2> uvs;
     std::vector<GLuint> indices;
+    std::vector< std::shared_ptr<Texture> > textures;
 
 private:
     glm::mat4 m_modelMatrix;
@@ -22,8 +24,8 @@ private:
 
 public:
     Mesh();
-    Mesh(const Mesh& other);
-    Mesh& operator=(const Mesh& other);  // TODO
+    Mesh(const Mesh& other) = delete;
+    Mesh& operator=(const Mesh& other) = delete;  // TODO
     Mesh(Mesh&& other) noexcept;
     Mesh& operator=(Mesh&& other) noexcept;
     ~Mesh() = default;
@@ -33,7 +35,7 @@ public:
     void EnableVertexAttribUV(bool on) const;
     void EnableVertexAttribNormals(bool on) const;
 
-    void Draw(const Shader& shader);
+    void Draw(std::shared_ptr<Shader> shader);
     void Translate(const glm::vec3& vec);
     void Scale(const float& multiplier);
     void Rotate(const float& rX, const float& rY, const float& rZ);

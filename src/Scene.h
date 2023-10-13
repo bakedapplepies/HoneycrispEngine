@@ -4,6 +4,7 @@
 #include "Debug.h"
 #include "Object.h"
 #include "Mesh.h"
+#include "NonRenderable.h"
 #include "types/types_index.h"
 
 enum EObjectRenderType
@@ -13,6 +14,11 @@ enum EObjectRenderType
     DYNAMIC
 };
 
+struct RenderableShaderGroupInfo
+{
+    std::vector< std::shared_ptr<Renderable> >objectShaderGroup;
+    std::shared_ptr<Shader> shader;
+};
 
 class Scene
 {
@@ -20,18 +26,78 @@ private:
     static std::shared_ptr<Shader> basicShader;
 
 protected:
-    std::unordered_map< std::shared_ptr<Shader>, std::vector< std::shared_ptr<Mesh> > > m_renderObjectPtrs;
-    std::vector< std::shared_ptr<Object> > m_nonRenderObjectPtrs;
+    std::unordered_map<GLuint, RenderableShaderGroupInfo> m_renderObjectPtrs;
+    std::vector< std::shared_ptr<NonRenderable> > m_nonRenderObjectPtrs;
 
 public:
     glm::vec3 bgColor = glm::vec3(0.0f, 0.0f, 0.0f);
 
-public: // protected
+protected:
     template <typename T>
-    SceneObject<T> CreateObject(T&& obj, EObjectRenderType render_type, std::shared_ptr<Shader> shader = nullptr)
+    SceneObject<T> CreateObject(std::true_type, T&& obj, EObjectRenderType render_type, std::shared_ptr<Shader> shader)
     {
-        Object* test_obj = static_cast<Object*>(&obj);
-        assert(test_obj != nullptr);  // TODO: Actually test with an invalid call
+        if (render_type == EObjectRenderType::STATIC)
+        {
+            SceneObject<T> objPtr = std::make_shared<T>(std::move(obj));
+            // TODO: batching
+            if (shader)
+            {
+                m_renderObjectPtrs[shader->getID()].objectShaderGroup.push_back(objPtr);
+                if (!m_renderObjectPtrs[shader->getID()].shader)
+                {
+                    m_renderObjectPtrs[shader->getID()].shader = shader;
+                }
+            }
+            else
+            {
+                m_renderObjectPtrs[basicShader->getID()].objectShaderGroup.push_back(objPtr);
+                if (!m_renderObjectPtrs[basicShader->getID()].shader)
+                {
+                    m_renderObjectPtrs[basicShader->getID()].shader = basicShader;
+                }
+            }
+            return objPtr;
+        }
+        else if (render_type == EObjectRenderType::DYNAMIC)
+        {
+            SceneObject<T> objPtr = std::make_shared<T>(std::move(obj));
+            // TODO: instancing
+            if (shader)
+            {
+                m_renderObjectPtrs[shader->getID()].objectShaderGroup.push_back(objPtr);
+                if (!m_renderObjectPtrs[shader->getID()].shader)
+                {
+                    m_renderObjectPtrs[shader->getID()].shader = shader;
+                }
+            }
+            else
+            {
+                m_renderObjectPtrs[basicShader->getID()].objectShaderGroup.push_back(objPtr);
+                if (!m_renderObjectPtrs[basicShader->getID()].shader)
+                {
+                    m_renderObjectPtrs[basicShader->getID()].shader = basicShader;
+                }
+            }
+            return objPtr;
+        }
+        else
+        {
+            // Debug::Error("EObjectRenderType enum must be either STATIC or DYNAMIC.");
+            assert(false && "EObjectRenderType enum must be either STATIC or DYNAMIC.");
+        }
+    }
+
+    template <typename T>
+    SceneObject<T> CreateObject(std::false_type, T&& obj, EObjectRenderType render_type, std::shared_ptr<Shader> shader)
+    {
+        SceneObject<T> objPtr = std::make_shared<T>(std::move(obj));
+        m_nonRenderObjectPtrs.push_back(objPtr);
+        return objPtr;
+    }
+
+    template <typename T>
+    SceneObject<T> CreateObject(T&& obj, EObjectRenderType render_type = EObjectRenderType::NONE, std::shared_ptr<Shader> shader = nullptr)
+    {
         if (!basicShader)
         {
             basicShader = std::make_shared<Shader>(
@@ -40,47 +106,22 @@ public: // protected
             );
         }
         
-        SceneObject<T> temp_ptr = std::make_shared<T>(std::move(obj));
-        switch (render_type)
-        {
-            case EObjectRenderType::NONE:
-                m_nonRenderObjectPtrs.push_back(temp_ptr);
-                break;
-            case EObjectRenderType::STATIC:
-                // TODO: batching
-                if (shader)
-                    m_renderObjectPtrs[shader].push_back(temp_ptr);
-                else
-                    m_renderObjectPtrs[basicShader].push_back(temp_ptr);
-                break;
-            case EObjectRenderType::DYNAMIC:
-                // TODO: instancing
-                if (shader)
-                    m_renderObjectPtrs[shader].push_back(temp_ptr);
-                else
-                    m_renderObjectPtrs[basicShader].push_back(temp_ptr);
-                break;
-            default:
-                Debug::Error("Check object type (EObjectRenderType enum not valid.)");
-                assert(false);
-                break;
-        }
-
-        return temp_ptr;
+        return CreateObject(std::is_base_of<Renderable, T>(), std::move(obj), render_type, shader);
     }
 
     void Draw(void) const
     {
         for (auto iter = m_renderObjectPtrs.begin(); iter != m_renderObjectPtrs.end(); iter++)
         {
-            iter->first->Use();
-            for (SceneObject<Mesh> obj : iter->second)
+            iter->second.shader->Use();
+            for (SceneObject<Renderable> obj : iter->second.objectShaderGroup)
             {
-                obj->Draw(*(iter->first));
+                obj->Draw(iter->second.shader);
             }
         }
     }
 
+public:
     virtual void OnUpdate() = 0;
 };
 

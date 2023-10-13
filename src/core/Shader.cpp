@@ -99,15 +99,15 @@ Shader& Shader::operator=(Shader&& other) noexcept
     return *this;
 }
 
-Shader::Shader(const Shader& other)
-{
+// Shader::Shader(const Shader& other)
+// {
 
-}
+// }
 
-Shader& Shader::operator=(const Shader& other)
-{
-    return *this;
-}
+// Shader& Shader::operator=(const Shader& other)
+// {
+//     return *this;
+// }
 
 Shader::~Shader()
 {

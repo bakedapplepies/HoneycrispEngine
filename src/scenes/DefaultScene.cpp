@@ -13,7 +13,7 @@ DefaultScene::DefaultScene()
 
     cube = CreateObject(Cube(), EObjectRenderType::STATIC, shader);
     cube->AddPosition(glm::vec3(-1.0f, -3.0f, -1.0f));
-    cube->AddPosition(glm::vec3(2.0f, 0.0f, 2.0f));
+    cube->AddPosition(glm::vec3(2.0f, 0.0f, 2.0f)); 
     cube->AddPosition(glm::vec3(-3.0f, 3.0f, 4.0f));
 
     customMesh = CreateObject(Mesh(), EObjectRenderType::STATIC);

@@ -195,11 +195,11 @@ void Mesh::EnableVertexAttribNormals(bool on) const
     }
 }
 
-Mesh::Mesh(const Mesh& other)
-{
-    m_VAO = other.m_VAO;
-    // m_vertData = other.m_vertData;  // will see if this line is needed
-}
+// Mesh::Mesh(const Mesh& other)
+// {
+//     m_VAO = other.m_VAO;
+//     // m_vertData = other.m_vertData;  // will see if this line is needed
+// }
 
 Mesh::Mesh(Mesh&& other) noexcept
 {
@@ -210,6 +210,7 @@ Mesh::Mesh(Mesh&& other) noexcept
     normals = std::move(other.normals);
     uvs = std::move(other.uvs);
     indices = std::move(other.indices);
+    textures = std::move(other.textures);
 
     m_vertData = std::move(other.m_vertData);
     m_VAO = std::move(other.m_VAO);
@@ -224,6 +225,7 @@ Mesh& Mesh::operator=(Mesh&& other) noexcept
     normals = std::move(other.normals);
     uvs = std::move(other.uvs);
     indices = std::move(other.indices);
+    textures = std::move(other.textures);
 
     m_vertData = std::move(other.m_vertData);
     m_VAO = std::move(other.m_VAO);
@@ -236,16 +238,33 @@ void Mesh::Bind() const
     m_VAO->Bind();
 }
 
-void Mesh::Draw(const Shader& shader)
+void Mesh::Draw(std::shared_ptr<Shader> shader)
 {
     m_VAO->Bind();
-    shader.Use();
+    shader->Use();
+
+    for (unsigned int i = 0; i < textures.size(); i++)
+    {
+        // Debug::Log("Unit: ", textures[i]->getTextureUnit());
+        // Debug::Log("ID: ", textures[i]->getID());
+        // Debug::Log("a");
+        textures[i]->Bind();
+        // Debug::Log("b");
+        if (textures[i]->getTextureType() == ETextureType::DIFFUSE)
+        {
+            shader->setIntUniform("u_material.albedo", textures[i]->getTextureUnit());
+        }
+        else if (textures[i]->getTextureType() == ETextureType::SPECULAR)
+        {
+            shader->setIntUniform("u_material.specular", textures[i]->getTextureUnit());
+        }
+    }
 
     for (const glm::vec3& i_position : positions)
     {
         glm::mat4 modelMatrix = GetModelMatrix(i_position);
-        shader.setMatrix3Uniform("u_normalMatrix", glm::mat3(glm::transpose(glm::inverse(modelMatrix))));
-        shader.setMatrix4Uniform("u_model", modelMatrix);
+        shader->setMatrix3Uniform("u_normalMatrix", glm::mat3(glm::transpose(glm::inverse(modelMatrix))));
+        shader->setMatrix4Uniform("u_model", modelMatrix);
         GLCall( glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (GLvoid*)0) );
     }
 }

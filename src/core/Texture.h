@@ -2,6 +2,12 @@
 
 #include "../pch/pch.h"
 
+enum ETextureType
+{
+    DIFFUSE,
+    SPECULAR
+};
+
 struct TextureCoords
 {
     glm::vec2 tl;  // top left
@@ -11,6 +17,12 @@ struct TextureCoords
 };
 
 // static std::vector<Texture> a[32];
+
+struct TextureInfo
+{
+    GLuint id = 0;
+    std::vector< std::vector<TextureCoords> > textureCoords;
+};
 
 class Texture
 {
@@ -22,26 +34,27 @@ private:
     GLuint m_textureID;
     std::vector< std::vector<TextureCoords> > m_textureCoords;
     std::string path;
+    ETextureType m_textureType;
     static GLuint sm_textureUnitCounter;
-    static std::unordered_map<std::string, Texture*> sm_initiatedTextures;
+    static std::unordered_map<std::string, TextureInfo> sm_initiatedTextures;
     static std::unordered_map<GLuint, GLint> sm_textureUnits;  // TODO: Convert GLint to vector to reuse texture units
     static std::unordered_map<GLuint, unsigned int> sm_textureIDCount;
-    static std::vector< std::shared_ptr<Texture> > sm_textureRefs;
 
 public:
     Texture() = default;
     ~Texture();
-    Texture(const std::string& texturePath, uint32_t textureResolutionWidth, uint32_t textureResolutionHeight, const std::source_location& location = std::source_location::current());    
-    Texture(const Texture&) = delete;
+    Texture(const std::string& texturePath, uint32_t textureResolutionWidth, uint32_t textureResolutionHeight, ETextureType textureType, const std::source_location& location = std::source_location::current());    
+    Texture(const Texture&);
     Texture(Texture&& other) noexcept;
-    Texture& operator=(const Texture&) = delete;
+    Texture& operator=(const Texture&);
     Texture& operator=(Texture&& other) noexcept;
 
     void GenerateTextureCoords();
 
 public:
     GLuint getID() const;
-    GLint getTextureUnit() const;
+    GLuint getTextureUnit() const;
+    ETextureType getTextureType() const;
 
     void Bind() const;
     void Unbind() const;

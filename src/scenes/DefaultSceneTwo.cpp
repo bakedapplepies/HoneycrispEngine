@@ -4,7 +4,11 @@
 DefaultSceneTwo::DefaultSceneTwo()
 {
     shader = std::make_shared<Shader>(
-        std::ifstream("../resources/shaders/vertex.glsl"),
+        std::ifstream("../resources/shaders/defaultvertex.glsl"),
+        std::ifstream("../resources/shaders/fragment.glsl")
+    );
+    backpackShader = std::make_shared<Shader>(
+        std::ifstream("../resources/shaders/defaultvertex.glsl"),
         std::ifstream("../resources/shaders/fragment.glsl")
     );
 
@@ -82,16 +86,14 @@ DefaultSceneTwo::DefaultSceneTwo()
     mesh->ConstructMesh();
     mesh->AddPosition(glm::vec3(0.0f, -6.0f, 0.0f));
 
-    model = CreateObject(Model("../../resources/models/backpack/backpack.obj"), EObjectRenderType::STATIC);
-
+    model = CreateObject(Model("../../resources/models/backpack/backpack.obj"), EObjectRenderType::STATIC, backpackShader);
+    model->AddPosition(glm::vec3(0.0f, 2.0f, 0.0f));
+    
     SetInitialUniforms();
 }
 
 void DefaultSceneTwo::OnUpdate()
 {
-    // cube->Draw(shader);
-    // // cube->Rotate();
-    // mesh->Draw(shader);
     Draw();
     bgColor = glm::sin(glm::vec3(glfwGetTime()) * glm::vec3(0.2f, 0.4f, 0.1f));
 }
@@ -127,4 +129,32 @@ void DefaultSceneTwo::SetInitialUniforms(void)
     shader->setFloatUniform("u_spotLight.constant", 1.0f);
     shader->setFloatUniform("u_spotLight.linear", 0.07f);
     shader->setFloatUniform("u_spotLight.quadratic", 0.0045f);
+
+    // lighting
+    backpackShader->setFloatUniform("u_material.shininess", 32.0f);
+
+    // dir light
+    backpackShader->setVector3Uniform("u_dirLight.direction", glm::normalize(glm::vec3(0, -1, 0)));
+    backpackShader->setVector3Uniform("u_dirLight.ambient", glm::vec3(1, 1, 1) * 0.1f);
+    backpackShader->setVector3Uniform("u_dirLight.diffuse", glm::vec3(1, 1, 1) * 0.7f);
+    backpackShader->setVector3Uniform("u_dirLight.specular", glm::vec3(1, 1, 1));
+
+    // point light
+    backpackShader->setVector3Uniform("u_pointLight.position", glm::vec3(10, 2, 10));
+    backpackShader->setVector3Uniform("u_pointLight.ambient", 0.1f * glm::vec3(1.0));
+    backpackShader->setVector3Uniform("u_pointLight.diffuse", 0.5f * glm::vec3(1.0));
+    backpackShader->setVector3Uniform("u_pointLight.specular", 1.0f * glm::vec3(1.0));
+    backpackShader->setFloatUniform("u_pointLight.constant", 1.0f);
+    backpackShader->setFloatUniform("u_pointLight.linear", 0.001f);
+    backpackShader->setFloatUniform("u_pointLight.quadratic", 0.0002f);
+
+    // spot light
+    backpackShader->setFloatUniform("u_spotLight.cutOff", glm::cos(glm::radians(15.0f)));
+    backpackShader->setFloatUniform("u_spotLight.outerCutOff", glm::cos(glm::radians(25.0f)));
+    backpackShader->setVector3Uniform("u_spotLight.ambient", 0.1f * glm::vec3(1.0));
+    backpackShader->setVector3Uniform("u_spotLight.diffuse", 0.5f * glm::vec3(1.0));
+    backpackShader->setVector3Uniform("u_spotLight.specular", 1.0f * glm::vec3(1.0));
+    backpackShader->setFloatUniform("u_spotLight.constant", 1.0f);
+    backpackShader->setFloatUniform("u_spotLight.linear", 0.07f);
+    backpackShader->setFloatUniform("u_spotLight.quadratic", 0.0045f);
 }
