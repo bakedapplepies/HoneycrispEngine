@@ -9,19 +9,19 @@ Cube::Cube()
     ConstructMesh();
 }
 
-Cube::Cube(Cube&& other) noexcept
-    : Mesh(std::move(other))
-{
+// Cube::Cube(Cube&& other) noexcept
+//     : Mesh(std::move(other))
+// {
     
-}
+// }
 
-Cube& Cube::operator=(Cube&& other) noexcept
-{
-    positions = std::move(other.positions);
-    this->GetVAO() = std::move(other.GetVAO());
+// Cube& Cube::operator=(Cube&& other) noexcept
+// {
+//     positions = std::move(other.positions);
+//     this->GetVAO() = std::move(other.GetVAO());
 
-    return *this;
-}
+//     return *this;
+// }
 
 void Cube::InitializeAttributeData()
 {

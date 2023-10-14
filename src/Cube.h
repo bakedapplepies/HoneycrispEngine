@@ -10,8 +10,8 @@ class Cube : public Mesh
 {
 public:
     Cube();
-    Cube(Cube&& other) noexcept;
-    Cube& operator=(Cube&& other) noexcept;
+    Cube(Cube&& other) noexcept = default;
+    Cube& operator=(Cube&& other) noexcept = default;
     ~Cube() = default;
 
 private:
