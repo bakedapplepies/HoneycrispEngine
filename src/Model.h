@@ -22,5 +22,8 @@ public:
 private:
     void processNode(aiNode* node, const aiScene*);
     Mesh processMesh(aiMesh* node, const aiScene*);
-    std::vector< std::shared_ptr<Texture> > loadMaterialTextures(aiMaterial* material, aiTextureType assimp_texture_type, const std::string& sampler_name);
+    std::vector< std::shared_ptr<Texture> > loadMaterialTextures(aiMaterial* material, aiTextureType assimp_texture_type);
+
+public:
+    void AddPosition(const glm::vec3& position);
 };

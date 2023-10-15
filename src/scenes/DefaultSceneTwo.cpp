@@ -3,6 +3,8 @@
 
 DefaultSceneTwo::DefaultSceneTwo()
 {
+    bgColor = glm::vec3(1.0f);
+
     shader = std::make_shared<Shader>(
         std::ifstream("../resources/shaders/defaultvertex.glsl"),
         std::ifstream("../resources/shaders/fragment.glsl")
@@ -87,7 +89,7 @@ DefaultSceneTwo::DefaultSceneTwo()
     mesh->AddPosition(glm::vec3(0.0f, -6.0f, 0.0f));
 
     model = CreateObject(Model("../../resources/models/backpack/backpack.obj"), EObjectRenderType::STATIC, backpackShader);
-    model->AddPosition(glm::vec3(0.0f, 2.0f, 0.0f));
+    model->AddPosition(glm::vec3(10.0f, 2.0f, 7.0f));
     
     SetInitialUniforms();
 }
@@ -95,7 +97,7 @@ DefaultSceneTwo::DefaultSceneTwo()
 void DefaultSceneTwo::OnUpdate()
 {
     Draw();
-    bgColor = glm::sin(glm::vec3(glfwGetTime()) * glm::vec3(0.2f, 0.4f, 0.1f));
+    // bgColor = glm::sin(glm::vec3(glfwGetTime()) * glm::vec3(0.2f, 0.4f, 0.1f));
 }
 
 void DefaultSceneTwo::SetInitialUniforms(void)

@@ -59,13 +59,12 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     {
         verticesPos.push_back(glm::vec3(
             mesh->mVertices[i].x,
-            mesh->mVertices[i].x,
+            mesh->mVertices[i].y,
             mesh->mVertices[i].z
         ));
-        // colors.push_back(glm::vec3(1.0f, 1.0f, 1.0f));
         normals.push_back(glm::vec3(
             mesh->mNormals[i].x,
-            mesh->mNormals[i].x,
+            mesh->mNormals[i].y,
             mesh->mNormals[i].z
         ));
         if (mesh->mTextureCoords[0])
@@ -88,7 +87,6 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     }
 
     resultMesh.vertices = verticesPos;
-    // resultMesh.colors = colors;
     resultMesh.normals = normals;
     resultMesh.uvs = uvs;
     resultMesh.indices = indices;
@@ -96,8 +94,8 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     if (mesh->mMaterialIndex >= 0)
     {
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-        std::vector< std::shared_ptr<Texture> > diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse1");
-        std::vector< std::shared_ptr<Texture> > specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_diffuse1");
+        std::vector< std::shared_ptr<Texture> > diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE);
+        std::vector< std::shared_ptr<Texture> > specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR);
         textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     }
@@ -108,7 +106,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     return resultMesh;
 }
 
-std::vector< std::shared_ptr<Texture> > Model::loadMaterialTextures(aiMaterial* material, aiTextureType assimp_texture_type, const std::string& sampler_name)
+std::vector< std::shared_ptr<Texture> > Model::loadMaterialTextures(aiMaterial* material, aiTextureType assimp_texture_type)
 {
     std::vector< std::shared_ptr<Texture> > textures;
 
@@ -146,3 +144,12 @@ void Model::Draw(std::shared_ptr<Shader> shader)
         m_meshes[i].Draw(shader);
     }
 }
+
+void Model::AddPosition(const glm::vec3& position)
+{
+    for (unsigned int i = 0; i < m_meshes.size(); i++)
+    {
+        m_meshes[i].AddPosition(position);
+    }
+    positions.push_back(position);
+};

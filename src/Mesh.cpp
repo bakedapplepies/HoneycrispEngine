@@ -26,7 +26,7 @@ void Mesh::ConstructMesh()
         assert(false);
     }
     
-    size_t vertArrayDataSize = vertices.size()*3 + colors.size()*3 + normals.size()*3 + uvs.size()*2;
+    size_t vertArrayDataSize = vertices.size()*3 + vertices.size()*3 + normals.size()*3 + uvs.size()*2;
     m_vertData.reserve(vertArrayDataSize);
 
     for (size_t vertIndex = 0; vertIndex < vertices.size(); vertIndex++)
@@ -38,7 +38,13 @@ void Mesh::ConstructMesh()
             m_vertData.push_back(vertices[vertIndex].z);
         }
 
-        if (!colors.empty())
+        if (colors.empty())
+        {
+            m_vertData.push_back(1.0f);
+            m_vertData.push_back(1.0f);
+            m_vertData.push_back(1.0f);
+        }
+        else
         {
             m_vertData.push_back(colors[vertIndex].x);
             m_vertData.push_back(colors[vertIndex].y);
@@ -70,7 +76,7 @@ void Mesh::ConstructMesh()
 
     size_t numAttribElements = 
         3 * !vertices.empty() +
-        3 * !colors.empty()   +
+        3 +
         2 * !uvs.empty()       +
         3 * !normals.empty();
     unsigned int currentOffset = 0;
@@ -92,20 +98,16 @@ void Mesh::ConstructMesh()
     else { EnableVertexAttribPosition(false); }
 
     // Color RGB
-    if (!colors.empty())
-    {
-        GLCall(glVertexAttribPointer(
-            1,
-            3,
-            GL_FLOAT,
-            GL_FALSE,
-            numAttribElements * sizeof(float),
-            (void*)(currentOffset * sizeof(float))
-        ));
-        EnableVertexAttribColor(true);
-        currentOffset += 3;
-    }
-    else { EnableVertexAttribColor(false); }
+    GLCall(glVertexAttribPointer(
+        1,
+        3,
+        GL_FLOAT,
+        GL_FALSE,
+        numAttribElements * sizeof(float),
+        (void*)(currentOffset * sizeof(float))
+    ));
+    EnableVertexAttribColor(true);
+    currentOffset += 3;
 
     if (!uvs.empty())
     {
@@ -245,11 +247,7 @@ void Mesh::Draw(std::shared_ptr<Shader> shader)
 
     for (unsigned int i = 0; i < textures.size(); i++)
     {
-        // Debug::Log("Unit: ", textures[i]->getTextureUnit());
-        // Debug::Log("ID: ", textures[i]->getID());
-        // Debug::Log("a");
         textures[i]->Bind();
-        // Debug::Log("b");
         if (textures[i]->getTextureType() == ETextureType::DIFFUSE)
         {
             shader->setIntUniform("u_material.albedo", textures[i]->getTextureUnit());

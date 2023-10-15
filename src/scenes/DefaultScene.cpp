@@ -194,5 +194,4 @@ void DefaultScene::SetInitialUniforms(void)
     shader->setFloatUniform("u_spotLight.constant", 1.0f);
     shader->setFloatUniform("u_spotLight.linear", 0.07f);
     shader->setFloatUniform("u_spotLight.quadratic", 0.0045f);
-    
 }

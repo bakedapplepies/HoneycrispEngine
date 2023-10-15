@@ -30,20 +30,24 @@ Texture::Texture(const std::string& texturePath, uint32_t textureResolutionWidth
             m_textureCoords = sm_initiatedTextures[path].textureCoords;
             m_textureType = textureType;
 
+            sm_textureIDCount[m_textureID]++;
+
             return;
         }
     }
 
     GLCall(glGenTextures(1, &m_textureID));
-    sm_initiatedTextures[path].id = m_textureID;  // this would be dangling by using the move constructor
+    sm_initiatedTextures[path].id = m_textureID;
+    m_textureType = textureType;
 
     sm_textureUnits[m_textureID] = sm_textureUnitCounter;
     sm_textureUnitCounter = (sm_textureUnitCounter + 1) % 32;
     sm_textureIDCount[m_textureID]++;
 
     int nrChannels;
+    int desiredChannels = (textureRelativePath.extension().string() == ".jpg" || textureRelativePath.extension().string() == ".jpeg") ? 3 : 4;
     unsigned char* data = stbi_load(
-        path.c_str(), &m_pixelWidth, &m_pixelHeight, &nrChannels, 4);
+        path.c_str(), &m_pixelWidth, &m_pixelHeight, &nrChannels, desiredChannels);
     
     if (data)
     {
@@ -89,7 +93,7 @@ Texture::Texture(const Texture& other)
     m_textureType = other.m_textureType;
 
     path = other.path;
-    m_textureID = sm_initiatedTextures[other.path].id;
+    m_textureID = other.m_textureID;
     sm_textureIDCount[m_textureID]++;
     m_textureCoords = sm_initiatedTextures[other.path].textureCoords;
 }
