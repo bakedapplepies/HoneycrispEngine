@@ -12,7 +12,7 @@ Texture::Texture(const std::string& texturePath, uint32_t textureResolutionWidth
     ETextureType textureType, const std::source_location& location
 ) : m_textureWidth(textureResolutionWidth), m_textureHeight(textureResolutionHeight)
 {
-    /* texture in absolute forms to ensure no paths are repeated */  // TODO: Not done yet
+    /* texture in absolute forms to ensure no paths are repeated */
     std::filesystem::path textureRelativePath("../");  // project root
     textureRelativePath /= std::filesystem::path(location.file_name()).remove_filename();  // where the file is
     textureRelativePath /= texturePath;  // add relative path relative to the above path <---------
@@ -45,7 +45,7 @@ Texture::Texture(const std::string& texturePath, uint32_t textureResolutionWidth
     sm_textureIDCount[m_textureID]++;
 
     int nrChannels;
-    int desiredChannels = (textureRelativePath.extension().string() == ".jpg" || textureRelativePath.extension().string() == ".jpeg") ? 3 : 4;
+    int desiredChannels = 0;
     unsigned char* data = stbi_load(
         path.c_str(), &m_pixelWidth, &m_pixelHeight, &nrChannels, desiredChannels);
     

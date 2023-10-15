@@ -20,7 +20,7 @@ Model::Model(const std::string& path, const std::source_location& location) : mo
     // Model loading
     float beginTime = glfwGetTime();
     Assimp::Importer import;
-    const aiScene *scene = import.ReadFile(relativePath.string(), aiProcess_Triangulate | aiProcess_FlipUVs);
+    const aiScene *scene = import.ReadFile(relativePath.string(), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_FlipWindingOrder);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {

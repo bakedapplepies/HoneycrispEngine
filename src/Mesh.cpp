@@ -245,7 +245,7 @@ void Mesh::Draw(std::shared_ptr<Shader> shader)
     m_VAO->Bind();
     shader->Use();
 
-    for (unsigned int i = 0; i < textures.size(); i++)
+    for (unsigned int i = 0; i < textures.size(); i++)  // TODO: Fix repetition
     {
         textures[i]->Bind();
         if (textures[i]->getTextureType() == ETextureType::DIFFUSE)
