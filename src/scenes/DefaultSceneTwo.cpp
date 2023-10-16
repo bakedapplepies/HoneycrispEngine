@@ -5,14 +5,7 @@ DefaultSceneTwo::DefaultSceneTwo()
 {
     bgColor = glm::vec3(1.0f);
 
-    shader = std::make_shared<Shader>(
-        std::ifstream("../resources/shaders/defaultvertex.glsl"),
-        std::ifstream("../resources/shaders/fragment.glsl")
-    );
-    backpackShader = std::make_shared<Shader>(
-        std::ifstream("../resources/shaders/defaultvertex.glsl"),
-        std::ifstream("../resources/shaders/fragment.glsl")
-    );
+    InitializeShaders();
 
     cube = CreateObject(Cube(), EObjectRenderType::STATIC, shader);
     cube->AddPosition(glm::vec3(1.0f, 3.0f ,5.0f));
@@ -90,14 +83,41 @@ DefaultSceneTwo::DefaultSceneTwo()
 
     model = CreateObject(Model("../../resources/models/backpack/backpack.obj"), EObjectRenderType::STATIC, backpackShader);
     model->AddPosition(glm::vec3(10.0f, 2.0f, 7.0f));
+
+    std::vector<std::string> cubemapFaces = {
+        "../../resources/textures/cubemaps/skybox/right.jpg",
+        "../../resources/textures/cubemaps/skybox/left.jpg",
+        "../../resources/textures/cubemaps/skybox/top.jpg",
+        "../../resources/textures/cubemaps/skybox/bottom.jpg",
+        "../../resources/textures/cubemaps/skybox/front.jpg",
+        "../../resources/textures/cubemaps/skybox/back.jpg"
+    };
+    cubemap = CreateObject(Cubemap(cubemapFaces), EObjectRenderType::STATIC, cubemapShader);
     
     SetInitialUniforms();
 }
 
 void DefaultSceneTwo::OnUpdate()
 {
+    // cubemapShader->setMatrix4Uniform("u_view_NoTrans", glm::mat4(glm::mat3()));
     Draw();
     // bgColor = glm::sin(glm::vec3(glfwGetTime()) * glm::vec3(0.2f, 0.4f, 0.1f));
+}
+
+void DefaultSceneTwo::InitializeShaders(void)
+{
+    shader = std::make_shared<Shader>(
+        std::ifstream("../resources/shaders/defaultvertex.glsl"),
+        std::ifstream("../resources/shaders/fragment.glsl")
+    );
+    backpackShader = std::make_shared<Shader>(
+        std::ifstream("../resources/shaders/defaultvertex.glsl"),
+        std::ifstream("../resources/shaders/fragment.glsl")
+    );
+    cubemapShader = std::make_shared<Shader>(
+        std::ifstream("../resources/shaders/cubemapvertex.glsl"),
+        std::ifstream("../resources/shaders/cubemapfragment.glsl")
+    );
 }
 
 void DefaultSceneTwo::SetInitialUniforms(void)

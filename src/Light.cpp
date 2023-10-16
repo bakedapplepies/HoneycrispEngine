@@ -13,14 +13,12 @@ Light::Light(Light&& other) noexcept
 {
     positions = std::move(other.positions);
     m_colorEmit = other.m_colorEmit;
-    this->GetVAO() = std::move(other.GetVAO());
 }
 
 Light& Light::operator=(Light&& other) noexcept
 {
     positions = std::move(other.positions);
     m_colorEmit = other.m_colorEmit;
-    this->GetVAO() = std::move(other.GetVAO());
 
     return *this;
 }

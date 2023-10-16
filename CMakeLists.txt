@@ -66,6 +66,7 @@ set(APPLICATION
 	./src/Mesh.cpp
 	./src/main.cpp
 	./src/Light.cpp
+    ./src/Cubemap.cpp
 	./src/Debug.cpp
 	./src/Cube.cpp
 	./src/Camera.cpp

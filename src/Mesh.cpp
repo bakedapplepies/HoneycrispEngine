@@ -75,27 +75,23 @@ void Mesh::ConstructMesh()
 
 
     size_t numAttribElements = 
-        3 * !vertices.empty() +
+        3 +
         3 +
         2 * !uvs.empty()       +
         3 * !normals.empty();
     unsigned int currentOffset = 0;
 
     // Postions XYZ
-    if (!vertices.empty())
-    {
-        GLCall(glVertexAttribPointer(
-            0,
-            3,
-            GL_FLOAT,
-            GL_FALSE,
-            numAttribElements * sizeof(float),
-            (void*)(currentOffset * sizeof(float))
-        ));
-        EnableVertexAttribPosition(true);
-        currentOffset += 3;
-    }
-    else { EnableVertexAttribPosition(false); }
+    GLCall(glVertexAttribPointer(
+        0,
+        3,
+        GL_FLOAT,
+        GL_FALSE,
+        numAttribElements * sizeof(float),
+        (void*)(currentOffset * sizeof(float))
+    ));
+    EnableVertexAttribPosition(true);
+    currentOffset += 3;
 
     // Color RGB
     GLCall(glVertexAttribPointer(
@@ -235,12 +231,7 @@ Mesh& Mesh::operator=(Mesh&& other) noexcept
     return *this;
 }
 
-void Mesh::Bind() const
-{
-    m_VAO->Bind();
-}
-
-void Mesh::Draw(std::shared_ptr<Shader> shader)
+void Mesh::Draw(std::shared_ptr<Shader> shader) const
 {
     m_VAO->Bind();
     shader->Use();

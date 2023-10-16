@@ -12,7 +12,7 @@ private:
     std::vector<Mesh> m_meshes;
 
 public:
-    void Draw(std::shared_ptr<Shader> shader);
+    void Draw(std::shared_ptr<Shader> shader) const;
 
 public:
     Model(const std::string& path, const std::source_location& location = std::source_location::current());
@@ -25,5 +25,6 @@ private:
     std::vector< std::shared_ptr<Texture> > loadMaterialTextures(aiMaterial* material, aiTextureType assimp_texture_type);
 
 public:
+    void OnUpdate() {}
     void AddPosition(const glm::vec3& position);
 };

@@ -12,5 +12,5 @@ protected:
 
 public:
     virtual inline void AddPosition(const glm::vec3& position) { positions.push_back(position); };
-    virtual inline std::vector<glm::vec3>& GetPositions() final { return positions; };
+    virtual void OnUpdate() = 0;
 };

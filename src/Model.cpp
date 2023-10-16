@@ -137,7 +137,7 @@ std::vector< std::shared_ptr<Texture> > Model::loadMaterialTextures(aiMaterial* 
     return textures;
 }
 
-void Model::Draw(std::shared_ptr<Shader> shader)
+void Model::Draw(std::shared_ptr<Shader> shader) const
 {
     for (unsigned int i = 0; i < m_meshes.size(); i++)
     {

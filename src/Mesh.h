@@ -35,7 +35,8 @@ public:
     void EnableVertexAttribUV(bool on) const;
     void EnableVertexAttribNormals(bool on) const;
 
-    void Draw(std::shared_ptr<Shader> shader);
+    virtual void OnUpdate() {}
+    void Draw(std::shared_ptr<Shader> shader) const;
     void Translate(const glm::vec3& vec);
     void Scale(const float& multiplier);
     void Rotate(const float& rX, const float& rY, const float& rZ);
@@ -43,6 +44,5 @@ public:
     glm::mat4 GetModelMatrix(const glm::vec3& position) const;
 
     void ConstructMesh();
-    void Bind() const;
     std::weak_ptr<VertexArray> GetVAO();
 };

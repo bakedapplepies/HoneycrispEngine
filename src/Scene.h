@@ -28,6 +28,7 @@ private:
 protected:
     std::unordered_map<GLuint, RenderableShaderGroupInfo> m_renderObjectPtrs;
     std::vector< std::shared_ptr<NonRenderable> > m_nonRenderObjectPtrs;
+    //  TODO: Add cubemap here
 
 public:
     glm::vec3 bgColor = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -123,6 +124,8 @@ protected:
 
 public:
     virtual void OnUpdate() = 0;
+    virtual void InitializeShaders(void) {}
+    virtual void SetInitialUniforms(void) {}
 };
 
 /*  Binary search-insert

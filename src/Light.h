@@ -2,10 +2,10 @@
 
 #include "pch/pch.h"
 
-#include "Mesh.h"
+#include "NonRenderable.h"
 
 
-class Light : public Mesh
+class Light : public NonRenderable
 {
 private:
     glm::vec3 m_colorEmit;
@@ -18,6 +18,8 @@ public:
     Light& operator=(const Light& other) = delete;
     Light& operator=(Light&& other) noexcept;
     ~Light() = default;
+
+    void OnUpdate() {}
 
     glm::vec3& GetColor();
 };

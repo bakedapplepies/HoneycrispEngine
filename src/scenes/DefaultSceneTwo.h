@@ -7,6 +7,7 @@
 #include "../Cube.h"
 #include "../core/Texture.h"
 #include "../Model.h"
+#include "../Cubemap.h"
 
 
 class DefaultSceneTwo : public Scene
@@ -14,12 +15,16 @@ class DefaultSceneTwo : public Scene
 private:
     std::shared_ptr<Shader> shader;
     std::shared_ptr<Shader> backpackShader;
+    std::shared_ptr<Shader> cubemapShader;
     SceneObject<Cube> cube;
     SceneObject<Mesh> mesh;
     SceneObject<Model> model;
 
+    SceneObject<Cubemap> cubemap;
+
 public:
     DefaultSceneTwo();
     virtual void OnUpdate();
+    void InitializeShaders(void);
     void SetInitialUniforms(void);  // TODO
 };

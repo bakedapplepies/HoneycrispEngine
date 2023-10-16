@@ -1,1 +1,1 @@
-cmake -S . -B ./build -G "Ninja" -DCMAKE_CXX_COMPILER=C:/MinGW-W64/MinGW-W64/bin/g++.exe -DCMAKE_BUILD_TYPE=Debug
+cmake -S . -B ./build -G "Ninja" -DCMAKE_BUILD_TYPE=Debug
