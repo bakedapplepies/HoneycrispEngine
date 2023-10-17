@@ -1,13 +1,57 @@
 #include "Scene.h"
 
-std::shared_ptr<Shader> Scene::basicShader = nullptr;
+std::shared_ptr<Shader> Scene::m_basicShader = nullptr;
+std::shared_ptr<Shader> Scene::m_cubemapShader = nullptr;
 
-// std::shared_ptr<Mesh> Scene::CreateRenderableObject()
-// {
+void Scene::CreateCubemap(
+    const std::string& right,
+    const std::string& left,
+    const std::string& top,
+    const std::string& bottom,
+    const std::string& front,
+    const std::string& back,
+    const std::source_location& location
+)
+{
+    std::vector<std::string> cubemapFaces = {
+        right, left, top, bottom, front, back
+    };
 
-// }
+    for (unsigned int i = 0; i < cubemapFaces.size(); i++)
+    {
+        std::string root("../");  // Executable is in build folder
+        std::filesystem::path textureRelativePath(root);
+        textureRelativePath /= std::filesystem::path(location.file_name()).remove_filename();  // where the file is
+        textureRelativePath /= cubemapFaces[i].c_str();  // add relative path relative to the above path <----
+                                                    // in case this is absolute, it will replace everything  |
+        textureRelativePath = std::filesystem::absolute(textureRelativePath);  // make absolute -------------
+        textureRelativePath.make_preferred();
+        cubemapFaces[i] = textureRelativePath.string();
+    }
 
-// std::shared_ptr<Object> Scene::CreateNonRenderableObject()
-// {
+    m_cubemap = std::make_unique<Cubemap>(cubemapFaces);
+}
 
-// }
+void Scene::Draw(void) const
+{
+    for (auto iter = m_renderObjectPtrs.begin(); iter != m_renderObjectPtrs.end(); iter++)
+    {
+        iter->second.shader->Use();
+        for (SceneObject<Renderable> obj : iter->second.objectShaderGroup)
+        {
+            obj->Draw(iter->second.shader);
+        }
+    }
+    if (m_cubemap)
+    {
+        if (!m_cubemapShader)
+        {
+            m_cubemapShader = std::make_shared<Shader>(
+                std::ifstream("../resources/shaders/cubemapvertex.glsl"),
+                std::ifstream("../resources/shaders/cubemapfragment.glsl")
+            );
+            m_cubemapShader->setIntUniform("cubemap", 10);
+        }
+        m_cubemap->Draw(m_cubemapShader);
+    }
+}

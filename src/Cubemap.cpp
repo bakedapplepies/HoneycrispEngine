@@ -1,7 +1,7 @@
 #include "Cubemap.h"
 
 
-Cubemap::Cubemap(const std::vector<std::string>& faces, const std::source_location& location)
+Cubemap::Cubemap(const std::vector<std::string>& faces)
 {
     GLCall(glGenTextures(1, &m_cubemapTextureID));
     GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemapTextureID));
@@ -9,16 +9,9 @@ Cubemap::Cubemap(const std::vector<std::string>& faces, const std::source_locati
     int width, height, nrChannels, desiredChannels = 0;
     for (unsigned int i = 0; i < faces.size(); i++)
     {
-        std::string root("../");  // Executable is in build folder
-        std::filesystem::path textureRelativePath(root);
-        textureRelativePath /= std::filesystem::path(location.file_name()).remove_filename();  // where the file is
-        textureRelativePath /= faces[i].c_str();  // add relative path relative to the above path <---------
-                                                  // in case this is absolute, it will replace everything  |
-        textureRelativePath = std::filesystem::absolute(textureRelativePath);  // make absolute -----------
-        textureRelativePath.make_preferred();
-        std::string path = textureRelativePath.string();
-
-        unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, desiredChannels);
+        stbi_set_flip_vertically_on_load(false);
+        unsigned char* data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, desiredChannels);
+        stbi_set_flip_vertically_on_load(true);
 
         GLenum format;
         if (nrChannels == 1)
@@ -101,28 +94,28 @@ void Cubemap::SetVAO()
 
     indicesData = {
         // front
-        0, 1, 2,
-        0, 2, 3,
+        0, 2, 1,
+        0, 3, 2,
 
         // right
-        4, 5, 6,
-        4, 6, 7,
+        4, 6, 5,
+        4, 7, 6,
 
         // back
-        8, 9, 10,
-        8, 10, 11,
+        8, 10, 9,
+        8, 11, 10,
 
         // left
-        12, 13, 14,
-        12, 14, 15,
+        12, 14, 13,
+        12, 15, 14,
 
         // top
-        16, 17, 18,
-        16, 18, 19,
+        16, 18, 17,
+        16, 19, 18,
 
         // back
-        20, 21, 22,
-        20, 22, 23
+        20, 22, 21,
+        20, 23, 22
     };
 
     cubemapMesh.vertices = verticesPos;
@@ -134,8 +127,11 @@ void Cubemap::SetVAO()
 
 void Cubemap::Draw(std::shared_ptr<Shader> shader) const
 {
-    glDepthMask(GL_FALSE);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemapTextureID);
+    // GLCall(glDepthMask(GL_FALSE));  // TODO: ????
+    GLCall(glDepthFunc(GL_LEQUAL));
+    GLCall(glActiveTexture(GL_TEXTURE0 + 10));
+    GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemapTextureID));
     cubemapMesh.Draw(shader);
-    glDepthMask(GL_TRUE);
+    GLCall(glDepthFunc(GL_LESS));
+    // GLCall(glDepthMask(GL_TRUE));
 }

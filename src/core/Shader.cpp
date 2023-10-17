@@ -33,7 +33,8 @@ Shader::Shader(std::ifstream&& vertexFile, std::ifstream&& fragmentFile)
     if (!success)
     {
         GLCall(glGetShaderInfoLog(vertexShader, 512, NULL, infoLog));
-        Debug::Error("Vertex Shader compilation failed:\n\t", infoLog);
+        Debug::Error("Vertex Shader compilation failed at {}:\n\t");
+        // Debug::Error(fmt::format("Vertex Shader compilation failed at {}:\n\t", ), infoLog);
 
         GLCall(glDeleteShader(vertexShader));
         m_shaderID = 0;
@@ -98,16 +99,6 @@ Shader& Shader::operator=(Shader&& other) noexcept
 
     return *this;
 }
-
-// Shader::Shader(const Shader& other)
-// {
-
-// }
-
-// Shader& Shader::operator=(const Shader& other)
-// {
-//     return *this;
-// }
 
 Shader::~Shader()
 {

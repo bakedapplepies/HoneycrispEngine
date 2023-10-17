@@ -14,6 +14,7 @@ layout (std140, binding = 0) uniform Matrices
 
 void main()
 {
-    TexCoords = aPos;  // using local space as uvs
-    gl_Position = u_projection * mat4(mat3(u_view)) * vec4(aPos, 1.0);
+    TexCoords = vec3(aPos.x, aPos.y, -aPos.z);  // using local space as uvs
+    vec4 pos = u_projection * mat4(mat3(u_view)) * vec4(aPos, 1.0);
+    gl_Position = pos.xyww;
 }

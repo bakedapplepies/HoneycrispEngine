@@ -14,8 +14,14 @@ private:
     std::vector<unsigned int> indicesData;
     Mesh cubemapMesh;
 
+private:
+    Cubemap(const Cubemap&) = delete;
+    Cubemap& operator=(const Cubemap&) = delete;
+    Cubemap(Cubemap&&) = delete;
+    Cubemap& operator=(Cubemap&&) = delete;
+
 public:
-    Cubemap(const std::vector<std::string>& faces, const std::source_location& location = std::source_location::current());
+    Cubemap(const std::vector<std::string>& faces);
     void OnUpdate() {};
     void Draw(std::shared_ptr<Shader> shader) const;
 

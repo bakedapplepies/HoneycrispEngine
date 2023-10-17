@@ -6,6 +6,7 @@
 #include "Mesh.h"
 #include "NonRenderable.h"
 #include "types/types_index.h"
+#include "Cubemap.h"
 
 enum EObjectRenderType
 {
@@ -23,12 +24,13 @@ struct RenderableShaderGroupInfo
 class Scene
 {
 private:
-    static std::shared_ptr<Shader> basicShader;
+    static std::shared_ptr<Shader> m_basicShader;
+    static std::shared_ptr<Shader> m_cubemapShader;
+    std::unique_ptr<Cubemap> m_cubemap;
 
 protected:
     std::unordered_map<GLuint, RenderableShaderGroupInfo> m_renderObjectPtrs;
     std::vector< std::shared_ptr<NonRenderable> > m_nonRenderObjectPtrs;
-    //  TODO: Add cubemap here
 
 public:
     glm::vec3 bgColor = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -51,10 +53,10 @@ protected:
             }
             else
             {
-                m_renderObjectPtrs[basicShader->getID()].objectShaderGroup.push_back(objPtr);
-                if (!m_renderObjectPtrs[basicShader->getID()].shader)
+                m_renderObjectPtrs[m_basicShader->getID()].objectShaderGroup.push_back(objPtr);
+                if (!m_renderObjectPtrs[m_basicShader->getID()].shader)
                 {
-                    m_renderObjectPtrs[basicShader->getID()].shader = basicShader;
+                    m_renderObjectPtrs[m_basicShader->getID()].shader = m_basicShader;
                 }
             }
             return objPtr;
@@ -73,10 +75,10 @@ protected:
             }
             else
             {
-                m_renderObjectPtrs[basicShader->getID()].objectShaderGroup.push_back(objPtr);
-                if (!m_renderObjectPtrs[basicShader->getID()].shader)
+                m_renderObjectPtrs[m_basicShader->getID()].objectShaderGroup.push_back(objPtr);
+                if (!m_renderObjectPtrs[m_basicShader->getID()].shader)
                 {
-                    m_renderObjectPtrs[basicShader->getID()].shader = basicShader;
+                    m_renderObjectPtrs[m_basicShader->getID()].shader = m_basicShader;
                 }
             }
             return objPtr;
@@ -99,9 +101,9 @@ protected:
     template <typename T>
     SceneObject<T> CreateObject(T&& obj, EObjectRenderType render_type = EObjectRenderType::NONE, std::shared_ptr<Shader> shader = nullptr)
     {
-        if (!basicShader)
+        if (!m_basicShader)
         {
-            basicShader = std::make_shared<Shader>(
+            m_basicShader = std::make_shared<Shader>(
                 std::ifstream("../resources/shaders/defaultvertex.glsl"),
                 std::ifstream("../resources/shaders/defaultfragment.glsl")
             );
@@ -110,47 +112,19 @@ protected:
         return CreateObject(std::is_base_of<Renderable, T>(), std::move(obj), render_type, shader);
     }
 
-    void Draw(void) const
-    {
-        for (auto iter = m_renderObjectPtrs.begin(); iter != m_renderObjectPtrs.end(); iter++)
-        {
-            iter->second.shader->Use();
-            for (SceneObject<Renderable> obj : iter->second.objectShaderGroup)
-            {
-                obj->Draw(iter->second.shader);
-            }
-        }
-    }
+    void CreateCubemap(
+        const std::string& right,
+        const std::string& left,
+        const std::string& top,
+        const std::string& botttom,
+        const std::string& front,
+        const std::string& back,
+        const std::source_location& location = std::source_location::current()
+    );
+    void Draw(void) const;
 
 public:
     virtual void OnUpdate() = 0;
     virtual void InitializeShaders(void) {}
     virtual void SetInitialUniforms(void) {}
 };
-
-/*  Binary search-insert
-void add_val(std::vector<Object>& vec, int v)
-{
-    unsigned int l = 0, r = vec.size() - 1;
-    if (r == -1) vec.push_back({v, "abc"});
-    else if (v < vec[l].id) vec.insert(vec.begin() + 0, {v, "abc"});
-    else if (v > vec[r].id) vec.push_back({v, "abc"});
-    else
-    {
-        unsigned int m = (l + r) / 2;
-        while (vec[m].id != v)
-        {
-            if (v < vec[m].id)
-            {
-                r = m - 1;
-            }
-            else if (vec[m].id < v)
-            {
-                l = m + 1;
-            }
-            m = (l + r) / 2;
-        }
-        vec.insert(vec.begin() + m, {v, "abc"});
-    }
-}
-*/

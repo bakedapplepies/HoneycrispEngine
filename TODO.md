@@ -1,13 +1,11 @@
-- runtime vertex attribute change (GL_DYNAMIC_DRAW)
 - batch/instance rendering
-- push all draw calls to renderer and sort by shader
 - ShaderConfig object to pass into draw calls?
 - optimize shader system
 - move all enums to a separate file
 - cache texture (ktx) & store model in reuseable binary format
 - check if shared_ptr in SceneManager is necessary
-- GL_STATIC_DRAW OR GL_DYNAMIC_DRAW
 - Add a macro for false-asserting + glfwTerminate();
 - Keep track of already used shader ids in a map with shader count, then only delete the id when shader counts
 reduce to 0.
 - Model texture grouping
+- Manage texture units (including GL_TEXTURE_CUBE_MAP)

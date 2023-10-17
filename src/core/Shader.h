@@ -12,8 +12,8 @@ private:
 public:
     Shader() = default;
     Shader(std::ifstream&& vertexShaderPath, std::ifstream&& fragmentShaderPath);
-    Shader(const Shader& other) = default;
-    Shader& operator=(const Shader& other) = default;
+    Shader(const Shader& other) = delete;
+    Shader& operator=(const Shader& other) = delete;
     Shader(Shader&& other) noexcept;
     Shader& operator=(Shader&& other) noexcept;
     ~Shader();
