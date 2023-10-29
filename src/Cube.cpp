@@ -1,4 +1,4 @@
-#include "Debug.h"
+#include "utils/Debug.h"
 #include "Cube.h"
 #include "core/Texture.h"
 

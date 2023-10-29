@@ -1,6 +1,6 @@
 #include "pch/pch.h"
 
-#include "Debug.h"
+#include "utils/Debug.h"
 #include "Window.h"
 #include "SceneManager.h"
 #include "./scenes/DefaultScene.h"

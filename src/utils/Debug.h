@@ -1,16 +1,16 @@
 #pragma once
 
-#include "pch/pch.h"
+#include "../pch/pch.h"
 
 
 // #define DEBUG
 #define ASSERT(x) if (!(x)) createBreak();
+#define DEBUG
 #ifdef DEBUG
 #define GLCall(x) GLClearError();\
     x;\
     ASSERT(GLLogCall(#x, __BASE_FILE__, __LINE__))
-#endif
-#ifndef DEBUG
+#else
 #define GLCall(x) x;
 #endif
 

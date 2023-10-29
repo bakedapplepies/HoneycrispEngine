@@ -31,7 +31,6 @@ private:
     CallbackData callbackData;
     Camera camera = Camera(glm::vec3(0.0f, 5.0f, 0.0f));  // set initial direction in CallbackData
     Light light;
-    Shader mainShader;
 
     glm::mat4 viewMatrix;
     glm::mat4 projectionMatrix;

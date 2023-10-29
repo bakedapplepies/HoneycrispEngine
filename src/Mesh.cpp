@@ -1,5 +1,5 @@
 #include "Mesh.h"
-#include "Debug.h"
+#include "utils/Debug.h"
 
 
 Mesh::Mesh()
@@ -192,12 +192,6 @@ void Mesh::EnableVertexAttribNormals(bool on) const
         GLCall(glDisableVertexAttribArray(3));
     }
 }
-
-// Mesh::Mesh(const Mesh& other)
-// {
-//     m_VAO = other.m_VAO;
-//     // m_vertData = other.m_vertData;  // will see if this line is needed
-// }
 
 Mesh::Mesh(Mesh&& other) noexcept
 {

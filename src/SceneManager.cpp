@@ -1,5 +1,5 @@
 #include "SceneManager.h"
-#include "Debug.h"
+#include "utils/Debug.h"
 
 
 SceneManager* SceneManager::_instance = nullptr;
@@ -15,6 +15,7 @@ SceneManager& SceneManager::Get()
 
 void SceneManager::Update()
 {
+    // maybe add if-statements to check availability
     _scenesMap[_activeSceneIndex]->OnUpdate();
 }
 

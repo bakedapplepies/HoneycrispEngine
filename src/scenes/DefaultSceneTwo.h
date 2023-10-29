@@ -21,6 +21,9 @@ private:
 
 public:
     DefaultSceneTwo();
+    ~DefaultSceneTwo();
+    DefaultSceneTwo(DefaultSceneTwo&& other) noexcept = default;
+    DefaultSceneTwo& operator=(DefaultSceneTwo&& other) noexcept = default;
     virtual void OnUpdate();
     void InitializeShaders(void);
     void SetInitialUniforms(void);  // TODO

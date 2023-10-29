@@ -1,4 +1,4 @@
-- batch/instance rendering
+- batch/instance rendering; prioritize instancing
 - ShaderConfig object to pass into draw calls?
 - optimize shader system
 - move all enums to a separate file
@@ -9,3 +9,5 @@
 reduce to 0.
 - Model texture grouping
 - Manage texture units (including GL_TEXTURE_CUBE_MAP)
+- LOD
+- Make model loading asynchronous

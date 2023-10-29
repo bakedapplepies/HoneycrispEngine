@@ -3,7 +3,7 @@
 #include "pch/pch.h"
 
 #include "Window.h"
-#include "Debug.h"
+#include "utils/Debug.h"
 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)

@@ -83,6 +83,15 @@ DefaultSceneTwo::DefaultSceneTwo()
 
     model = CreateObject(Model("../../resources/models/backpack/backpack.obj"), EObjectRenderType::STATIC, backpackShader);
     model->AddPosition(glm::vec3(10.0f, 2.0f, 7.0f));
+    model->AddPosition(glm::vec3(10.0f, 4.0f, 7.0f));
+    model->AddPosition(glm::vec3(10.0f, 0.0f, 7.0f));
+    model->AddPosition(glm::vec3(10.0f, 2.0f, 4.0f));
+    model->AddPosition(glm::vec3(6.0f, 2.0f, 7.0f));
+    model->AddPosition(glm::vec3(6.0f, 8.0f, 7.0f));
+    model->AddPosition(glm::vec3(8.0f, 10.0f, 7.0f));
+    model->AddPosition(glm::vec3(1.0f, 7.0f, 9.0f));
+    model->AddPosition(glm::vec3(5.0f, 8.0f, 8.0f));
+    model->AddPosition(glm::vec3(4.0f, 10.0f, 1.0f));
 
     CreateCubemap(
         "../../resources/textures/cubemaps/skybox/right.jpg",
@@ -94,6 +103,10 @@ DefaultSceneTwo::DefaultSceneTwo()
     );
     
     SetInitialUniforms();
+}
+
+DefaultSceneTwo::~DefaultSceneTwo()
+{
 }
 
 void DefaultSceneTwo::OnUpdate()
@@ -117,7 +130,6 @@ void DefaultSceneTwo::InitializeShaders(void)
 void DefaultSceneTwo::SetInitialUniforms(void)
 {
     // lighting
-    // shader->setIntUniform("cubemap", 10);
     shader->setIntUniform("u_material.albedo", Textures::mainTextureMap.getTextureUnit());
     shader->setIntUniform("u_material.specular", Textures::mainTextureSpecularMap.getTextureUnit());
     shader->setFloatUniform("u_material.shininess", 32.0f);
@@ -147,8 +159,8 @@ void DefaultSceneTwo::SetInitialUniforms(void)
     shader->setFloatUniform("u_spotLight.linear", 0.07f);
     shader->setFloatUniform("u_spotLight.quadratic", 0.0045f);
 
-    // lighting
     backpackShader->setIntUniform("cubemap", 10);
+    // lighting
     // backpackShader->setFloatUniform("u_material.shininess", 32.0f);
 
     // // dir light
@@ -175,6 +187,4 @@ void DefaultSceneTwo::SetInitialUniforms(void)
     // backpackShader->setFloatUniform("u_spotLight.constant", 1.0f);
     // backpackShader->setFloatUniform("u_spotLight.linear", 0.07f);
     // backpackShader->setFloatUniform("u_spotLight.quadratic", 0.0045f);
-
-    // cubemapShader->setIntUniform("cubemap", 10);
 }

@@ -1,4 +1,4 @@
-#include "../Debug.h"
+#include "../utils/Debug.h"
 #include "Texture.h"
 
 
@@ -18,8 +18,9 @@ Texture::Texture(const std::string& texturePath, uint32_t textureResolutionWidth
     textureRelativePath /= texturePath;  // add relative path relative to the above path <---------
                                          // in case this is absolute, it will replace everything  |
     textureRelativePath = std::filesystem::absolute(textureRelativePath);  // make absolute ------
-    textureRelativePath.make_preferred();
+    textureRelativePath = textureRelativePath.lexically_normal();
     path = textureRelativePath.string();
+    // Debug::Log(fmt::format("{}", std::filesystem::last_write_time(path).time_since_epoch().count()));
 
     if (sm_initiatedTextures[path].id > 0)
     {

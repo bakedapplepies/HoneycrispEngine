@@ -10,6 +10,7 @@ private:
     mutable std::unordered_map<std::string, GLint> m_uniformLocationCache;
 
 public:
+    static int shaderCount;
     Shader() = default;
     Shader(std::ifstream&& vertexShaderPath, std::ifstream&& fragmentShaderPath);
     Shader(const Shader& other) = delete;

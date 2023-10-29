@@ -16,6 +16,9 @@ private:
 
 public:
     DefaultScene();
+    ~DefaultScene();
+    DefaultScene(DefaultScene&& other) noexcept = default;
+    DefaultScene& operator=(DefaultScene&& other) noexcept = default;
     virtual void OnUpdate();
     void SetInitialUniforms(void);
 };

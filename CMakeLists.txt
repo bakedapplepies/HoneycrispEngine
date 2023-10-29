@@ -59,6 +59,7 @@ set(SCENES
 )
 
 set(APPLICATION
+    ./src/utils/Debug.cpp
 	./src/Window.cpp
 	./src/SceneManager.cpp
 	./src/Scene.cpp
@@ -67,7 +68,6 @@ set(APPLICATION
 	./src/main.cpp
 	./src/Light.cpp
     ./src/Cubemap.cpp
-	./src/Debug.cpp
 	./src/Cube.cpp
 	./src/Camera.cpp
 	./src/Application.cpp

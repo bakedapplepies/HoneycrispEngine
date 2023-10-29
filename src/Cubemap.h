@@ -3,7 +3,7 @@
 #include "pch/pch.h"
 #include "Renderable.h"
 #include "Mesh.h"
-#include "Debug.h"
+#include "utils/Debug.h"
 
 
 class Cubemap : public Renderable
@@ -27,5 +27,5 @@ public:
 
 private:
     void AddPosition(const glm::vec3& position) {}
-    void SetVAO();
+    void SetMesh();
 };

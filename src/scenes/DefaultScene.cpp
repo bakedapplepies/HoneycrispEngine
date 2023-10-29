@@ -1,11 +1,13 @@
 #include "DefaultScene.h"
-#include "../Debug.h"
+#include "../utils/Debug.h"
+#include "../utils/json_util.h"
 
 
 #define RAND rand()/double(RAND_MAX)
 
 DefaultScene::DefaultScene()
 {
+    // JsonUtil::parseFile("../../resources/shaders/vertex.glsl");
     shader = std::make_shared<Shader>(
         std::ifstream("../resources/shaders/defaultvertex.glsl"),
         std::ifstream("../resources/shaders/fragment.glsl")
@@ -156,6 +158,10 @@ DefaultScene::DefaultScene()
     customMesh->AddPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 
     SetInitialUniforms();
+}
+
+DefaultScene::~DefaultScene()
+{
 }
 
 void DefaultScene::OnUpdate()

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "pch/pch.h"
-#include "Debug.h"
+#include "utils/Debug.h"
 #include "Object.h"
 #include "Mesh.h"
 #include "NonRenderable.h"
@@ -24,9 +24,11 @@ struct RenderableShaderGroupInfo
 class Scene
 {
 private:
+    static size_t sceneCount;
     static std::shared_ptr<Shader> m_basicShader;
     static std::shared_ptr<Shader> m_cubemapShader;
     std::unique_ptr<Cubemap> m_cubemap;
+    bool m_std_moved = false;
 
 protected:
     std::unordered_map<GLuint, RenderableShaderGroupInfo> m_renderObjectPtrs;
@@ -124,7 +126,31 @@ protected:
     void Draw(void) const;
 
 public:
-    virtual void OnUpdate() = 0;
+    Scene();
+    virtual ~Scene()
+    {
+        m_renderObjectPtrs.clear();
+        if (!m_std_moved)
+        {
+            sceneCount--;
+        }
+        if (sceneCount == 0)
+        {
+            m_basicShader.reset();
+            m_cubemapShader.reset();
+        }
+        else if (sceneCount < 0)
+        {
+            Debug::Error("Oops shader count is less than zero");
+            assert(false);
+        }
+    }
+    Scene(const Scene&) = delete;
+    Scene& operator=(const Scene&) = delete;
+    Scene(Scene&& other) noexcept;
+    Scene& operator=(Scene&& other) noexcept;
+
+    virtual void OnUpdate() = 0;  // force a derived method
     virtual void InitializeShaders(void) {}
     virtual void SetInitialUniforms(void) {}
 };

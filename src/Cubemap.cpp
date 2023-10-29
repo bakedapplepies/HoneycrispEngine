@@ -50,10 +50,10 @@ Cubemap::Cubemap(const std::vector<std::string>& faces)
         GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE));
     }
 
-    SetVAO();
+    SetMesh();
 }
 
-void Cubemap::SetVAO()
+void Cubemap::SetMesh()
 {
     verticesPos = {
         glm::vec3(-1.0f,  1.0f,  1.0f),

@@ -8,7 +8,7 @@ class SceneManager
 {
 private:
     size_t _activeSceneIndex = 0;
-    std::unordered_map< size_t, std::shared_ptr<Scene> > _scenesMap;
+    std::unordered_map< size_t, std::unique_ptr<Scene> > _scenesMap;
     static SceneManager* _instance;
 
 private:
@@ -27,13 +27,14 @@ public:
     template <typename T>
     void CreateScene(T&& t, size_t index)
     {
+        static_assert(std::is_base_of<Scene, T>() && "Method SceneManager::CreateScene didn't receive a scene object.");
         if (_scenesMap[index])
         {
-            Debug::Error("Scene index already occupied.");
+            Debug::Error(fmt::format("Scene index[{}] already occupied.", index));
             return;
         }
-        std::shared_ptr<T> temp_ptr = std::make_shared<T>(std::move(t));
-        _scenesMap[index] = temp_ptr;
+        std::unique_ptr<T> temp_ptr = std::make_unique<T>(std::move(t));
+        _scenesMap[index] = std::move(temp_ptr);
     }
 
     static SceneManager& Get();

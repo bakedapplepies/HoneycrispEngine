@@ -1,6 +1,7 @@
-#include "../Debug.h"
+#include "../utils/Debug.h"
 #include "Shader.h"
 
+int Shader::shaderCount = 0;
 
 std::string Shader::parseShader(std::ifstream& infile)
 {
@@ -84,11 +85,13 @@ Shader::Shader(std::ifstream&& vertexFile, std::ifstream&& fragmentFile)
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
+
+    shaderCount++;
 }
 
 Shader::Shader(Shader&& other) noexcept
 {
-    m_shaderID = other.m_shaderID;
+    m_shaderID = other.m_shaderID;  //        v
     other.m_shaderID = 0;  // glDeleteProgram(0); will be ignored
 }
 
@@ -102,7 +105,7 @@ Shader& Shader::operator=(Shader&& other) noexcept
 
 Shader::~Shader()
 {
-    if (m_shaderID)
+    if (m_shaderID != 0)
     {
         GLCall(glDeleteProgram(m_shaderID));
     }

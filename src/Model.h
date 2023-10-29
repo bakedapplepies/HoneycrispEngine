@@ -2,7 +2,7 @@
 
 #include "pch/pch.h"
 #include "Mesh.h"
-#include "Debug.h"
+#include "utils/Debug.h"
 #include "core/Texture.h"
 
 

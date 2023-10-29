@@ -93,7 +93,10 @@
         "regex": "cpp",
         "stack": "cpp",
         "unordered_set": "cpp",
-        "source_location": "cpp"
+        "source_location": "cpp",
+        "forward_list": "cpp",
+        "span": "cpp",
+        "valarray": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled",
     "C_Cpp.default.compilerPath": "C:\\MinGW-W64\\MinGW-W64\\bin\\g++.exe",

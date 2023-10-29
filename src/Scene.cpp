@@ -1,7 +1,35 @@
 #include "Scene.h"
 
+size_t Scene::sceneCount = 0;
 std::shared_ptr<Shader> Scene::m_basicShader = nullptr;
 std::shared_ptr<Shader> Scene::m_cubemapShader = nullptr;
+
+Scene::Scene()
+{
+    sceneCount++;
+}
+
+Scene::Scene(Scene&& other) noexcept
+{
+    m_cubemap = std::move(other.m_cubemap);
+    m_renderObjectPtrs = std::move(other.m_renderObjectPtrs);
+    m_nonRenderObjectPtrs = std::move(other.m_nonRenderObjectPtrs);
+    bgColor = std::move(other.bgColor);
+
+    other.m_std_moved = true;
+}
+
+Scene& Scene::operator=(Scene&& other) noexcept
+{
+    m_cubemap = std::move(other.m_cubemap);
+    m_renderObjectPtrs = std::move(other.m_renderObjectPtrs);
+    m_nonRenderObjectPtrs = std::move(other.m_nonRenderObjectPtrs);
+    bgColor = std::move(other.bgColor);
+
+    other.m_std_moved = true;
+
+    return *this;
+}
 
 void Scene::CreateCubemap(
     const std::string& right,
