@@ -11,3 +11,4 @@ reduce to 0.
 - Manage texture units (including GL_TEXTURE_CUBE_MAP)
 - LOD
 - Make model loading asynchronous
+- Look into Premake
