@@ -1,0 +1,1 @@
+premake5 premake_ninja --cc=clang -dc=ldc

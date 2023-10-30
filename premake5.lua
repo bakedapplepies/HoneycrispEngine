@@ -1,4 +1,7 @@
+require "./vendor/premake_ninja"
+
 workspace "LearnOpenGL"
+    location "build_lua"
     configurations { "Debug", "Release" }
 
 project "LearnOpenGL"
