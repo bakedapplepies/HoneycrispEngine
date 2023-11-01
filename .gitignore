@@ -5,8 +5,10 @@
 *.exe
 glm
 build
+bin
 imgui.ini
 **/imgui.ini
 **/*.lib
 *.a
 assimp
+build_lua
