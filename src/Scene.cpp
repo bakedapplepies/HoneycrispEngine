@@ -46,8 +46,8 @@ void Scene::CreateCubemap(
     };
 
     for (unsigned int i = 0; i < cubemapFaces.size(); i++)
-    {
-        std::string root("../");  // Executable is in build folder
+    {  // TODO: make a ROOT macro or something for easy root folder path access
+        std::string root("../../");  // Executable is in build folder
         std::filesystem::path textureRelativePath(root);
         textureRelativePath /= std::filesystem::path(location.file_name()).remove_filename();  // where the file is
         textureRelativePath /= cubemapFaces[i].c_str();  // add relative path relative to the above path <----
@@ -75,8 +75,8 @@ void Scene::Draw(void) const
         if (!m_cubemapShader)
         {
             m_cubemapShader = std::make_shared<Shader>(
-                std::ifstream("../resources/shaders/cubemapvertex.glsl"),
-                std::ifstream("../resources/shaders/cubemapfragment.glsl")
+                Path("../resources/shaders/cubemapvertex.glsl"),
+                Path("../resources/shaders/cubemapfragment.glsl")
             );
             m_cubemapShader->setIntUniform("cubemap", 10);
         }

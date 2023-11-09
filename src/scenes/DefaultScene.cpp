@@ -1,6 +1,7 @@
 #include "DefaultScene.h"
 #include "../utils/Debug.h"
 #include "../utils/json_util.h"
+#include "../utils/utils.h"
 
 
 #define RAND rand()/double(RAND_MAX)
@@ -9,8 +10,8 @@ DefaultScene::DefaultScene()
 {
     // JsonUtil::parseFile("../../resources/shaders/vertex.glsl");
     shader = std::make_shared<Shader>(
-        std::ifstream("../resources/shaders/defaultvertex.glsl"),
-        std::ifstream("../resources/shaders/fragment.glsl")
+        Path("../../resources/shaders/defaultvertex.glsl"),
+        Path("../../resources/shaders/fragment.glsl")
     );
 
     cube = CreateObject(Cube(), EObjectRenderType::STATIC, shader);

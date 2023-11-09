@@ -12,13 +12,13 @@ Texture::Texture(const std::string& texturePath, uint32_t textureResolutionWidth
 ) : m_textureWidth(textureResolutionWidth), m_textureHeight(textureResolutionHeight)
 {
     /* texture in absolute forms to ensure no paths are repeated */
-    std::string root("../");  // Executable is in build folder
+    std::string root("../../");  // Executable is in build folder
     std::filesystem::path textureRelativePath(root);
     textureRelativePath /= std::filesystem::path(location.file_name()).remove_filename();  // where the file is
     textureRelativePath /= texturePath;  // add relative path relative to the above path <---------
                                          // in case this is absolute, it will replace everything  |
     textureRelativePath = std::filesystem::absolute(textureRelativePath);  // make absolute ------
-    textureRelativePath = textureRelativePath.lexically_normal();
+    textureRelativePath = textureRelativePath.lexically_normal();  // get rid of ".."s
     path = textureRelativePath.string();
     // Debug::Log(fmt::format("{}", std::filesystem::last_write_time(path).time_since_epoch().count()));
 
@@ -70,11 +70,12 @@ Texture::Texture(const std::string& texturePath, uint32_t textureResolutionWidth
         GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
         GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
         
-        path = texturePath;
+        // path = texturePath;
         stbi_image_free(data);
     }
     else
     {
+        Debug::Error(path);
         Debug::Error(fmt::format("Texture failed to load: {}", stbi_failure_reason()));
         stbi_image_free(data);
         assert(false && "Texture failed to load.");

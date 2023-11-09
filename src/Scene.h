@@ -7,6 +7,7 @@
 #include "NonRenderable.h"
 #include "types/types_index.h"
 #include "Cubemap.h"
+#include "utils/utils.h"
 
 enum EObjectRenderType
 {
@@ -106,8 +107,8 @@ protected:
         if (!m_basicShader)
         {
             m_basicShader = std::make_shared<Shader>(
-                std::ifstream("../resources/shaders/defaultvertex.glsl"),
-                std::ifstream("../resources/shaders/defaultfragment.glsl")
+                Path("../resources/shaders/defaultvertex.glsl"),
+                Path("../resources/shaders/defaultfragment.glsl")
             );
         }
         

@@ -1,33 +1,28 @@
 #include "Model.h"
 
 
-Model::Model(const std::string& path, const std::source_location& location) : modelDirectory(path)
+Model::Model(const std::string& path, const std::source_location& location)
 {
-    std::filesystem::path modelPath(path.c_str());
-    std::filesystem::path modelFile = modelPath.filename();
-    modelPath.make_preferred();
+    std::filesystem::path modelPath("../../");
+    modelPath /= location.file_name();
     modelPath.remove_filename();
-    std::filesystem::path clientFile(location.file_name());
-    clientFile.make_preferred();
-    clientFile.remove_filename();
-    std::filesystem::path currentFile(fmt::format("{}", __FILE__));
-    currentFile.make_preferred();
-    currentFile.remove_filename();
-
-    modelDirectory = std::filesystem::relative(clientFile /= modelPath, currentFile);
-    std::filesystem::path relativePath = modelDirectory / modelFile;
+    modelPath /= path;
+    modelPath.make_preferred();
+    modelPath.lexically_normal();
+    modelDirectory = modelPath;
+    modelDirectory.remove_filename();
 
     // Model loading
     float beginTime = glfwGetTime();
     Assimp::Importer import;
-    const aiScene *scene = import.ReadFile(relativePath.string(), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_FlipWindingOrder);
+    const aiScene *scene = import.ReadFile(modelPath.string(), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_FlipWindingOrder);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
         Debug::Error("ASSIMP: ", import.GetErrorString());
         assert(false);
     }   
-    Debug::Log(fmt::format("Time took to load {}: {}s", relativePath.string(), glfwGetTime() - beginTime));
+    Debug::Log(fmt::format("Time took to load {}: {}s", modelPath.string(), glfwGetTime() - beginTime));
     processNode(scene->mRootNode, scene);
 }
 

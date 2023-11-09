@@ -1,4 +1,5 @@
 #include "DefaultSceneTwo.h"
+#include "../utils/utils.h"
 
 
 DefaultSceneTwo::DefaultSceneTwo()
@@ -118,12 +119,12 @@ void DefaultSceneTwo::OnUpdate()
 void DefaultSceneTwo::InitializeShaders(void)
 {
     shader = std::make_shared<Shader>(
-        std::ifstream("../resources/shaders/defaultvertex.glsl"),
-        std::ifstream("../resources/shaders/fragment.glsl")
+        Path("../../resources/shaders/defaultvertex.glsl"),
+        Path("../../resources/shaders/fragment.glsl")
     );
     backpackShader = std::make_shared<Shader>(
-        std::ifstream("../resources/shaders/defaultvertex.glsl"),
-        std::ifstream("../resources/shaders/reflectfragment.glsl")
+        Path("../../resources/shaders/defaultvertex.glsl"),
+        Path("../../resources/shaders/reflectfragment.glsl")
     );
 }
 

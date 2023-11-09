@@ -3,10 +3,11 @@
 
 int Shader::shaderCount = 0;
 
-std::string Shader::parseShader(std::ifstream& infile)
+std::string Shader::parseShader(const std::string& path)
 {
     std::string line;
     std::stringstream ss;
+    std::ifstream infile(path);
     while (std::getline(infile, line))
     {
         ss << line << '\n';
@@ -15,8 +16,24 @@ std::string Shader::parseShader(std::ifstream& infile)
     return ss.str();
 }
 
-Shader::Shader(std::ifstream&& vertexFile, std::ifstream&& fragmentFile)
+Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile, const std::source_location& location)
 {
+    // std::string root("../../");  // Executable is in build folder
+    // std::filesystem::path vertexRelativePath(root);
+    // std::filesystem::path fragmentRelativePath(root);
+    // vertexRelativePath /= std::filesystem::path(location.file_name()).remove_filename();
+    // fragmentRelativePath /= std::filesystem::path(location.file_name()).remove_filename();
+    // vertexRelativePath /= vertexFile;
+    // fragmentRelativePath /= fragmentFile;
+
+    // vertexRelativePath = std::filesystem::absolute(vertexRelativePath);
+    // fragmentRelativePath = std::filesystem::absolute(fragmentRelativePath);
+    // vertexRelativePath = vertexRelativePath.lexically_normal();
+    // fragmentRelativePath = fragmentRelativePath.lexically_normal();
+    // std::string vertexPath = vertexRelativePath.string();
+    // std::string fragmentPath = fragmentRelativePath.string();
+
+
     std::string vs = parseShader(vertexFile);
     const char* vertexShaderSrc = vs.c_str();
     std::string fs = parseShader(fragmentFile);
@@ -34,7 +51,7 @@ Shader::Shader(std::ifstream&& vertexFile, std::ifstream&& fragmentFile)
     if (!success)
     {
         GLCall(glGetShaderInfoLog(vertexShader, 512, NULL, infoLog));
-        Debug::Error("Vertex Shader compilation failed at {}:\n\t");
+        Debug::Error(fmt::format("Vertex Shader compilation failed at {}:\n\t", vertexFile), infoLog);
         // Debug::Error(fmt::format("Vertex Shader compilation failed at {}:\n\t", ), infoLog);
 
         GLCall(glDeleteShader(vertexShader));
@@ -50,7 +67,7 @@ Shader::Shader(std::ifstream&& vertexFile, std::ifstream&& fragmentFile)
     if (!success)
     {
         GLCall(glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog));
-        Debug::Error("Fragment Shader compilation failed:\n\t", infoLog);
+        Debug::Error(fmt::format("Fragment Shader compilation failed at {}:\n\t", fragmentFile), infoLog);
 
         GLCall(glDeleteShader(fragmentShader));
         m_shaderID = 0;

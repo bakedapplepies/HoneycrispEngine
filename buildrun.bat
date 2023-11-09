@@ -1,3 +1,4 @@
-call build.bat || exit
-cd ..
-call run.bat || exit
+cd build
+ninja || exit
+cd ../bin/Debug
+.\LearnOpenGL.exe || exit

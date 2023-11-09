@@ -12,14 +12,14 @@ private:
 public:
     static int shaderCount;
     Shader() = default;
-    Shader(std::ifstream&& vertexShaderPath, std::ifstream&& fragmentShaderPath);
+    Shader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath, const std::source_location& location = std::source_location::current());
     Shader(const Shader& other) = delete;
     Shader& operator=(const Shader& other) = delete;
     Shader(Shader&& other) noexcept;
     Shader& operator=(Shader&& other) noexcept;
     ~Shader();
 
-    std::string parseShader(std::ifstream& infile);
+    std::string parseShader(const std::string& path);
     
     GLuint getID() const;
     void Use() const;
