@@ -13,8 +13,8 @@
             ],
             "windowsSdkVersion": "10.0.20348.0",
             "cppStandard": "c++20",
-            "intelliSenseMode": "gcc-x64",
-            "compilerPath": "C:/MinGW-W64/MinGW-W64/bin/g++.exe"
+            "intelliSenseMode": "windows-clang-x64",
+            "compilerPath": "C:/MinGW-W64/MinGW-W64/bin/clang++.exe"
         }
     ],
     "version": 4

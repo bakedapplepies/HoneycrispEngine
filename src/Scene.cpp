@@ -75,8 +75,8 @@ void Scene::Draw(void) const
         if (!m_cubemapShader)
         {
             m_cubemapShader = std::make_shared<Shader>(
-                Path("../resources/shaders/cubemapvertex.glsl"),
-                Path("../resources/shaders/cubemapfragment.glsl")
+                FileSystem::Path("../resources/shaders/CubemapVertex.glsl"),
+                FileSystem::Path("../resources/shaders/CubemapFragment.glsl")
             );
             m_cubemapShader->setIntUniform("cubemap", 10);
         }

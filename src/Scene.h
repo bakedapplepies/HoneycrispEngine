@@ -107,8 +107,8 @@ protected:
         if (!m_basicShader)
         {
             m_basicShader = std::make_shared<Shader>(
-                Path("../resources/shaders/defaultvertex.glsl"),
-                Path("../resources/shaders/defaultfragment.glsl")
+                FileSystem::Path("../resources/shaders/DefaultVertex.glsl"),
+                FileSystem::Path("../resources/shaders/DefaultFragment.glsl")
             );
         }
         

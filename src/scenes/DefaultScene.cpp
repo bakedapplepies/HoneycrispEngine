@@ -10,8 +10,8 @@ DefaultScene::DefaultScene()
 {
     // JsonUtil::parseFile("../../resources/shaders/vertex.glsl");
     shader = std::make_shared<Shader>(
-        Path("../../resources/shaders/defaultvertex.glsl"),
-        Path("../../resources/shaders/fragment.glsl")
+        FileSystem::Path("../../resources/shaders/DefaultVertex.glsl"),
+        FileSystem::Path("../../resources/shaders/fragment.glsl")
     );
 
     cube = CreateObject(Cube(), EObjectRenderType::STATIC, shader);

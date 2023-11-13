@@ -1,14 +1,14 @@
 - batch/instance rendering; prioritize instancing
 - ShaderConfig object to pass into draw calls?
 - optimize shader system
-- move all enums to a separate file
+- move all enums to a separate file (?)
 - cache texture (ktx) & store model in reuseable binary format
 - check if shared_ptr in SceneManager is necessary
 - Add a macro for false-asserting + glfwTerminate();
 - Keep track of already used shader ids in a map with shader count, then only delete the id when shader counts
 reduce to 0.
-- Model texture grouping
 - Manage texture units (including GL_TEXTURE_CUBE_MAP)
-- LOD
+- LOD (mesh subdivision via geometry shader for now, mesh shader later)
 - Make model loading asynchronous
-- Add libraries as submodules
+- Add libraries as submodules (premake)
+- create breakpoint via mingw-w64

@@ -3,10 +3,12 @@ out vec4 FragColor;
 
 precision mediump float;
 
-in vec3 VertColor;
-in vec2 TexCoord;
-in vec3 Normal;
-in vec3 FragPos;
+in VS_OUT {
+    vec3 VertColor;
+    vec2 TexCoord;
+    vec3 Normal;
+    vec3 FragPos;
+} fs_in;
 
 layout(std140, binding = 1) uniform GlobUniforms
 {
@@ -32,10 +34,10 @@ uniform samplerCube cubemap;
 
 void main()
 {
-    vec3 viewToFrag = FragPos - u_viewPos;
+    vec3 viewToFrag = fs_in.FragPos - u_viewPos;
 
     vec3 I = viewToFrag;
-    vec3 R = reflect(I, Normal);
+    vec3 R = reflect(I, fs_in.Normal);
 
     FragColor = vec4(texture(cubemap, R).rgb, 1.0);
 }

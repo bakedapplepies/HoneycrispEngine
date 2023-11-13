@@ -12,7 +12,7 @@ private:
 public:
     static int shaderCount;
     Shader() = default;
-    Shader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath, const std::source_location& location = std::source_location::current());
+    Shader(const std::string& vertexFile, const std::string& fragmentFile, const std::string& geometryFile = "", const std::source_location& location = std::source_location::current());
     Shader(const Shader& other) = delete;
     Shader& operator=(const Shader& other) = delete;
     Shader(Shader&& other) noexcept;

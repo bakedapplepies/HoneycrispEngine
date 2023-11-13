@@ -1,7 +1,7 @@
 #include "utils.h"
 
 
-std::string Path(const std::string& path, const std::source_location& location)
+std::string FileSystem::Path(const std::string& path, const std::source_location& location)
 {
     std::filesystem::path absPath("../../");
     absPath /= location.file_name();

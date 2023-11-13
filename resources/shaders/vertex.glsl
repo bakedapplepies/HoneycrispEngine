@@ -4,10 +4,12 @@ layout(location = 1) in vec3 aColor;
 layout(location = 2) in vec2 aTexCoord;
 layout(location = 3) in vec3 aNormal;
 
-out vec3 VertColor;
-out vec2 TexCoord;
-out vec3 Normal;
-out vec3 FragPos;
+out VS_OUT {
+    vec3 VertColor;
+    vec2 TexCoord;
+    vec3 Normal;
+    vec3 FragPos;
+} vs_out;
 
 layout (std140, binding = 0) uniform Matrices
 { 
@@ -23,9 +25,9 @@ void main() {
     vec4 worldPos = u_model * vec4(aPos, 1.0);
     worldPos += vec4(0, sin(dot(normalize(vec3(1, 0, 1)), vec3(worldPos.x, 0, worldPos.z))/5 + u_time*2), 0, 0);
     gl_Position = u_projection * u_view * worldPos;
-    FragPos = vec3(worldPos);
-    Normal = u_normalMatrix * aNormal;
+    vs_out.FragPos = vec3(worldPos);
+    vs_out.Normal = u_normalMatrix * aNormal;
     // Normal = normalize(Normal);
-    VertColor = aColor;
-    TexCoord = aTexCoord;
+    vs_out.VertColor = aColor;
+    vs_out.TexCoord = aTexCoord;
 }

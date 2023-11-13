@@ -118,7 +118,7 @@ void Window::Loop()
 
     GLCall(glBindBuffer(GL_UNIFORM_BUFFER, ubo[0]));
     GLCall(glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4) + sizeof(GLfloat), nullptr, GL_STATIC_DRAW));
-    GLCall(glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo[0], 0, 2 * sizeof(glm::mat4) + sizeof(float)));
+    GLCall(glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo[0], 0, 2 * sizeof(glm::mat4) + sizeof(GLfloat)));
 
     GLCall(glBindBuffer(GL_UNIFORM_BUFFER, ubo[1]));
     GLCall(glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::vec3), nullptr, GL_STATIC_DRAW));

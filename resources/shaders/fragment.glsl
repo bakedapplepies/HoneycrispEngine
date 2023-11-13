@@ -3,10 +3,12 @@ out vec4 FragColor;
 
 precision mediump float;
 
-in vec3 VertColor;
-in vec2 TexCoord;
-in vec3 Normal;
-in vec3 FragPos;
+in VS_OUT {
+    vec3 VertColor;
+    vec2 TexCoord;
+    vec3 Normal;
+    vec3 FragPos;
+} fs_in;
 
 layout(std140, binding = 1) uniform GlobUniforms
 {
@@ -83,7 +85,7 @@ vec3 CalcDirLight(DirLight dirLight, vec3 normal, vec3 dirToView, vec3 textureFr
 
 vec3 CalcPointLight(PointLight pointLight, vec3 normal, vec3 dirToView, vec3 textureFrag, vec3 specularFrag)
 {
-    vec3 fragToLight = pointLight.position - FragPos;
+    vec3 fragToLight = pointLight.position - fs_in.FragPos;
     vec3 dirToLight = normalize(fragToLight);
 
     vec3 ambient = pointLight.ambient * textureFrag;
@@ -103,7 +105,7 @@ vec3 CalcPointLight(PointLight pointLight, vec3 normal, vec3 dirToView, vec3 tex
 
 vec3 CalcSpotLight(SpotLight spotLight, vec3 normal, vec3 dirToView, vec3 textureFrag, vec3 specularFrag)
 {
-    vec3 fragToLight = u_viewPos - FragPos;
+    vec3 fragToLight = u_viewPos - fs_in.FragPos;
     vec3 dirToLight = normalize(fragToLight);
 
     float theta = dot(dirToLight, normalize(-spotLightDir));
@@ -128,14 +130,14 @@ vec3 CalcSpotLight(SpotLight spotLight, vec3 normal, vec3 dirToView, vec3 textur
 void main()
 {
     vec3 result = vec3(0.0);
-    vec3 fragToView = u_viewPos - FragPos;
+    vec3 fragToView = u_viewPos - fs_in.FragPos;
     vec3 dirToView = normalize(fragToView);
-    vec3 textureFrag = vec3(texture(u_material.albedo, TexCoord));
-    vec3 specularFrag = vec3(texture(u_material.specular, TexCoord));
+    vec3 textureFrag = vec3(texture(u_material.albedo, fs_in.TexCoord));
+    vec3 specularFrag = vec3(texture(u_material.specular, fs_in.TexCoord));
 
-    result += CalcDirLight(u_dirLight, Normal, dirToView, textureFrag, specularFrag);
-    result += CalcPointLight(u_pointLight, Normal, dirToView, textureFrag, specularFrag);
-    result += CalcSpotLight(u_spotLight, Normal, dirToView, textureFrag, specularFrag);
+    result += CalcDirLight(u_dirLight, fs_in.Normal, dirToView, textureFrag, specularFrag);
+    result += CalcPointLight(u_pointLight, fs_in.Normal, dirToView, textureFrag, specularFrag);
+    result += CalcSpotLight(u_spotLight, fs_in.Normal, dirToView, textureFrag, specularFrag);
 
-    FragColor = vec4(VertColor, 1.0) * vec4(result, 1.0);
+    FragColor = vec4(fs_in.VertColor, 1.0) * vec4(result, 1.0);
 }

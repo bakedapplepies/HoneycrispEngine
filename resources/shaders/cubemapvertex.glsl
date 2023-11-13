@@ -10,8 +10,6 @@ layout (std140, binding = 0) uniform Matrices
     float u_time;
 };
 
-// uniform mat4 u_view_NoTrans;
-
 void main()
 {
     TexCoords = vec3(aPos.x, aPos.y, -aPos.z);  // using local space as uvs

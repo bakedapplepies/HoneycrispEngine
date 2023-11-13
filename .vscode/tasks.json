@@ -6,7 +6,7 @@
         {
             "label": "BuildDebug",
             "type": "shell",
-            "command": ".\\buildrun.bat",
+            "command": ".\\build.bat",
             "args": [],
             "problemMatcher": []
         },

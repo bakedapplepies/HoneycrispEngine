@@ -16,32 +16,19 @@ std::string Shader::parseShader(const std::string& path)
     return ss.str();
 }
 
-Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile, const std::source_location& location)
+Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile, const std::string& geometryFile, const std::source_location& location)
 {
-    // std::string root("../../");  // Executable is in build folder
-    // std::filesystem::path vertexRelativePath(root);
-    // std::filesystem::path fragmentRelativePath(root);
-    // vertexRelativePath /= std::filesystem::path(location.file_name()).remove_filename();
-    // fragmentRelativePath /= std::filesystem::path(location.file_name()).remove_filename();
-    // vertexRelativePath /= vertexFile;
-    // fragmentRelativePath /= fragmentFile;
+    const std::string vertexShaderSource = parseShader(vertexFile);
+    const std::string fragmentShaderSource = parseShader(fragmentFile);
+    const std::string geometryShaderSource = geometryFile.size() ? parseShader(geometryFile) : "";
 
-    // vertexRelativePath = std::filesystem::absolute(vertexRelativePath);
-    // fragmentRelativePath = std::filesystem::absolute(fragmentRelativePath);
-    // vertexRelativePath = vertexRelativePath.lexically_normal();
-    // fragmentRelativePath = fragmentRelativePath.lexically_normal();
-    // std::string vertexPath = vertexRelativePath.string();
-    // std::string fragmentPath = fragmentRelativePath.string();
-
-
-    std::string vs = parseShader(vertexFile);
-    const char* vertexShaderSrc = vs.c_str();
-    std::string fs = parseShader(fragmentFile);
-    const char* fragmentShaderSrc = fs.c_str();
+    const char* vsSource = vertexShaderSource.c_str();
+    const char* fsSource = fragmentShaderSource.c_str();
+    const char* gsSource = geometryShaderSource.c_str();
 
     /* Vertex Shader */
     GLCall(GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER));
-    GLCall(glShaderSource(vertexShader, 1, &vertexShaderSrc, NULL));
+    GLCall(glShaderSource(vertexShader, 1, &vsSource, NULL));
     GLCall(glCompileShader(vertexShader));
 
     int success;
@@ -55,12 +42,12 @@ Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile, c
         // Debug::Error(fmt::format("Vertex Shader compilation failed at {}:\n\t", ), infoLog);
 
         GLCall(glDeleteShader(vertexShader));
-        m_shaderID = 0;
+        assert(false);
     }
 
     /* Fragment Shader */
     GLCall(GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER));
-    GLCall(glShaderSource(fragmentShader, 1, &fragmentShaderSrc, NULL));
+    GLCall(glShaderSource(fragmentShader, 1, &fsSource, NULL));
     GLCall(glCompileShader(fragmentShader));
 
     GLCall(glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success));
@@ -70,13 +57,31 @@ Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile, c
         Debug::Error(fmt::format("Fragment Shader compilation failed at {}:\n\t", fragmentFile), infoLog);
 
         GLCall(glDeleteShader(fragmentShader));
-        m_shaderID = 0;
+        assert(false);
+    }
+
+    GLCall(GLuint geometryShader = glCreateShader(GL_GEOMETRY_SHADER));
+    if (geometryShaderSource.length() > 0)
+    {
+        GLCall(glShaderSource(geometryShader, 1, &gsSource, NULL));
+        GLCall(glCompileShader(geometryShader));
+
+        GLCall(glGetShaderiv(geometryShader, GL_COMPILE_STATUS, &success));
+        if (!success)
+        {
+            GLCall(glGetShaderInfoLog(geometryShader, 512, NULL, infoLog));
+            Debug::Error(fmt::format("Geometry Shader compilation failed at {}:\n\t", geometryFile), infoLog);
+
+            GLCall(glDeleteShader(fragmentShader));
+            assert(false);
+        }
     }
 
     /* Creating Shader Program */
     GLCall(m_shaderID = glCreateProgram();)
     GLCall(glAttachShader(m_shaderID, vertexShader));
     GLCall(glAttachShader(m_shaderID, fragmentShader));
+    if (geometryShaderSource.length() > 0) { GLCall(glAttachShader(m_shaderID, geometryShader)); }
 
     GLCall(glLinkProgram(m_shaderID));
     GLCall(glGetProgramiv(m_shaderID, GL_LINK_STATUS, &success));
@@ -102,6 +107,7 @@ Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile, c
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
+    glDeleteShader(geometryShader);
 
     shaderCount++;
 }

@@ -119,12 +119,13 @@ void DefaultSceneTwo::OnUpdate()
 void DefaultSceneTwo::InitializeShaders(void)
 {
     shader = std::make_shared<Shader>(
-        Path("../../resources/shaders/defaultvertex.glsl"),
-        Path("../../resources/shaders/fragment.glsl")
+        FileSystem::Path("../../resources/shaders/DefaultVertex.glsl"),
+        FileSystem::Path("../../resources/shaders/fragment.glsl")
     );
     backpackShader = std::make_shared<Shader>(
-        Path("../../resources/shaders/defaultvertex.glsl"),
-        Path("../../resources/shaders/reflectfragment.glsl")
+        FileSystem::Path("../../resources/shaders/DefaultVertex.glsl"),
+        FileSystem::Path("../../resources/shaders/ReflectFragment.glsl"),
+        FileSystem::Path("../../resources/shaders/ExplodeGeometry.glsl")
     );
 }
 

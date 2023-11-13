@@ -3,10 +3,12 @@ out vec4 FragColor;
 
 precision mediump float;
 
-in vec3 VertColor;
-in vec2 TexCoord;
-in vec3 Normal;
-in vec3 FragPos;
+in VS_OUT {
+    vec3 VertColor;
+    vec2 TexCoord;
+    vec3 Normal;
+    vec3 FragPos;
+} fs_in;
 
 layout(std140, binding = 1) uniform GlobUniforms
 {
@@ -17,5 +19,5 @@ layout(std140, binding = 1) uniform GlobUniforms
 
 void main()
 {
-    FragColor = vec4(VertColor, 1.0);
+    FragColor = vec4(fs_in.VertColor, 1.0);
 }
