@@ -37,13 +37,6 @@ DefaultSceneTwo::DefaultSceneTwo()
         colors.emplace_back(glm::vec3(0.369f, 0.616f, 0.204f));
     }
 
-    std::vector<glm::vec3> normals;
-    normals.reserve(totalVerts);
-    for (int i = 0; i < totalVerts; i++)
-    {
-        normals.emplace_back(glm::vec3(0.0f, 1.0f, 0.0f));
-    }
-
     std::vector<glm::vec2> uvs;
     uvs.reserve(totalVerts);
     for (int i = 0; i < vertW; i++)
@@ -72,10 +65,9 @@ DefaultSceneTwo::DefaultSceneTwo()
         }
     }
 
-    mesh = CreateObject(Mesh(), EObjectRenderType::STATIC, shader);
+    mesh = CreateObject(Mesh(), EObjectRenderType::STATIC, wackyShader);
     mesh->vertices = vertices;
     mesh->colors = colors;
-    mesh->normals = normals;
     mesh->uvs = uvs;
     mesh->indices = indices;
 
@@ -84,15 +76,6 @@ DefaultSceneTwo::DefaultSceneTwo()
 
     model = CreateObject(Model("../../resources/models/backpack/backpack.obj"), EObjectRenderType::STATIC, backpackShader);
     model->AddPosition(glm::vec3(10.0f, 2.0f, 7.0f));
-    // model->AddPosition(glm::vec3(10.0f, 4.0f, 7.0f));
-    // model->AddPosition(glm::vec3(10.0f, 0.0f, 7.0f));
-    // model->AddPosition(glm::vec3(10.0f, 2.0f, 4.0f));
-    // model->AddPosition(glm::vec3(6.0f, 2.0f, 7.0f));
-    // model->AddPosition(glm::vec3(6.0f, 8.0f, 7.0f));
-    // model->AddPosition(glm::vec3(8.0f, 10.0f, 7.0f));
-    // model->AddPosition(glm::vec3(1.0f, 7.0f, 9.0f));
-    // model->AddPosition(glm::vec3(5.0f, 8.0f, 8.0f));
-    // model->AddPosition(glm::vec3(4.0f, 10.0f, 1.0f));
 
     CreateCubemap(
         "../../resources/textures/cubemaps/skybox/right.jpg",
@@ -126,6 +109,11 @@ void DefaultSceneTwo::InitializeShaders(void)
     backpackShader = std::make_shared<Shader>(
         FileSystem::Path("../../resources/shaders/DefaultVertex.glsl"),
         FileSystem::Path("../../resources/shaders/PhongShadingFragment.glsl")  // update cubemap texture unit uniform
+    );
+    wackyShader = std::make_shared<Shader>(
+        FileSystem::Path("../../resources/shaders/WaveVertex.glsl"),
+        FileSystem::Path("../../resources/shaders/PhongShadingFragment.glsl"),
+        FileSystem::Path("../../resources/shaders/WaveGeometry.glsl")
     );
     normalShader = std::make_shared<Shader>(
         FileSystem::Path("../../resources/shaders/NormalVertex.glsl"),
@@ -165,6 +153,36 @@ void DefaultSceneTwo::SetInitialUniforms(void)
     shader->setFloatUniform("u_spotLight.constant", 1.0f);
     shader->setFloatUniform("u_spotLight.linear", 0.07f);
     shader->setFloatUniform("u_spotLight.quadratic", 0.0045f);
+    
+    // lighting
+    wackyShader->setIntUniform("u_material.albedo", Textures::mainTextureMap.getTextureUnit());
+    wackyShader->setIntUniform("u_material.specular", Textures::mainTextureSpecularMap.getTextureUnit());
+    wackyShader->setFloatUniform("u_material.shininess", 32.0f);
+
+    // dir light
+    wackyShader->setVector3Uniform("u_dirLight.direction", glm::normalize(glm::vec3(0, -1, 0)));
+    wackyShader->setVector3Uniform("u_dirLight.ambient", glm::vec3(1, 1, 1) * 0.1f);
+    wackyShader->setVector3Uniform("u_dirLight.diffuse", glm::vec3(1, 1, 1) * 0.7f);
+    wackyShader->setVector3Uniform("u_dirLight.specular", glm::vec3(1, 1, 1));
+
+    // point light
+    wackyShader->setVector3Uniform("u_pointLight.position", glm::vec3(10, 2, 10));
+    wackyShader->setVector3Uniform("u_pointLight.ambient", 0.1f * glm::vec3(1.0));
+    wackyShader->setVector3Uniform("u_pointLight.diffuse", 0.5f * glm::vec3(1.0));
+    wackyShader->setVector3Uniform("u_pointLight.specular", 1.0f * glm::vec3(1.0));
+    wackyShader->setFloatUniform("u_pointLight.constant", 1.0f);
+    wackyShader->setFloatUniform("u_pointLight.linear", 0.001f);
+    wackyShader->setFloatUniform("u_pointLight.quadratic", 0.0002f);
+
+    // spot light
+    wackyShader->setFloatUniform("u_spotLight.cutOff", glm::cos(glm::radians(15.0f)));
+    wackyShader->setFloatUniform("u_spotLight.outerCutOff", glm::cos(glm::radians(25.0f)));
+    wackyShader->setVector3Uniform("u_spotLight.ambient", 0.1f * glm::vec3(1.0));
+    wackyShader->setVector3Uniform("u_spotLight.diffuse", 0.5f * glm::vec3(1.0));
+    wackyShader->setVector3Uniform("u_spotLight.specular", 1.0f * glm::vec3(1.0));
+    wackyShader->setFloatUniform("u_spotLight.constant", 1.0f);
+    wackyShader->setFloatUniform("u_spotLight.linear", 0.07f);
+    wackyShader->setFloatUniform("u_spotLight.quadratic", 0.0045f);
 
     // backpackShader->setIntUniform("cubemap", 10);
     // lighting
