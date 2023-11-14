@@ -8,7 +8,7 @@ Application::~Application()
 {
     window.reset();
     glfwTerminate();
-    Debug::Log("GLFW terminated safely.");
+    Debug::Log("GLFW terminated.");
 }
 
 Application& Application::Get()

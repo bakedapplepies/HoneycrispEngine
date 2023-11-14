@@ -24,10 +24,11 @@ uniform mat3 u_normalMatrix;
 void main() {
     vec4 worldPos = u_model * vec4(aPos, 1.0);
     worldPos += vec4(0, sin(dot(normalize(vec3(1, 0, 1)), vec3(worldPos.x, 0, worldPos.z))/5 + u_time*2), 0, 0);
-    gl_Position = u_projection * u_view * worldPos;
+    
     vs_out.FragPos = vec3(worldPos);
     vs_out.Normal = u_normalMatrix * aNormal;
-    // Normal = normalize(Normal);
     vs_out.VertColor = aColor;
     vs_out.TexCoord = aTexCoord;
+
+    gl_Position = u_projection * u_view * worldPos;
 }

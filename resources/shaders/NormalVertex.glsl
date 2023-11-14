@@ -24,9 +24,9 @@ void main()
 {
     vs_out.VertColor = aColor;
     vs_out.TexCoord = aTexCoord;
-    vs_out.Normal = u_normalMatrix * aNormal;
+    vs_out.Normal = mat3(transpose(inverse(u_view * u_model))) * aNormal;
     vec4 worldPos = u_model * vec4(aPos, 1.0);
     vs_out.FragPos = vec3(worldPos);
 
-    gl_Position = u_projection * u_view * worldPos;
+    gl_Position = u_view * worldPos;
 }

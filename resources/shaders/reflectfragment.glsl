@@ -17,18 +17,6 @@ layout(std140, binding = 1) uniform GlobUniforms
     vec3 spotLightDir;
 };
 
-// struct Material
-// {
-//     sampler2D albedo;
-//     sampler2D roughness;
-//     sampler2D ao;
-//     sampler2D normal;
-//     sampler2D specular;
-
-//     float shininess;
-// };
-
-// uniform Material u_material;
 uniform samplerCube cubemap;
 
 

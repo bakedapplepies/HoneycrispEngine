@@ -11,7 +11,7 @@ DefaultScene::DefaultScene()
     // JsonUtil::parseFile("../../resources/shaders/vertex.glsl");
     shader = std::make_shared<Shader>(
         FileSystem::Path("../../resources/shaders/DefaultVertex.glsl"),
-        FileSystem::Path("../../resources/shaders/fragment.glsl")
+        FileSystem::Path("../../resources/shaders/PhongShadingFragment.glsl")
     );
 
     cube = CreateObject(Cube(), EObjectRenderType::STATIC, shader);

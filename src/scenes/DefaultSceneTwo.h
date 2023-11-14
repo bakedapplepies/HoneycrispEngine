@@ -15,6 +15,7 @@ class DefaultSceneTwo : public Scene
 private:
     std::shared_ptr<Shader> shader;
     std::shared_ptr<Shader> backpackShader;
+    std::shared_ptr<Shader> normalShader;
     SceneObject<Cube> cube;
     SceneObject<Mesh> mesh;
     SceneObject<Model> model;
