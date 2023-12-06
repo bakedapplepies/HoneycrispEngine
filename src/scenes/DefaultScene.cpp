@@ -10,16 +10,17 @@ DefaultScene::DefaultScene()
 {
     // JsonUtil::parseFile("../../resources/shaders/vertex.glsl");
     shader = std::make_shared<Shader>(
-        FileSystem::Path("../../resources/shaders/DefaultVertex.glsl"),
-        FileSystem::Path("../../resources/shaders/PhongShadingFragment.glsl")
+        FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
+        FileSystem::Path("resources/shaders/PhongShadingFragment.glsl")
     );
 
-    cube = CreateObject(Cube(), EObjectRenderType::STATIC, shader);
-    cube->AddPosition(glm::vec3(-1.0f, -3.0f, -1.0f));
-    cube->AddPosition(glm::vec3(2.0f, 0.0f, 2.0f)); 
-    cube->AddPosition(glm::vec3(-3.0f, 3.0f, 4.0f));
+    cube = CreateObject<Cube, EObjectMovement::NONE>();
+    cube->setShader(shader);
+    cube->addPosition(glm::vec3(-1.0f, -3.0f, -1.0f));
+    cube->addPosition(glm::vec3(2.0f, 0.0f, 2.0f)); 
+    cube->addPosition(glm::vec3(-3.0f, 3.0f, 4.0f));
 
-    customMesh = CreateObject(Mesh(), EObjectRenderType::STATIC);
+    customMesh = CreateObject<Mesh, EObjectMovement::NONE>();
 
     customMesh->vertices = std::vector<glm::vec3> {
         // front
@@ -156,7 +157,7 @@ DefaultScene::DefaultScene()
     };
 
     customMesh->ConstructMesh();
-    customMesh->AddPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+    customMesh->addPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 
     SetInitialUniforms();
 }

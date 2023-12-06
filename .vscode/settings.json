@@ -99,7 +99,11 @@
         "valarray": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled",
-    "C_Cpp.default.compilerPath": "C:\\MinGW-W64\\MinGW-W64\\bin\\g++.exe",
+    "C_Cpp.default.compilerPath": "C:\\MinGW-W64\\MinGW-W64\\bin\\clang++.exe",
     "C_Cpp.intelliSenseEngineFallback": "enabled",
+    "lldb.showDisassembly": "always",
+    "lldb.displayFormat": "auto",
+    "lldb.dereferencePointers": true,
+    "lldb.consoleMode": "evaluate"
     // "lldb.library": "C:\\MinGW-W64\\MinGW-W64\\bin\\liblldb.dll"
 }

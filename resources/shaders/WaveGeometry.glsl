@@ -10,6 +10,11 @@ in VS_OUT {
     vec3 FragPos;
 } gs_in[];
 
+in VS_OUT_WAVE_DATA {
+    float AngularVelocity;
+    float InitialPhase;
+} gs_in_wave_data[];
+
 // Export Vertex Attributes to next shader stage
 out VS_OUT {
     vec3 VertColor;

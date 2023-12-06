@@ -1,14 +1,16 @@
-- batch/instance rendering; prioritize instancing
-- ShaderConfig object to pass into draw calls?
-- optimize shader system
-- move all enums to a separate file (?)
-- cache texture (ktx) & store model in reuseable binary format
-- check if shared_ptr in SceneManager is necessary
-- Add a macro for false-asserting + glfwTerminate();
-- Keep track of already used shader ids in a map with shader count, then only delete the id when shader counts
+- TODO: batch/instance rendering; prioritize instancing
+- TODO: ShaderConfig object to pass into draw calls?
+- TODO: optimize shader system
+- TODO: move all enums to a separate file (?)
+- TODO: cache texture (ktx) & store model in reuseable binary format
+- TODO: check if shared_ptr in SceneManager is necessary
+- TODO: Add a macro for false-asserting + glfwTerminate();
+- TODO: Keep track of already used shader ids in a map with shader count, then only delete the id when shader counts
 reduce to 0.
-- Manage texture units (including GL_TEXTURE_CUBE_MAP)
-- LOD (mesh subdivision via geometry shader for now, mesh shader later)
-- Make model loading asynchronous
-- Add libraries as submodules (premake)
-- create breakpoint via mingw-w64
+- TODO: Manage texture units (including GL_TEXTURE_CUBE_MAP)
+- TODO: LOD (mesh subdivision via geometry shader for now, mesh shader later)
+- TODO: Make model loading asynchronous
+- TODO: Add libraries as submodules (premake)
+- TODO: create breakpoint via mingw-w64
+- TODO: replace CreateObject with template functions
+- TODO: Mark constructors as explicit

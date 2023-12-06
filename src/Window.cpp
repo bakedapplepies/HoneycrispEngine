@@ -82,7 +82,7 @@ Window::Window()
     light = Light(
         glm::vec3(1.0f, 1.0f, 1.0f)
     );
-    light.AddPosition(glm::vec3(1.0f, 1.0f, 3.0f));
+    light.addPosition(glm::vec3(1.0f, 1.0f, 3.0f));
 
     // Model backpack("../resources/models/backpack/backpack.obj");
 

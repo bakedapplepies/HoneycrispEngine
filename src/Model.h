@@ -3,6 +3,7 @@
 #include "pch/pch.h"
 #include "Mesh.h"
 #include "utils/Debug.h"
+#include "utils/utils.h"
 #include "core/Texture.h"
 
 
@@ -10,14 +11,14 @@ class Model : public Renderable
 {
 private:
     std::vector<Mesh> m_meshes;
+    std::filesystem::path m_modelDirectory;
 
 public:
     void Draw(std::shared_ptr<Shader> shader) const;
 
 public:
-    Model(const std::string& path, const std::source_location& location = std::source_location::current());
-    Model(Model&& other) = default;
-    std::filesystem::path modelDirectory;
+    Model(const FileSystem::Path& path);
+    Model(Model&& other) = default;  // TODO: Proper constructors
 
 private:
     void processNode(aiNode* node, const aiScene*);
@@ -26,5 +27,5 @@ private:
 
 public:
     void OnUpdate() {}
-    void AddPosition(const glm::vec3& position);
+    void addPosition(const glm::vec3& position);
 };

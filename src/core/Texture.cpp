@@ -7,28 +7,19 @@ std::unordered_map<std::string, TextureInfo> Texture::sm_initiatedTextures;
 std::unordered_map<GLuint, GLint> Texture::sm_textureUnits;  // key: ID -> texture unit
 std::unordered_map<GLuint, unsigned int> Texture::sm_textureIDCount;
 
-Texture::Texture(const std::string& texturePath, uint32_t textureResolutionWidth, uint32_t textureResolutionHeight,
+Texture::Texture(const FileSystem::Path& texturePath, uint32_t textureResolutionWidth, uint32_t textureResolutionHeight,
     ETextureType textureType, const std::source_location& location
 ) : m_textureWidth(textureResolutionWidth), m_textureHeight(textureResolutionHeight)
 {
-    /* texture in absolute forms to ensure no paths are repeated */
-    std::string root("../../");  // Executable is in build folder
-    std::filesystem::path textureRelativePath(root);
-    textureRelativePath /= std::filesystem::path(location.file_name()).remove_filename();  // where the file is
-    textureRelativePath /= texturePath;  // add relative path relative to the above path <---------
-                                         // in case this is absolute, it will replace everything  |
-    textureRelativePath = std::filesystem::absolute(textureRelativePath);  // make absolute ------
-    textureRelativePath = textureRelativePath.lexically_normal();  // get rid of ".."s
-    path = textureRelativePath.string();
     // Debug::Log(fmt::format("{}", std::filesystem::last_write_time(path).time_since_epoch().count()));
 
-    if (sm_initiatedTextures[path].id > 0)
+    if (sm_initiatedTextures[texturePath.path].id > 0)
     {
-        GLuint id = sm_initiatedTextures[path].id;
+        GLuint id = sm_initiatedTextures[texturePath.path].id;
         if (id)
         {
             m_textureID = id;
-            m_textureCoords = sm_initiatedTextures[path].textureCoords;
+            m_textureCoords = sm_initiatedTextures[texturePath.path].textureCoords;
             m_textureType = textureType;
 
             sm_textureIDCount[m_textureID]++;
@@ -38,7 +29,7 @@ Texture::Texture(const std::string& texturePath, uint32_t textureResolutionWidth
     }
 
     GLCall(glGenTextures(1, &m_textureID));
-    sm_initiatedTextures[path].id = m_textureID;
+    sm_initiatedTextures[texturePath.path].id = m_textureID;
     m_textureType = textureType;
 
     sm_textureUnits[m_textureID] = sm_textureUnitCounter;
@@ -48,7 +39,7 @@ Texture::Texture(const std::string& texturePath, uint32_t textureResolutionWidth
     int nrChannels;
     int desiredChannels = 0;
     unsigned char* data = stbi_load(
-        path.c_str(), &m_pixelWidth, &m_pixelHeight, &nrChannels, desiredChannels);
+        texturePath.path.c_str(), &m_pixelWidth, &m_pixelHeight, &nrChannels, desiredChannels);
     
     if (data)
     {
@@ -75,7 +66,7 @@ Texture::Texture(const std::string& texturePath, uint32_t textureResolutionWidth
     }
     else
     {
-        Debug::Error(path);
+        Debug::Error(texturePath.path);
         Debug::Error(fmt::format("Texture failed to load: {}", stbi_failure_reason()));
         stbi_image_free(data);
         assert(false && "Texture failed to load.");
@@ -195,12 +186,12 @@ Texture Textures::mainTextureSpecularMap;
 void Texture::LoadTextures()
 {
     Textures::mainTextureMap = Texture(
-        "../../resources/textures/grass_textures.png",
+        FileSystem::Path("resources/textures/grass_textures.png"),
         3, 1,
         ETextureType::DIFFUSE
     );
     Textures::mainTextureSpecularMap = Texture(
-        "../../resources/textures/grass_textures_specular_map.png",
+        FileSystem::Path("resources/textures/grass_textures_specular_map.png"),
         3, 1,
         ETextureType::SPECULAR
     );

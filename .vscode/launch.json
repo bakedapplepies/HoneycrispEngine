@@ -7,17 +7,17 @@
     "configurations": [
         {
             "name": "Debug OpenGL",
-            "type": "cppdbg",
+            "type": "lldb",
             "request": "launch",
-            "cwd": "${workspaceRoot}/bin/Debug",
-            "program": "${workspaceRoot}/bin/Debug/LearnOpenGL.exe",
-            "MIMode": "lldb",
-            "miDebuggerPath": "C:\\MinGW-W64\\MinGW-W64\\bin\\lldb-mi.exe",
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/bin/Debug/LearnOpenGL.exe",
             "preLaunchTask": "BuildDebug",
-            "logging": {
-                "trace": true,
-                // "engineLogging": true,
-            }
+            "sourceLanguages": [
+                "cpp"
+            ],
+            "sourceMap": { "." : "${workspaceFolder}" },
+            "terminal": "integrated",
+            "breakpointMode": "file",
         },
     ]
 }

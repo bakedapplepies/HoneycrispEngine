@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../pch/pch.h"
+#include "../utils/utils.h"
 
 
 class Shader
@@ -10,9 +11,8 @@ private:
     mutable std::unordered_map<std::string, GLint> m_uniformLocationCache;
 
 public:
-    static int shaderCount;
     Shader() = default;
-    Shader(const std::string& vertexFile, const std::string& fragmentFile, const std::string& geometryFile = "", const std::source_location& location = std::source_location::current());
+    Shader(const FileSystem::Path& vertexFile, const FileSystem::Path& fragmentFile, const FileSystem::Path& geometryFile = {""});
     Shader(const Shader& other) = delete;
     Shader& operator=(const Shader& other) = delete;
     Shader(Shader&& other) noexcept;

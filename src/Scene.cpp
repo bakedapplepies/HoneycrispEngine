@@ -32,30 +32,17 @@ Scene& Scene::operator=(Scene&& other) noexcept
 }
 
 void Scene::CreateCubemap(
-    const std::string& right,
-    const std::string& left,
-    const std::string& top,
-    const std::string& bottom,
-    const std::string& front,
-    const std::string& back,
-    const std::source_location& location
+    const FileSystem::Path& right,
+    const FileSystem::Path& left,
+    const FileSystem::Path& top,
+    const FileSystem::Path& bottom,
+    const FileSystem::Path& front,
+    const FileSystem::Path& back
 )
 {
     std::vector<std::string> cubemapFaces = {
-        right, left, top, bottom, front, back
+        right.path, left.path, top.path, bottom.path, front.path, back.path
     };
-
-    for (unsigned int i = 0; i < cubemapFaces.size(); i++)
-    {  // TODO: make a ROOT macro or something for easy root folder path access
-        std::string root("../../");  // Executable is in build folder
-        std::filesystem::path textureRelativePath(root);
-        textureRelativePath /= std::filesystem::path(location.file_name()).remove_filename();  // where the file is
-        textureRelativePath /= cubemapFaces[i].c_str();  // add relative path relative to the above path <----
-                                                    // in case this is absolute, it will replace everything  |
-        textureRelativePath = std::filesystem::absolute(textureRelativePath);  // make absolute -------------
-        textureRelativePath.make_preferred();
-        cubemapFaces[i] = textureRelativePath.string();
-    }
 
     m_cubemap = std::make_unique<Cubemap>(cubemapFaces);
 }
@@ -65,9 +52,9 @@ void Scene::Draw(void) const
     for (auto iter = m_renderObjectPtrs.begin(); iter != m_renderObjectPtrs.end(); iter++)
     {
         iter->second.shader->Use();
-        for (SceneObject<Renderable> obj : iter->second.objectShaderGroup)
+        for (std::pair< size_t, std::shared_ptr<Renderable> > obj : iter->second.objectShaderGroup)
         {
-            obj->Draw(iter->second.shader);
+            obj.second->Draw(iter->second.shader);
         }
     }
     if (m_cubemap)
@@ -75,11 +62,95 @@ void Scene::Draw(void) const
         if (!m_cubemapShader)
         {
             m_cubemapShader = std::make_shared<Shader>(
-                FileSystem::Path("../resources/shaders/CubemapVertex.glsl"),
-                FileSystem::Path("../resources/shaders/CubemapFragment.glsl")
+                FileSystem::Path("resources/shaders/CubemapVertex.glsl"),
+                FileSystem::Path("resources/shaders/CubemapFragment.glsl")
             );
             m_cubemapShader->setIntUniform("cubemap", 10);
         }
         m_cubemap->Draw(m_cubemapShader);
     }
+}
+
+size_t Scene::genSceneObjectID()
+{
+    if (!sceneObjectIDQueue.empty())
+    {
+        size_t id = sceneObjectIDQueue.top();
+        sceneObjectIDQueue.pop();
+        return id;
+    }
+    
+    return nextSceneObjectID++;
+}
+
+void Scene::deleteSceneObjectID(size_t id)
+{
+    if (id == nextSceneObjectID - 1)  // id of last created SceneObject
+    {
+        nextSceneObjectID--;
+    }
+    else
+    {
+        sceneObjectIDQueue.push(id);
+    }
+}
+
+// Make sure vector is already sorted
+// template <template<typename> typename T, typename U>
+void Scene::binary_insert_ptr(
+    std::vector<std::pair<size_t, std::shared_ptr<Renderable>>>& vec, const std::pair<size_t, std::shared_ptr<Renderable>>& pair)
+{
+    // static_assert(std::is_arithmetic_v<T>, "Type T is not of arithmetic type");
+
+    if (vec.size() == 0)
+    {
+        vec.push_back({ pair.first, pair.second });
+        return;
+    }
+    else if (vec.size() == 1)
+    {
+        size_t pos = static_cast<size_t>(pair.first > vec[0].first);
+        vec.insert(vec.begin() + pos, { pair.first, pair.second });
+    }
+
+    size_t left = 0, right = vec.size() - 1;
+    size_t mid = (left + right) / 2;
+
+    while (!(vec[mid].first < pair.first && pair.first < vec[mid + 1].first))
+    {
+        if (pair.first < vec[mid].first) right = mid;
+        else left = mid + 1;
+
+        mid = (left + right) / 2;
+
+        if (mid == vec.size() - 1) break;
+        else if (mid == 0) break;
+    }
+
+    vec.insert(vec.begin() + mid + (size_t)(mid != 0), { pair.first, pair.second });
+}
+
+// template <typename T>
+void Scene::binary_delete_ptr(std::vector<std::pair<size_t, std::shared_ptr<Renderable>>>& vec, const size_t& objID)
+{
+    // static_assert(std::is_arithmetic_v<T>, "Type T is not of arithmetic type");
+
+    if (vec.size() == 0)
+    {
+        // assert(!"Vector is empty");
+        return;
+    }
+
+    size_t left = 0, right = vec.size() - 1;
+    size_t mid = (left + right) / 2;
+
+    while (objID != vec[mid].first)
+    {
+        if (objID < vec[mid].first) right = mid - 1;
+        else left = mid + 1;
+
+        mid = (left + right) / 2;
+    }
+
+    vec.erase(vec.begin() + mid);
 }

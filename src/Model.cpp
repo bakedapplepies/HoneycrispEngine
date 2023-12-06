@@ -1,28 +1,22 @@
 #include "Model.h"
 
 
-Model::Model(const std::string& path, const std::source_location& location)
+Model::Model(const FileSystem::Path& path)
 {
-    std::filesystem::path modelPath("../../");
-    modelPath /= location.file_name();
-    modelPath.remove_filename();
-    modelPath /= path;
-    modelPath.make_preferred();
-    modelPath.lexically_normal();
-    modelDirectory = modelPath;
-    modelDirectory.remove_filename();
-
     // Model loading
     float beginTime = glfwGetTime();
     Assimp::Importer import;
-    const aiScene *scene = import.ReadFile(modelPath.string(), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_FlipWindingOrder);
+    const aiScene *scene = import.ReadFile(path.path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_FlipWindingOrder);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
         Debug::Error("ASSIMP: ", import.GetErrorString());
         assert(false);
-    }   
-    Debug::Log(fmt::format("Time took to load {}: {}s", modelPath.string(), glfwGetTime() - beginTime));
+    }
+    Debug::Log(fmt::format("Time took to load {}: {}s", path.path, glfwGetTime() - beginTime));
+    m_modelDirectory = std::filesystem::path(path.path);
+    m_modelDirectory = m_modelDirectory.remove_filename();
+
     processNode(scene->mRootNode, scene);
 }
 
@@ -124,7 +118,7 @@ std::vector< std::shared_ptr<Texture> > Model::loadMaterialTextures(aiMaterial* 
     {
         aiString textureFilename;
         material->GetTexture(assimp_texture_type, i, &textureFilename);
-        std::filesystem::path texturePath = modelDirectory / textureFilename.C_Str();
+        std::filesystem::path texturePath = m_modelDirectory / textureFilename.C_Str();
         texturePath = std::filesystem::absolute(texturePath);
         textures.push_back(std::make_shared<Texture>(texturePath.string(), 1, 1, textureType));
         m_loadedTexturePaths[textureFilename.C_Str()] = true;
@@ -140,11 +134,11 @@ void Model::Draw(std::shared_ptr<Shader> shader) const
     }
 }
 
-void Model::AddPosition(const glm::vec3& position)
+void Model::addPosition(const glm::vec3& position)
 {
     for (unsigned int i = 0; i < m_meshes.size(); i++)
     {
-        m_meshes[i].AddPosition(position);
+        m_meshes[i].addPosition(position);
     }
     positions.push_back(position);
 };

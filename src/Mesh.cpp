@@ -261,7 +261,7 @@ glm::mat4 Mesh::GetModelMatrix(const glm::vec3& position) const
     return model;
 }
 
-void Mesh::AddPosition(const glm::vec3& position)  // add batching
+void Mesh::addPosition(const glm::vec3& position)  // add batching
 {
     positions.push_back(position);
 }

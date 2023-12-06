@@ -2,34 +2,85 @@
 
 #include "pch/pch.h"
 #include "utils/Debug.h"
-#include "Object.h"
-#include "Mesh.h"
+#include "Renderable.h"
 #include "NonRenderable.h"
-#include "types/types_index.h"
 #include "Cubemap.h"
 #include "utils/utils.h"
 
-enum EObjectRenderType
-{
-    NONE,
-    STATIC,
-    DYNAMIC
-};
 
-struct RenderableShaderGroupInfo
+class Scene  // : public std::enable_shared_from_this<Scene>
 {
-    std::vector< std::shared_ptr<Renderable> >objectShaderGroup;
-    std::shared_ptr<Shader> shader;
-};
+protected:
+    template <class T>
+    class SceneObject : public T, public std::enable_shared_from_this<SceneObject<T>>
+    {
+    private:  // TODO: Check if we really need a pointer the the parent class
+        Scene* scene;
+        GLuint shaderID;
 
-class Scene
-{
+    public:
+        size_t sceneObjectID;
+
+    public:
+        template <typename... Args>
+        SceneObject(Scene* scene, Args&&... args) : scene(scene), T(std::forward<T>(args)...)
+        {
+            sceneObjectID = scene->genSceneObjectID();
+            shaderID = scene->m_basicShader->getID();
+        }
+
+    public:  // TODO: private everything & befriend parent class, only expose class type to the outside
+        void setShader(std::shared_ptr<Shader> newShader)
+        {
+            Scene::binary_delete_ptr(
+                scene->m_renderObjectPtrs[shaderID].objectShaderGroup,
+                sceneObjectID
+            );
+            shaderID = newShader->getID();
+            if (!scene->m_renderObjectPtrs[shaderID].shader)
+            {
+                scene->m_renderObjectPtrs[shaderID].shader = newShader;
+            }
+            Scene::binary_insert_ptr(
+                scene->m_renderObjectPtrs[shaderID].objectShaderGroup,
+                { sceneObjectID, this->shared_from_this() }
+            );
+        }
+    };
+    
+    enum EObjectMovement
+    {
+        NONE,
+        DYNAMIC
+    };
+
+private:
+    struct RenderableShaderGroupInfo
+    {
+        std::vector< std::pair< size_t, std::shared_ptr<Renderable> > > objectShaderGroup;
+        std::shared_ptr<Shader> shader;
+    };
+
+private:
+    // Make sure vector is already sorted
+    // template <template<typename> typename T, typename U>
+    static void binary_insert_ptr(
+        std::vector<std::pair<size_t, std::shared_ptr<Renderable>>>& vec,
+        const std::pair<size_t, std::shared_ptr<Renderable>>& pair
+    );
+
+    // template <typename T>
+    static void binary_delete_ptr(std::vector<std::pair<size_t, std::shared_ptr<Renderable>>>& vec, const size_t& objID);
+
 private:
     static size_t sceneCount;
     static std::shared_ptr<Shader> m_basicShader;
     static std::shared_ptr<Shader> m_cubemapShader;
     std::unique_ptr<Cubemap> m_cubemap;
     bool m_std_moved = false;
+
+    size_t nextSceneObjectID = 0;
+    std::priority_queue< size_t, std::vector<size_t>, std::greater<size_t> > sceneObjectIDQueue;
 
 protected:
     std::unordered_map<GLuint, RenderableShaderGroupInfo> m_renderObjectPtrs;
@@ -38,91 +89,88 @@ protected:
 public:
     glm::vec3 bgColor = glm::vec3(0.0f, 0.0f, 0.0f);
 
-protected:
-    template <typename T>
-    SceneObject<T> CreateObject(std::true_type, T&& obj, EObjectRenderType render_type, std::shared_ptr<Shader> shader)
-    {
-        if (render_type == EObjectRenderType::STATIC)
+private:
+    template <typename T, typename... Args>
+    std::shared_ptr< SceneObject<T> > CreateMovable(std::true_type, Args&&... args)
+    {  // SceneObject<T> is still of type Renderable, can be added normally to m_renderObjectPtrs
+        std::shared_ptr< SceneObject<T> > objPtr = std::make_shared< SceneObject<T> >(this, std::forward<Args>(args)...);
+        
+        // TODO: batching
+        Scene::binary_insert_ptr(
+            m_renderObjectPtrs[m_basicShader->getID()].objectShaderGroup,
+            { objPtr->sceneObjectID, objPtr }
+        );
+        if (!m_renderObjectPtrs[m_basicShader->getID()].shader)
         {
-            SceneObject<T> objPtr = std::make_shared<T>(std::move(obj));
-            // TODO: batching
-            if (shader)
-            {
-                m_renderObjectPtrs[shader->getID()].objectShaderGroup.push_back(objPtr);
-                if (!m_renderObjectPtrs[shader->getID()].shader)
-                {
-                    m_renderObjectPtrs[shader->getID()].shader = shader;
-                }
-            }
-            else
-            {
-                m_renderObjectPtrs[m_basicShader->getID()].objectShaderGroup.push_back(objPtr);
-                if (!m_renderObjectPtrs[m_basicShader->getID()].shader)
-                {
-                    m_renderObjectPtrs[m_basicShader->getID()].shader = m_basicShader;
-                }
-            }
-            return objPtr;
+            m_renderObjectPtrs[m_basicShader->getID()].shader = m_basicShader;
         }
-        else if (render_type == EObjectRenderType::DYNAMIC)
-        {
-            SceneObject<T> objPtr = std::make_shared<T>(std::move(obj));
-            // TODO: instancing
-            if (shader)
-            {
-                m_renderObjectPtrs[shader->getID()].objectShaderGroup.push_back(objPtr);
-                if (!m_renderObjectPtrs[shader->getID()].shader)
-                {
-                    m_renderObjectPtrs[shader->getID()].shader = shader;
-                }
-            }
-            else
-            {
-                m_renderObjectPtrs[m_basicShader->getID()].objectShaderGroup.push_back(objPtr);
-                if (!m_renderObjectPtrs[m_basicShader->getID()].shader)
-                {
-                    m_renderObjectPtrs[m_basicShader->getID()].shader = m_basicShader;
-                }
-            }
-            return objPtr;
-        }
-        else
-        {
-            // Debug::Error("EObjectRenderType enum must be either STATIC or DYNAMIC.");
-            assert(false && "EObjectRenderType enum must be either STATIC or DYNAMIC.");
-        }
+        return objPtr;
     }
 
-    template <typename T>
-    SceneObject<T> CreateObject(std::false_type, T&& obj, EObjectRenderType render_type, std::shared_ptr<Shader> shader)
+    template <typename T, typename... Args>
+    std::shared_ptr< SceneObject<T> > CreateImmovable(std::true_type, Args&&... args)
     {
-        SceneObject<T> objPtr = std::make_shared<T>(std::move(obj));
+        std::shared_ptr< SceneObject<T> > objPtr = std::make_shared< SceneObject<T> >(this, std::forward<Args>(args)...);
+        
+        // TODO: instancing
+        Scene::binary_insert_ptr(
+            m_renderObjectPtrs[m_basicShader->getID()].objectShaderGroup,
+            { objPtr->sceneObjectID, objPtr }
+        );
+        if (!m_renderObjectPtrs[m_basicShader->getID()].shader)
+        {
+            m_renderObjectPtrs[m_basicShader->getID()].shader = m_basicShader;
+        }
+        return objPtr;
+    }
+
+    template <typename T, typename... Args>
+    std::shared_ptr< SceneObject<T> > CreateMovable(std::false_type, Args&&... args)
+    {
+        std::shared_ptr< SceneObject<T> > objPtr = std::make_shared< SceneObject<T> >(this, std::forward<Args>(args)...);
         m_nonRenderObjectPtrs.push_back(objPtr);
         return objPtr;
     }
 
-    template <typename T>
-    SceneObject<T> CreateObject(T&& obj, EObjectRenderType render_type = EObjectRenderType::NONE, std::shared_ptr<Shader> shader = nullptr)
+    template <typename T, typename... Args>
+    std::shared_ptr< SceneObject<T> > CreateImmovable(std::false_type, Args&&... args)
     {
-        if (!m_basicShader)
+        std::shared_ptr< SceneObject<T> > objPtr = std::make_shared< SceneObject<T> >(this, std::forward<Args>(args)...);
+        m_nonRenderObjectPtrs.push_back(objPtr);
+        return objPtr;
+    }
+
+protected:
+    template <typename T, EObjectMovement movement_type, typename... Args>
+    std::shared_ptr< SceneObject<T> > CreateObject(Args&&... args)
+    {
+        static_assert(std::is_base_of<Object, T>());
+        if (!m_basicShader)  // just initializing basic shader
         {
             m_basicShader = std::make_shared<Shader>(
-                FileSystem::Path("../resources/shaders/DefaultVertex.glsl"),
-                FileSystem::Path("../resources/shaders/DefaultFragment.glsl")
+                FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
+                FileSystem::Path("resources/shaders/DefaultFragment.glsl")
             );
         }
         
-        return CreateObject(std::is_base_of<Renderable, T>(), std::move(obj), render_type, shader);
+        // TODO: use forward to check for regular refs
+        if (movement_type == EObjectMovement::DYNAMIC)
+        {
+            return CreateMovable<T>(std::is_base_of<Renderable, T>(), args...);
+        }
+        else
+        {
+            return CreateImmovable<T>(std::is_base_of<Renderable, T>(), args...);
+        }
     }
 
     void CreateCubemap(
-        const std::string& right,
-        const std::string& left,
-        const std::string& top,
-        const std::string& botttom,
-        const std::string& front,
-        const std::string& back,
-        const std::source_location& location = std::source_location::current()
+        const FileSystem::Path& right,
+        const FileSystem::Path& left,
+        const FileSystem::Path& top,
+        const FileSystem::Path& botttom,
+        const FileSystem::Path& front,
+        const FileSystem::Path& back
     );
     void Draw(void) const;
 
@@ -142,8 +190,8 @@ public:
         }
         else if (sceneCount < 0)
         {
-            Debug::Error("Oops shader count is less than zero");
-            assert(false);
+            Debug::Error("Oops scene count is less than zero");
+            assert(!"Oops scene count is less than zero");
         }
     }
     Scene(const Scene&) = delete;
@@ -151,7 +199,10 @@ public:
     Scene(Scene&& other) noexcept;
     Scene& operator=(Scene&& other) noexcept;
 
-    virtual void OnUpdate() = 0;  // force a derived method
+    virtual void OnUpdate() = 0;  // force overload
     virtual void InitializeShaders(void) {}
     virtual void SetInitialUniforms(void) {}
+
+    virtual size_t genSceneObjectID() final;
+    virtual void deleteSceneObjectID(size_t id) final;
 };

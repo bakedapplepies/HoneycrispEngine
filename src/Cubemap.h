@@ -4,6 +4,7 @@
 #include "Renderable.h"
 #include "Mesh.h"
 #include "utils/Debug.h"
+#include "utils/utils.h"
 
 
 class Cubemap : public Renderable
@@ -26,6 +27,5 @@ public:
     void Draw(std::shared_ptr<Shader> shader) const;
 
 private:
-    void AddPosition(const glm::vec3& position) {}
     void SetMesh();
 };

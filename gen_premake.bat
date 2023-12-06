@@ -1,1 +1,1 @@
-premake5 ninja --cc=clang -dc=ldc
+premake5 ninja --cc=clang

@@ -4,5 +4,21 @@
 
 namespace FileSystem
 {
-    std::string Path(const std::string& path, const std::source_location& location = std::source_location::current());
+    struct Path
+    {
+        std::string path = "";
+        Path(const std::string& path)
+        {
+            std::filesystem::path absPath("../../");
+            absPath /= path;
+            
+            absPath = absPath.make_preferred();
+            absPath = absPath.lexically_normal();
+            this->path = absPath.string();
+        }
+    };
+}
+
+namespace Algo
+{
 }

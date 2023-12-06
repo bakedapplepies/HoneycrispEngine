@@ -1,8 +1,6 @@
 #include "../utils/Debug.h"
 #include "Shader.h"
 
-int Shader::shaderCount = 0;
-
 std::string Shader::parseShader(const std::string& path)
 {
     std::string line;
@@ -16,11 +14,11 @@ std::string Shader::parseShader(const std::string& path)
     return ss.str();
 }
 
-Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile, const std::string& geometryFile, const std::source_location& location)
+Shader::Shader(const FileSystem::Path& vertexFile, const FileSystem::Path& fragmentFile, const FileSystem::Path& geometryFile)
 {
-    const std::string vertexShaderSource = parseShader(vertexFile);
-    const std::string fragmentShaderSource = parseShader(fragmentFile);
-    const std::string geometryShaderSource = geometryFile.size() ? parseShader(geometryFile) : "";
+    const std::string vertexShaderSource = parseShader(vertexFile.path);
+    const std::string fragmentShaderSource = parseShader(fragmentFile.path);
+    const std::string geometryShaderSource = geometryFile.path.size() ? parseShader(geometryFile.path) : "";
 
     const char* vsSource = vertexShaderSource.c_str();
     const char* fsSource = fragmentShaderSource.c_str();
@@ -38,11 +36,11 @@ Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile, c
     if (!success)
     {
         GLCall(glGetShaderInfoLog(vertexShader, 512, NULL, infoLog));
-        Debug::Error(fmt::format("Vertex Shader compilation failed at {}:\n\t", vertexFile), infoLog);
+        Debug::Error(fmt::format("Vertex Shader compilation failed at {}:\n\t", vertexFile.path), infoLog);
         // Debug::Error(fmt::format("Vertex Shader compilation failed at {}:\n\t", ), infoLog);
 
         GLCall(glDeleteShader(vertexShader));
-        assert(false);
+        assert(!"Vertex Shader compilation error.");
     }
 
     /* Fragment Shader */
@@ -54,7 +52,7 @@ Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile, c
     if (!success)
     {
         GLCall(glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog));
-        Debug::Error(fmt::format("Fragment Shader compilation failed at {}:\n\t", fragmentFile), infoLog);
+        Debug::Error(fmt::format("Fragment Shader compilation failed at {}:\n\t", fragmentFile.path), infoLog);
 
         GLCall(glDeleteShader(fragmentShader));
         assert(false);
@@ -70,7 +68,7 @@ Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile, c
         if (!success)
         {
             GLCall(glGetShaderInfoLog(geometryShader, 512, NULL, infoLog));
-            Debug::Error(fmt::format("Geometry Shader compilation failed at {}:\n\t", geometryFile), infoLog);
+            Debug::Error(fmt::format("Geometry Shader compilation failed at {}:\n\t", geometryFile.path), infoLog);
 
             GLCall(glDeleteShader(fragmentShader));
             assert(false);
@@ -108,8 +106,6 @@ Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile, c
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
     glDeleteShader(geometryShader);
-
-    shaderCount++;
 }
 
 Shader::Shader(Shader&& other) noexcept
@@ -133,19 +129,6 @@ Shader::~Shader()
         GLCall(glDeleteProgram(m_shaderID));
     }
 }
-
-// template <>
-// struct std::hash<Shader>
-// {
-//     size_t operator()(std::weak_ptr<Shader> shader) const
-//     {
-//         if (auto sp = shader.lock())
-//         {
-//             return sp->getID();
-//         }
-//         assert(false);
-//     }
-// };
 
 void Shader::Use() const
 {

@@ -27,7 +27,7 @@ public:
     template <typename T>
     void CreateScene(T&& t, size_t index)
     {
-        static_assert(std::is_base_of<Scene, T>() && "Method SceneManager::CreateScene didn't receive a scene object.");
+        static_assert(std::is_base_of<Scene, T>(), "Method SceneManager::CreateScene didn't receive a scene object.");
         if (_scenesMap[index])
         {
             Debug::Error(fmt::format("Scene index[{}] already occupied.", index));

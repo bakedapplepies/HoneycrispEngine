@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../pch/pch.h"
+#include "../utils/utils.h"
 
 enum ETextureType
 {
@@ -43,7 +44,7 @@ private:
 public:
     Texture() = default;
     ~Texture();
-    Texture(const std::string& texturePath, uint32_t textureResolutionWidth, uint32_t textureResolutionHeight, ETextureType textureType, const std::source_location& location = std::source_location::current());    
+    Texture(const FileSystem::Path& texturePath, uint32_t textureResolutionWidth, uint32_t textureResolutionHeight, ETextureType textureType, const std::source_location& location = std::source_location::current());    
     Texture(const Texture&);
     Texture(Texture&& other) noexcept;
     Texture& operator=(const Texture&);
@@ -65,7 +66,8 @@ public:
     TextureCoords& GetTextureCoords(uint32_t x, uint32_t y);
 };
 
-namespace Textures {
+namespace Textures
+{
     extern Texture mainTextureMap;
     extern Texture mainTextureSpecularMap;
 }

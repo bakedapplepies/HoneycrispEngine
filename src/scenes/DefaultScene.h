@@ -11,8 +11,8 @@ class DefaultScene : public Scene
 {
 private:
     std::shared_ptr<Shader> shader;
-    SceneObject<Cube> cube;
-    SceneObject<Mesh> customMesh;
+    std::shared_ptr< SceneObject<Cube> > cube;
+    std::shared_ptr< SceneObject<Mesh> > customMesh;
 
 public:
     DefaultScene();

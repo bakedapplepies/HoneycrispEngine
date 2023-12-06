@@ -47,7 +47,7 @@ Cubemap::Cubemap(const std::vector<std::string>& faces)
         {
             Debug::Error(fmt::format("Texture failed to load: {}", stbi_failure_reason()));
             stbi_image_free(data);
-            assert(false && "Cubemap textures failed to load.");
+            assert(!"Cubemap textures failed to load.");
         }
     }
 
@@ -123,7 +123,7 @@ void Cubemap::SetMesh()
     cubemapMesh.indices = indicesData;
 
     cubemapMesh.ConstructMesh();
-    cubemapMesh.AddPosition(glm::vec3(0.0f));
+    cubemapMesh.addPosition(glm::vec3(0.0f));
 }
 
 void Cubemap::Draw(std::shared_ptr<Shader> shader) const

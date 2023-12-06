@@ -45,7 +45,7 @@ void GenerateLine(int index, vec3 normal)
     UpdateVertAttribs(index*2);
     EmitVertex();
 
-    gl_Position = u_projection * (gl_in[index].gl_Position + vec4(gs_in[index].Normal, 0.0) * 0.4);
+    gl_Position = u_projection * (gl_in[index].gl_Position + vec4(normal, 0.0) * 0.7);
     UpdateVertAttribs(index*2 + 1);
     EmitVertex();
 

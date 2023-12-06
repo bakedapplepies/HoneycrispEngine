@@ -55,7 +55,7 @@ namespace Debug
     }
 
     template <typename T, typename... Args>
-    void Log(const T& t, Args... args)
+    void Log(const T& t, const Args&... args)
     {
         if (beganLine)
         {
@@ -79,7 +79,7 @@ namespace Debug
     }
 
     template <typename T, typename... Args>
-    void Warn(const T& t, Args... args)
+    void Warn(const T& t, const Args&... args)
     {
         if (beganLine)
         {
@@ -103,7 +103,7 @@ namespace Debug
     }
 
     template <typename T, typename... Args>
-    void Error(const T& t, Args... args)
+    void Error(const T& t, const Args&... args)
     {
         if (beganLine)
         {

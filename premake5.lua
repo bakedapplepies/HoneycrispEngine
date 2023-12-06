@@ -4,20 +4,21 @@ workspace "LearnOpenGL"
     location "build"
     configurations { "Debug", "Release" }
 
-    buildoptions { "-fsanitize=address", "-ffile-prefix-map=..=." }
-    linkoptions { "-fsanitize=address", "-lassimp.dll" }
+    buildoptions { "-fsanitize=address", "-ffile-prefix-map=..=.", "-g" }
+    linkoptions { "-fsanitize=address", "-lassimp.dll", "-g" }
 
     filter { "system:windows" }
-        postbuildcommands { "xcopy /Q /E /Y /I /D ..\\lib\\libassimp-5.dll ..\\bin\\Debug\\" }
+        postbuildcommands { "xcopy /Q /E /Y /I /D ..\\lib\\libassimp-5.dll ..\\bin\\%{cfg.buildcfg}\\" }
 
-    filter { "not system:windows" }  -- not sure if this works
-        postbuildcommands { "{COPY} ../lib/libassimp-5.dll ../bin/%{cfg.buildcfg}/libassimp-5.dll" }
+    filter { "not system:windows" }  -- TODO: not sure if this works
+        postbuildcommands { "{COPY} ../lib/libassimp-5.dll ../bin/%{cfg.buildcfg}/" }
 
 project "LearnOpenGL"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++20"
-    targetdir "bin/%{cfg.buildcfg}"
+    targetdir "bin/%{cfg.buildcfg}/"
+    defines { "GLM_FORCE_SWIZZLE" }
 
     -- PCH
     includedirs "src/pch"
@@ -66,7 +67,7 @@ project "LearnOpenGL"
     filter "configurations:Debug"
         defines { "DEBUG" }
         symbols "On"
-        optimize "On"
+        -- optimize "On"
         sanitize { "Address" }
 
     filter "configurations:Release"

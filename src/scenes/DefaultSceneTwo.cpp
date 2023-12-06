@@ -8,10 +8,11 @@ DefaultSceneTwo::DefaultSceneTwo()
 
     InitializeShaders();
 
-    cube = CreateObject(Cube(), EObjectRenderType::STATIC, shader);
-    cube->AddPosition(glm::vec3(1.0f, 3.0f ,5.0f));
-    cube->AddPosition(glm::vec3(3.0f, 2.0f ,1.0f));
-    cube->AddPosition(glm::vec3(-5.0f, -2.0f ,3.0f));
+    cube = CreateObject<Cube, EObjectMovement::NONE>();
+    cube->setShader(shader);
+    cube->addPosition(glm::vec3(1.0f, 3.0f ,5.0f));
+    cube->addPosition(glm::vec3(3.0f, 2.0f ,1.0f));
+    cube->addPosition(glm::vec3(-5.0f, -2.0f ,3.0f));
 
     TextureCoords& grassUV = Textures::mainTextureMap.GetTextureCoords(0, 0);
     int width = 50, height = 50;
@@ -65,25 +66,27 @@ DefaultSceneTwo::DefaultSceneTwo()
         }
     }
 
-    mesh = CreateObject(Mesh(), EObjectRenderType::STATIC, wackyShader);
+    mesh = CreateObject<Mesh, EObjectMovement::NONE>();
+    mesh->setShader(wackyShader);
     mesh->vertices = vertices;
     mesh->colors = colors;
     mesh->uvs = uvs;
     mesh->indices = indices;
 
     mesh->ConstructMesh();
-    mesh->AddPosition(glm::vec3(0.0f, -6.0f, 0.0f));
+    mesh->addPosition(glm::vec3(0.0f, -6.0f, 0.0f));
 
-    model = CreateObject(Model("../../resources/models/backpack/backpack.obj"), EObjectRenderType::STATIC, backpackShader);
-    model->AddPosition(glm::vec3(10.0f, 2.0f, 7.0f));
+    model = CreateObject<Model, EObjectMovement::NONE>(FileSystem::Path("resources/models/backpack/backpack.obj"));
+    model->setShader(backpackShader);
+    model->addPosition(glm::vec3(10.0f, 2.0f, 7.0f));
 
     CreateCubemap(
-        "../../resources/textures/cubemaps/skybox/right.jpg",
-        "../../resources/textures/cubemaps/skybox/left.jpg",
-        "../../resources/textures/cubemaps/skybox/top.jpg",
-        "../../resources/textures/cubemaps/skybox/bottom.jpg",
-        "../../resources/textures/cubemaps/skybox/front.jpg",
-        "../../resources/textures/cubemaps/skybox/back.jpg"
+        FileSystem::Path("resources/textures/cubemaps/skybox/right.jpg"),
+        FileSystem::Path("resources/textures/cubemaps/skybox/left.jpg"),
+        FileSystem::Path("resources/textures/cubemaps/skybox/top.jpg"),
+        FileSystem::Path("resources/textures/cubemaps/skybox/bottom.jpg"),
+        FileSystem::Path("resources/textures/cubemaps/skybox/front.jpg"),
+        FileSystem::Path("resources/textures/cubemaps/skybox/back.jpg")
     );
     
     SetInitialUniforms();
@@ -96,29 +99,28 @@ DefaultSceneTwo::~DefaultSceneTwo()
 void DefaultSceneTwo::OnUpdate()
 {
     Draw();
-    model->Draw(normalShader);
-    cube->Draw(normalShader);
+    mesh->Draw(normalWaveShader);
 }
 
 void DefaultSceneTwo::InitializeShaders(void)
 {
     shader = std::make_shared<Shader>(
-        FileSystem::Path("../../resources/shaders/DefaultVertex.glsl"),
-        FileSystem::Path("../../resources/shaders/PhongShadingFragment.glsl")
+        FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
+        FileSystem::Path("resources/shaders/PhongShadingFragment.glsl")
     );
     backpackShader = std::make_shared<Shader>(
-        FileSystem::Path("../../resources/shaders/DefaultVertex.glsl"),
-        FileSystem::Path("../../resources/shaders/PhongShadingFragment.glsl")  // update cubemap texture unit uniform
+        FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
+        FileSystem::Path("resources/shaders/PhongShadingFragment.glsl")  // update cubemap texture unit uniform
     );
     wackyShader = std::make_shared<Shader>(
-        FileSystem::Path("../../resources/shaders/WaveVertex.glsl"),
-        FileSystem::Path("../../resources/shaders/PhongShadingFragment.glsl"),
-        FileSystem::Path("../../resources/shaders/WaveGeometry.glsl")
+        FileSystem::Path("resources/shaders/WaveVertex.glsl"),
+        FileSystem::Path("resources/shaders/PhongShadingFragment.glsl"),
+        FileSystem::Path("resources/shaders/WaveGeometry.glsl")
     );
-    normalShader = std::make_shared<Shader>(
-        FileSystem::Path("../../resources/shaders/NormalVertex.glsl"),
-        FileSystem::Path("../../resources/shaders/YellowFragment.glsl"),
-        FileSystem::Path("../../resources/shaders/NormalGeometry.glsl")
+    normalWaveShader = std::make_shared<Shader>(
+        FileSystem::Path("resources/shaders/WaveNormalVertex.glsl"),
+        FileSystem::Path("resources/shaders/YellowFragment.glsl"),
+        FileSystem::Path("resources/shaders/NormalGeometry.glsl")
     );
 }
 
@@ -136,7 +138,7 @@ void DefaultSceneTwo::SetInitialUniforms(void)
     shader->setVector3Uniform("u_dirLight.specular", glm::vec3(1, 1, 1));
 
     // point light
-    shader->setVector3Uniform("u_pointLight.position", glm::vec3(10, 2, 10));
+    shader->setVector3Uniform("u_pointLight.position", glm::vec3(10, 2, 50));
     shader->setVector3Uniform("u_pointLight.ambient", 0.1f * glm::vec3(1.0));
     shader->setVector3Uniform("u_pointLight.diffuse", 0.5f * glm::vec3(1.0));
     shader->setVector3Uniform("u_pointLight.specular", 1.0f * glm::vec3(1.0));
@@ -195,9 +197,9 @@ void DefaultSceneTwo::SetInitialUniforms(void)
     backpackShader->setVector3Uniform("u_dirLight.specular", glm::vec3(1, 1, 1));
 
     // point light
-    backpackShader->setVector3Uniform("u_pointLight.position", glm::vec3(10, 2, 10));
+    backpackShader->setVector3Uniform("u_pointLight.position", glm::vec3(15, 4, 15));
     backpackShader->setVector3Uniform("u_pointLight.ambient", 0.1f * glm::vec3(1.0));
-    backpackShader->setVector3Uniform("u_pointLight.diffuse", 0.5f * glm::vec3(1.0));
+    backpackShader->setVector3Uniform("u_pointLight.diffuse", 0.6f * glm::vec3(1.0));
     backpackShader->setVector3Uniform("u_pointLight.specular", 1.0f * glm::vec3(1.0));
     backpackShader->setFloatUniform("u_pointLight.constant", 1.0f);
     backpackShader->setFloatUniform("u_pointLight.linear", 0.001f);
