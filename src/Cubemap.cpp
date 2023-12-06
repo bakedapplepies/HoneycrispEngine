@@ -47,6 +47,7 @@ Cubemap::Cubemap(const std::vector<std::string>& faces)
         {
             Debug::Error(fmt::format("Texture failed to load: {}", stbi_failure_reason()));
             stbi_image_free(data);
+            glfwTerminate();
             assert(!"Cubemap textures failed to load.");
         }
     }

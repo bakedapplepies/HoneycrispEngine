@@ -30,16 +30,17 @@ Shader::Shader(const FileSystem::Path& vertexFile, const FileSystem::Path& fragm
     GLCall(glCompileShader(vertexShader));
 
     int success;
-    char infoLog[512];
+    char infoLog[1024];
 
     GLCall(glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success));
     if (!success)
     {
-        GLCall(glGetShaderInfoLog(vertexShader, 512, NULL, infoLog));
+        GLCall(glGetShaderInfoLog(vertexShader, 1024, NULL, infoLog));
         Debug::Error(fmt::format("Vertex Shader compilation failed at {}:\n\t", vertexFile.path), infoLog);
         // Debug::Error(fmt::format("Vertex Shader compilation failed at {}:\n\t", ), infoLog);
 
         GLCall(glDeleteShader(vertexShader));
+        glfwTerminate();
         assert(!"Vertex Shader compilation error.");
     }
 
@@ -51,11 +52,12 @@ Shader::Shader(const FileSystem::Path& vertexFile, const FileSystem::Path& fragm
     GLCall(glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success));
     if (!success)
     {
-        GLCall(glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog));
+        GLCall(glGetShaderInfoLog(fragmentShader, 1024, NULL, infoLog));
         Debug::Error(fmt::format("Fragment Shader compilation failed at {}:\n\t", fragmentFile.path), infoLog);
 
         GLCall(glDeleteShader(fragmentShader));
-        assert(false);
+        glfwTerminate();
+        assert(!"Fragment Shader compilation error.");
     }
 
     GLCall(GLuint geometryShader = glCreateShader(GL_GEOMETRY_SHADER));
@@ -67,11 +69,12 @@ Shader::Shader(const FileSystem::Path& vertexFile, const FileSystem::Path& fragm
         GLCall(glGetShaderiv(geometryShader, GL_COMPILE_STATUS, &success));
         if (!success)
         {
-            GLCall(glGetShaderInfoLog(geometryShader, 512, NULL, infoLog));
+            GLCall(glGetShaderInfoLog(geometryShader, 1024, NULL, infoLog));
             Debug::Error(fmt::format("Geometry Shader compilation failed at {}:\n\t", geometryFile.path), infoLog);
 
             GLCall(glDeleteShader(fragmentShader));
-            assert(false);
+            glfwTerminate();
+            assert(!"Geometry Shader compilation error.");
         }
     }
 
@@ -85,22 +88,32 @@ Shader::Shader(const FileSystem::Path& vertexFile, const FileSystem::Path& fragm
     GLCall(glGetProgramiv(m_shaderID, GL_LINK_STATUS, &success));
     if (!success)
     {
-        GLCall(glGetProgramInfoLog(m_shaderID, 512, NULL, infoLog));
+        GLCall(glGetProgramInfoLog(m_shaderID, 1024, NULL, infoLog));
         Debug::Error("Shader Program Linking failed:\n\t", infoLog);
 
         glDeleteProgram(m_shaderID);
         m_shaderID = 0;
+
+        Debug::Error(fmt::format("Shader in program:\n\t{}\n\t{}\n\t{}", vertexFile.path, fragmentFile.path, geometryFile.path));
+
+        glfwTerminate();
+        assert(!"Shader linking error.");
     }
     
     GLCall(glValidateProgram(m_shaderID));
     GLCall(glGetProgramiv(m_shaderID, GL_VALIDATE_STATUS, &success));
     if (!success)
     {
-        GLCall(glGetProgramInfoLog(m_shaderID, 512, NULL, infoLog));
+        GLCall(glGetProgramInfoLog(m_shaderID, 1024, NULL, infoLog));
         Debug::Error("Shader Program Validation failed:\n\t", infoLog);
 
         glDeleteProgram(m_shaderID);
         m_shaderID = 0;
+
+        Debug::Error(fmt::format("Shader in program:\n\t{}\n\t{}\n\t{}", vertexFile.path, fragmentFile.path, geometryFile.path));
+
+        glfwTerminate();
+        assert(!"Shader validation error.");
     }
 
     glDeleteShader(vertexShader);

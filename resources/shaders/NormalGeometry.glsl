@@ -42,11 +42,11 @@ vec3 GetNormal()
 void GenerateLine(int index, vec3 normal)
 {
     gl_Position = u_projection * gl_in[index].gl_Position;
-    UpdateVertAttribs(index*2);
+    UpdateVertAttribs(index);
     EmitVertex();
 
     gl_Position = u_projection * (gl_in[index].gl_Position + vec4(normal, 0.0) * 0.7);
-    UpdateVertAttribs(index*2 + 1);
+    UpdateVertAttribs(index);
     EmitVertex();
 
     EndPrimitive();

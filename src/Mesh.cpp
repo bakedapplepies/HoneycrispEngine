@@ -17,12 +17,14 @@ void Mesh::ConstructMesh()
     else if (vertices.empty())
     {
         Debug::Error("No data to construct mesh.");
+        glfwTerminate();
         assert(false);
     }
 
     if (indices.empty())
     {
         Debug::Error("No indices to draw mesh.");
+        glfwTerminate();
         assert(false);
     }
     

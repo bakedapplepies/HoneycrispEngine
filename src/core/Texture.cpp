@@ -69,7 +69,8 @@ Texture::Texture(const FileSystem::Path& texturePath, uint32_t textureResolution
         Debug::Error(texturePath.path);
         Debug::Error(fmt::format("Texture failed to load: {}", stbi_failure_reason()));
         stbi_image_free(data);
-        assert(false && "Texture failed to load.");
+        glfwTerminate();
+        assert(!"Texture failed to load.");
     }
 
     GenerateTextureCoords();  // for quads
