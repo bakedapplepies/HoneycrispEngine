@@ -124,7 +124,7 @@ void Cubemap::SetMesh()
     cubemapMesh.indices = indicesData;
 
     cubemapMesh.ConstructMesh();
-    cubemapMesh.addPosition(glm::vec3(0.0f));
+    cubemapMesh.addTransform(Transform(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f)));
 }
 
 void Cubemap::Draw(std::shared_ptr<Shader> shader) const

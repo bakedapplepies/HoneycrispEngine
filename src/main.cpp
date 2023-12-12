@@ -1,4 +1,5 @@
 #include "Application.h"
+#include "utils/Debug.h"
 
 
 int main()

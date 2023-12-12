@@ -18,6 +18,8 @@ public:
     std::vector< std::shared_ptr<Texture> > textures;
 
 private:
+    std::vector<glm::vec3> m_eulerAngles;
+    std::vector<float> m_scalars;
     glm::mat4 m_modelMatrix;
     std::vector<float> m_vertData;
     std::shared_ptr<VertexArray> m_VAO;
@@ -35,13 +37,12 @@ public:
     void EnableVertexAttribUV(bool on) const;
     void EnableVertexAttribNormals(bool on) const;
 
-    virtual void OnUpdate() {}
+    virtual void onUpdate() {}
     void Draw(std::shared_ptr<Shader> shader) const;
     void Translate(const glm::vec3& vec);
     void Scale(const float& multiplier);
     void Rotate(const float& rX, const float& rY, const float& rZ);
-    void addPosition(const glm::vec3& position);
-    glm::mat4 GetModelMatrix(const glm::vec3& position) const;
+    glm::mat4 GetModelMatrix(const Transform& position) const;
 
     void ConstructMesh();
     std::weak_ptr<VertexArray> GetVAO();

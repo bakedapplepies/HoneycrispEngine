@@ -19,7 +19,7 @@ public:
     Light& operator=(Light&& other) noexcept;
     ~Light() = default;
 
-    void OnUpdate() {}
+    void onUpdate() {}
 
     glm::vec3& GetColor();
 };

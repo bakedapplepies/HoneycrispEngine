@@ -23,7 +23,7 @@ private:
 
 public:
     Cubemap(const std::vector<std::string>& faces);
-    void OnUpdate() {};
+    void onUpdate() {};
     void Draw(std::shared_ptr<Shader> shader) const;
 
 private:

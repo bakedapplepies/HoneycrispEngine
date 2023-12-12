@@ -134,11 +134,11 @@ void Model::Draw(std::shared_ptr<Shader> shader) const
     }
 }
 
-void Model::addPosition(const glm::vec3& position)
+void Model::addTransform(const Transform& transform)
 {
     for (unsigned int i = 0; i < m_meshes.size(); i++)
     {
-        m_meshes[i].addPosition(position);
+        m_meshes[i].addTransform(transform);
     }
-    positions.push_back(position);
+    transforms.push_back(transform);
 };

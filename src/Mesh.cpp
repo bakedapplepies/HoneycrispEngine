@@ -197,7 +197,7 @@ void Mesh::EnableVertexAttribNormals(bool on) const
 
 Mesh::Mesh(Mesh&& other) noexcept
 {
-    positions = std::move(other.positions);
+    transforms = std::move(other.transforms);
 
     vertices = std::move(other.vertices);
     colors = std::move(other.colors);
@@ -212,7 +212,7 @@ Mesh::Mesh(Mesh&& other) noexcept
 
 Mesh& Mesh::operator=(Mesh&& other) noexcept
 {
-    positions = std::move(other.positions);
+    transforms = std::move(other.transforms);
 
     vertices = std::move(other.vertices);
     colors = std::move(other.colors);
@@ -245,27 +245,28 @@ void Mesh::Draw(std::shared_ptr<Shader> shader) const
         }
     }
 
-    for (const glm::vec3& i_position : positions)
+    for (const Transform& i_transform : transforms)
     {
-        glm::mat4 modelMatrix = GetModelMatrix(i_position);
+        glm::mat4 modelMatrix = GetModelMatrix(i_transform);
         shader->setMatrix3Uniform("u_normalMatrix", glm::mat3(glm::transpose(glm::inverse(modelMatrix))));
         shader->setMatrix4Uniform("u_model", modelMatrix);
         GLCall( glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (GLvoid*)0) );
     }
 }
 
-glm::mat4 Mesh::GetModelMatrix(const glm::vec3& position) const
+glm::mat4 Mesh::GetModelMatrix(const Transform& transform) const
 {
-    // maybe add rotation and scale
+    glm::mat4 modelMatrix = glm::mat4(1.0f);
 
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, position);
-    return model;
-}
+    modelMatrix = glm::translate(modelMatrix, transform.position);
+    
+    glm::quat quaternion = glm::quat(transform.eulerAngles);
+    glm::mat4 rotationMatrix = glm::toMat4(quaternion);
+    modelMatrix *= rotationMatrix;
 
-void Mesh::addPosition(const glm::vec3& position)  // add batching
-{
-    positions.push_back(position);
+    modelMatrix = glm::scale(modelMatrix, transform.scale);
+
+    return modelMatrix;
 }
 
 std::weak_ptr<VertexArray> Mesh::GetVAO()

@@ -3,7 +3,6 @@
 #include "../pch/pch.h"
 
 #include "../Scene.h"
-#include "../types/types_index.h"
 #include "../Cube.h"
 #include "../core/Texture.h"
 #include "../Model.h"
@@ -27,7 +26,7 @@ public:
     ~DefaultSceneTwo();
     DefaultSceneTwo(DefaultSceneTwo&& other) noexcept = default;
     DefaultSceneTwo& operator=(DefaultSceneTwo&& other) noexcept = default;
-    virtual void OnUpdate();
+    virtual void onUpdate();
     void InitializeShaders(void);
     void SetInitialUniforms(void);
 };

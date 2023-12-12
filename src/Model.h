@@ -26,6 +26,6 @@ private:
     std::vector< std::shared_ptr<Texture> > loadMaterialTextures(aiMaterial* material, aiTextureType assimp_texture_type);
 
 public:
-    void OnUpdate() {}
-    void addPosition(const glm::vec3& position);
+    void onUpdate() {}
+    void addTransform(const Transform& transform);  // acts as interface for meshes
 };

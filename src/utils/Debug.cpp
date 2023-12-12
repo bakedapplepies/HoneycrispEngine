@@ -2,16 +2,19 @@
 
 
 static bool err = false;
-void createBreak() {
+void createBreak()
+{
     err = true;
     assert(err);
 }
 
-void GLClearError() {
+void GLClearError()
+{
     while (glGetError() != GL_NO_ERROR);
 }
 
-bool GLLogCall(const char* function, const char* file, unsigned int line) {
+bool GLLogCall(const char* function, const char* file, unsigned int line)
+{
     while (GLenum error = glGetError()) {
         std::string errorType;
         switch (error)
@@ -32,4 +35,11 @@ bool GLLogCall(const char* function, const char* file, unsigned int line) {
         return false;
     }
     return true;
+}
+
+void terminate(const char* msg, const char* file, unsigned int line)
+{
+    glfwTerminate();
+    std::cout << fmt::format("[TERMINATE at {}, Ln: {}]: {}\n", file, line, msg);
+    assert(false);
 }

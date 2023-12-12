@@ -4,13 +4,13 @@
 - TODO: move all enums to a separate file (?)
 - TODO: cache texture (ktx) & store model in reuseable binary format
 - TODO: check if shared_ptr in SceneManager is necessary
-- TODO: Add a macro for false-asserting + glfwTerminate();
-- TODO: Keep track of already used shader ids in a map with shader count, then only delete the id when shader counts
-reduce to 0.
 - TODO: Manage texture units (including GL_TEXTURE_CUBE_MAP)
 - TODO: LOD (mesh subdivision via geometry shader for now, mesh shader later)
 - TODO: Make model loading asynchronous
 - TODO: Add libraries as submodules (premake)
-- TODO: create breakpoint via mingw-w64
-- TODO: replace CreateObject with template functions
 - TODO: Mark constructors as explicit
+- TODO: Quaternion implementation
+- TODO: Use std::string_view whenever possible
+- TODO: Separate the program in 2 threads: Rendering and Everything else. The only input the Rendering thread
+gets is the Draw-calls-queue.
+- TODO: rename protected members with p_ prefixes

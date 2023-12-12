@@ -8,7 +8,7 @@ std::unordered_map<GLuint, GLint> Texture::sm_textureUnits;  // key: ID -> textu
 std::unordered_map<GLuint, unsigned int> Texture::sm_textureIDCount;
 
 Texture::Texture(const FileSystem::Path& texturePath, uint32_t textureResolutionWidth, uint32_t textureResolutionHeight,
-    ETextureType textureType, const std::source_location& location
+    ETextureType textureType
 ) : m_textureWidth(textureResolutionWidth), m_textureHeight(textureResolutionHeight)
 {
     // Debug::Log(fmt::format("{}", std::filesystem::last_write_time(path).time_since_epoch().count()));

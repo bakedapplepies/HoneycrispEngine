@@ -10,9 +10,9 @@ DefaultSceneTwo::DefaultSceneTwo()
 
     cube = CreateObject<Cube, EObjectMovement::NONE>();
     cube->setShader(shader);
-    cube->addPosition(glm::vec3(1.0f, 3.0f ,5.0f));
-    cube->addPosition(glm::vec3(3.0f, 2.0f ,1.0f));
-    cube->addPosition(glm::vec3(-5.0f, -2.0f ,3.0f));
+    cube->addTransform(Transform(glm::vec3(1.0f, 3.0f ,5.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+    cube->addTransform(Transform(glm::vec3(3.0f, 2.0f ,1.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+    cube->addTransform(Transform(glm::vec3(-5.0f, -2.0f ,3.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
 
     TextureCoords& grassUV = Textures::mainTextureMap.GetTextureCoords(0, 0);
     int width = 50, height = 50;
@@ -74,11 +74,11 @@ DefaultSceneTwo::DefaultSceneTwo()
     mesh->indices = indices;
 
     mesh->ConstructMesh();
-    mesh->addPosition(glm::vec3(0.0f, -6.0f, 0.0f));
+    mesh->addTransform(Transform(glm::vec3(0.0f, -6.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
 
     model = CreateObject<Model, EObjectMovement::NONE>(FileSystem::Path("resources/models/backpack/backpack.obj"));
     model->setShader(backpackShader);
-    model->addPosition(glm::vec3(10.0f, 2.0f, 7.0f));
+    model->addTransform(Transform(glm::vec3(10.0f, 2.0f, 7.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(5.0f)));
 
     CreateCubemap(
         FileSystem::Path("resources/textures/cubemaps/skybox/right.jpg"),
@@ -96,7 +96,7 @@ DefaultSceneTwo::~DefaultSceneTwo()
 {
 }
 
-void DefaultSceneTwo::OnUpdate()
+void DefaultSceneTwo::onUpdate()
 {
     Draw();
     mesh->Draw(normalWaveShader);

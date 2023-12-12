@@ -16,7 +16,7 @@ SceneManager& SceneManager::Get()
 void SceneManager::Update()
 {
     // maybe add if-statements to check availability
-    _scenesMap[_activeSceneIndex]->OnUpdate();
+    _scenesMap[_activeSceneIndex]->onUpdate();
 }
 
 void SceneManager::ClearAllScenes()

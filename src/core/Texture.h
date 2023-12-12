@@ -44,7 +44,7 @@ private:
 public:
     Texture() = default;
     ~Texture();
-    Texture(const FileSystem::Path& texturePath, uint32_t textureResolutionWidth, uint32_t textureResolutionHeight, ETextureType textureType, const std::source_location& location = std::source_location::current());    
+    Texture(const FileSystem::Path& texturePath, uint32_t textureResolutionWidth, uint32_t textureResolutionHeight, ETextureType textureType);    
     Texture(const Texture&);
     Texture(Texture&& other) noexcept;
     Texture& operator=(const Texture&);

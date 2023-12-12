@@ -3,6 +3,8 @@
 #include "../pch/pch.h"
 
 
+#define TERMINATE(msg) terminate(#msg, __FILE__, __LINE__);
+
 // #define DEBUG
 #define ASSERT(x) if (!(x)) createBreak();
 // #define DEBUG
@@ -23,6 +25,7 @@ void createBreak();
 
 void GLClearError();
 bool GLLogCall(const char* function, const char* file, unsigned int line);
+void terminate(const char* msg, const char* file, unsigned int line);
 
 static std::ostream& operator<<(std::ostream& stream, const glm::vec2& vec2)
 {
@@ -53,7 +56,7 @@ namespace Debug
         std::cout << t << '\n';
         beganLine = true;
     }
-
+    
     template <typename T, typename... Args>
     void Log(const T& t, const Args&... args)
     {

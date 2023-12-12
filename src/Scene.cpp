@@ -137,8 +137,7 @@ void Scene::binary_delete_ptr(std::vector<std::pair<size_t, std::shared_ptr<Rend
 
     if (vec.size() == 0)
     {
-        // assert(!"Vector is empty");
-        return;
+        assert(!"Vector is empty");
     }
 
     size_t left = 0, right = vec.size() - 1;

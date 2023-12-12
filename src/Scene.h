@@ -63,13 +63,11 @@ private:
 
 private:
     // Make sure vector is already sorted
-    // template <template<typename> typename T, typename U>
     static void binary_insert_ptr(
         std::vector<std::pair<size_t, std::shared_ptr<Renderable>>>& vec,
         const std::pair<size_t, std::shared_ptr<Renderable>>& pair
     );
 
-    // template <typename T>
     static void binary_delete_ptr(std::vector<std::pair<size_t, std::shared_ptr<Renderable>>>& vec, const size_t& objID);
 
 private:
@@ -199,7 +197,7 @@ public:
     Scene(Scene&& other) noexcept;
     Scene& operator=(Scene&& other) noexcept;
 
-    virtual void OnUpdate() = 0;  // force overload
+    virtual void onUpdate() = 0;  // force overload
     virtual void InitializeShaders(void) {}
     virtual void SetInitialUniforms(void) {}
 
