@@ -96,15 +96,8 @@
         "source_location": "cpp",
         "forward_list": "cpp",
         "span": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "filesystem": "cpp"
     },
-    "C_Cpp.errorSquiggles": "enabled",
-    "C_Cpp.default.compilerPath": "C:\\MinGW-W64\\MinGW-W64\\bin\\clang++.exe",
-    "C_Cpp.default.cppStandard": "c++20",
-    "C_Cpp.intelliSenseEngineFallback": "enabled",
-    "lldb.showDisassembly": "always",
-    "lldb.displayFormat": "auto",
-    "lldb.dereferencePointers": true,
-    "lldb.consoleMode": "evaluate"
-    // "lldb.library": "C:\\MinGW-W64\\MinGW-W64\\bin\\liblldb.dll"
+    "cmake.generator": "Ninja"
 }

@@ -14,3 +14,5 @@
 - TODO: Separate the program in 2 threads: Rendering and Everything else. The only input the Rendering thread
 gets is the Draw-calls-queue.
 - TODO: rename protected members with p_ prefixes
+- TODO: Render priority
+- TODO: Add libs to vendor and compile them in cmake

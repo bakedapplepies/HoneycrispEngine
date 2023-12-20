@@ -8,7 +8,7 @@
 
 class Renderable : public Object
 {
-protected:
+public:  // TODO: check accessibility
     std::vector<Transform> transforms;
 
 public:

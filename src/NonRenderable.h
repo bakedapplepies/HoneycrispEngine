@@ -6,7 +6,7 @@
 
 class NonRenderable : public Object
 {
-protected:
+public:
     std::vector<glm::vec3> positions;
     
 public:
