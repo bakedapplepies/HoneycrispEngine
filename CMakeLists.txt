@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.26.0)
 project(LearnOpenGL CXX C)
 
+add_subdirectory(vendor)
 add_subdirectory(dependencies)
 add_subdirectory(src)
 

@@ -4,7 +4,10 @@
             "name": "Win32",
             "includePath": [
                 "${default}",
-                "${workspaceFolder}/dependencies"
+                "${workspaceFolder}/dependencies",
+                "${workspaceFolder}/vendor/glm",
+                "${workspaceFolder}/vendor/assimp/include",
+                "${workspaceFolder}/build/vendor/assimp/include"
             ],
             "defines": [
                 "_DEBUG",
