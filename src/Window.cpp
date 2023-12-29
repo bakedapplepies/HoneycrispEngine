@@ -26,14 +26,13 @@ Window::Window()
         callbackData.windowWidth,
         callbackData.windowHeight,
         "LearnOpenGL",
-        NULL,
-        NULL
+        nullptr,
+        nullptr
     );
 
-    if (glfwWindow == NULL)
+    if (glfwWindow == nullptr)
     {
-        Debug::Error("GLFW Window Initialization failed.");
-        glfwTerminate();
+        TERMINATE("GLFW Window Initialization failed.");
     }
     glfwMakeContextCurrent(glfwWindow);
     glfwSwapInterval(1);  // vsync
@@ -42,8 +41,7 @@ Window::Window()
     /* Initialize GLAD -> Only call OpenGL functions after this */
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
-        Debug::Error("GLAD Initialization failed.");
-        glfwTerminate();
+        TERMINATE("GLAD Initialization failed.");
     }
     Debug::Log("OpenGL (Core) ", glGetString(GL_VERSION));
 
@@ -58,33 +56,29 @@ Window::Window()
 
     glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  // disable cursor
 
+    /* Depth, Stencil, Blending */
     GLCall(glEnable(GL_DEPTH_TEST));
     GLCall(glEnable(GL_CULL_FACE));
     GLCall(glFrontFace(GL_CW));
     GLCall(glCullFace(GL_BACK));
+
+    GLCall(glEnable(GL_STENCIL_TEST));
+
     // GLCall(glEnable(GL_BLEND));
+
     GLCall(glViewport(0, 0, callbackData.windowWidth, callbackData.windowHeight));
 
-    Debug::Log("Window config done.");
 
     /* Textures */
     stbi_set_flip_vertically_on_load(true);
     Texture::LoadTextures();
 
-    viewMatrix = camera.GetViewMatrix();
     projectionMatrix = glm::perspective(
         glm::radians(45.0f),
         (float)callbackData.windowWidth/(float)callbackData.windowHeight,
         0.1f,
         100.0f
     );
-
-    light = Light(
-        glm::vec3(1.0f, 1.0f, 1.0f)
-    );
-    light.addPosition(glm::vec3(1.0f, 1.0f, 3.0f));
-
-    // Model backpack("../resources/models/backpack/backpack.obj");
 
     // ImGUI
     IMGUI_CHECKVERSION();
@@ -113,16 +107,8 @@ void Window::Loop()
     Textures::mainTextureSpecularMap.Bind();
     camera.SetPos(camera.cameraPos + glm::vec3(0, 10, 0));
 
-    GLuint ubo[2];
-    GLCall(glGenBuffers(2, ubo));
-
-    GLCall(glBindBuffer(GL_UNIFORM_BUFFER, ubo[0]));
-    GLCall(glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4) + sizeof(GLfloat), nullptr, GL_STATIC_DRAW));
-    GLCall(glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo[0], 0, 2 * sizeof(glm::mat4) + sizeof(GLfloat)));
-
-    GLCall(glBindBuffer(GL_UNIFORM_BUFFER, ubo[1]));
-    GLCall(glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::vec3), nullptr, GL_STATIC_DRAW));
-    GLCall(glBindBufferRange(GL_UNIFORM_BUFFER, 1, ubo[1], 0, 2 * sizeof(glm::vec3)));
+    UniformBuffer<glm::mat4, glm::mat4, float> uboMatrices(0);
+    UniformBuffer<glm::vec3, glm::vec3, glm::vec3> uboOther(1);
 
     while(!glfwWindowShouldClose(glfwWindow))
     {
@@ -136,16 +122,15 @@ void Window::Loop()
         // Set background
         glm::vec3 bgColor = SceneManager::Get().GetSceneBgColor();
         GLCall(glClearColor(bgColor.r, bgColor.g, bgColor.b, 1.0f));
-        GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+
+        // Clear buffers
+        GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 
         // ImGui
         ImGui_ImplGlfw_NewFrame();
         ImGui_ImplOpenGL3_NewFrame(); 
         ImGui::NewFrame();
 
-        // float old_font_size = ImGui::GetFont()->Scale;
-        // ImGui::GetFont()->Scale *= 1.5;
-        // ImGui::PushFont(ImGui::GetFont());
         ImGui::Begin("Settings");
         static float lightSizeScale = 0.2f;
         static float waveSpeed = 1.0f;
@@ -157,14 +142,16 @@ void Window::Loop()
         ImGui::Text("Total time: %fms", deltaTime * 1000);
 
         ImGui::End();
-        // ImGui::GetFont()->Scale = old_font_size;
-        // ImGui::TreePop();
+
+        ImGui::Begin("Settings2");
+        glm::vec3 lightColor = glm::vec3(0.0f);
+        ImGui::SliderFloat3("Light Color", glm::value_ptr(lightColor), 0.0f, 1.0f);
+        ImGui::End();
 
         // Update camera
         camera.SetDirection(glm::normalize(callbackData.cameraDirection));
-        viewMatrix = camera.GetViewMatrix();
 
-        // put in callbackData
+        // TODO: put in callbackData
         projectionMatrix = glm::perspective(
             glm::radians(45.0f),
             (float)callbackData.windowWidth/(float)callbackData.windowHeight,
@@ -173,15 +160,19 @@ void Window::Loop()
         );
 
         // Global uniforms
-        GLCall(glBindBuffer(GL_UNIFORM_BUFFER, ubo[0]));
-        GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(viewMatrix)));
-        GLCall(glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(projectionMatrix)));
         float u_time = begin*waveSpeed;
-        GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), sizeof(GLfloat), &u_time));
-
-        GLCall(glBindBuffer(GL_UNIFORM_BUFFER, ubo[1]));
-        GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::vec3), glm::value_ptr(camera.cameraPos)));
-        GLCall(glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::vec3), sizeof(glm::vec3), glm::value_ptr(camera.direction)));
+        uboMatrices.Update(
+            glm::value_ptr(camera.GetViewMatrix()),
+            glm::value_ptr(projectionMatrix),
+            &u_time
+        );
+        
+        glm::vec3 lightPos(4.0f, 5.0f, 6.0f);
+        uboOther.Update(
+            glm::value_ptr(camera.cameraPos),
+            glm::value_ptr(camera.cameraPos),
+            glm::value_ptr(camera.direction)
+        );
 
         renderingTime = glfwGetTime();
         SceneManager::Get().Update();
@@ -190,8 +181,8 @@ void Window::Loop()
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
                 
-        GLCall(glfwSwapBuffers(glfwWindow));
-        GLCall(glfwPollEvents());
+        glfwSwapBuffers(glfwWindow);
+        glfwPollEvents();
     }
 }
 

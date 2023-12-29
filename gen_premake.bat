@@ -1,1 +1,0 @@
-premake5 ninja --cc=clang

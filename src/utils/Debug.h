@@ -2,8 +2,9 @@
 
 #include "../pch/pch.h"
 
+// TODO: Rename file (Logging or sth)
 
-#define TERMINATE(msg) terminate(#msg, __FILE__, __LINE__);
+#define TERMINATE(msg) terminate(msg, __FILE__, __LINE__);
 
 // #define DEBUG
 #define ASSERT(x) if (!(x)) createBreak();

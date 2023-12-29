@@ -16,3 +16,5 @@ gets is the Draw-calls-queue.
 - TODO: rename protected members with p_ prefixes
 - TODO: Render priority
 - TODO: Add libs to vendor and compile them in cmake
+- TODO: What the hell is noexcept
+- TODO: Continuous maps

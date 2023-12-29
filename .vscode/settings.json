@@ -99,5 +99,6 @@
         "valarray": "cpp",
         "filesystem": "cpp"
     },
-    "cmake.generator": "Ninja"
+    "cmake.generator": "Ninja",
+    "C_Cpp.intelliSenseEngineFallback": "enabled"
 }

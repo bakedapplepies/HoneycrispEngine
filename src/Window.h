@@ -1,12 +1,8 @@
 #pragma once
 
 #include "pch/pch.h"
-
-#include "Mesh.h"
-#include "Cube.h"
-#include "Light.h"
-#include "core/Texture.h"
 #include "Camera.h"
+#include "core/UniformBuffer.h"
 
 
 struct CallbackData
@@ -30,9 +26,7 @@ private:
     GLFWwindow* glfwWindow;
     CallbackData callbackData;
     Camera camera = Camera(glm::vec3(0.0f, 5.0f, 0.0f));  // set initial direction in CallbackData
-    Light light;
 
-    glm::mat4 viewMatrix;
     glm::mat4 projectionMatrix;
 
     bool continueProgram = true;
