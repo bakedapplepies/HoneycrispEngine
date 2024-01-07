@@ -5,12 +5,23 @@ static bool err = false;
 void createBreak()
 {
     err = true;
-    assert(err);
 }
 
 void GLClearError()
 {
     while (glGetError() != GL_NO_ERROR);
+}
+
+std::ostream& operator<<(std::ostream& stream, const glm::vec2& vec2)
+{
+    std::cout << fmt::format("[{}, {}]", vec2.x, vec2.y);
+    return stream;
+}
+
+std::ostream& operator<<(std::ostream& stream, const glm::vec3& vec3)
+{
+    std::cout << fmt::format("[{}, {}, {}]", vec3.x, vec3.y, vec3.z);
+    return stream;
 }
 
 bool GLLogCall(const char* function, const char* file, unsigned int line)

@@ -9,7 +9,7 @@ namespace FileSystem
         std::string path = "";
         Path(const std::string& path)
         {
-            std::filesystem::path absPath("../../");
+            std::filesystem::path absPath = std::filesystem::current_path();
             absPath /= path;
             
             absPath = absPath.make_preferred();

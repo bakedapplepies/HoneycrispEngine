@@ -273,8 +273,3 @@ std::weak_ptr<VertexArray> Mesh::GetVAO()
 {
     return std::weak_ptr<VertexArray>(m_VAO);
 }
-
-void Mesh::Rotate(const float& rX, const float& rY, const float& rZ)
-{
-    // m_rotation = 
-}

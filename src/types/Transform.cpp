@@ -14,3 +14,19 @@ Transform& Transform::operator=(const Transform& other)
 
     return *this;
 }
+
+Transform::Transform(Transform&& other) noexcept
+{
+    position = std::move(other.position);
+    eulerAngles = std::move(other.eulerAngles);
+    scale = std::move(other.scale);
+}
+
+Transform& Transform::operator=(Transform&& other) noexcept
+{
+    position = std::move(other.position);
+    eulerAngles = std::move(other.eulerAngles);
+    scale = std::move(other.scale);
+
+    return *this;
+}

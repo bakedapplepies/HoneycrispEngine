@@ -18,3 +18,5 @@ gets is the Draw-calls-queue.
 - TODO: Add libs to vendor and compile them in cmake
 - TODO: What the hell is noexcept
 - TODO: Continuous maps
+- TODO: Add type-checking for UBOs
+- TODO: Texture2D Min/Mag filter (nearest/linear), Wrap (repeat/clamp/...)

@@ -15,10 +15,18 @@ private:
 public:
     UniformBuffer(GLuint bindingIndex) : m_bindingIndex(bindingIndex)
     {
+        if (takenBindingIndices[bindingIndex])
+        {
+            // Technically an error, but doesn't crash OpenGL
+            // because uniforms don't have to be filled
+            Debug::Error("Invalid binding index (Already taken.)");
+            return;
+        }
+        takenBindingIndices[bindingIndex] = true;
+
         AddTypeSizes();
 
         GLCall(glGenBuffers(1, &m_uboID));
-
         GLCall(glBindBuffer(GL_UNIFORM_BUFFER, m_uboID));
         GLCall(glBufferData(GL_UNIFORM_BUFFER, totalByteSize, nullptr, GL_STATIC_DRAW));
         GLCall(glBindBufferRange(GL_UNIFORM_BUFFER, bindingIndex, m_uboID, 0, totalByteSize));
@@ -29,7 +37,7 @@ public:
     void Update(const Args* const... args) const
     {
         static_assert(sizeof...(args) == sizeof...(Ts), "Invalid number of arguments for UBO");
-        glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
+        GLCall(glBindBuffer(GL_UNIFORM_BUFFER, m_uboID));
         size_t offset = 0;
         size_t index = 0;
         Update(index, offset, args...);
@@ -38,7 +46,7 @@ public:
     template <typename T, typename... Args>
     void Update(size_t index, size_t offset, const T* const t, const Args* const... args) const
     {
-        glBufferSubData(GL_UNIFORM_BUFFER, offset, m_sizes[index], t);
+        GLCall(glBufferSubData(GL_UNIFORM_BUFFER, offset, m_sizes[index], t));
         offset += m_sizes[index];
         index++;
         Update(index, offset, args...);
@@ -47,7 +55,7 @@ public:
     template <typename T>
     void Update(size_t index, size_t offset, const T* const t) const
     {
-        glBufferSubData(GL_UNIFORM_BUFFER, offset, m_sizes[index], t);
+        GLCall(glBufferSubData(GL_UNIFORM_BUFFER, offset, m_sizes[index], t));
     }
 
 private:
@@ -64,3 +72,6 @@ private:
         }
     }
 };
+
+template<typename... Ts>
+std::unordered_map<GLuint, bool> UniformBuffer<Ts...>::takenBindingIndices;

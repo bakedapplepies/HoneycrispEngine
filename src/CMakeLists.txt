@@ -44,20 +44,24 @@ target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE -ffile-prefix-map=${CMAKE_S
 target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE GLM_FORCE_SWIZZLE)
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/dependencies
+    ${CMAKE_SOURCE_DIR}/vendor/glfw/include
     ${CMAKE_SOURCE_DIR}/vendor/glm
     ${CMAKE_SOURCE_DIR}/vendor/assimp/include
     ${CMAKE_SOURCE_DIR}/vendor/assimp/include/assimp
+    ${CMAKE_SOURCE_DIR}/vendor/fmt/include
 )
 target_precompile_headers(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src/pch/pch.cpp ${CMAKE_SOURCE_DIR}/src/pch/pch.h)
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/lib)
+target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/build/vendor/glfw/src)
+target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/build/vendor/fmt)
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     GLAD
-    FMT
+    glfw3
+    fmtd
     IMGUI
     STB_IMAGE
     OPENFBX
     assimp.dll
-    glfw3
     opengl32
     gdi32
     user32

@@ -42,7 +42,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     std::vector<glm::vec3> normals;
     std::vector<glm::vec2> uvs;
     std::vector<unsigned int> indices;
-    std::vector< std::shared_ptr<Texture> > textures;
+    std::vector< std::shared_ptr<Texture2D> > textures;
 
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
@@ -83,8 +83,8 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     if (mesh->mMaterialIndex >= 0)
     {
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-        std::vector< std::shared_ptr<Texture> > diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE);
-        std::vector< std::shared_ptr<Texture> > specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR);
+        std::vector< std::shared_ptr<Texture2D> > diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE);
+        std::vector< std::shared_ptr<Texture2D> > specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR);
         textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     }
@@ -95,9 +95,9 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     return resultMesh;
 }
 
-std::vector< std::shared_ptr<Texture> > Model::loadMaterialTextures(aiMaterial* material, aiTextureType assimp_texture_type)
+std::vector< std::shared_ptr<Texture2D> > Model::loadMaterialTextures(aiMaterial* material, aiTextureType assimp_texture_type)
 {
-    std::vector< std::shared_ptr<Texture> > textures;
+    std::vector< std::shared_ptr<Texture2D> > textures;
 
     ETextureType textureType;
     switch (assimp_texture_type)
@@ -109,7 +109,7 @@ std::vector< std::shared_ptr<Texture> > Model::loadMaterialTextures(aiMaterial* 
         textureType = ETextureType::SPECULAR;
         break;
     default:
-        Debug::Warn("Texture type not recognized.");
+        Debug::Warn("Texture2D type not recognized.");
         break;
     }
 
@@ -120,7 +120,7 @@ std::vector< std::shared_ptr<Texture> > Model::loadMaterialTextures(aiMaterial* 
         material->GetTexture(assimp_texture_type, i, &textureFilename);
         std::filesystem::path texturePath = m_modelDirectory / textureFilename.C_Str();
         texturePath = std::filesystem::absolute(texturePath);
-        textures.push_back(std::make_shared<Texture>(texturePath.string(), 1, 1, textureType));
+        textures.push_back(std::make_shared<Texture2D>(texturePath.string(), 1, 1, textureType));
         m_loadedTexturePaths[textureFilename.C_Str()] = true;
     }
     return textures;

@@ -23,7 +23,11 @@
         {
             "name": "cmake",
             "configurationProvider": "ms-vscode.cmake-tools",
-            "compilerPath": "C:\\MinGW-W64\\MinGW-W64\\bin\\clang++.exe"
+            "compilerPath": "C:\\MinGW-W64\\MinGW-W64\\bin\\clang++.exe",
+            "includePath": [
+                "${default}",
+                "${workspaceFolder}/vendor/glm"
+            ]
         }
     ],
     "version": 4

@@ -71,7 +71,7 @@ Window::Window()
 
     /* Textures */
     stbi_set_flip_vertically_on_load(true);
-    Texture::LoadTextures();
+    Texture2D::LoadTextures();
 
     projectionMatrix = glm::perspective(
         glm::radians(45.0f),
@@ -107,7 +107,7 @@ void Window::Loop()
     Textures::mainTextureSpecularMap.Bind();
     camera.SetPos(camera.cameraPos + glm::vec3(0, 10, 0));
 
-    UniformBuffer<glm::mat4, glm::mat4, float> uboMatrices(0);
+    UniformBuffer<glm::mat4, glm::mat4, float> uboMatrices(0);  // binding index
     UniformBuffer<glm::vec3, glm::vec3, glm::vec3> uboOther(1);
 
     while(!glfwWindowShouldClose(glfwWindow))
@@ -195,7 +195,7 @@ Window::~Window()
 
     // Delete these while OpenGL is still in context
     SceneManager::Get().ClearAllScenes();
-    Texture::DeleteAllTextures();
+    Texture2D::DeleteAllTextures();
 
     Debug::Log("Deallocated all resources.");
 }

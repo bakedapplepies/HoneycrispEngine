@@ -3,7 +3,6 @@
 #include "pch/pch.h"
 #include "utils/Debug.h"
 #include "Renderable.h"
-#include "NonRenderable.h"
 #include "Cubemap.h"
 #include "utils/utils.h"
 
@@ -82,7 +81,7 @@ private:
 
 protected:
     std::unordered_map<GLuint, RenderableShaderGroupInfo> m_renderObjectPtrs;
-    std::vector< std::shared_ptr<NonRenderable> > m_nonRenderObjectPtrs;
+    std::vector< std::shared_ptr<Object> > m_nonRenderObjectPtrs;
 
 public:
     glm::vec3 bgColor = glm::vec3(0.0f, 0.0f, 0.0f);

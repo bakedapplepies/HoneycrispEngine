@@ -25,7 +25,7 @@ struct TextureInfo
     std::vector< std::vector<TextureCoords> > textureCoords;
 };
 
-class Texture
+class Texture2D
 {
 private:
     int m_pixelWidth, m_pixelHeight;
@@ -42,13 +42,13 @@ private:
     static std::unordered_map<GLuint, unsigned int> sm_textureIDCount;
 
 public:
-    Texture() = default;
-    ~Texture();
-    Texture(const FileSystem::Path& texturePath, uint32_t textureResolutionWidth, uint32_t textureResolutionHeight, ETextureType textureType);    
-    Texture(const Texture&);
-    Texture(Texture&& other) noexcept;
-    Texture& operator=(const Texture&);
-    Texture& operator=(Texture&& other) noexcept;
+    Texture2D() = default;
+    ~Texture2D();
+    Texture2D(const FileSystem::Path& texturePath, uint32_t textureResolutionWidth, uint32_t textureResolutionHeight, ETextureType textureType);    
+    Texture2D(const Texture2D&);
+    Texture2D(Texture2D&& other) noexcept;
+    Texture2D& operator=(const Texture2D&);
+    Texture2D& operator=(Texture2D&& other) noexcept;
 
     void GenerateTextureCoords();
 
@@ -68,6 +68,6 @@ public:
 
 namespace Textures
 {
-    extern Texture mainTextureMap;
-    extern Texture mainTextureSpecularMap;
+    extern Texture2D mainTextureMap;
+    extern Texture2D mainTextureSpecularMap;
 }

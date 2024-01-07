@@ -1,18 +1,18 @@
 #pragma once
 
 #include "pch/pch.h"
+#include "Object.h"
+#include "types/Transform.h"
 
-#include "NonRenderable.h"
 
-
-class Light : public NonRenderable
+class Light : public Object
 {
 private:
     glm::vec3 m_colorEmit;
+    Transform transform;
 
 public:
-    Light() = default;
-    Light(const glm::vec3& color);
+    Light(const glm::vec3& color, const Transform& transform);
     Light(const Light& other) = delete;
     Light(Light&& other) noexcept;
     Light& operator=(const Light& other) = delete;

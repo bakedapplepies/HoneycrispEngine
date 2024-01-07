@@ -15,7 +15,7 @@ public:
     std::vector<glm::vec3> normals;
     std::vector<glm::vec2> uvs;
     std::vector<GLuint> indices;
-    std::vector< std::shared_ptr<Texture> > textures;
+    std::vector< std::shared_ptr<Texture2D> > textures;
 
 private:
     std::vector<glm::vec3> m_eulerAngles;

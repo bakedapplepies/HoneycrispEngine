@@ -7,38 +7,25 @@
 #define TERMINATE(msg) terminate(msg, __FILE__, __LINE__);
 
 // #define DEBUG
-#define ASSERT(x) if (!(x)) createBreak();
-// #define DEBUG
-// #ifdef DEBUG
-#define GLCall(x) GLClearError();\
-    x;\
-    ASSERT(GLLogCall(#x, __BASE_FILE__, __LINE__))
-// #else
-// #define GLCall(x) x;
-// #endif
-
-#define GRAY(x) system("Color 08");\
-    x;\
-    system("Color 07");\
+#ifndef DEBUG
+    #define ASSERT(x) if (!(x)) createBreak();
+    #define GLCall(x) GLClearError();\
+        x;\
+        ASSERT(GLLogCall(#x, __BASE_FILE__, __LINE__))
+#else
+    #define ASSERT(x) x;
+    #define GLCall(x) x;
+#endif
 
 
 void createBreak();
-
 void GLClearError();
 bool GLLogCall(const char* function, const char* file, unsigned int line);
 void terminate(const char* msg, const char* file, unsigned int line);
 
-static std::ostream& operator<<(std::ostream& stream, const glm::vec2& vec2)
-{
-    std::cout << fmt::format("[{}, {}]", vec2.x, vec2.y);
-    return stream;
-}
+static std::ostream& operator<<(std::ostream& stream, const glm::vec2& vec2);
 
-static std::ostream& operator<<(std::ostream& stream, const glm::vec3& vec3)
-{
-    std::cout << fmt::format("[{}, {}, {}]", vec3.x, vec3.y, vec3.z);
-    return stream;
-}
+static std::ostream& operator<<(std::ostream& stream, const glm::vec3& vec3);
 
 namespace Debug
 {

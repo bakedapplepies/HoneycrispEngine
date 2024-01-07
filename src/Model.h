@@ -23,7 +23,7 @@ public:
 private:
     void processNode(aiNode* node, const aiScene*);
     Mesh processMesh(aiMesh* node, const aiScene*);
-    std::vector< std::shared_ptr<Texture> > loadMaterialTextures(aiMaterial* material, aiTextureType assimp_texture_type);
+    std::vector< std::shared_ptr<Texture2D> > loadMaterialTextures(aiMaterial* material, aiTextureType assimp_texture_type);
 
 public:
     void onUpdate() {}

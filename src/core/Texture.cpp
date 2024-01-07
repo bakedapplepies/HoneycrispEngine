@@ -2,12 +2,12 @@
 #include "Texture.h"
 
 
-GLuint Texture::sm_textureUnitCounter = 0;
-std::unordered_map<std::string, TextureInfo> Texture::sm_initiatedTextures;
-std::unordered_map<GLuint, GLint> Texture::sm_textureUnits;  // key: ID -> texture unit
-std::unordered_map<GLuint, unsigned int> Texture::sm_textureIDCount;
+GLuint Texture2D::sm_textureUnitCounter = 0;
+std::unordered_map<std::string, TextureInfo> Texture2D::sm_initiatedTextures;
+std::unordered_map<GLuint, GLint> Texture2D::sm_textureUnits;  // key: ID -> texture unit
+std::unordered_map<GLuint, unsigned int> Texture2D::sm_textureIDCount;
 
-Texture::Texture(const FileSystem::Path& texturePath, uint32_t textureResolutionWidth, uint32_t textureResolutionHeight,
+Texture2D::Texture2D(const FileSystem::Path& texturePath, uint32_t textureResolutionWidth, uint32_t textureResolutionHeight,
     ETextureType textureType
 ) : m_textureWidth(textureResolutionWidth), m_textureHeight(textureResolutionHeight)
 {
@@ -78,7 +78,7 @@ Texture::Texture(const FileSystem::Path& texturePath, uint32_t textureResolution
     Bind();
 }
 
-Texture::Texture(const Texture& other)
+Texture2D::Texture2D(const Texture2D& other)
 {
     m_pixelWidth = other.m_pixelWidth;
     m_pixelHeight = other.m_pixelHeight;
@@ -92,7 +92,7 @@ Texture::Texture(const Texture& other)
     m_textureCoords = sm_initiatedTextures[other.path].textureCoords;
 }
 
-Texture& Texture::operator=(const Texture& other)
+Texture2D& Texture2D::operator=(const Texture2D& other)
 {
     m_pixelWidth = other.m_pixelWidth;
     m_pixelHeight = other.m_pixelHeight;
@@ -108,7 +108,7 @@ Texture& Texture::operator=(const Texture& other)
     return *this;
 }
 
-Texture::Texture(Texture&& other) noexcept
+Texture2D::Texture2D(Texture2D&& other) noexcept
 {
     m_pixelWidth = other.m_pixelWidth;
     m_pixelHeight = other.m_pixelHeight;
@@ -123,7 +123,7 @@ Texture::Texture(Texture&& other) noexcept
     other.m_textureID = 0;
 }
 
-Texture& Texture::operator=(Texture&& other) noexcept
+Texture2D& Texture2D::operator=(Texture2D&& other) noexcept
 {
     m_pixelWidth = other.m_pixelWidth;
     m_pixelHeight = other.m_pixelHeight;
@@ -140,38 +140,38 @@ Texture& Texture::operator=(Texture&& other) noexcept
     return *this;
 }
 
-Texture::~Texture()
+Texture2D::~Texture2D()
 {
     Delete();
 }
 
-GLuint Texture::getID() const
+GLuint Texture2D::getID() const
 {
     return m_textureID;
 }
 
-GLuint Texture::getTextureUnit() const
+GLuint Texture2D::getTextureUnit() const
 {
     return sm_textureUnits[m_textureID];
 }
 
-ETextureType Texture::getTextureType() const
+ETextureType Texture2D::getTextureType() const
 {
     return m_textureType;
 }
 
-void Texture::Bind() const
+void Texture2D::Bind() const
 {
     GLCall(glActiveTexture(GL_TEXTURE0 + sm_textureUnits[m_textureID]));
     GLCall(glBindTexture(GL_TEXTURE_2D, m_textureID));
 }
 
-void Texture::Unbind() const  // could be static
+void Texture2D::Unbind() const  // could be static
 {
     GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
-void Texture::Delete()
+void Texture2D::Delete()
 {
     if (--sm_textureIDCount[m_textureID] == 0)  // only all textures with the same ID are gone then do this
     {
@@ -182,16 +182,16 @@ void Texture::Delete()
 }
 
 /* texture maps */
-Texture Textures::mainTextureMap;
-Texture Textures::mainTextureSpecularMap;
-void Texture::LoadTextures()
+Texture2D Textures::mainTextureMap;
+Texture2D Textures::mainTextureSpecularMap;
+void Texture2D::LoadTextures()
 {
-    Textures::mainTextureMap = Texture(
+    Textures::mainTextureMap = Texture2D(
         FileSystem::Path("resources/textures/grass_textures.png"),
         3, 1,
         ETextureType::DIFFUSE
     );
-    Textures::mainTextureSpecularMap = Texture(
+    Textures::mainTextureSpecularMap = Texture2D(
         FileSystem::Path("resources/textures/grass_textures_specular_map.png"),
         3, 1,
         ETextureType::SPECULAR
@@ -199,7 +199,7 @@ void Texture::LoadTextures()
 }
 
 // we are storing textures in static lists so that must be deleted before going out of context
-void Texture::DeleteAllTextures()  // static
+void Texture2D::DeleteAllTextures()  // static
 {
     for (auto iter = sm_textureIDCount.begin(); iter != sm_textureIDCount.end(); iter++)
     {
@@ -210,7 +210,7 @@ void Texture::DeleteAllTextures()  // static
     Debug::Log("Deleted all textures.");
 }
 
-void Texture::GenerateTextureCoords()
+void Texture2D::GenerateTextureCoords()
 {
     m_textureCoords.reserve(m_textureHeight);
 
@@ -235,7 +235,7 @@ void Texture::GenerateTextureCoords()
     sm_initiatedTextures[path].textureCoords = m_textureCoords;
 }
 
-TextureCoords& Texture::GetTextureCoords(uint32_t x, uint32_t y)
+TextureCoords& Texture2D::GetTextureCoords(uint32_t x, uint32_t y)
 {
     return m_textureCoords[y][x];
 }
