@@ -14,4 +14,5 @@ public:  // TODO: check accessibility
 public:
     virtual inline void addTransform(const Transform& transform) { transforms.push_back(transform); };
     virtual void Draw(std::shared_ptr<Shader> shader) const = 0;
+    virtual ~Renderable() {}
 };

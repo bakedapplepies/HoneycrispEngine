@@ -14,13 +14,13 @@ void GLClearError()
 
 std::ostream& operator<<(std::ostream& stream, const glm::vec2& vec2)
 {
-    std::cout << fmt::format("[{}, {}]", vec2.x, vec2.y);
+    std::cout << glm::to_string(vec2);
     return stream;
 }
 
 std::ostream& operator<<(std::ostream& stream, const glm::vec3& vec3)
 {
-    std::cout << fmt::format("[{}, {}, {}]", vec3.x, vec3.y, vec3.z);
+    std::cout << glm::to_string(vec3);
     return stream;
 }
 

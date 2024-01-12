@@ -167,7 +167,6 @@ void Window::Loop()
             &u_time
         );
         
-        glm::vec3 lightPos(4.0f, 5.0f, 6.0f);
         uboOther.Update(
             glm::value_ptr(camera.cameraPos),
             glm::value_ptr(camera.cameraPos),

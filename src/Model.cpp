@@ -141,4 +141,4 @@ void Model::addTransform(const Transform& transform)
         m_meshes[i].addTransform(transform);
     }
     transforms.push_back(transform);
-};
+    };

@@ -43,7 +43,7 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, uint32_t textureResolu
     
     if (data)
     {
-        GLenum format;
+        GLenum format = -1;
         if (nrChannels == 1)
             format = GL_RED;
         else if (nrChannels == 3)

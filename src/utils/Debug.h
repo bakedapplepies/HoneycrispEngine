@@ -23,9 +23,8 @@ void GLClearError();
 bool GLLogCall(const char* function, const char* file, unsigned int line);
 void terminate(const char* msg, const char* file, unsigned int line);
 
-static std::ostream& operator<<(std::ostream& stream, const glm::vec2& vec2);
-
-static std::ostream& operator<<(std::ostream& stream, const glm::vec3& vec3);
+std::ostream& operator<<(std::ostream& stream, const glm::vec2& vec2);
+std::ostream& operator<<(std::ostream& stream, const glm::vec3& vec3);
 
 namespace Debug
 {

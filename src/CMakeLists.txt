@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.26.0)
 project(${CMAKE_PROJECT_NAME} CXX C)
 
 set(SOURCE
+    # utils
+    ${CMAKE_SOURCE_DIR}/src/utils/Debug.cpp
+
     # OpenGL stuff
     ${CMAKE_SOURCE_DIR}/src/core/VertexBuffer.cpp
     ${CMAKE_SOURCE_DIR}/src/core/ElementBuffer.cpp
@@ -12,9 +15,6 @@ set(SOURCE
 
     # types
     ${CMAKE_SOURCE_DIR}/src/types/Transform.cpp
-    
-    # utils
-    ${CMAKE_SOURCE_DIR}/src/utils/Debug.cpp
 
     # Application stuff
     ${CMAKE_SOURCE_DIR}/src/ImGuiController.cpp
@@ -40,10 +40,19 @@ add_executable(${CMAKE_PROJECT_NAME}
     ${SOURCE}
     ${SCENES}
 )
-target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE -ffile-prefix-map=${CMAKE_SOURCE_DIR}=.)
+target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
+    -ffile-prefix-map=${CMAKE_SOURCE_DIR}=.
+    -Wall
+    -Wextra
+    -pedantic
+    -Wno-unused-parameter
+    -Wno-unused-variable
+    -Wno-unused-private-field
+)
+
 target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE GLM_FORCE_SWIZZLE)
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
-    ${CMAKE_SOURCE_DIR}/dependencies
+    ${CMAKE_SOURCE_DIR}/vendor
     ${CMAKE_SOURCE_DIR}/vendor/glfw/include
     ${CMAKE_SOURCE_DIR}/vendor/glm
     ${CMAKE_SOURCE_DIR}/vendor/assimp/include

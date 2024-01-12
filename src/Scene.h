@@ -22,7 +22,7 @@ protected:
 
     public:
         template <typename... Args>
-        SceneObject(Scene* scene, Args&&... args) : scene(scene), T(std::forward<T>(args)...)
+        SceneObject(Scene* scene, Args&&... args) : T(std::forward<T>(args)...), scene(scene)
         {
             sceneObjectID = scene->genSceneObjectID();
             shaderID = scene->m_basicShader->getID();
