@@ -1,9 +1,9 @@
 #pragma once
 
-#include "pch/pch.h"
+#include "src/pch/pch.h"
 
 #include "Window.h"
-#include "utils/Debug.h"
+
 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -17,7 +17,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 void error_callback(int error, const char* msg)
 {
     std::string errorMsg = fmt::format("({}): {}", error, msg);
-    Debug::Error(errorMsg);
+    HNCRSP_LOG_ERROR(errorMsg);
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)

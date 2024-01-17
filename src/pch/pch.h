@@ -1,8 +1,10 @@
 #pragma once
 
+// OPENGL SETUP
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+// 3RD-PARTY LIBRARIES
 #include <stb/stb_image.h>
 
 #include <glm/glm.hpp>
@@ -10,27 +12,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
-
-#include <iostream>
-#include <string>   
-#include <fstream>
-#include <sstream>
-#include <cmath>
-#include <memory>
-#include <vector>
-#include <unordered_map>
-#include <random>
-#include <thread>
-// #include <windows.h>
-#include <cassert>
-#include <sys/stat.h>
-#include <source_location>
-#include <filesystem>
-#include <chrono>
-#include <queue>
-#include <type_traits>
-// #include <algorithm>
-#include <array>
+#include <glm/gtx/string_cast.hpp>
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
@@ -48,3 +30,28 @@
 #include <assimp/postprocess.h>
 
 #include <nlohmann/json.hpp>
+
+// STANDARD LIBRARIES
+#include <iostream>
+#include <string>   
+#include <fstream>
+#include <sstream>
+#include <cmath>
+#include <memory>
+#include <vector>
+#include <unordered_map>
+#include <random>
+#include <thread>
+#include <cassert>
+#include <sys/stat.h>
+#include <source_location>
+#include <filesystem>
+#include <chrono>
+#include <queue>
+#include <type_traits>
+#include <array>
+
+// COMMON HEADERS
+#include "src/utils/Debug.h"
+#include "src/utils/Assert.h"
+#include "src/utils/Terminate.h"

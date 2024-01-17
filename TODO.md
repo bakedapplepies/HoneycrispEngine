@@ -20,3 +20,5 @@ gets is the Draw-calls-queue.
 - TODO: Continuous maps
 - TODO: Add type-checking for UBOs
 - TODO: Texture2D Min/Mag filter (nearest/linear), Wrap (repeat/clamp/...)
+- TODO: Replace std::vector with std::array whenever possible
+- TODO: Look into glNamed... functions

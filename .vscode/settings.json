@@ -97,7 +97,9 @@
         "forward_list": "cpp",
         "span": "cpp",
         "valarray": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "complex": "cpp",
+        "typeindex": "cpp"
     },
     "cmake.generator": "Ninja",
     "C_Cpp.intelliSenseEngineFallback": "enabled"

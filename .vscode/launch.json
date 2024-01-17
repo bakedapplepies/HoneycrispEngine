@@ -4,7 +4,7 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug LearnOpenGL",
+            "name": "Debug Application",
             "program": "${workspaceFolder}/build/src/LearnOpenGL.exe",
             "args": [],
             "cwd": "${workspaceFolder}/build/src"

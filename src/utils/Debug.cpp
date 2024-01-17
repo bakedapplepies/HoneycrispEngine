@@ -1,12 +1,6 @@
 #include "Debug.h"
 
 
-static bool err = false;
-void createBreak()
-{
-    err = true;
-}
-
 void GLClearError()
 {
     while (glGetError() != GL_NO_ERROR);
@@ -14,13 +8,13 @@ void GLClearError()
 
 std::ostream& operator<<(std::ostream& stream, const glm::vec2& vec2)
 {
-    std::cout << fmt::format("[{}, {}]", vec2.x, vec2.y);
+    std::cout << glm::to_string(vec2);
     return stream;
 }
 
 std::ostream& operator<<(std::ostream& stream, const glm::vec3& vec3)
 {
-    std::cout << fmt::format("[{}, {}, {}]", vec3.x, vec3.y, vec3.z);
+    std::cout << glm::to_string(vec3);
     return stream;
 }
 
@@ -46,11 +40,4 @@ bool GLLogCall(const char* function, const char* file, unsigned int line)
         return false;
     }
     return true;
-}
-
-void terminate(const char* msg, const char* file, unsigned int line)
-{
-    glfwTerminate();
-    std::cout << fmt::format("[TERMINATE at {}, Ln: {}]: {}\n", file, line, msg);
-    assert(false);
 }

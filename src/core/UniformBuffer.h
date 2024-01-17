@@ -1,5 +1,5 @@
-#include "../pch/pch.h"
-#include "../utils/Debug.h"
+#include "src/pch/pch.h"
+
 
 
 template <typename... Ts>
@@ -10,6 +10,7 @@ private:
     GLuint m_uboID;
     GLuint m_bindingIndex;  // not used after initialization for now
     std::array<size_t, sizeof...(Ts)> m_sizes;
+    std::array<size_t, sizeof...(Ts)> m_offsets;
     size_t totalByteSize = 0;
 
 public:
@@ -18,8 +19,7 @@ public:
         if (takenBindingIndices[bindingIndex])
         {
             // Technically an error, but doesn't crash OpenGL
-            // because uniforms don't have to be filled
-            Debug::Error("Invalid binding index (Already taken.)");
+            HNCRSP_LOG_ERROR("Binding index already taken.");
             return;
         }
         takenBindingIndices[bindingIndex] = true;
@@ -36,7 +36,7 @@ public:
     template <typename... Args>
     void Update(const Args* const... args) const
     {
-        static_assert(sizeof...(args) == sizeof...(Ts), "Invalid number of arguments for UBO");
+        static_assert(sizeof...(args) <= sizeof...(Ts), "Invalid number of arguments for UBO");
         GLCall(glBindBuffer(GL_UNIFORM_BUFFER, m_uboID));
         size_t offset = 0;
         size_t index = 0;
@@ -58,6 +58,17 @@ public:
         GLCall(glBufferSubData(GL_UNIFORM_BUFFER, offset, m_sizes[index], t));
     }
 
+    template <typename T>
+    void Update(size_t index, const T* const t) const
+    {
+        GLCall(glBufferSubData(GL_UNIFORM_BUFFER, m_offsets[index], m_sizes[index], t));
+    }
+
+    void Bind() const
+    {
+        GLCall(glBindBuffer(GL_UNIFORM_BUFFER, m_uboID));
+    }
+
 private:
     template <int i = 0>
     void AddTypeSizes()
@@ -66,6 +77,7 @@ private:
         {
             using T = typename std::tuple_element<i, std::tuple<Ts...>>::type;
             m_sizes[i] = sizeof(T);
+            m_offsets[i] = totalByteSize;
             totalByteSize += sizeof(T);
 
             AddTypeSizes<i + 1>();

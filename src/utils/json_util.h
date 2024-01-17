@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../pch/pch.h"
+#include "src/pch/pch.h"
 #include "Debug.h"
 
 
@@ -10,7 +10,7 @@ namespace JsonUtil
 
     json parseFile(const std::string& path, const std::source_location& location = std::source_location::current())
     {
-        Debug::Log(location.file_name());
+        HNCRSP_LOG_INFO(location.file_name());
 
         return {};
     }

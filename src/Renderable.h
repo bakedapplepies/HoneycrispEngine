@@ -1,6 +1,6 @@
 #pragma once
 
-#include "pch/pch.h"
+#include "src/pch/pch.h"
 #include "Object.h"
 #include "core/Shader.h"
 #include "types/Transform.h"
@@ -14,4 +14,5 @@ public:  // TODO: check accessibility
 public:
     virtual inline void addTransform(const Transform& transform) { transforms.push_back(transform); };
     virtual void Draw(std::shared_ptr<Shader> shader) const = 0;
+    virtual ~Renderable() {}
 };

@@ -1,5 +1,5 @@
 #include "SceneManager.h"
-#include "utils/Debug.h"
+
 
 
 SceneManager* SceneManager::_instance = nullptr;
@@ -28,7 +28,7 @@ void SceneManager::SetActiveScene(size_t index)
 {
     if (!_scenesMap[index])
     {
-        Debug::Error(fmt::format("Scene index [{}] not found.", index));
+        HNCRSP_LOG_ERROR(fmt::format("Scene index [{}] not found.", index));
         return;
     }
     _activeSceneIndex = index;

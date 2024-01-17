@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../pch/pch.h"
+#include "src/pch/pch.h"
 
 #include "../Scene.h"
 #include "../Cube.h"

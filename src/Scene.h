@@ -1,7 +1,7 @@
 #pragma once
 
-#include "pch/pch.h"
-#include "utils/Debug.h"
+#include "src/pch/pch.h"
+
 #include "Renderable.h"
 #include "Cubemap.h"
 #include "utils/utils.h"
@@ -22,7 +22,7 @@ protected:
 
     public:
         template <typename... Args>
-        SceneObject(Scene* scene, Args&&... args) : scene(scene), T(std::forward<T>(args)...)
+        SceneObject(Scene* scene, Args&&... args) : T(std::forward<T>(args)...), scene(scene)
         {
             sceneObjectID = scene->genSceneObjectID();
             shaderID = scene->m_basicShader->getID();
@@ -187,7 +187,7 @@ public:
         }
         else if (sceneCount < 0)
         {
-            Debug::Error("Oops scene count is less than zero");
+            HNCRSP_LOG_ERROR("Oops scene count is less than zero");
             assert(!"Oops scene count is less than zero");
         }
     }

@@ -1,5 +1,5 @@
 #include "DefaultScene.h"
-#include "../utils/Debug.h"
+
 #include "../utils/utils.h"
 
 

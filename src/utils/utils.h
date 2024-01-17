@@ -1,24 +1,24 @@
 #pragma once
 
-#include "../pch/pch.h"
+#include "src/pch/pch.h"
+#include "Debug.h"
+
+
+#define HNCRSP_STRINGIFY(x) #x
 
 namespace FileSystem
 {
-    struct Path
+    class Path
     {
-        std::string path = "";
-        Path(const std::string& path)
+    private:
+        std::filesystem::path m_path;
+
+    public:
+        Path(std::string_view path);
+        std::string getPath() const
         {
-            std::filesystem::path absPath = std::filesystem::current_path();
-            absPath /= path;
-            
-            absPath = absPath.make_preferred();
-            absPath = absPath.lexically_normal();
-            this->path = absPath.string();
+            std::string str = m_path.string();
+            return str;
         }
     };
-}
-
-namespace Algo
-{
 }

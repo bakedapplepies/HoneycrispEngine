@@ -1,6 +1,6 @@
-#include "pch/pch.h"
+#include "src/pch/pch.h"
 
-#include "utils/Debug.h"
+
 #include "Window.h"
 #include "SceneManager.h"
 #include "./scenes/DefaultScene.h"
@@ -43,7 +43,7 @@ Window::Window()
     {
         TERMINATE("GLAD Initialization failed.");
     }
-    Debug::Log("OpenGL (Core) ", glGetString(GL_VERSION));
+    HNCRSP_LOG_INFO("OpenGL (Core) ", glGetString(GL_VERSION));
 
 
     /* Callbacks */
@@ -89,7 +89,7 @@ Window::Window()
 
     ImGui::StyleColorsDark();
 
-    Debug::Log("Window Initialization done.");
+    HNCRSP_LOG_INFO("Window Initialization done.");
 }
 
 
@@ -161,13 +161,14 @@ void Window::Loop()
 
         // Global uniforms
         float u_time = begin*waveSpeed;
+        uboMatrices.Bind();
         uboMatrices.Update(
             glm::value_ptr(camera.GetViewMatrix()),
             glm::value_ptr(projectionMatrix),
             &u_time
         );
         
-        glm::vec3 lightPos(4.0f, 5.0f, 6.0f);
+        uboOther.Bind();
         uboOther.Update(
             glm::value_ptr(camera.cameraPos),
             glm::value_ptr(camera.cameraPos),
@@ -197,7 +198,7 @@ Window::~Window()
     SceneManager::Get().ClearAllScenes();
     Texture2D::DeleteAllTextures();
 
-    Debug::Log("Deallocated all resources.");
+    HNCRSP_LOG_INFO("Deallocated all resources.");
 }
 
 

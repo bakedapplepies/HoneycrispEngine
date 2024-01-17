@@ -1,4 +1,4 @@
-#include "../utils/Debug.h"
+
 #include "VertexArray.h"
 
 

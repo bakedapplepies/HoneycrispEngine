@@ -41,7 +41,12 @@ void Scene::CreateCubemap(
 )
 {
     std::vector<std::string> cubemapFaces = {
-        right.path, left.path, top.path, bottom.path, front.path, back.path
+        right.getPath(),
+        left.getPath(),
+        top.getPath(),
+        bottom.getPath(),
+        front.getPath(),
+        back.getPath()
     };
 
     m_cubemap = std::make_unique<Cubemap>(cubemapFaces);

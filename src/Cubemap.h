@@ -1,9 +1,9 @@
 #pragma once
 
-#include "pch/pch.h"
+#include "src/pch/pch.h"
 #include "Renderable.h"
 #include "Mesh.h"
-#include "utils/Debug.h"
+
 #include "utils/utils.h"
 
 
@@ -23,8 +23,8 @@ private:
 
 public:
     Cubemap(const std::vector<std::string>& faces);
-    void onUpdate() {};
-    void Draw(std::shared_ptr<Shader> shader) const;
+    void onUpdate() override {};
+    void Draw(std::shared_ptr<Shader> shader) const override;
 
 private:
     void SetMesh();
