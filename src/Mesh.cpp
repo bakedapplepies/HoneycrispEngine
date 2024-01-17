@@ -1,5 +1,5 @@
 #include "Mesh.h"
-#include "utils/Debug.h"
+
 
 
 Mesh::Mesh()
@@ -11,19 +11,19 @@ void Mesh::ConstructMesh()
 {
     if (!m_vertData.empty())
     {
-        Debug::Warn("Mesh already constructed.");
+        HNCRSP_LOG_WARN("Mesh already constructed.");
         return;
     }
     else if (vertices.empty())
     {
-        Debug::Error("No data to construct mesh.");
+        HNCRSP_LOG_ERROR("No data to construct mesh.");
         glfwTerminate();
         assert(false);
     }
 
     if (indices.empty())
     {
-        Debug::Error("No indices to draw mesh.");
+        HNCRSP_LOG_ERROR("No indices to draw mesh.");
         glfwTerminate();
         assert(false);
     }

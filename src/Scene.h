@@ -1,7 +1,7 @@
 #pragma once
 
-#include "pch/pch.h"
-#include "utils/Debug.h"
+#include "src/pch/pch.h"
+
 #include "Renderable.h"
 #include "Cubemap.h"
 #include "utils/utils.h"
@@ -187,7 +187,7 @@ public:
         }
         else if (sceneCount < 0)
         {
-            Debug::Error("Oops scene count is less than zero");
+            HNCRSP_LOG_ERROR("Oops scene count is less than zero");
             assert(!"Oops scene count is less than zero");
         }
     }

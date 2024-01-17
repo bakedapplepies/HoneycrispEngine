@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../pch/pch.h"
+#include "src/pch/pch.h"
 #include "../utils/utils.h"
 
 
@@ -19,7 +19,7 @@ public:
     Shader& operator=(Shader&& other) noexcept;
     ~Shader();
 
-    std::string parseShader(const std::string& path);
+    std::string parseShader(const std::string_view& path);
     
     GLuint getID() const;
     void Use() const;

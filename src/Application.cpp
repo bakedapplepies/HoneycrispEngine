@@ -1,5 +1,5 @@
 #include "Application.h"
-#include "utils/Debug.h"
+
 
 
 Application* Application::m_ContextWrap = nullptr;
@@ -8,7 +8,7 @@ Application::~Application()
 {
     window.reset();
     glfwTerminate();
-    Debug::Log("GLFW terminated.");
+    HNCRSP_LOG_INFO("GLFW terminated.");
 }
 
 Application& Application::Get()
@@ -30,7 +30,7 @@ void Application::Run()
 {
     if(!glfwInit())
     {
-        Debug::Error("GLFW Initialization failed.");
+        HNCRSP_LOG_ERROR("GLFW Initialization failed.");
         return;
     }
     

@@ -1,4 +1,4 @@
-#include "../utils/Debug.h"
+
 #include "Texture.h"
 
 
@@ -11,15 +11,14 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, uint32_t textureResolu
     ETextureType textureType
 ) : m_textureWidth(textureResolutionWidth), m_textureHeight(textureResolutionHeight)
 {
-    // Debug::Log(fmt::format("{}", std::filesystem::last_write_time(path).time_since_epoch().count()));
-
-    if (sm_initiatedTextures[texturePath.path].id > 0)
+    if (sm_initiatedTextures[texturePath.getPath().data()].id > 0)
     {
-        GLuint id = sm_initiatedTextures[texturePath.path].id;
+        GLuint id = sm_initiatedTextures[texturePath.getPath().data()].id;
         if (id)
         {
+            // setting up stored texture
             m_textureID = id;
-            m_textureCoords = sm_initiatedTextures[texturePath.path].textureCoords;
+            m_textureCoords = sm_initiatedTextures[texturePath.getPath().data()].textureCoords;
             m_textureType = textureType;
 
             sm_textureIDCount[m_textureID]++;
@@ -29,7 +28,7 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, uint32_t textureResolu
     }
 
     GLCall(glGenTextures(1, &m_textureID));
-    sm_initiatedTextures[texturePath.path].id = m_textureID;
+    sm_initiatedTextures[texturePath.getPath().data()].id = m_textureID;
     m_textureType = textureType;
 
     sm_textureUnits[m_textureID] = sm_textureUnitCounter;
@@ -39,7 +38,7 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, uint32_t textureResolu
     int nrChannels;
     int desiredChannels = 0;
     unsigned char* data = stbi_load(
-        texturePath.path.c_str(), &m_pixelWidth, &m_pixelHeight, &nrChannels, desiredChannels);
+        texturePath.getPath().data(), &m_pixelWidth, &m_pixelHeight, &nrChannels, desiredChannels);
     
     if (data)
     {
@@ -66,8 +65,8 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, uint32_t textureResolu
     }
     else
     {
-        Debug::Error(texturePath.path);
-        Debug::Error(fmt::format("Texture failed to load: {}", stbi_failure_reason()));
+        HNCRSP_LOG_ERROR(texturePath.getPath());
+        HNCRSP_LOG_ERROR(fmt::format("Texture failed to load: {}", stbi_failure_reason()));
         stbi_image_free(data);
         glfwTerminate();
         assert(!"Texture failed to load.");
@@ -207,7 +206,7 @@ void Texture2D::DeleteAllTextures()  // static
         GLCall(glDeleteTextures(1, &iter->first));
         sm_textureUnitCounter--;
     }
-    Debug::Log("Deleted all textures.");
+    HNCRSP_LOG_INFO("Deleted all textures.");
 }
 
 void Texture2D::GenerateTextureCoords()

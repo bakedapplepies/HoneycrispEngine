@@ -1,9 +1,9 @@
 #pragma once
 
-#include "pch/pch.h"
+#include "src/pch/pch.h"
 #include "Renderable.h"
 #include "Mesh.h"
-#include "utils/Debug.h"
+
 #include "utils/utils.h"
 
 

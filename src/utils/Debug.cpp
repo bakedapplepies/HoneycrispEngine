@@ -1,12 +1,6 @@
 #include "Debug.h"
 
 
-static bool err = false;
-void createBreak()
-{
-    err = true;
-}
-
 void GLClearError()
 {
     while (glGetError() != GL_NO_ERROR);
@@ -46,11 +40,4 @@ bool GLLogCall(const char* function, const char* file, unsigned int line)
         return false;
     }
     return true;
-}
-
-void terminate(const char* msg, const char* file, unsigned int line)
-{
-    glfwTerminate();
-    std::cout << fmt::format("[TERMINATE at {}, Ln: {}]: {}\n", file, line, msg);
-    assert(false);
 }

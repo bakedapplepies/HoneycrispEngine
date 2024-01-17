@@ -3,36 +3,63 @@ project(${CMAKE_PROJECT_NAME} CXX C)
 
 set(SOURCE
     # utils
+    ${CMAKE_SOURCE_DIR}/src/utils/Debug.h
     ${CMAKE_SOURCE_DIR}/src/utils/Debug.cpp
+    ${CMAKE_SOURCE_DIR}/src/utils/utils.h
+    ${CMAKE_SOURCE_DIR}/src/utils/utils.cpp
+    ${CMAKE_SOURCE_DIR}/src/utils/Terminate.h
+    ${CMAKE_SOURCE_DIR}/src/utils/Terminate.cpp
+    ${CMAKE_SOURCE_DIR}/src/utils/Assert.h
+    ${CMAKE_SOURCE_DIR}/src/utils/Assert.cpp
 
     # OpenGL stuff
+    ${CMAKE_SOURCE_DIR}/src/core/VertexBuffer.h
     ${CMAKE_SOURCE_DIR}/src/core/VertexBuffer.cpp
+    ${CMAKE_SOURCE_DIR}/src/core/ElementBuffer.h
     ${CMAKE_SOURCE_DIR}/src/core/ElementBuffer.cpp
+    ${CMAKE_SOURCE_DIR}/src/core/VertexArray.h
     ${CMAKE_SOURCE_DIR}/src/core/VertexArray.cpp
+    ${CMAKE_SOURCE_DIR}/src/core/Shader.h
     ${CMAKE_SOURCE_DIR}/src/core/Shader.cpp
+    ${CMAKE_SOURCE_DIR}/src/core/Texture.h
     ${CMAKE_SOURCE_DIR}/src/core/Texture.cpp
+    ${CMAKE_SOURCE_DIR}/src/core/UniformBuffer.h
     ${CMAKE_SOURCE_DIR}/src/core/UniformBuffer.cpp
 
     # types
+    ${CMAKE_SOURCE_DIR}/src/types/Transform.h
     ${CMAKE_SOURCE_DIR}/src/types/Transform.cpp
 
     # Application stuff
+    ${CMAKE_SOURCE_DIR}/src/ImGuiController.h
     ${CMAKE_SOURCE_DIR}/src/ImGuiController.cpp
+    ${CMAKE_SOURCE_DIR}/src/Application.h
     ${CMAKE_SOURCE_DIR}/src/Application.cpp
+    ${CMAKE_SOURCE_DIR}/src/Camera.h
     ${CMAKE_SOURCE_DIR}/src/Camera.cpp
+    ${CMAKE_SOURCE_DIR}/src/Cube.h
     ${CMAKE_SOURCE_DIR}/src/Cube.cpp
+    ${CMAKE_SOURCE_DIR}/src/Light.h
     ${CMAKE_SOURCE_DIR}/src/Light.cpp
+    ${CMAKE_SOURCE_DIR}/src/Cubemap.h
     ${CMAKE_SOURCE_DIR}/src/Cubemap.cpp
+    ${CMAKE_SOURCE_DIR}/src/Mesh.h
     ${CMAKE_SOURCE_DIR}/src/Mesh.cpp
+    ${CMAKE_SOURCE_DIR}/src/Model.h
     ${CMAKE_SOURCE_DIR}/src/Model.cpp
+    ${CMAKE_SOURCE_DIR}/src/Scene.h
     ${CMAKE_SOURCE_DIR}/src/Scene.cpp
+    ${CMAKE_SOURCE_DIR}/src/SceneManager.h
     ${CMAKE_SOURCE_DIR}/src/SceneManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/Window.h
     ${CMAKE_SOURCE_DIR}/src/Window.cpp
     ${CMAKE_SOURCE_DIR}/src/main.cpp
 )
 
 set(SCENES
+    ${CMAKE_SOURCE_DIR}/src/scenes/DefaultScene.h
     ${CMAKE_SOURCE_DIR}/src/scenes/DefaultScene.cpp
+    ${CMAKE_SOURCE_DIR}/src/scenes/DefaultSceneTwo.h
     ${CMAKE_SOURCE_DIR}/src/scenes/DefaultSceneTwo.cpp
 )
 
@@ -50,8 +77,9 @@ target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
     -Wno-unused-private-field
 )
 
-target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE GLM_FORCE_SWIZZLE)
+target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE GLM_FORCE_SWIZZLE HNCRSP_PROJECT_DIR="${CMAKE_SOURCE_DIR}")
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
+    ${CMAKE_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/vendor
     ${CMAKE_SOURCE_DIR}/vendor/glfw/include
     ${CMAKE_SOURCE_DIR}/vendor/glm

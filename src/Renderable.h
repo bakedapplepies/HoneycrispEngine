@@ -1,6 +1,6 @@
 #pragma once
 
-#include "pch/pch.h"
+#include "src/pch/pch.h"
 #include "Object.h"
 #include "core/Shader.h"
 #include "types/Transform.h"

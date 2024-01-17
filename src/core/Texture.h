@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../pch/pch.h"
+#include "src/pch/pch.h"
 #include "../utils/utils.h"
 
 enum ETextureType
@@ -44,7 +44,12 @@ private:
 public:
     Texture2D() = default;
     ~Texture2D();
-    Texture2D(const FileSystem::Path& texturePath, uint32_t textureResolutionWidth, uint32_t textureResolutionHeight, ETextureType textureType);    
+    Texture2D(
+        const FileSystem::Path& texturePath,
+        uint32_t textureResolutionWidth,
+        uint32_t textureResolutionHeight,
+        ETextureType textureType
+    );    
     Texture2D(const Texture2D&);
     Texture2D(Texture2D&& other) noexcept;
     Texture2D& operator=(const Texture2D&);

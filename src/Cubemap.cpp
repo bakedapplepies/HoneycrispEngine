@@ -45,10 +45,10 @@ Cubemap::Cubemap(const std::vector<std::string>& faces)
         }
         else
         {
-            Debug::Error(fmt::format("Texture failed to load: {}", stbi_failure_reason()));
+            HNCRSP_LOG_ERROR(fmt::format("Texture failed to load: {}.", stbi_failure_reason()));
+            HNCRSP_LOG_INFO(fmt::format("Texture path: {}", faces[i]));
             stbi_image_free(data);
-            glfwTerminate();
-            assert(!"Cubemap textures failed to load.");
+            TERMINATE("Cubemap textures failed to load.");
         }
     }
 

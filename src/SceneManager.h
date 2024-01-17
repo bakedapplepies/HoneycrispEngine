@@ -1,6 +1,6 @@
 #pragma once
 
-#include "pch/pch.h"
+#include "src/pch/pch.h"
 #include "Scene.h"
 
 
@@ -30,7 +30,7 @@ public:
         static_assert(std::is_base_of<Scene, T>(), "Method SceneManager::CreateScene didn't receive a scene object.");
         if (_scenesMap[index])
         {
-            Debug::Error(fmt::format("Scene index[{}] already occupied.", index));
+            HNCRSP_LOG_ERROR(fmt::format("Scene index[{}] already occupied.", index));
             return;
         }
         std::unique_ptr<T> temp_ptr = std::make_unique<T>(std::move(t));

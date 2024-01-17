@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.26.0)
-project(LearnOpenGL.Vendors CXX C)
+project(${CMAKE_PROJECT_NAME}.Vendors CXX C)
 
 # set( GLFW_BUILD_DOCS OFF CACHE BOOL  "GLFW lib only" )
 # set( GLFW_INSTALL OFF CACHE BOOL  "GLFW lib only" )

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../pch/pch.h"
+#include "src/pch/pch.h"
 
 #include "VertexBuffer.h"
 #include "ElementBuffer.h"

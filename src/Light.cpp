@@ -1,6 +1,6 @@
-#include "pch/pch.h"
+#include "src/pch/pch.h"
 
-#include "utils/Debug.h"
+
 #include "Light.h"
 
 
