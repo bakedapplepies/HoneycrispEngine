@@ -2,6 +2,8 @@
 #include "../utils/utils.h"
 
 
+using namespace Honeycrisp;
+
 DefaultSceneTwo::DefaultSceneTwo()
 {
     bgColor = glm::vec3(1.0f);

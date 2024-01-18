@@ -142,11 +142,13 @@ protected:
     std::shared_ptr< SceneObject<T> > CreateObject(Args&&... args)
     {
         static_assert(std::is_base_of<Object, T>());
+        
+        using namespace Honeycrisp::FileSystem;
         if (!m_basicShader)  // just initializing basic shader
         {
             m_basicShader = std::make_shared<Shader>(
-                FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
-                FileSystem::Path("resources/shaders/DefaultFragment.glsl")
+                Path("resources/shaders/DefaultVertex.glsl"),
+                Path("resources/shaders/DefaultFragment.glsl")
             );
         }
         
@@ -162,12 +164,12 @@ protected:
     }
 
     void CreateCubemap(
-        const FileSystem::Path& right,
-        const FileSystem::Path& left,
-        const FileSystem::Path& top,
-        const FileSystem::Path& botttom,
-        const FileSystem::Path& front,
-        const FileSystem::Path& back
+        const Honeycrisp::FileSystem::Path& right,
+        const Honeycrisp::FileSystem::Path& left,
+        const Honeycrisp::FileSystem::Path& top,
+        const Honeycrisp::FileSystem::Path& botttom,
+        const Honeycrisp::FileSystem::Path& front,
+        const Honeycrisp::FileSystem::Path& back
     );
     void Draw(void) const;
 
@@ -187,8 +189,7 @@ public:
         }
         else if (sceneCount < 0)
         {
-            HNCRSP_LOG_ERROR("Oops scene count is less than zero");
-            assert(!"Oops scene count is less than zero");
+            HNCRSP_TERMINATE("Oops scene count is less than zero");
         }
     }
     Scene(const Scene&) = delete;

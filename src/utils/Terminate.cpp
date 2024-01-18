@@ -1,9 +1,12 @@
 #include "Terminate.h"
 
 
-void terminate(const char* msg, const char* file, unsigned int line)
+namespace Honeycrisp
 {
-    glfwTerminate();
-    std::cout << fmt::format("[TERMINATE at {}, Ln: {}]: {}\n", file, line, msg);
-    assert(false);
+    void terminate(const char* msg, const char* file, unsigned int line)
+    {
+        glfwTerminate();
+        std::cout << fmt::format("[TERMINATE at {}, Ln: {}]: {}\n", file, line, msg);
+        assert(false);
+    }
 }

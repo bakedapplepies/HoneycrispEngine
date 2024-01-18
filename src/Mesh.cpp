@@ -16,16 +16,12 @@ void Mesh::ConstructMesh()
     }
     else if (vertices.empty())
     {
-        HNCRSP_LOG_ERROR("No data to construct mesh.");
-        glfwTerminate();
-        assert(false);
+        HNCRSP_TERMINATE("No data to construct mesh.");
     }
 
     if (indices.empty())
     {
-        HNCRSP_LOG_ERROR("No indices to draw mesh.");
-        glfwTerminate();
-        assert(false);
+        HNCRSP_TERMINATE("No indices to draw mesh.");
     }
     
     size_t vertArrayDataSize = vertices.size()*3 + vertices.size()*3 + normals.size()*3 + uvs.size()*2;
@@ -258,7 +254,7 @@ glm::mat4 Mesh::GetModelMatrix(const Transform& transform) const
 {
     glm::mat4 modelMatrix = glm::mat4(1.0f);
 
-    modelMatrix = glm::translate(modelMatrix, transform.position);
+    modelMatrix = glm::translate(modelMatrix, transform.position + m_relativeOrigin);
     
     glm::quat quaternion = glm::quat(transform.eulerAngles);
     glm::mat4 rotationMatrix = glm::toMat4(quaternion);

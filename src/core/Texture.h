@@ -45,7 +45,7 @@ public:
     Texture2D() = default;
     ~Texture2D();
     Texture2D(
-        const FileSystem::Path& texturePath,
+        const Honeycrisp::FileSystem::Path& texturePath,
         uint32_t textureResolutionWidth,
         uint32_t textureResolutionHeight,
         ETextureType textureType

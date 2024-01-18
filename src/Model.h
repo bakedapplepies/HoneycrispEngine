@@ -17,7 +17,7 @@ public:
     void Draw(std::shared_ptr<Shader> shader) const;
 
 public:
-    Model(const FileSystem::Path& path);
+    Model(const Honeycrisp::FileSystem::Path& path);
     Model(Model&& other) = default;  // TODO: Proper constructors
 
 private:

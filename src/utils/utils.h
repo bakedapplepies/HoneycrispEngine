@@ -4,8 +4,11 @@
 #include "Debug.h"
 
 
+#define HNCRSP_NAMESPACE_START namespace Honeycrisp {
+#define HNCRSP_NAMESPACE_END }
 #define HNCRSP_STRINGIFY(x) #x
 
+HNCRSP_NAMESPACE_START
 namespace FileSystem
 {
     class Path
@@ -22,3 +25,4 @@ namespace FileSystem
         }
     };
 }
+HNCRSP_NAMESPACE_END

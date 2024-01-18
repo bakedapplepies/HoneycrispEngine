@@ -32,7 +32,7 @@ Window::Window()
 
     if (glfwWindow == nullptr)
     {
-        TERMINATE("GLFW Window Initialization failed.");
+        HNCRSP_TERMINATE("GLFW Window Initialization failed.");
     }
     glfwMakeContextCurrent(glfwWindow);
     glfwSwapInterval(1);  // vsync
@@ -41,7 +41,7 @@ Window::Window()
     /* Initialize GLAD -> Only call OpenGL functions after this */
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
-        TERMINATE("GLAD Initialization failed.");
+        HNCRSP_TERMINATE("GLAD Initialization failed.");
     }
     HNCRSP_LOG_INFO("OpenGL (Core) ", glGetString(GL_VERSION));
 
@@ -107,7 +107,9 @@ void Window::Loop()
     Textures::mainTextureSpecularMap.Bind();
     camera.SetPos(camera.cameraPos + glm::vec3(0, 10, 0));
 
+    // view matrix, proj matrix, time
     UniformBuffer<glm::mat4, glm::mat4, float> uboMatrices(0);  // binding index
+    // viewPos, spotlightPos, spotlightDir
     UniformBuffer<glm::vec3, glm::vec3, glm::vec3> uboOther(1);
 
     while(!glfwWindowShouldClose(glfwWindow))
@@ -144,8 +146,10 @@ void Window::Loop()
         ImGui::End();
 
         ImGui::Begin("Settings2");
-        glm::vec3 lightColor = glm::vec3(0.0f);
+        static glm::vec3 lightColor = glm::vec3(0.0f);
+        static glm::vec3 lightDir = glm::vec3(1.0f);
         ImGui::SliderFloat3("Light Color", glm::value_ptr(lightColor), 0.0f, 1.0f);
+        ImGui::SliderFloat3("Light Dir", glm::value_ptr(lightDir), 0.0f, 1.0f);
         ImGui::End();
 
         // Update camera

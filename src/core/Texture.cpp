@@ -1,13 +1,14 @@
-
 #include "Texture.h"
 
+
+using namespace Honeycrisp::FileSystem;
 
 GLuint Texture2D::sm_textureUnitCounter = 0;
 std::unordered_map<std::string, TextureInfo> Texture2D::sm_initiatedTextures;
 std::unordered_map<GLuint, GLint> Texture2D::sm_textureUnits;  // key: ID -> texture unit
 std::unordered_map<GLuint, unsigned int> Texture2D::sm_textureIDCount;
 
-Texture2D::Texture2D(const FileSystem::Path& texturePath, uint32_t textureResolutionWidth, uint32_t textureResolutionHeight,
+Texture2D::Texture2D(const Path& texturePath, uint32_t textureResolutionWidth, uint32_t textureResolutionHeight,
     ETextureType textureType
 ) : m_textureWidth(textureResolutionWidth), m_textureHeight(textureResolutionHeight)
 {
@@ -68,8 +69,7 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, uint32_t textureResolu
         HNCRSP_LOG_ERROR(texturePath.getPath());
         HNCRSP_LOG_ERROR(fmt::format("Texture failed to load: {}", stbi_failure_reason()));
         stbi_image_free(data);
-        glfwTerminate();
-        assert(!"Texture failed to load.");
+        HNCRSP_TERMINATE("Texture failed to load.");
     }
 
     GenerateTextureCoords();  // for quads
@@ -186,12 +186,12 @@ Texture2D Textures::mainTextureSpecularMap;
 void Texture2D::LoadTextures()
 {
     Textures::mainTextureMap = Texture2D(
-        FileSystem::Path("resources/textures/grass_textures.png"),
+        Path("resources/textures/grass_textures.png"),
         3, 1,
         ETextureType::DIFFUSE
     );
     Textures::mainTextureSpecularMap = Texture2D(
-        FileSystem::Path("resources/textures/grass_textures_specular_map.png"),
+        Path("resources/textures/grass_textures_specular_map.png"),
         3, 1,
         ETextureType::SPECULAR
     );

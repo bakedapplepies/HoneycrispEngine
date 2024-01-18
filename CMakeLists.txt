@@ -4,7 +4,7 @@ project(Honeycrisp CXX C)
 add_subdirectory(vendor)
 add_subdirectory(src)
 
-# TODO: Add options for Debug/Release/DebugRelease/DebugSpeed
+# TODO: Add options for Debug/Release/MinSizeRel/RelWithDebInfo
 
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")

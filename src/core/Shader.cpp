@@ -1,5 +1,7 @@
-
 #include "Shader.h"
+
+
+using namespace Honeycrisp::FileSystem;
 
 std::string Shader::parseShader(const std::string_view& path)
 {
@@ -14,7 +16,7 @@ std::string Shader::parseShader(const std::string_view& path)
     return ss.str();
 }
 
-Shader::Shader(const FileSystem::Path& vertexFile, const FileSystem::Path& fragmentFile, const FileSystem::Path& geometryFile)
+Shader::Shader(const Path& vertexFile, const Path& fragmentFile, const Path& geometryFile)
 {
     const std::string vertexShaderSource = parseShader(vertexFile.getPath());
     const std::string fragmentShaderSource = parseShader(fragmentFile.getPath());
@@ -40,8 +42,7 @@ Shader::Shader(const FileSystem::Path& vertexFile, const FileSystem::Path& fragm
         // HNCRSP_LOG_ERROR(fmt::format("Vertex Shader compilation failed at {}:\n\t", ), infoLog);
 
         GLCall(glDeleteShader(vertexShader));
-        glfwTerminate();
-        assert(!"Vertex Shader compilation error.");
+        HNCRSP_TERMINATE("Vertex Shader compilation error.");
     }
 
     /* Fragment Shader */
@@ -56,8 +57,7 @@ Shader::Shader(const FileSystem::Path& vertexFile, const FileSystem::Path& fragm
         HNCRSP_LOG_ERROR(fmt::format("Fragment Shader compilation failed at {}:\n\t", fragmentFile.getPath()), infoLog);
 
         GLCall(glDeleteShader(fragmentShader));
-        glfwTerminate();
-        assert(!"Fragment Shader compilation error.");
+        HNCRSP_TERMINATE("Fragment Shader compilation error.");
     }
 
     GLCall(GLuint geometryShader = glCreateShader(GL_GEOMETRY_SHADER));
@@ -73,8 +73,7 @@ Shader::Shader(const FileSystem::Path& vertexFile, const FileSystem::Path& fragm
             HNCRSP_LOG_ERROR(fmt::format("Geometry Shader compilation failed at {}:\n\t", geometryFile.getPath()), infoLog);
 
             GLCall(glDeleteShader(fragmentShader));
-            glfwTerminate();
-            assert(!"Geometry Shader compilation error.");
+            HNCRSP_TERMINATE("Geometry Shader compilation error.");
         }
     }
 
@@ -96,8 +95,7 @@ Shader::Shader(const FileSystem::Path& vertexFile, const FileSystem::Path& fragm
 
         HNCRSP_LOG_ERROR(fmt::format("Shader in program:\n\t{}\n\t{}\n\t{}", vertexFile.getPath(), fragmentFile.getPath(), geometryFile.getPath()));
 
-        glfwTerminate();
-        assert(!"Shader linking error.");
+        HNCRSP_TERMINATE("Shader linking error.");
     }
     
     GLCall(glValidateProgram(m_shaderID));
@@ -112,8 +110,7 @@ Shader::Shader(const FileSystem::Path& vertexFile, const FileSystem::Path& fragm
 
         HNCRSP_LOG_ERROR(fmt::format("Shader in program:\n\t{}\n\t{}\n\t{}", vertexFile.getPath(), fragmentFile.getPath(), geometryFile.getPath()));
 
-        glfwTerminate();
-        assert(!"Shader validation error.");
+        HNCRSP_TERMINATE("Shader validation error.");
     }
 
     glDeleteShader(vertexShader);

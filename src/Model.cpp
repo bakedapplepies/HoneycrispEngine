@@ -1,7 +1,8 @@
 #include "Model.h"
 
 
-Model::Model(const FileSystem::Path& path)
+using namespace Honeycrisp::FileSystem;
+Model::Model(const Path& path)
 {
     // Model loading
     float beginTime = glfwGetTime();
@@ -10,12 +11,11 @@ Model::Model(const FileSystem::Path& path)
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
-        HNCRSP_LOG_ERROR("ASSIMP: ", import.GetErrorString());
-        assert(false);
+        HNCRSP_TERMINATE(fmt::format("ASSIMP: {}", import.GetErrorString()).c_str());
     }
-    HNCRSP_LOG_INFO(
+    HNCRSP_LOG_INFO(  // display relative path from project directory
         fmt::format(
-            "Time took to load {}: {}s",
+            "Model load time ~{}: {}s",
             std::filesystem::relative(path.getPath(), HNCRSP_PROJECT_DIR).string(),
             glfwGetTime() - beginTime
         )
@@ -91,6 +91,8 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
         std::vector< std::shared_ptr<Texture2D> > diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE);
         std::vector< std::shared_ptr<Texture2D> > specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR);
+        
+        textures.reserve(diffuseMaps.size() + specularMaps.size());
         textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     }
@@ -125,7 +127,7 @@ std::vector< std::shared_ptr<Texture2D> > Model::loadMaterialTextures(aiMaterial
         aiString textureFilename;
         material->GetTexture(assimp_texture_type, i, &textureFilename);
         std::filesystem::path texturePath = m_modelDirectory / textureFilename.C_Str();
-        FileSystem::Path project_texturePath(texturePath.string());
+        Path project_texturePath(texturePath.string());
         textures.push_back(std::make_shared<Texture2D>(project_texturePath, 1, 1, textureType));
         m_loadedTexturePaths[textureFilename.C_Str()] = true;
     }
@@ -147,4 +149,4 @@ void Model::addTransform(const Transform& transform)
         m_meshes[i].addTransform(transform);
     }
     transforms.push_back(transform);
-    };
+};

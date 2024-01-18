@@ -35,12 +35,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
             // Toggle wireframes
             case GLFW_KEY_M:
-                GLint front_back_mode[2];
-                glGetIntegerv(GL_POLYGON_MODE, front_back_mode);
-                if (front_back_mode[0] == GL_FILL)
-                    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-                else
-                    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+                static bool wireframe = false;
+                wireframe = !wireframe;
+                glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
                 break;
 
             // Toggle FPS-cap

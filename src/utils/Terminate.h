@@ -3,6 +3,9 @@
 #include "src/pch/pch.h"
 
 
-#define TERMINATE(msg) terminate(msg, __FILE__, __LINE__);
+#define HNCRSP_TERMINATE(msg) Honeycrisp::terminate(msg, __FILE__, __LINE__);
 
-void terminate(const char* msg, const char* file, unsigned int line);
+namespace Honeycrisp
+{
+    void terminate(const char* msg, const char* file, unsigned int line);
+}

@@ -12,7 +12,11 @@ private:
 
 public:
     Shader() = default;
-    Shader(const FileSystem::Path& vertexFile, const FileSystem::Path& fragmentFile, const FileSystem::Path& geometryFile = {""});
+    Shader(
+        const Honeycrisp::FileSystem::Path& vertexFile,
+        const Honeycrisp::FileSystem::Path& fragmentFile,
+        const Honeycrisp::FileSystem::Path& geometryFile = {""}
+    );
     Shader(const Shader& other) = delete;
     Shader& operator=(const Shader& other) = delete;
     Shader(Shader&& other) noexcept;

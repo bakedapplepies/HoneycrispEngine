@@ -1,7 +1,6 @@
 #include "Application.h"
 
 
-
 Application* Application::m_ContextWrap = nullptr;
 
 Application::~Application()

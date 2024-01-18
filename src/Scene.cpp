@@ -1,5 +1,8 @@
 #include "Scene.h"
 
+
+using namespace Honeycrisp::FileSystem;
+
 size_t Scene::sceneCount = 0;
 std::shared_ptr<Shader> Scene::m_basicShader = nullptr;
 std::shared_ptr<Shader> Scene::m_cubemapShader = nullptr;
@@ -32,12 +35,12 @@ Scene& Scene::operator=(Scene&& other) noexcept
 }
 
 void Scene::CreateCubemap(
-    const FileSystem::Path& right,
-    const FileSystem::Path& left,
-    const FileSystem::Path& top,
-    const FileSystem::Path& bottom,
-    const FileSystem::Path& front,
-    const FileSystem::Path& back
+    const Path& right,
+    const Path& left,
+    const Path& top,
+    const Path& bottom,
+    const Path& front,
+    const Path& back
 )
 {
     std::vector<std::string> cubemapFaces = {
@@ -67,8 +70,8 @@ void Scene::Draw(void) const
         if (!m_cubemapShader)
         {
             m_cubemapShader = std::make_shared<Shader>(
-                FileSystem::Path("resources/shaders/CubemapVertex.glsl"),
-                FileSystem::Path("resources/shaders/CubemapFragment.glsl")
+                Path("resources/shaders/CubemapVertex.glsl"),
+                Path("resources/shaders/CubemapFragment.glsl")
             );
             m_cubemapShader->setIntUniform("cubemap", 10);
         }
@@ -142,7 +145,7 @@ void Scene::binary_delete_ptr(std::vector<std::pair<size_t, std::shared_ptr<Rend
 
     if (vec.size() == 0)
     {
-        assert(!"Vector is empty");
+        HNCRSP_TERMINATE("Vector is empty");
     }
 
     size_t left = 0, right = vec.size() - 1;

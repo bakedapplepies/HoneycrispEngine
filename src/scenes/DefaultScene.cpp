@@ -5,6 +5,8 @@
 
 #define RAND rand()/double(RAND_MAX)
 
+using namespace Honeycrisp;
+
 DefaultScene::DefaultScene()
 {
     shader = std::make_shared<Shader>(
