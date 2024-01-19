@@ -1,6 +1,7 @@
 #include "SceneManager.h"
 
 
+HNCRSP_NAMESPACE_START
 
 SceneManager* SceneManager::_instance = nullptr;
 
@@ -43,3 +44,5 @@ glm::vec3 SceneManager::GetSceneBgColor()
 {
     return _scenesMap[_activeSceneIndex]->bgColor;
 }
+
+HNCRSP_NAMESPACE_END

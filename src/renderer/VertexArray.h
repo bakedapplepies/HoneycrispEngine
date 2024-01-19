@@ -6,6 +6,8 @@
 #include "ElementBuffer.h"
 
 
+HNCRSP_NAMESPACE_START
+
 class VertexArray
 {
 private:
@@ -30,3 +32,5 @@ public:
 
     GLuint getID();
 };
+
+HNCRSP_NAMESPACE_END

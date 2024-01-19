@@ -1,7 +1,7 @@
 #include "Shader.h"
 
 
-using namespace Honeycrisp::FileSystem;
+HNCRSP_NAMESPACE_START
 
 std::string Shader::parseShader(const std::string_view& path)
 {
@@ -16,7 +16,10 @@ std::string Shader::parseShader(const std::string_view& path)
     return ss.str();
 }
 
-Shader::Shader(const Path& vertexFile, const Path& fragmentFile, const Path& geometryFile)
+Shader::Shader(
+    const FileSystem::Path& vertexFile,
+    const FileSystem::Path& fragmentFile,
+    const FileSystem::Path& geometryFile)
 {
     const std::string vertexShaderSource = parseShader(vertexFile.getPath());
     const std::string fragmentShaderSource = parseShader(fragmentFile.getPath());
@@ -203,3 +206,5 @@ void Shader::setVector3Uniform(const std::string& name, const glm::vec3& vector)
         glm::value_ptr(vector)
     ));
 }
+
+HNCRSP_NAMESPACE_END

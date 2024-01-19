@@ -7,6 +7,8 @@
 #include "utils/utils.h"
 
 
+HNCRSP_NAMESPACE_START
+
 class Scene  // : public std::enable_shared_from_this<Scene>
 {
 protected:
@@ -204,3 +206,5 @@ public:
     virtual size_t genSceneObjectID() final;
     virtual void deleteSceneObjectID(size_t id) final;
 };
+
+HNCRSP_NAMESPACE_END

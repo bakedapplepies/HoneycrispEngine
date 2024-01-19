@@ -1,14 +1,14 @@
 #include "Texture.h"
 
 
-using namespace Honeycrisp::FileSystem;
+HNCRSP_NAMESPACE_START
 
 GLuint Texture2D::sm_textureUnitCounter = 0;
 std::unordered_map<std::string, TextureInfo> Texture2D::sm_initiatedTextures;
 std::unordered_map<GLuint, GLint> Texture2D::sm_textureUnits;  // key: ID -> texture unit
 std::unordered_map<GLuint, unsigned int> Texture2D::sm_textureIDCount;
 
-Texture2D::Texture2D(const Path& texturePath, uint32_t textureResolutionWidth, uint32_t textureResolutionHeight,
+Texture2D::Texture2D(const FileSystem::Path& texturePath, uint32_t textureResolutionWidth, uint32_t textureResolutionHeight,
     ETextureType textureType
 ) : m_textureWidth(textureResolutionWidth), m_textureHeight(textureResolutionHeight)
 {
@@ -186,12 +186,12 @@ Texture2D Textures::mainTextureSpecularMap;
 void Texture2D::LoadTextures()
 {
     Textures::mainTextureMap = Texture2D(
-        Path("resources/textures/grass_textures.png"),
+        FileSystem::Path("resources/textures/grass_textures.png"),
         3, 1,
         ETextureType::DIFFUSE
     );
     Textures::mainTextureSpecularMap = Texture2D(
-        Path("resources/textures/grass_textures_specular_map.png"),
+        FileSystem::Path("resources/textures/grass_textures_specular_map.png"),
         3, 1,
         ETextureType::SPECULAR
     );
@@ -238,3 +238,5 @@ TextureCoords& Texture2D::GetTextureCoords(uint32_t x, uint32_t y)
 {
     return m_textureCoords[y][x];
 }
+
+HNCRSP_NAMESPACE_END

@@ -1,8 +1,9 @@
 #include "Model.h"
 
 
-using namespace Honeycrisp::FileSystem;
-Model::Model(const Path& path)
+HNCRSP_NAMESPACE_START
+
+Model::Model(const FileSystem::Path& path)
 {
     // Model loading
     float beginTime = glfwGetTime();
@@ -127,7 +128,7 @@ std::vector< std::shared_ptr<Texture2D> > Model::loadMaterialTextures(aiMaterial
         aiString textureFilename;
         material->GetTexture(assimp_texture_type, i, &textureFilename);
         std::filesystem::path texturePath = m_modelDirectory / textureFilename.C_Str();
-        Path project_texturePath(texturePath.string());
+        FileSystem::Path project_texturePath(texturePath.string());
         textures.push_back(std::make_shared<Texture2D>(project_texturePath, 1, 1, textureType));
         m_loadedTexturePaths[textureFilename.C_Str()] = true;
     }
@@ -150,3 +151,5 @@ void Model::addTransform(const Transform& transform)
     }
     transforms.push_back(transform);
 };
+
+HNCRSP_NAMESPACE_END

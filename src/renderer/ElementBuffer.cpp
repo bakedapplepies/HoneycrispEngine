@@ -1,6 +1,7 @@
-
 #include "ElementBuffer.h"
 
+
+HNCRSP_NAMESPACE_START
 
 ElementBuffer::ElementBuffer(ElementBuffer&& other) noexcept
 {
@@ -37,3 +38,5 @@ void ElementBuffer::Unbind() const
 {
     GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 }
+
+HNCRSP_NAMESPACE_END

@@ -5,6 +5,7 @@
 #include "Window.h"
 
 
+HNCRSP_NAMESPACE_START
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -130,3 +131,5 @@ void mouse_callback(GLFWwindow* window, double xpos_double, double ypos_double)
         direction.z = sinf(glm::radians(yaw)) * cosf(glm::radians(pitch));
     }
 }
+
+HNCRSP_NAMESPACE_END

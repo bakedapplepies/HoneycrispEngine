@@ -1,13 +1,13 @@
 #include "src/pch/pch.h"
 
-
 #include "Window.h"
-#include "SceneManager.h"
-#include "./scenes/DefaultScene.h"
-#include "./scenes/DefaultSceneTwo.h"
+#include "src/core/SceneManager.h"
+#include "src/scenes/DefaultScene.h"
+#include "src/scenes/DefaultSceneTwo.h"
 #include "Callbacks.h"
-#include "Model.h"
 
+
+HNCRSP_NAMESPACE_START
 
 Window::Window()
 {
@@ -253,3 +253,5 @@ void Window::processInput()
         camera.ChangePos(glm::vec3(0.0f, -1.0f, 0.0f) * camera.speed * deltaTime);
     }
 }
+
+HNCRSP_NAMESPACE_END

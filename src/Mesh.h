@@ -3,9 +3,11 @@
 #include "src/pch/pch.h"
 
 #include "Renderable.h"
-#include "core/VertexArray.h"
-#include "core/Texture.h"
+#include "renderer/VertexArray.h"
+#include "renderer/Texture.h"
 
+
+HNCRSP_NAMESPACE_START
 
 class Mesh : public Renderable
 {
@@ -37,8 +39,8 @@ public:
     void EnableVertexAttribUV(bool on) const;
     void EnableVertexAttribNormals(bool on) const;
 
-    virtual void onUpdate() {}
-    void Draw(std::shared_ptr<Shader> shader) const;
+    virtual void onUpdate() override {}
+    void Draw(std::shared_ptr<Shader> shader) const override;
     void Translate(const glm::vec3& vec);
     void Scale(const float& multiplier);
     void Rotate(const float& rX, const float& rY, const float& rZ);
@@ -47,3 +49,5 @@ public:
     void ConstructMesh();
     std::weak_ptr<VertexArray> GetVAO();
 };
+
+HNCRSP_NAMESPACE_END

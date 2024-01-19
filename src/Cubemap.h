@@ -4,8 +4,8 @@
 #include "Renderable.h"
 #include "Mesh.h"
 
-#include "utils/utils.h"
 
+HNCRSP_NAMESPACE_START
 
 class Cubemap : public Renderable
 {
@@ -29,3 +29,5 @@ public:
 private:
     void SetMesh();
 };
+
+HNCRSP_NAMESPACE_END

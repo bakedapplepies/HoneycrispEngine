@@ -1,6 +1,7 @@
 #include "src/pch/pch.h"
 
 
+HNCRSP_NAMESPACE_START
 
 template <typename... Ts>
 class UniformBuffer
@@ -87,3 +88,5 @@ private:
 
 template<typename... Ts>
 std::unordered_map<GLuint, bool> UniformBuffer<Ts...>::takenBindingIndices;
+
+HNCRSP_NAMESPACE_END

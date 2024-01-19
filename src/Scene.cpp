@@ -1,7 +1,7 @@
 #include "Scene.h"
 
 
-using namespace Honeycrisp::FileSystem;
+HNCRSP_NAMESPACE_START
 
 size_t Scene::sceneCount = 0;
 std::shared_ptr<Shader> Scene::m_basicShader = nullptr;
@@ -35,12 +35,12 @@ Scene& Scene::operator=(Scene&& other) noexcept
 }
 
 void Scene::CreateCubemap(
-    const Path& right,
-    const Path& left,
-    const Path& top,
-    const Path& bottom,
-    const Path& front,
-    const Path& back
+    const FileSystem::Path& right,
+    const FileSystem::Path& left,
+    const FileSystem::Path& top,
+    const FileSystem::Path& bottom,
+    const FileSystem::Path& front,
+    const FileSystem::Path& back
 )
 {
     std::vector<std::string> cubemapFaces = {
@@ -70,8 +70,8 @@ void Scene::Draw(void) const
         if (!m_cubemapShader)
         {
             m_cubemapShader = std::make_shared<Shader>(
-                Path("resources/shaders/CubemapVertex.glsl"),
-                Path("resources/shaders/CubemapFragment.glsl")
+                FileSystem::Path("resources/shaders/CubemapVertex.glsl"),
+                FileSystem::Path("resources/shaders/CubemapFragment.glsl")
             );
             m_cubemapShader->setIntUniform("cubemap", 10);
         }
@@ -161,3 +161,5 @@ void Scene::binary_delete_ptr(std::vector<std::pair<size_t, std::shared_ptr<Rend
 
     vec.erase(vec.begin() + mid);
 }
+
+HNCRSP_NAMESPACE_END

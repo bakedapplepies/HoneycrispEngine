@@ -1,6 +1,8 @@
 #include "Cubemap.h"
 
 
+HNCRSP_NAMESPACE_START
+
 Cubemap::Cubemap(const std::vector<std::string>& faces)
 {
     GLCall(glGenTextures(1, &m_cubemapTextureID));
@@ -137,3 +139,5 @@ void Cubemap::Draw(std::shared_ptr<Shader> shader) const
     GLCall(glDepthFunc(GL_LESS));
     // GLCall(glDepthMask(GL_TRUE));
 }
+
+HNCRSP_NAMESPACE_END

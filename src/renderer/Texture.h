@@ -3,6 +3,9 @@
 #include "src/pch/pch.h"
 #include "../utils/utils.h"
 
+
+HNCRSP_NAMESPACE_START
+
 enum ETextureType
 {
     DIFFUSE,
@@ -76,3 +79,5 @@ namespace Textures
     extern Texture2D mainTextureMap;
     extern Texture2D mainTextureSpecularMap;
 }
+
+HNCRSP_NAMESPACE_END

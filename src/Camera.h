@@ -3,6 +3,8 @@
 #include "src/pch/pch.h"
 
 
+HNCRSP_NAMESPACE_START
+
 class Camera
 {
 public:
@@ -22,3 +24,5 @@ public:
     
     glm::mat4 GetViewMatrix() const;
 };
+
+HNCRSP_NAMESPACE_END

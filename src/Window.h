@@ -2,8 +2,10 @@
 
 #include "src/pch/pch.h"
 #include "Camera.h"
-#include "core/UniformBuffer.h"
+#include "renderer/UniformBuffer.h"
 
+
+HNCRSP_NAMESPACE_START
 
 struct CallbackData
 {
@@ -44,3 +46,5 @@ public:
 
     void Loop();
 };
+
+HNCRSP_NAMESPACE_END

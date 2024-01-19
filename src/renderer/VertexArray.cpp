@@ -1,6 +1,7 @@
-
 #include "VertexArray.h"
 
+
+HNCRSP_NAMESPACE_START
 
 VertexArray::VertexArray(VertexArray&& other) noexcept
 {
@@ -59,3 +60,5 @@ ElementBuffer* VertexArray::getEBO()
 {
     return &m_elementBuffer;
 }
+
+HNCRSP_NAMESPACE_END

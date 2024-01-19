@@ -1,6 +1,8 @@
 #include "Application.h"
 
 
+HNCRSP_NAMESPACE_START
+
 Application* Application::m_ContextWrap = nullptr;
 
 Application::~Application()
@@ -36,3 +38,5 @@ void Application::Run()
     window = std::make_unique<Window>();
     window->Loop();
 }
+
+HNCRSP_NAMESPACE_END

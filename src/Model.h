@@ -2,10 +2,10 @@
 
 #include "src/pch/pch.h"
 #include "Mesh.h"
+#include "renderer/Texture.h"
 
-#include "utils/utils.h"
-#include "core/Texture.h"
 
+HNCRSP_NAMESPACE_START
 
 class Model : public Renderable
 {
@@ -17,7 +17,7 @@ public:
     void Draw(std::shared_ptr<Shader> shader) const;
 
 public:
-    Model(const Honeycrisp::FileSystem::Path& path);
+    Model(const FileSystem::Path& path);
     Model(Model&& other) = default;  // TODO: Proper constructors
 
 private:
@@ -29,3 +29,5 @@ public:
     void onUpdate() {}
     void addTransform(const Transform& transform);  // acts as interface for meshes
 };
+
+HNCRSP_NAMESPACE_END

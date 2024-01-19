@@ -4,6 +4,8 @@
 #include "Window.h"
 
 
+HNCRSP_NAMESPACE_START
+
 class Application
 {
 private:
@@ -24,3 +26,5 @@ public:
 	static void DeleteInstance();
 	void Run();
 };
+
+HNCRSP_NAMESPACE_END

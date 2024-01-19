@@ -2,24 +2,23 @@
 
 #include "src/pch/pch.h"
 
-#include "../Scene.h"
-#include "../Cube.h"
-#include "../core/Texture.h"
-#include "../Model.h"
-#include "../Cubemap.h"
-#include "../utils/utils.h"
+#include "src/Scene.h"
+#include "src/Cube.h"
+#include "src/renderer/Texture.h"
+#include "src/Model.h"
+#include "src/Cubemap.h"
 
 
-class DefaultSceneTwo : public Scene
+class DefaultSceneTwo : public Honeycrisp::Scene
 {
 private:
-    std::shared_ptr<Shader> shader;
-    std::shared_ptr<Shader> backpackShader;
-    std::shared_ptr<Shader> wackyShader;
-    std::shared_ptr<Shader> normalWaveShader;
-    std::shared_ptr< SceneObject<Cube> > cube;
-    std::shared_ptr< SceneObject<Mesh> > mesh;
-    std::shared_ptr< SceneObject<Model> > model;
+    std::shared_ptr<Honeycrisp::Shader> shader;
+    std::shared_ptr<Honeycrisp::Shader> backpackShader;
+    std::shared_ptr<Honeycrisp::Shader> wackyShader;
+    std::shared_ptr<Honeycrisp::Shader> normalWaveShader;
+    std::shared_ptr< SceneObject<Honeycrisp::Cube> > cube;
+    std::shared_ptr< SceneObject<Honeycrisp::Mesh> > mesh;
+    std::shared_ptr< SceneObject<Honeycrisp::Model> > model;
 
 public:
     DefaultSceneTwo();

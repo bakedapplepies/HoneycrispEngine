@@ -1,6 +1,7 @@
 #include "Mesh.h"
 
 
+HNCRSP_NAMESPACE_START
 
 Mesh::Mesh()
 {
@@ -269,3 +270,5 @@ std::weak_ptr<VertexArray> Mesh::GetVAO()
 {
     return std::weak_ptr<VertexArray>(m_VAO);
 }
+
+HNCRSP_NAMESPACE_END

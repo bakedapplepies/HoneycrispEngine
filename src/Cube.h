@@ -2,9 +2,10 @@
 
 #include "src/pch/pch.h"
 
-#include "core/Texture.h"
 #include "Mesh.h"
 
+
+HNCRSP_NAMESPACE_START
 
 class Cube : public Mesh
 {
@@ -24,3 +25,5 @@ private:
     std::vector<glm::vec2> _uvs;
     std::vector<GLuint> _indices;
 };
+
+HNCRSP_NAMESPACE_END

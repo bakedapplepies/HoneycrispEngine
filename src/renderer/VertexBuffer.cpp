@@ -1,6 +1,7 @@
-
 #include "VertexBuffer.h"
 
+
+HNCRSP_NAMESPACE_START
 
 VertexBuffer::VertexBuffer(VertexBuffer&& other) noexcept
 {
@@ -37,3 +38,5 @@ void VertexBuffer::Unbind() const
 {
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
+
+HNCRSP_NAMESPACE_END

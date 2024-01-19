@@ -4,6 +4,8 @@
 #include "../utils/utils.h"
 
 
+HNCRSP_NAMESPACE_START
+
 class Shader
 {
 private:
@@ -13,9 +15,9 @@ private:
 public:
     Shader() = default;
     Shader(
-        const Honeycrisp::FileSystem::Path& vertexFile,
-        const Honeycrisp::FileSystem::Path& fragmentFile,
-        const Honeycrisp::FileSystem::Path& geometryFile = {""}
+        const FileSystem::Path& vertexFile,
+        const FileSystem::Path& fragmentFile,
+        const FileSystem::Path& geometryFile = {""}
     );
     Shader(const Shader& other) = delete;
     Shader& operator=(const Shader& other) = delete;
@@ -35,3 +37,5 @@ public:
     void setMatrix3Uniform(const std::string& name, const glm::mat3& matrix) const;
     void setVector3Uniform(const std::string& name, const glm::vec3& vector) const;
 };
+
+HNCRSP_NAMESPACE_END

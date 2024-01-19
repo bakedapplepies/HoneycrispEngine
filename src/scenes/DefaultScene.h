@@ -3,16 +3,16 @@
 #include "src/pch/pch.h"
 
 #include "../Scene.h"
-#include "../core/Shader.h"
+#include "../renderer/Shader.h"
 #include "../Cube.h"
 
 
-class DefaultScene : public Scene
+class DefaultScene : public Honeycrisp::Scene
 {
 private:
-    std::shared_ptr<Shader> shader;
-    std::shared_ptr< SceneObject<Cube> > cube;
-    std::shared_ptr< SceneObject<Mesh> > customMesh;
+    std::shared_ptr<Honeycrisp::Shader> shader;
+    std::shared_ptr< SceneObject<Honeycrisp::Cube> > cube;
+    std::shared_ptr< SceneObject<Honeycrisp::Mesh> > customMesh;
 
 public:
     DefaultScene();

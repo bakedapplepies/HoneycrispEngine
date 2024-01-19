@@ -1,8 +1,10 @@
 #pragma once
 
 #include "src/pch/pch.h"
-#include "Scene.h"
+#include "src/Scene.h"
 
+
+HNCRSP_NAMESPACE_START
 
 class SceneManager
 {
@@ -42,3 +44,5 @@ public:
     void ClearAllScenes();
     void SetActiveScene(size_t index);
 };
+
+HNCRSP_NAMESPACE_END

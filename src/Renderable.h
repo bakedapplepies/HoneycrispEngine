@@ -2,9 +2,11 @@
 
 #include "src/pch/pch.h"
 #include "Object.h"
-#include "core/Shader.h"
+#include "renderer/Shader.h"
 #include "types/Transform.h"
 
+
+HNCRSP_NAMESPACE_START
 
 class Renderable : public Object
 {
@@ -33,3 +35,5 @@ public:
     virtual void Draw(std::shared_ptr<Shader> shader) const = 0;
     virtual ~Renderable() {}
 };
+
+HNCRSP_NAMESPACE_END

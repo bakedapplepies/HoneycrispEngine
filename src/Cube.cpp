@@ -1,7 +1,8 @@
-
 #include "Cube.h"
-#include "core/Texture.h"
+#include "renderer/Texture.h"
 
+
+HNCRSP_NAMESPACE_START
 
 Cube::Cube()
 {
@@ -207,3 +208,5 @@ void Cube::InitializeAttributeData()
     static_cast<Mesh*>(this)->uvs = _uvs;
     static_cast<Mesh*>(this)->indices = _indices;
 }
+
+HNCRSP_NAMESPACE_END

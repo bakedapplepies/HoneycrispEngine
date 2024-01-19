@@ -13,18 +13,24 @@ set(SOURCE
     ${CMAKE_SOURCE_DIR}/src/utils/Assert.cpp
 
     # OpenGL stuff
-    ${CMAKE_SOURCE_DIR}/src/core/VertexBuffer.h
-    ${CMAKE_SOURCE_DIR}/src/core/VertexBuffer.cpp
-    ${CMAKE_SOURCE_DIR}/src/core/ElementBuffer.h
-    ${CMAKE_SOURCE_DIR}/src/core/ElementBuffer.cpp
-    ${CMAKE_SOURCE_DIR}/src/core/VertexArray.h
-    ${CMAKE_SOURCE_DIR}/src/core/VertexArray.cpp
-    ${CMAKE_SOURCE_DIR}/src/core/Shader.h
-    ${CMAKE_SOURCE_DIR}/src/core/Shader.cpp
-    ${CMAKE_SOURCE_DIR}/src/core/Texture.h
-    ${CMAKE_SOURCE_DIR}/src/core/Texture.cpp
-    ${CMAKE_SOURCE_DIR}/src/core/UniformBuffer.h
-    ${CMAKE_SOURCE_DIR}/src/core/UniformBuffer.cpp
+    ${CMAKE_SOURCE_DIR}/src/renderer/VertexBuffer.h
+    ${CMAKE_SOURCE_DIR}/src/renderer/VertexBuffer.cpp
+    ${CMAKE_SOURCE_DIR}/src/renderer/ElementBuffer.h
+    ${CMAKE_SOURCE_DIR}/src/renderer/ElementBuffer.cpp
+    ${CMAKE_SOURCE_DIR}/src/renderer/VertexArray.h
+    ${CMAKE_SOURCE_DIR}/src/renderer/VertexArray.cpp
+    ${CMAKE_SOURCE_DIR}/src/renderer/Shader.h
+    ${CMAKE_SOURCE_DIR}/src/renderer/Shader.cpp
+    ${CMAKE_SOURCE_DIR}/src/renderer/Texture.h
+    ${CMAKE_SOURCE_DIR}/src/renderer/Texture.cpp
+    ${CMAKE_SOURCE_DIR}/src/renderer/UniformBuffer.h
+    ${CMAKE_SOURCE_DIR}/src/renderer/UniformBuffer.cpp
+
+    # managers
+    ${CMAKE_SOURCE_DIR}/src/core/SceneManager.h
+    ${CMAKE_SOURCE_DIR}/src/core/SceneManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/core/Texture2DManager.h
+    ${CMAKE_SOURCE_DIR}/src/core/Texture2DManager.cpp
 
     # types
     ${CMAKE_SOURCE_DIR}/src/types/Transform.h
@@ -49,8 +55,6 @@ set(SOURCE
     ${CMAKE_SOURCE_DIR}/src/Model.cpp
     ${CMAKE_SOURCE_DIR}/src/Scene.h
     ${CMAKE_SOURCE_DIR}/src/Scene.cpp
-    ${CMAKE_SOURCE_DIR}/src/SceneManager.h
-    ${CMAKE_SOURCE_DIR}/src/SceneManager.cpp
     ${CMAKE_SOURCE_DIR}/src/Window.h
     ${CMAKE_SOURCE_DIR}/src/Window.cpp
     ${CMAKE_SOURCE_DIR}/src/main.cpp

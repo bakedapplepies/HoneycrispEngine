@@ -116,7 +116,7 @@ void DefaultSceneTwo::InitializeShaders(void)
         FileSystem::Path("resources/shaders/PhongShadingFragment.glsl")  // update cubemap texture unit uniform
     );
     wackyShader = std::make_shared<Shader>(
-        FileSystem::Path("resources/shaders/WaveVertex.glsl"),
+        FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
         FileSystem::Path("resources/shaders/PhongShadingFragment.glsl"),
         FileSystem::Path("resources/shaders/WaveGeometry.glsl")
     );

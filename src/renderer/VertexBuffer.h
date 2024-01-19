@@ -3,6 +3,8 @@
 #include "src/pch/pch.h"
 
 
+HNCRSP_NAMESPACE_START
+
 class VertexBuffer
 {
 private:
@@ -20,3 +22,5 @@ public:
     void Bind() const;
     void Unbind() const;
 };
+
+HNCRSP_NAMESPACE_END
