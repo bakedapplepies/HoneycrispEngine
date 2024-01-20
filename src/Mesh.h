@@ -4,7 +4,7 @@
 
 #include "Renderable.h"
 #include "renderer/VertexArray.h"
-#include "renderer/Texture.h"
+#include "src/renderer/Texture2D.h"
 
 
 HNCRSP_NAMESPACE_START

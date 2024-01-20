@@ -3,46 +3,46 @@
 
 HNCRSP_NAMESPACE_START
 
-SceneManager* SceneManager::_instance = nullptr;
+SceneManager* SceneManager::m_instance = nullptr;
 
 SceneManager& SceneManager::Get()
 {
-    if (!_instance)
+    if (!m_instance)
     {
-        _instance = new SceneManager();
+        m_instance = new SceneManager();
     }
-    return *_instance;
+    return *m_instance;
 }
 
 void SceneManager::Update()
 {
     // maybe add if-statements to check availability
-    _scenesMap[_activeSceneIndex]->onUpdate();
+    m_scenesMap[m_activeSceneIndex]->onUpdate();
 }
 
 void SceneManager::ClearAllScenes()
 {
-    _scenesMap.clear();
+    m_scenesMap.clear();
 }
 
 void SceneManager::SetActiveScene(size_t index)
 {
-    if (!_scenesMap[index])
+    if (!m_scenesMap[index])
     {
         HNCRSP_LOG_ERROR(fmt::format("Scene index [{}] not found.", index));
         return;
     }
-    _activeSceneIndex = index;
+    m_activeSceneIndex = index;
 }
 
 void SceneManager::SetSceneBgColor(const glm::vec3& bgColor)
 {
-    _scenesMap[_activeSceneIndex]->bgColor = bgColor;
+    m_scenesMap[m_activeSceneIndex]->bgColor = bgColor;
 }
 
 glm::vec3 SceneManager::GetSceneBgColor()
 {
-    return _scenesMap[_activeSceneIndex]->bgColor;
+    return m_scenesMap[m_activeSceneIndex]->bgColor;
 }
 
 HNCRSP_NAMESPACE_END

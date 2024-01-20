@@ -13,7 +13,7 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     target_link_options(${CMAKE_PROJECT_NAME} PRIVATE -g -fsanitize=address)
 
 elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
-    target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE -O3)
-    target_link_options(${CMAKE_PROJECT_NAME} PRIVATE -O3)
+    add_compile_options(-O3)
+    add_link_options(-O3)
 
 endif()

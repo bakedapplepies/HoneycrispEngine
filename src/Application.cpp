@@ -1,42 +1,25 @@
 #include "Application.h"
+#include "src/core/RenderContext.h"
+#include "src/core/Texture2DManager.h"
+#include "src/core/SceneManager.h"
 
 
 HNCRSP_NAMESPACE_START
 
-Application* Application::m_ContextWrap = nullptr;
-
-Application::~Application()
-{
-    window.reset();
-    glfwTerminate();
-    HNCRSP_LOG_INFO("GLFW terminated.");
-}
-
-Application& Application::Get()
-{
-    if (!m_ContextWrap)
-    {
-        m_ContextWrap = new Application();
-    }
-    return *m_ContextWrap;
-}
-
-void Application::DeleteInstance()
-{
-    delete m_ContextWrap;
-    m_ContextWrap = nullptr;
-}
-
+// dependencies can be distributed via depedency injection
 void Application::Run()
-{
-    if(!glfwInit())
-    {
-        HNCRSP_LOG_ERROR("GLFW Initialization failed.");
-        return;
-    }
-    
-    window = std::make_unique<Window>();
+{    
+    RenderContext::StartUp();
+
+    std::unique_ptr<Window> window = std::make_unique<Window>();
+    Texture2DManager::StartUp();
     window->Loop();
+    Texture2DManager::ShutDown();
+    window.reset();
+
+    SceneManager::Get().ClearAllScenes();
+
+    RenderContext::ShutDown();
 }
 
 HNCRSP_NAMESPACE_END

@@ -8,7 +8,7 @@ Model::Model(const FileSystem::Path& path)
     // Model loading
     float beginTime = glfwGetTime();
     Assimp::Importer import;
-    const aiScene *scene = import.ReadFile(path.getPath().data(), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_FlipWindingOrder);
+    const aiScene *scene = import.ReadFile(path.string().data(), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_FlipWindingOrder);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
@@ -17,11 +17,11 @@ Model::Model(const FileSystem::Path& path)
     HNCRSP_LOG_INFO(  // display relative path from project directory
         fmt::format(
             "Model load time ~{}: {}s",
-            std::filesystem::relative(path.getPath(), HNCRSP_PROJECT_DIR).string(),
+            std::filesystem::relative(path.string(), HNCRSP_PROJECT_DIR).string(),
             glfwGetTime() - beginTime
         )
     );
-    m_modelDirectory = std::filesystem::path(path.getPath());
+    m_modelDirectory = std::filesystem::path(path.string());
     m_modelDirectory = m_modelDirectory.remove_filename();
 
     processNode(scene->mRootNode, scene);
@@ -129,7 +129,7 @@ std::vector< std::shared_ptr<Texture2D> > Model::loadMaterialTextures(aiMaterial
         material->GetTexture(assimp_texture_type, i, &textureFilename);
         std::filesystem::path texturePath = m_modelDirectory / textureFilename.C_Str();
         FileSystem::Path project_texturePath(texturePath.string());
-        textures.push_back(std::make_shared<Texture2D>(project_texturePath, 1, 1, textureType));
+        textures.push_back(std::make_shared<Texture2D>(project_texturePath, textureType, 1, 1));
         m_loadedTexturePaths[textureFilename.C_Str()] = true;
     }
     return textures;

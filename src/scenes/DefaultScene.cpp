@@ -1,6 +1,7 @@
 #include "DefaultScene.h"
 
 #include "../utils/utils.h"
+#include "src/core/Texture2DManager.h"
 
 
 #define RAND rand()/double(RAND_MAX)
@@ -9,6 +10,7 @@ using namespace Honeycrisp;
 
 DefaultScene::DefaultScene()
 {
+    // Texture2D& texture2d = Texture2DManager::getTexture2D(FileSystem::Path("resources/textures/grass_textures.png"));
     shader = std::make_shared<Shader>(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
         FileSystem::Path("resources/shaders/PhongShadingFragment.glsl")
@@ -174,8 +176,8 @@ void DefaultScene::onUpdate()
 void DefaultScene::SetInitialUniforms(void)
 {
     // lighting
-    shader->setIntUniform("u_material.albedo", Textures::mainTextureMap.getTextureUnit());
-    shader->setIntUniform("u_material.specular", Textures::mainTextureSpecularMap.getTextureUnit());
+    shader->setIntUniform("u_material.albedo", Texture2DManager::mainTextureMap.getTextureUnit());
+    shader->setIntUniform("u_material.specular", Texture2DManager::mainTextureSpecularMap.getTextureUnit());
     shader->setFloatUniform("u_material.shininess", 32.0f);
 
     // dir light

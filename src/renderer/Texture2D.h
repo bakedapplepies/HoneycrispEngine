@@ -1,7 +1,6 @@
 #pragma once
 
 #include "src/pch/pch.h"
-#include "../utils/utils.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -32,13 +31,14 @@ class Texture2D
 {
 private:
     int m_pixelWidth, m_pixelHeight;
-    int m_textureWidth;
-    int m_textureHeight;
+    uint32_t m_atlasWidth;
+    uint32_t m_atlasHeight;
     
-    GLuint m_textureID;
-    std::vector< std::vector<TextureCoords> > m_textureCoords;
-    std::string path;
+    GLuint m_textureID;  // can't be set to 0 due to opengl
     ETextureType m_textureType;
+    std::string path;
+    std::vector< std::vector<TextureCoords> > m_textureCoords;
+    
     static GLuint sm_textureUnitCounter;
     static std::unordered_map<std::string, TextureInfo> sm_initiatedTextures;
     static std::unordered_map<GLuint, GLint> sm_textureUnits;  // TODO: Convert GLint to vector to reuse texture units
@@ -48,14 +48,14 @@ public:
     Texture2D() = default;
     ~Texture2D();
     Texture2D(
-        const Honeycrisp::FileSystem::Path& texturePath,
-        uint32_t textureResolutionWidth,
-        uint32_t textureResolutionHeight,
-        ETextureType textureType
+        const FileSystem::Path& texturePath,
+        ETextureType textureType,
+        uint32_t atlasWidth,
+        uint32_t atlasHeight
     );    
     Texture2D(const Texture2D&);
-    Texture2D(Texture2D&& other) noexcept;
     Texture2D& operator=(const Texture2D&);
+    Texture2D(Texture2D&& other) noexcept;
     Texture2D& operator=(Texture2D&& other) noexcept;
 
     void GenerateTextureCoords();
@@ -69,15 +69,8 @@ public:
     void Unbind() const;
     void Delete();
 
-    static void LoadTextures();
     static void DeleteAllTextures();
     TextureCoords& GetTextureCoords(uint32_t x, uint32_t y);
 };
-
-namespace Textures
-{
-    extern Texture2D mainTextureMap;
-    extern Texture2D mainTextureSpecularMap;
-}
 
 HNCRSP_NAMESPACE_END

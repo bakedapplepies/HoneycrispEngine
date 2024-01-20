@@ -22,3 +22,4 @@ gets is the Draw-calls-queue.
 - TODO: Texture2D Min/Mag filter (nearest/linear), Wrap (repeat/clamp/...)
 - TODO: Replace std::vector with std::array whenever possible
 - TODO: Look into glNamed... functions
+- TODO: Use asynchronous operations to speed up model loading (nodes)

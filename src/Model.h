@@ -2,7 +2,7 @@
 
 #include "src/pch/pch.h"
 #include "Mesh.h"
-#include "renderer/Texture.h"
+#include "src/renderer/Texture2D.h"
 
 
 HNCRSP_NAMESPACE_START

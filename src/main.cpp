@@ -5,8 +5,7 @@ using namespace Honeycrisp;
 
 int main()
 {
-    Application::Get().Run();
-    Application::DeleteInstance();
+    Application::Run();
 
     return 0;
 }

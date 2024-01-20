@@ -6,18 +6,6 @@ void GLClearError()
     while (glGetError() != GL_NO_ERROR);
 }
 
-std::ostream& operator<<(std::ostream& stream, const glm::vec2& vec2)
-{
-    std::cout << glm::to_string(vec2);
-    return stream;
-}
-
-std::ostream& operator<<(std::ostream& stream, const glm::vec3& vec3)
-{
-    std::cout << glm::to_string(vec3);
-    return stream;
-}
-
 bool GLLogCall(const char* function, const char* file, unsigned int line)
 {
     while (GLenum error = glGetError()) {

@@ -68,11 +68,6 @@ Window::Window()
 
     GLCall(glViewport(0, 0, callbackData.windowWidth, callbackData.windowHeight));
 
-
-    /* Textures */
-    stbi_set_flip_vertically_on_load(true);
-    Texture2D::LoadTextures();
-
     projectionMatrix = glm::perspective(
         glm::radians(45.0f),
         (float)callbackData.windowWidth/(float)callbackData.windowHeight,
@@ -103,8 +98,8 @@ void Window::Loop()
 
 
     float begin = glfwGetTime();
-    Textures::mainTextureMap.Bind();
-    Textures::mainTextureSpecularMap.Bind();
+    Texture2DManager::mainTextureMap.Bind();
+    Texture2DManager::mainTextureSpecularMap.Bind();
     camera.SetPos(camera.cameraPos + glm::vec3(0, 10, 0));
 
     // view matrix, proj matrix, time
@@ -197,12 +192,6 @@ Window::~Window()
     ImGui::Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
-
-    // Delete these while OpenGL is still in context
-    SceneManager::Get().ClearAllScenes();
-    Texture2D::DeleteAllTextures();
-
-    HNCRSP_LOG_INFO("Deallocated all resources.");
 }
 
 

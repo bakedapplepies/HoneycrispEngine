@@ -1,22 +1,21 @@
 #pragma once
 
 #include "src/pch/pch.h"
+#include "src/types/Singleton.h"
 #include "src/Scene.h"
 
 
 HNCRSP_NAMESPACE_START
 
-class SceneManager
+class SceneManager : public Singleton
 {
 private:
-    size_t _activeSceneIndex = 0;
-    std::unordered_map< size_t, std::unique_ptr<Scene> > _scenesMap;
-    static SceneManager* _instance;
+    size_t m_activeSceneIndex = 0;
+    std::unordered_map< size_t, std::unique_ptr<Scene> > m_scenesMap;
+    static SceneManager* m_instance;
 
 private:
     SceneManager() = default;
-    SceneManager(const SceneManager&) = delete;
-    SceneManager(SceneManager&&) = delete;
     SceneManager& operator=(const SceneManager&) = delete;
     SceneManager& operator=(SceneManager&&) = delete;
 
@@ -30,13 +29,13 @@ public:
     void CreateScene(T&& t, size_t index)
     {
         static_assert(std::is_base_of<Scene, T>(), "Method SceneManager::CreateScene didn't receive a scene object.");
-        if (_scenesMap[index])
+        if (m_scenesMap[index])
         {
             HNCRSP_LOG_ERROR(fmt::format("Scene index[{}] already occupied.", index));
             return;
         }
         std::unique_ptr<T> temp_ptr = std::make_unique<T>(std::move(t));
-        _scenesMap[index] = std::move(temp_ptr);
+        m_scenesMap[index] = std::move(temp_ptr);
     }
 
     static SceneManager& Get();

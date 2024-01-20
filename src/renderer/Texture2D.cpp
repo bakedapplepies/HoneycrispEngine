@@ -1,4 +1,4 @@
-#include "Texture.h"
+#include "Texture2D.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -8,18 +8,18 @@ std::unordered_map<std::string, TextureInfo> Texture2D::sm_initiatedTextures;
 std::unordered_map<GLuint, GLint> Texture2D::sm_textureUnits;  // key: ID -> texture unit
 std::unordered_map<GLuint, unsigned int> Texture2D::sm_textureIDCount;
 
-Texture2D::Texture2D(const FileSystem::Path& texturePath, uint32_t textureResolutionWidth, uint32_t textureResolutionHeight,
-    ETextureType textureType
-) : m_textureWidth(textureResolutionWidth), m_textureHeight(textureResolutionHeight)
+Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureType,
+    uint32_t atlasWidth, uint32_t atlasHeight
+) : m_atlasWidth(atlasWidth), m_atlasHeight(atlasHeight)
 {
-    if (sm_initiatedTextures[texturePath.getPath().data()].id > 0)
+    if (sm_initiatedTextures[texturePath.string().data()].id > 0)
     {
-        GLuint id = sm_initiatedTextures[texturePath.getPath().data()].id;
+        GLuint id = sm_initiatedTextures[texturePath.string().data()].id;
         if (id)
         {
             // setting up stored texture
             m_textureID = id;
-            m_textureCoords = sm_initiatedTextures[texturePath.getPath().data()].textureCoords;
+            m_textureCoords = sm_initiatedTextures[texturePath.string().data()].textureCoords;
             m_textureType = textureType;
 
             sm_textureIDCount[m_textureID]++;
@@ -28,8 +28,9 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, uint32_t textureResolu
         }
     }
 
+
     GLCall(glGenTextures(1, &m_textureID));
-    sm_initiatedTextures[texturePath.getPath().data()].id = m_textureID;
+    sm_initiatedTextures[texturePath.string().data()].id = m_textureID;
     m_textureType = textureType;
 
     sm_textureUnits[m_textureID] = sm_textureUnitCounter;
@@ -39,7 +40,7 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, uint32_t textureResolu
     int nrChannels;
     int desiredChannels = 0;
     unsigned char* data = stbi_load(
-        texturePath.getPath().data(), &m_pixelWidth, &m_pixelHeight, &nrChannels, desiredChannels);
+        texturePath.string().data(), &m_pixelWidth, &m_pixelHeight, &nrChannels, desiredChannels);
     
     if (data)
     {
@@ -66,7 +67,7 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, uint32_t textureResolu
     }
     else
     {
-        HNCRSP_LOG_ERROR(texturePath.getPath());
+        HNCRSP_LOG_ERROR(texturePath.string());
         HNCRSP_LOG_ERROR(fmt::format("Texture failed to load: {}", stbi_failure_reason()));
         stbi_image_free(data);
         HNCRSP_TERMINATE("Texture failed to load.");
@@ -81,8 +82,8 @@ Texture2D::Texture2D(const Texture2D& other)
 {
     m_pixelWidth = other.m_pixelWidth;
     m_pixelHeight = other.m_pixelHeight;
-    m_textureWidth = other.m_textureWidth;
-    m_textureHeight = other.m_textureHeight;
+    m_atlasWidth = other.m_atlasWidth;
+    m_atlasHeight = other.m_atlasHeight;
     m_textureType = other.m_textureType;
 
     path = other.path;
@@ -95,8 +96,8 @@ Texture2D& Texture2D::operator=(const Texture2D& other)
 {
     m_pixelWidth = other.m_pixelWidth;
     m_pixelHeight = other.m_pixelHeight;
-    m_textureWidth = other.m_textureWidth;
-    m_textureHeight = other.m_textureHeight;
+    m_atlasWidth = other.m_atlasWidth;
+    m_atlasHeight = other.m_atlasHeight;
     m_textureType = other.m_textureType;
 
     path = other.path;
@@ -111,8 +112,8 @@ Texture2D::Texture2D(Texture2D&& other) noexcept
 {
     m_pixelWidth = other.m_pixelWidth;
     m_pixelHeight = other.m_pixelHeight;
-    m_textureWidth = other.m_textureWidth;
-    m_textureHeight = other.m_textureHeight;
+    m_atlasWidth = other.m_atlasWidth;
+    m_atlasHeight = other.m_atlasHeight;
     m_textureType = other.m_textureType;
 
     m_textureCoords = std::move(other.m_textureCoords);
@@ -126,8 +127,8 @@ Texture2D& Texture2D::operator=(Texture2D&& other) noexcept
 {
     m_pixelWidth = other.m_pixelWidth;
     m_pixelHeight = other.m_pixelHeight;
-    m_textureWidth = other.m_textureWidth;
-    m_textureHeight = other.m_textureHeight;
+    m_atlasWidth = other.m_atlasWidth;
+    m_atlasHeight = other.m_atlasHeight;
     m_textureType = other.m_textureType;
 
     m_textureCoords = std::move(other.m_textureCoords);
@@ -141,6 +142,7 @@ Texture2D& Texture2D::operator=(Texture2D&& other) noexcept
 
 Texture2D::~Texture2D()
 {
+    if (m_textureID == 0) return;
     Delete();
 }
 
@@ -180,25 +182,8 @@ void Texture2D::Delete()
     }
 }
 
-/* texture maps */
-Texture2D Textures::mainTextureMap;
-Texture2D Textures::mainTextureSpecularMap;
-void Texture2D::LoadTextures()
-{
-    Textures::mainTextureMap = Texture2D(
-        FileSystem::Path("resources/textures/grass_textures.png"),
-        3, 1,
-        ETextureType::DIFFUSE
-    );
-    Textures::mainTextureSpecularMap = Texture2D(
-        FileSystem::Path("resources/textures/grass_textures_specular_map.png"),
-        3, 1,
-        ETextureType::SPECULAR
-    );
-}
-
 // we are storing textures in static lists so that must be deleted before going out of context
-void Texture2D::DeleteAllTextures()  // static
+void Texture2D::DeleteAllTextures()
 {
     for (auto iter = sm_textureIDCount.begin(); iter != sm_textureIDCount.end(); iter++)
     {
@@ -211,22 +196,22 @@ void Texture2D::DeleteAllTextures()  // static
 
 void Texture2D::GenerateTextureCoords()
 {
-    m_textureCoords.reserve(m_textureHeight);
+    m_textureCoords.reserve(m_atlasHeight);
 
     // Reminder: OpenGL has (0, 0) at Bottom left
-    for (int row = 0; row < m_textureHeight; row++)
+    for (unsigned int row = 0; row < (unsigned int)m_atlasHeight; row++)
     {
-        m_textureCoords.push_back(std::vector<TextureCoords>(m_textureWidth));
-        for (int col = 0; col < m_textureWidth; col++)
+        m_textureCoords.push_back(std::vector<TextureCoords>(m_atlasWidth));
+        for (unsigned int col = 0; col < (unsigned int)m_atlasWidth; col++)
         {
-            float topRow = 1.0f - (float)(row)/(m_textureHeight);         // flipping y-coords
-            float bottomRow = 1.0f - (float)(row + 1)/(m_textureHeight);
+            float topRow = 1.0f - (float)(row)/(m_atlasHeight);         // flipping y-coords
+            float bottomRow = 1.0f - (float)(row + 1)/(m_atlasHeight);
             
             m_textureCoords[row][col] = {
-                glm::vec2((float)(col    )/(m_textureWidth), topRow),     // tl
-                glm::vec2((float)(col + 1)/(m_textureWidth), topRow),     // tr
-                glm::vec2((float)(col    )/(m_textureWidth), bottomRow),  // bl
-                glm::vec2((float)(col + 1)/(m_textureWidth), bottomRow)   // br
+                glm::vec2((float)(col    )/(m_atlasWidth), topRow),     // tl
+                glm::vec2((float)(col + 1)/(m_atlasWidth), topRow),     // tr
+                glm::vec2((float)(col    )/(m_atlasWidth), bottomRow),  // bl
+                glm::vec2((float)(col + 1)/(m_atlasWidth), bottomRow)   // br
             };
         }
     }

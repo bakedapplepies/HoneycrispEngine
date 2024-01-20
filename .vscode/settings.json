@@ -102,5 +102,6 @@
         "typeindex": "cpp"
     },
     "cmake.generator": "Ninja",
+    "cmake.buildDirectory": "${workspaceFolder}/build/${buildType}",
     "C_Cpp.intelliSenseEngineFallback": "enabled"
 }

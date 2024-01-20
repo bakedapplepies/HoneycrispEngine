@@ -4,7 +4,7 @@
 
 #include "src/Scene.h"
 #include "src/Cube.h"
-#include "src/renderer/Texture.h"
+#include "src/core/Texture2DManager.h"
 #include "src/Model.h"
 #include "src/Cubemap.h"
 

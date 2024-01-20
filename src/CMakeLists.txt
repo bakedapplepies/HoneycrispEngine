@@ -11,6 +11,10 @@ set(SOURCE
     ${CMAKE_SOURCE_DIR}/src/utils/Terminate.cpp
     ${CMAKE_SOURCE_DIR}/src/utils/Assert.h
     ${CMAKE_SOURCE_DIR}/src/utils/Assert.cpp
+    ${CMAKE_SOURCE_DIR}/src/utils/Logging.h
+    ${CMAKE_SOURCE_DIR}/src/utils/Logging.cpp
+    ${CMAKE_SOURCE_DIR}/src/utils/FileSystem.h
+    ${CMAKE_SOURCE_DIR}/src/utils/FileSystem.cpp
 
     # OpenGL stuff
     ${CMAKE_SOURCE_DIR}/src/renderer/VertexBuffer.h
@@ -21,12 +25,14 @@ set(SOURCE
     ${CMAKE_SOURCE_DIR}/src/renderer/VertexArray.cpp
     ${CMAKE_SOURCE_DIR}/src/renderer/Shader.h
     ${CMAKE_SOURCE_DIR}/src/renderer/Shader.cpp
-    ${CMAKE_SOURCE_DIR}/src/renderer/Texture.h
-    ${CMAKE_SOURCE_DIR}/src/renderer/Texture.cpp
+    ${CMAKE_SOURCE_DIR}/src/renderer/Texture2D.h
+    ${CMAKE_SOURCE_DIR}/src/renderer/Texture2D.cpp
     ${CMAKE_SOURCE_DIR}/src/renderer/UniformBuffer.h
     ${CMAKE_SOURCE_DIR}/src/renderer/UniformBuffer.cpp
 
     # managers
+    ${CMAKE_SOURCE_DIR}/src/core/RenderContext.h
+    ${CMAKE_SOURCE_DIR}/src/core/RenderContext.cpp
     ${CMAKE_SOURCE_DIR}/src/core/SceneManager.h
     ${CMAKE_SOURCE_DIR}/src/core/SceneManager.cpp
     ${CMAKE_SOURCE_DIR}/src/core/Texture2DManager.h
@@ -35,8 +41,11 @@ set(SOURCE
     # types
     ${CMAKE_SOURCE_DIR}/src/types/Transform.h
     ${CMAKE_SOURCE_DIR}/src/types/Transform.cpp
+    ${CMAKE_SOURCE_DIR}/src/types/Singleton.h
 
     # Application stuff
+    ${CMAKE_SOURCE_DIR}/src/core/Material.h
+    ${CMAKE_SOURCE_DIR}/src/core/Material.cpp
     ${CMAKE_SOURCE_DIR}/src/ImGuiController.h
     ${CMAKE_SOURCE_DIR}/src/ImGuiController.cpp
     ${CMAKE_SOURCE_DIR}/src/Application.h
@@ -93,12 +102,11 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 )
 target_precompile_headers(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src/pch/pch.cpp ${CMAKE_SOURCE_DIR}/src/pch/pch.h)
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/lib)
-target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/build/vendor/glfw/src)
-target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/build/vendor/fmt)
+target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/vendor/glfw/src)
+target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/vendor/fmt)
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     GLAD
     glfw3
-    fmtd
     IMGUI
     STB_IMAGE
     OPENFBX
@@ -109,6 +117,13 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     kernel32
     shell32
 )
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE fmtd)
+    
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE fmt)
+
+endif()
 
 if (NOT EXISTS "${CMAKE_BINARY_DIR}/libassimp-5.dll")
     message("-- Copying assimp-5.dll")
