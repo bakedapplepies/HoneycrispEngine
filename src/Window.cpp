@@ -9,80 +9,17 @@
 
 HNCRSP_NAMESPACE_START
 
-Window::Window()
+void Window::StartUp(GLFWwindow* glfwWindow, RenderContext::CallbackData* callbackData)
 {
-    std::ios_base::sync_with_stdio(false);
-    std::cin.tie(0);
-    
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    /* Create and assign OpenGL window context */
-    const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-    callbackData.windowWidth = mode->width * 0.75f;
-    callbackData.windowHeight = mode->height * 0.75f;
-    glfwWindow = glfwCreateWindow(
-        callbackData.windowWidth,
-        callbackData.windowHeight,
-        "LearnOpenGL",
-        nullptr,
-        nullptr
-    );
-
-    if (glfwWindow == nullptr)
-    {
-        HNCRSP_TERMINATE("GLFW Window Initialization failed.");
-    }
-    glfwMakeContextCurrent(glfwWindow);
-    glfwSwapInterval(1);  // vsync
-
-
-    /* Initialize GLAD -> Only call OpenGL functions after this */
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        HNCRSP_TERMINATE("GLAD Initialization failed.");
-    }
-    HNCRSP_LOG_INFO("OpenGL (Core) ", glGetString(GL_VERSION));
-
-
-    /* Callbacks */
-    glfwSetWindowUserPointer(glfwWindow, &callbackData);
-
-    glfwSetErrorCallback(error_callback);
-    glfwSetCursorPosCallback(glfwWindow, mouse_callback);
-    glfwSetFramebufferSizeCallback(glfwWindow, framebuffer_size_callback);
-    glfwSetKeyCallback(glfwWindow, key_callback);
-
-    glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  // disable cursor
-
-    /* Depth, Stencil, Blending */
-    GLCall(glEnable(GL_DEPTH_TEST));
-    GLCall(glEnable(GL_CULL_FACE));
-    GLCall(glFrontFace(GL_CW));
-    GLCall(glCullFace(GL_BACK));
-
-    GLCall(glEnable(GL_STENCIL_TEST));
-
-    // GLCall(glEnable(GL_BLEND));
-
-    GLCall(glViewport(0, 0, callbackData.windowWidth, callbackData.windowHeight));
+    m_glfwWindow = glfwWindow;
+    m_callbackData = callbackData;
 
     projectionMatrix = glm::perspective(
         glm::radians(45.0f),
-        (float)callbackData.windowWidth/(float)callbackData.windowHeight,
+        (float)m_callbackData.windowWidth/(float)m_callbackData.windowHeight,
         0.1f,
         100.0f
     );
-
-    // ImGUI
-    IMGUI_CHECKVERSION();
-
-    ImGui::CreateContext();
-    ImGui_ImplOpenGL3_Init();
-    ImGui_ImplGlfw_InitForOpenGL(glfwWindow, true);
-
-    ImGui::StyleColorsDark();
 
     HNCRSP_LOG_INFO("Window Initialization done.");
 }
@@ -98,8 +35,8 @@ void Window::Loop()
 
 
     float begin = glfwGetTime();
-    Texture2DManager::mainTextureMap.Bind();
-    Texture2DManager::mainTextureSpecularMap.Bind();
+    Texture2DManager::mainTextureMap->Bind();
+    Texture2DManager::mainTextureSpecularMap->Bind();
     camera.SetPos(camera.cameraPos + glm::vec3(0, 10, 0));
 
     // view matrix, proj matrix, time
@@ -107,7 +44,7 @@ void Window::Loop()
     // viewPos, spotlightPos, spotlightDir
     UniformBuffer<glm::vec3, glm::vec3, glm::vec3> uboOther(1);
 
-    while(!glfwWindowShouldClose(glfwWindow))
+    while(!glfwWindowShouldClose(m_glfwWindow))
     {
         deltaTime = glfwGetTime() - begin;
         begin = glfwGetTime();
@@ -148,12 +85,12 @@ void Window::Loop()
         ImGui::End();
 
         // Update camera
-        camera.SetDirection(glm::normalize(callbackData.cameraDirection));
+        camera.SetDirection(glm::normalize(m_callbackData.cameraDirection));
 
-        // TODO: put in callbackData
+        // TODO: put in m_callbackData
         projectionMatrix = glm::perspective(
             glm::radians(45.0f),
-            (float)callbackData.windowWidth/(float)callbackData.windowHeight,
+            (float)m_callbackData.windowWidth/(float)m_callbackData.windowHeight,
             0.1f,
             100.0f
         );
@@ -181,19 +118,45 @@ void Window::Loop()
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
                 
-        glfwSwapBuffers(glfwWindow);
+        glfwSwapBuffers(m_glfwWindow);
         glfwPollEvents();
     }
 }
 
-
-Window::~Window()
+void Window::processInput()
 {
-    ImGui::Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
-}
+    if (glfwGetKey(m_glfwWindow, GLFW_KEY_W) == GLFW_PRESS)
+    {
+        camera.ChangePos(glm::normalize(glm::vec3(camera.direction.x, 0.0f, camera.direction.z)) * camera.speed * deltaTime);
+    }
 
+    if (glfwGetKey(m_glfwWindow, GLFW_KEY_S) == GLFW_PRESS)
+    {
+        camera.ChangePos(-glm::normalize(glm::vec3(camera.direction.x, 0.0f, camera.direction.z)) * camera.speed * deltaTime);
+    }
+
+    if (glfwGetKey(m_glfwWindow, GLFW_KEY_A) == GLFW_PRESS)
+    {
+        glm::vec3 direction = glm::normalize(glm::cross(camera.direction, camera.cameraUp));
+        camera.ChangePos(-glm::vec3(direction.x, 0.0f, direction.z) * camera.speed * deltaTime);
+    }
+
+    if (glfwGetKey(m_glfwWindow, GLFW_KEY_D) == GLFW_PRESS)
+    {
+        glm::vec3 direction = glm::normalize(glm::cross(camera.direction, camera.cameraUp));
+        camera.ChangePos(glm::vec3(direction.x, 0.0f, direction.z) * camera.speed * deltaTime);
+    }
+
+    if (glfwGetKey(m_glfwWindow, GLFW_KEY_SPACE) == GLFW_PRESS)
+    {
+        camera.ChangePos(glm::vec3(0.0f, 1.0f, 0.0f) * camera.speed * deltaTime);
+    }
+
+    if (glfwGetKey(m_glfwWindow, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+    {
+        camera.ChangePos(glm::vec3(0.0f, -1.0f, 0.0f) * camera.speed * deltaTime);
+    }
+}
 
 void Window::calcFPS()
 {
@@ -202,44 +165,9 @@ void Window::calcFPS()
     if (totalTime >= 1.0f)
     {
         std::string title = "LearnOpenGL - FPS: " + fmt::to_string(frames);
-        glfwSetWindowTitle(glfwWindow, title.c_str());
+        glfwSetWindowTitle(m_glfwWindow, title.c_str());
         frames = 0;
         totalTime = 0.0f;
-    }
-}
-
-void Window::processInput()
-{
-    if (glfwGetKey(glfwWindow, GLFW_KEY_W) == GLFW_PRESS)
-    {
-        camera.ChangePos(glm::normalize(glm::vec3(camera.direction.x, 0.0f, camera.direction.z)) * camera.speed * deltaTime);
-    }
-
-    if (glfwGetKey(glfwWindow, GLFW_KEY_S) == GLFW_PRESS)
-    {
-        camera.ChangePos(-glm::normalize(glm::vec3(camera.direction.x, 0.0f, camera.direction.z)) * camera.speed * deltaTime);
-    }
-
-    if (glfwGetKey(glfwWindow, GLFW_KEY_A) == GLFW_PRESS)
-    {
-        glm::vec3 direction = glm::normalize(glm::cross(camera.direction, camera.cameraUp));
-        camera.ChangePos(-glm::vec3(direction.x, 0.0f, direction.z) * camera.speed * deltaTime);
-    }
-
-    if (glfwGetKey(glfwWindow, GLFW_KEY_D) == GLFW_PRESS)
-    {
-        glm::vec3 direction = glm::normalize(glm::cross(camera.direction, camera.cameraUp));
-        camera.ChangePos(glm::vec3(direction.x, 0.0f, direction.z) * camera.speed * deltaTime);
-    }
-
-    if (glfwGetKey(glfwWindow, GLFW_KEY_SPACE) == GLFW_PRESS)
-    {
-        camera.ChangePos(glm::vec3(0.0f, 1.0f, 0.0f) * camera.speed * deltaTime);
-    }
-
-    if (glfwGetKey(glfwWindow, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-    {
-        camera.ChangePos(glm::vec3(0.0f, -1.0f, 0.0f) * camera.speed * deltaTime);
     }
 }
 

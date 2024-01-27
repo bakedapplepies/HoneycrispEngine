@@ -14,13 +14,14 @@ namespace Texture2DManager
     namespace
     {
         // TODO: see if this should be used (std::unordered_map)
-        static std::unordered_map<std::string, Texture2D> m_texture2Ds;
+        std::unordered_map<std::string, Texture2D> m_texture2Ds;
 
+        int m_maxTextureUnitsPerStage;
         // void Create
     }
 
-    extern Texture2D mainTextureMap;
-    extern Texture2D mainTextureSpecularMap;
+    extern std::unique_ptr<Texture2D> mainTextureMap;
+    extern std::unique_ptr<Texture2D> mainTextureSpecularMap;
 
     Texture2D& getTexture2D(
         const FileSystem::Path& path,
@@ -28,6 +29,8 @@ namespace Texture2DManager
         unsigned int atlasVerticalRes,
         unsigned int atlasHorizontalRes
     );
+
+    int getMaxTextureUnits();
 
     void StartUp();
     void ShutDown();

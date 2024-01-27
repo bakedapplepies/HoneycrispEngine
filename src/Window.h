@@ -1,32 +1,18 @@
 #pragma once
 
 #include "src/pch/pch.h"
+#include "src/core/RenderContext.h"
 #include "Camera.h"
 #include "renderer/UniformBuffer.h"
 
 
 HNCRSP_NAMESPACE_START
 
-struct CallbackData
-{
-    bool capFPS = true;
-    bool showMouse = false;
-    bool firstMouse = true;
-    int windowHeight;
-    int windowWidth;
-    float lastX;
-    float lastY;
-    float yaw = -90.0f;
-    float pitch = 0.0f;
-    float fov = 45.0f;
-    glm::vec3 cameraDirection = glm::vec3(0, 0, -1.0f);  // initial camera direction or it would look at origin by default
-};
-
 class Window
 {
 private:
-    GLFWwindow* glfwWindow;
-    CallbackData callbackData;
+    GLFWwindow* m_glfwWindow;
+    RenderContext::CallbackData m_callbackData;
     Camera camera = Camera(glm::vec3(0.0f, 5.0f, 0.0f));  // set initial direction in CallbackData
 
     glm::mat4 projectionMatrix;
@@ -36,15 +22,16 @@ private:
     float totalTime = 0;
     unsigned int frames = 0;
 
+public:
+    void StartUp(GLFWwindow* glfwWindow, RenderContext::CallbackData callbackData);
+    void Loop();
+    Window() = default;
+    ~Window() = default;
+
+
 private:
     void calcFPS();
     void processInput();
-
-public:
-    Window();
-    ~Window();
-
-    void Loop();
 };
 
 HNCRSP_NAMESPACE_END

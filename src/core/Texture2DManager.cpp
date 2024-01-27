@@ -3,8 +3,8 @@
 
 HNCRSP_NAMESPACE_START
 
-Texture2D Texture2DManager::mainTextureMap;
-Texture2D Texture2DManager::mainTextureSpecularMap;
+std::unique_ptr<Texture2D> Texture2DManager::mainTextureMap;
+std::unique_ptr<Texture2D> Texture2DManager::mainTextureSpecularMap;
 
 Texture2D& Texture2DManager::getTexture2D(
     const FileSystem::Path& path,
@@ -18,17 +18,23 @@ Texture2D& Texture2DManager::getTexture2D(
     return m_texture2Ds[path.string()];
 }
 
+int Texture2DManager::getMaxTextureUnits()
+{
+    return m_maxTextureUnitsPerStage;
+}
+
 void Texture2DManager::StartUp()
 {
     stbi_set_flip_vertically_on_load(true);
 
+    GLCall(glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_maxTextureUnitsPerStage));
 
-    mainTextureMap = Texture2D(
+    mainTextureMap = std::make_unique<Texture2D>(
         FileSystem::Path("resources/textures/grass_textures.png"),
         ETextureType::DIFFUSE,
         3, 1
     );
-    mainTextureSpecularMap = Texture2D(
+    mainTextureSpecularMap = std::make_unique<Texture2D>(
         FileSystem::Path("resources/textures/grass_textures_specular_map.png"),
         ETextureType::SPECULAR,
         3, 1
@@ -38,7 +44,11 @@ void Texture2DManager::StartUp()
 void Texture2DManager::ShutDown()
 {
     // m_texture2Ds.clear();
-    Texture2D::DeleteAllTextures();
+    // HNCRSP_LOG_INFO("111111111");
+    // Texture2D::DeleteAllTextures();
+    // HNCRSP_LOG_INFO("222222222");
+    mainTextureMap.reset();
+    mainTextureSpecularMap.reset();
 }
 
 HNCRSP_NAMESPACE_END

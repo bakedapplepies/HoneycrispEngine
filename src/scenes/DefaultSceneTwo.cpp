@@ -15,7 +15,7 @@ DefaultSceneTwo::DefaultSceneTwo()
     cube->addTransform(Transform(glm::vec3(3.0f, 2.0f ,1.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
     cube->addTransform(Transform(glm::vec3(-5.0f, -2.0f ,3.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
 
-    TextureCoords& grassUV = Texture2DManager::mainTextureMap.GetTextureCoords(0, 0);
+    TextureCoords& grassUV = Texture2DManager::mainTextureMap->GetTextureCoords(0, 0);
     unsigned int width = 50, height = 50;
     unsigned int vertW = width+1, vertH = height+1;
     unsigned int totalVerts = vertW * vertH;
@@ -129,8 +129,8 @@ void DefaultSceneTwo::InitializeShaders(void)
 void DefaultSceneTwo::SetInitialUniforms(void)
 {
     // lighting
-    shader->setIntUniform("u_material.albedo", Texture2DManager::mainTextureMap.getTextureUnit());
-    shader->setIntUniform("u_material.specular", Texture2DManager::mainTextureSpecularMap.getTextureUnit());
+    shader->setIntUniform("u_material.albedo", Texture2DManager::mainTextureMap->getTextureUnit());
+    shader->setIntUniform("u_material.specular", Texture2DManager::mainTextureSpecularMap->getTextureUnit());
     shader->setFloatUniform("u_material.shininess", 32.0f);
 
     // dir light
@@ -159,8 +159,8 @@ void DefaultSceneTwo::SetInitialUniforms(void)
     shader->setFloatUniform("u_spotLight.quadratic", 0.0045f);
     
     // lighting
-    wackyShader->setIntUniform("u_material.albedo", Texture2DManager::mainTextureMap.getTextureUnit());
-    wackyShader->setIntUniform("u_material.specular", Texture2DManager::mainTextureSpecularMap.getTextureUnit());
+    wackyShader->setIntUniform("u_material.albedo", Texture2DManager::mainTextureMap->getTextureUnit());
+    wackyShader->setIntUniform("u_material.specular", Texture2DManager::mainTextureSpecularMap->getTextureUnit());
     wackyShader->setFloatUniform("u_material.shininess", 32.0f);
 
     // dir light

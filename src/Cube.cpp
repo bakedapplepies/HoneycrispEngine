@@ -134,9 +134,9 @@ void Cube::InitializeAttributeData()
         glm::vec3(0.0f, -1.0f,  0.0f), 
     };
 
-    TextureCoords& grassSideCoords = Texture2DManager::mainTextureMap.GetTextureCoords(1, 0);
-    TextureCoords& grassTopCoords = Texture2DManager::mainTextureMap.GetTextureCoords(0, 0);
-    TextureCoords& dirtCoords = Texture2DManager::mainTextureMap.GetTextureCoords(2, 0);
+    TextureCoords& grassSideCoords = Texture2DManager::mainTextureMap->GetTextureCoords(1, 0);
+    TextureCoords& grassTopCoords = Texture2DManager::mainTextureMap->GetTextureCoords(0, 0);
+    TextureCoords& dirtCoords = Texture2DManager::mainTextureMap->GetTextureCoords(2, 0);
 
     _uvs = std::vector<glm::vec2> {
         // top

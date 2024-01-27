@@ -34,7 +34,7 @@ private:
     uint32_t m_atlasWidth;
     uint32_t m_atlasHeight;
     
-    GLuint m_textureID;  // can't be set to 0 due to opengl
+    GLuint m_textureID;
     ETextureType m_textureType;
     std::string path;
     std::vector< std::vector<TextureCoords> > m_textureCoords;

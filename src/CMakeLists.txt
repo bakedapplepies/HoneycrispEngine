@@ -31,12 +31,16 @@ set(SOURCE
     ${CMAKE_SOURCE_DIR}/src/renderer/UniformBuffer.cpp
 
     # managers
+    ${CMAKE_SOURCE_DIR}/src/core/GLFWContext.h
+    ${CMAKE_SOURCE_DIR}/src/core/GLFWContext.cpp
     ${CMAKE_SOURCE_DIR}/src/core/RenderContext.h
     ${CMAKE_SOURCE_DIR}/src/core/RenderContext.cpp
     ${CMAKE_SOURCE_DIR}/src/core/SceneManager.h
     ${CMAKE_SOURCE_DIR}/src/core/SceneManager.cpp
     ${CMAKE_SOURCE_DIR}/src/core/Texture2DManager.h
     ${CMAKE_SOURCE_DIR}/src/core/Texture2DManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/core/ImGuiManager.h
+    ${CMAKE_SOURCE_DIR}/src/core/ImGuiManager.cpp
 
     # types
     ${CMAKE_SOURCE_DIR}/src/types/Transform.h
@@ -46,8 +50,6 @@ set(SOURCE
     # Application stuff
     ${CMAKE_SOURCE_DIR}/src/core/Material.h
     ${CMAKE_SOURCE_DIR}/src/core/Material.cpp
-    ${CMAKE_SOURCE_DIR}/src/ImGuiController.h
-    ${CMAKE_SOURCE_DIR}/src/ImGuiController.cpp
     ${CMAKE_SOURCE_DIR}/src/Application.h
     ${CMAKE_SOURCE_DIR}/src/Application.cpp
     ${CMAKE_SOURCE_DIR}/src/Camera.h

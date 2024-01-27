@@ -12,14 +12,14 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureTy
     uint32_t atlasWidth, uint32_t atlasHeight
 ) : m_atlasWidth(atlasWidth), m_atlasHeight(atlasHeight)
 {
-    if (sm_initiatedTextures[texturePath.string().data()].id > 0)
+    if (sm_initiatedTextures[texturePath.string()].id > 0)
     {
-        GLuint id = sm_initiatedTextures[texturePath.string().data()].id;
+        GLuint id = sm_initiatedTextures[texturePath.string()].id;
         if (id)
         {
             // setting up stored texture
             m_textureID = id;
-            m_textureCoords = sm_initiatedTextures[texturePath.string().data()].textureCoords;
+            m_textureCoords = sm_initiatedTextures[texturePath.string()].textureCoords;
             m_textureType = textureType;
 
             sm_textureIDCount[m_textureID]++;
@@ -30,7 +30,7 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureTy
 
 
     GLCall(glGenTextures(1, &m_textureID));
-    sm_initiatedTextures[texturePath.string().data()].id = m_textureID;
+    sm_initiatedTextures[texturePath.string()].id = m_textureID;
     m_textureType = textureType;
 
     sm_textureUnits[m_textureID] = sm_textureUnitCounter;
@@ -167,13 +167,15 @@ void Texture2D::Bind() const
     GLCall(glBindTexture(GL_TEXTURE_2D, m_textureID));
 }
 
-void Texture2D::Unbind() const  // could be static
+void Texture2D::Unbind() const
 {
     GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
 void Texture2D::Delete()
 {
+    if (sm_textureIDCount[m_textureID] == 0) return;
+
     if (--sm_textureIDCount[m_textureID] == 0)  // only all textures with the same ID are gone then do this
     {
         if (m_textureID) GLCall(glDeleteTextures(1, &m_textureID));

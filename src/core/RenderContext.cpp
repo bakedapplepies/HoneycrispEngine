@@ -3,20 +3,58 @@
 
 HNCRSP_NAMESPACE_START
 
-void RenderContext::StartUp()
+[[nodiscard]] WindowPtr_and_CallbackData RenderContext::StartUp_GetWindow()
 {
-    if (m_alreadyStarted)
-        return;
-        
-    if(!glfwInit())
-    {
-        HNCRSP_TERMINATE("GLFW Initialization failed.");
-    }
-}
+    /* Create and assign OpenGL window context */
+    const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    callbackData.windowWidth = mode->width * 0.75f;
+    callbackData.windowHeight = mode->height * 0.75f;
+    GLFWwindow* glfwWindow = glfwCreateWindow(
+        callbackData.windowWidth,
+        callbackData.windowHeight,
+        "LearnOpenGL",
+        nullptr,
+        nullptr
+    );
 
-void RenderContext::ShutDown()
-{
-    glfwTerminate();
+    if (glfwWindow == nullptr)
+    {
+        HNCRSP_TERMINATE("GLFW Window Initialization failed.");
+    }
+    glfwMakeContextCurrent(glfwWindow);
+    glfwSwapInterval(1);  // vsync
+
+    /* Callbacks */
+    glfwSetErrorCallback(error_callback);
+    glfwSetCursorPosCallback(glfwWindow, mouse_callback);
+    glfwSetFramebufferSizeCallback(glfwWindow, framebuffer_size_callback);
+    glfwSetKeyCallback(glfwWindow, key_callback);
+
+    glfwSetWindowUserPointer(glfwWindow, &callbackData);
+    glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  // disable cursor
+
+    /* Initialize GLAD -> Only call OpenGL functions after this */
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        HNCRSP_TERMINATE("GLAD Initialization failed.");
+    }
+    HNCRSP_LOG_INFO("OpenGL (Core) ", glGetString(GL_VERSION));
+
+    /* Depth, Stencil, Blending */
+    // depth test
+    GLCall(glEnable(GL_DEPTH_TEST));
+    // cull faces
+    GLCall(glEnable(GL_CULL_FACE));
+    GLCall(glFrontFace(GL_CW));
+    GLCall(glCullFace(GL_BACK));
+    // stencil test
+    GLCall(glEnable(GL_STENCIL_TEST));
+    // blending
+    // GLCall(glEnable(GL_BLEND));
+
+    GLCall(glViewport(0, 0, callbackData.windowWidth, callbackData.windowHeight));
+
+    return { glfwWindow, callbackData };
 }
 
 HNCRSP_NAMESPACE_END

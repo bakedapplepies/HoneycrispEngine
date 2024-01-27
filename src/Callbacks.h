@@ -3,13 +3,14 @@
 #include "src/pch/pch.h"
 
 #include "Window.h"
+#include "src/core/SceneManager.h"
 
 
 HNCRSP_NAMESPACE_START
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-    static CallbackData* callbackData = static_cast<CallbackData*>(glfwGetWindowUserPointer(window));
+    static Window::CallbackData* callbackData = static_cast<Window::CallbackData*>(glfwGetWindowUserPointer(window));
     glViewport(0, 0, width, height);
     callbackData->windowWidth = width;
     callbackData->windowHeight = height;  // to reconstruct perspective matrix
@@ -23,7 +24,7 @@ void error_callback(int error, const char* msg)
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    static CallbackData* callbackData = static_cast<CallbackData*>(glfwGetWindowUserPointer(window));
+    static Window::CallbackData* callbackData = static_cast<Window::CallbackData*>(glfwGetWindowUserPointer(window));
 
     if (action == GLFW_PRESS)
     {
@@ -88,7 +89,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 void mouse_callback(GLFWwindow* window, double xpos_double, double ypos_double)
 {
-    static CallbackData* callbackData = static_cast<CallbackData*>(glfwGetWindowUserPointer(window));
+    static Window::CallbackData* callbackData = static_cast<Window::CallbackData*>(glfwGetWindowUserPointer(window));
     
     if (!callbackData->showMouse)
     {
