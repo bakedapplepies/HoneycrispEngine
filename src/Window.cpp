@@ -64,6 +64,8 @@ void Window::Loop()
         ImGui_ImplOpenGL3_NewFrame(); 
         ImGui::NewFrame();
 
+        ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
+        ImGui::SetNextWindowSize(ImVec2(100.0f, 100.0f));
         ImGui::Begin("Settings");
         static float lightSizeScale = 0.2f;
         static float waveSpeed = 1.0f;
@@ -74,9 +76,6 @@ void Window::Loop()
         ImGui::Text("Rendering time: %fms (%f%%)", renderingTime * 1000, renderingTime/deltaTime*100);
         ImGui::Text("Total time: %fms", deltaTime * 1000);
 
-        ImGui::End();
-
-        ImGui::Begin("Settings2");
         static glm::vec3 lightColor = glm::vec3(0.0f);
         static glm::vec3 lightDir = glm::vec3(1.0f);
         ImGui::SliderFloat3("Light Color", glm::value_ptr(lightColor), 0.0f, 1.0f);

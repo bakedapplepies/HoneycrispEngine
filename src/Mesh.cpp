@@ -234,19 +234,19 @@ void Mesh::Draw(std::shared_ptr<Shader> shader) const
         textures[i]->Bind();
         if (textures[i]->getTextureType() == ETextureType::DIFFUSE)
         {
-            shader->setIntUniform("u_material.albedo", textures[i]->getTextureUnit());
+            shader->setIntUnf("u_material.albedo", textures[i]->getTextureUnit());
         }
         else if (textures[i]->getTextureType() == ETextureType::SPECULAR)
         {
-            shader->setIntUniform("u_material.specular", textures[i]->getTextureUnit());
+            shader->setIntUnf("u_material.specular", textures[i]->getTextureUnit());
         }
     }
 
     for (const Transform& i_transform : transforms)
     {
         glm::mat4 modelMatrix = GetModelMatrix(i_transform);
-        shader->setMatrix3Uniform("u_normalMatrix", glm::mat3(glm::transpose(glm::inverse(modelMatrix))));
-        shader->setMatrix4Uniform("u_model", modelMatrix);
+        shader->setMat3Unf("u_normalMatrix", glm::mat3(glm::transpose(glm::inverse(modelMatrix))));
+        shader->setMat4Unf("u_model", modelMatrix);
         GLCall( glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (GLvoid*)0) );
     }
 }

@@ -31,11 +31,11 @@ public:
     void Use() const;
 
     GLint getUniformLocation(const std::string& name) const;
-    void setIntUniform(const std::string& name, int value) const;
-    void setFloatUniform(const std::string& name, float value) const;
-    void setMatrix4Uniform(const std::string& name, const glm::mat4& matrix) const;
-    void setMatrix3Uniform(const std::string& name, const glm::mat3& matrix) const;
-    void setVector3Uniform(const std::string& name, const glm::vec3& vector) const;
+    void setIntUnf(const std::string& name, int value) const;
+    void setFloatUnf(const std::string& name, float value) const;
+    void setMat4Unf(const std::string& name, const glm::mat4& matrix) const;
+    void setMat3Unf(const std::string& name, const glm::mat3& matrix) const;
+    void setVec3Unf(const std::string& name, const glm::vec3& vector) const;
 };
 
 HNCRSP_NAMESPACE_END

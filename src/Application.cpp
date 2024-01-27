@@ -26,6 +26,8 @@ void Application::Run()
     ImGuiManager::ShutDown();
     SceneManager::Get().ClearAllScenes();
     GLFWContext::ShutDown();
+
+    // Window object can be deleted of the stack easily
 }
 
 HNCRSP_NAMESPACE_END

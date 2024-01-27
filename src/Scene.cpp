@@ -73,7 +73,7 @@ void Scene::Draw(void) const
                 FileSystem::Path("resources/shaders/CubemapVertex.glsl"),
                 FileSystem::Path("resources/shaders/CubemapFragment.glsl")
             );
-            m_cubemapShader->setIntUniform("cubemap", 10);
+            m_cubemapShader->setIntUnf("cubemap", 10);
         }
         m_cubemap->Draw(m_cubemapShader);
     }

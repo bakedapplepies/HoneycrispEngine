@@ -165,17 +165,17 @@ GLint Shader::getUniformLocation(const std::string& name) const
     return location;
 }
 
-void Shader::setIntUniform(const std::string& name, int value) const
+void Shader::setIntUnf(const std::string& name, int value) const
 {
     GLCall(glProgramUniform1i(m_shaderID, getUniformLocation(name), value));
 }
 
-void Shader::setFloatUniform(const std::string& name, float value) const
+void Shader::setFloatUnf(const std::string& name, float value) const
 {
     GLCall(glProgramUniform1f(m_shaderID, getUniformLocation(name), value));
 }
 
-void Shader::setMatrix4Uniform(const std::string& name, const glm::mat4& matrix) const
+void Shader::setMat4Unf(const std::string& name, const glm::mat4& matrix) const
 {
     GLCall(glProgramUniformMatrix4fv(
         m_shaderID,
@@ -186,7 +186,7 @@ void Shader::setMatrix4Uniform(const std::string& name, const glm::mat4& matrix)
     ));
 }
 
-void Shader::setMatrix3Uniform(const std::string& name, const glm::mat3& matrix) const
+void Shader::setMat3Unf(const std::string& name, const glm::mat3& matrix) const
 {
     GLCall(glProgramUniformMatrix3fv(
         m_shaderID,
@@ -197,7 +197,7 @@ void Shader::setMatrix3Uniform(const std::string& name, const glm::mat3& matrix)
     ));
 }
 
-void Shader::setVector3Uniform(const std::string& name, const glm::vec3& vector) const
+void Shader::setVec3Unf(const std::string& name, const glm::vec3& vector) const
 {
     GLCall(glProgramUniform3fv(
         m_shaderID,

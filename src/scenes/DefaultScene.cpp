@@ -176,32 +176,32 @@ void DefaultScene::onUpdate()
 void DefaultScene::SetInitialUniforms(void)
 {
     // lighting
-    shader->setIntUniform("u_material.albedo", Texture2DManager::mainTextureMap->getTextureUnit());
-    shader->setIntUniform("u_material.specular", Texture2DManager::mainTextureSpecularMap->getTextureUnit());
-    shader->setFloatUniform("u_material.shininess", 32.0f);
+    shader->setIntUnf("u_material.albedo", Texture2DManager::mainTextureMap->getTextureUnit());
+    shader->setIntUnf("u_material.specular", Texture2DManager::mainTextureSpecularMap->getTextureUnit());
+    shader->setFloatUnf("u_material.shininess", 32.0f);
 
     // dir light
-    shader->setVector3Uniform("u_dirLight.direction", glm::normalize(glm::vec3(0, -1, 0)));
-    shader->setVector3Uniform("u_dirLight.ambient", glm::vec3(1, 1, 1) * 0.1f);
-    shader->setVector3Uniform("u_dirLight.diffuse", glm::vec3(1, 1, 1) * 0.7f);
-    shader->setVector3Uniform("u_dirLight.specular", glm::vec3(1, 1, 1));
+    shader->setVec3Unf("u_dirLight.direction", glm::normalize(glm::vec3(0, -1, 0)));
+    shader->setVec3Unf("u_dirLight.ambient", glm::vec3(1, 1, 1) * 0.1f);
+    shader->setVec3Unf("u_dirLight.diffuse", glm::vec3(1, 1, 1) * 0.7f);
+    shader->setVec3Unf("u_dirLight.specular", glm::vec3(1, 1, 1));
 
     // point light
-    shader->setVector3Uniform("u_pointLight.position", glm::vec3(10, 2, 10));
-    shader->setVector3Uniform("u_pointLight.ambient", 0.1f * glm::vec3(1.0));
-    shader->setVector3Uniform("u_pointLight.diffuse", 0.5f * glm::vec3(1.0));
-    shader->setVector3Uniform("u_pointLight.specular", 1.0f * glm::vec3(1.0));
-    shader->setFloatUniform("u_pointLight.constant", 1.0f);
-    shader->setFloatUniform("u_pointLight.linear", 0.001f);
-    shader->setFloatUniform("u_pointLight.quadratic", 0.0002f);
+    shader->setVec3Unf("u_pointLight.position", glm::vec3(10, 2, 10));
+    shader->setVec3Unf("u_pointLight.ambient", 0.1f * glm::vec3(1.0));
+    shader->setVec3Unf("u_pointLight.diffuse", 0.5f * glm::vec3(1.0));
+    shader->setVec3Unf("u_pointLight.specular", 1.0f * glm::vec3(1.0));
+    shader->setFloatUnf("u_pointLight.constant", 1.0f);
+    shader->setFloatUnf("u_pointLight.linear", 0.001f);
+    shader->setFloatUnf("u_pointLight.quadratic", 0.0002f);
 
     // spot light
-    shader->setFloatUniform("u_spotLight.cutOff", glm::cos(glm::radians(15.0f)));
-    shader->setFloatUniform("u_spotLight.outerCutOff", glm::cos(glm::radians(25.0f)));
-    shader->setVector3Uniform("u_spotLight.ambient", 0.1f * glm::vec3(1.0));
-    shader->setVector3Uniform("u_spotLight.diffuse", 0.5f * glm::vec3(1.0));
-    shader->setVector3Uniform("u_spotLight.specular", 1.0f * glm::vec3(1.0));
-    shader->setFloatUniform("u_spotLight.constant", 1.0f);
-    shader->setFloatUniform("u_spotLight.linear", 0.07f);
-    shader->setFloatUniform("u_spotLight.quadratic", 0.0045f);
+    shader->setFloatUnf("u_spotLight.cutOff", glm::cos(glm::radians(15.0f)));
+    shader->setFloatUnf("u_spotLight.outerCutOff", glm::cos(glm::radians(25.0f)));
+    shader->setVec3Unf("u_spotLight.ambient", 0.1f * glm::vec3(1.0));
+    shader->setVec3Unf("u_spotLight.diffuse", 0.5f * glm::vec3(1.0));
+    shader->setVec3Unf("u_spotLight.specular", 1.0f * glm::vec3(1.0));
+    shader->setFloatUnf("u_spotLight.constant", 1.0f);
+    shader->setFloatUnf("u_spotLight.linear", 0.07f);
+    shader->setFloatUnf("u_spotLight.quadratic", 0.0045f);
 }
