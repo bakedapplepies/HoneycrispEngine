@@ -3,7 +3,7 @@
 
 HNCRSP_NAMESPACE_START
 
-[[nodiscard]] WindowPtr_and_CallbackData RenderContext::StartUp_GetWindow()
+[[nodiscard]] RenderContext::WindowPtr_and_CallbackDataPtr RenderContext::StartUp_GetWindow()
 {
     /* Create and assign OpenGL window context */
     const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -54,7 +54,7 @@ HNCRSP_NAMESPACE_START
 
     GLCall(glViewport(0, 0, callbackData.windowWidth, callbackData.windowHeight));
 
-    return { glfwWindow, callbackData };
+    return { glfwWindow, &callbackData };
 }
 
 HNCRSP_NAMESPACE_END

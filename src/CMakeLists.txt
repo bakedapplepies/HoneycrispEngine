@@ -50,6 +50,8 @@ set(SOURCE
     # Application stuff
     ${CMAKE_SOURCE_DIR}/src/core/Material.h
     ${CMAKE_SOURCE_DIR}/src/core/Material.cpp
+    ${CMAKE_SOURCE_DIR}/src/Callbacks.h
+    ${CMAKE_SOURCE_DIR}/src/Callbacks.cpp
     ${CMAKE_SOURCE_DIR}/src/Application.h
     ${CMAKE_SOURCE_DIR}/src/Application.cpp
     ${CMAKE_SOURCE_DIR}/src/Camera.h

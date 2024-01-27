@@ -8,6 +8,8 @@ HNCRSP_NAMESPACE_START
 
 namespace RenderContext
 {
+    // ===== Data types =====
+    
     struct CallbackData
     {
         bool capFPS = true;
@@ -23,18 +25,20 @@ namespace RenderContext
         glm::vec3 cameraDirection = glm::vec3(0, 0, -1.0f);  // initial camera direction or it would look at origin by default
     };
 
-    struct WindowPtr_and_CallbackData
+    struct WindowPtr_and_CallbackDataPtr
     {
         GLFWwindow* glfwWindow;
-        CallbackData callbackData;
+        CallbackData* callbackData;
     };
+
+    // ===== Namespace stuff =====
 
     namespace
     {
         CallbackData callbackData;
     }
 
-    [[nodiscard]] WindowPtr_and_CallbackData StartUp_GetWindow();
+    [[nodiscard]] WindowPtr_and_CallbackDataPtr StartUp_GetWindow();
 }
 
 HNCRSP_NAMESPACE_END

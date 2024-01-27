@@ -16,14 +16,13 @@ void Window::StartUp(GLFWwindow* glfwWindow, RenderContext::CallbackData* callba
 
     projectionMatrix = glm::perspective(
         glm::radians(45.0f),
-        (float)m_callbackData.windowWidth/(float)m_callbackData.windowHeight,
+        (float)m_callbackData->windowWidth/(float)m_callbackData->windowHeight,
         0.1f,
         100.0f
     );
 
     HNCRSP_LOG_INFO("Window Initialization done.");
 }
-
 
 void Window::Loop()
 {
@@ -85,12 +84,12 @@ void Window::Loop()
         ImGui::End();
 
         // Update camera
-        camera.SetDirection(glm::normalize(m_callbackData.cameraDirection));
+        camera.SetDirection(glm::normalize(m_callbackData->cameraDirection));
 
         // TODO: put in m_callbackData
         projectionMatrix = glm::perspective(
             glm::radians(45.0f),
-            (float)m_callbackData.windowWidth/(float)m_callbackData.windowHeight,
+            (float)m_callbackData->windowWidth/(float)m_callbackData->windowHeight,
             0.1f,
             100.0f
         );
