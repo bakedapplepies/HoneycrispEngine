@@ -9,12 +9,13 @@
 
 HNCRSP_NAMESPACE_START
 
-// dependencies can be distributed via depedency injection
+// get dependencies via depedency injection
 void Application::Run()
 {    
     GLFWContext::StartUp();
-    // GLFWwindow* and CallbackData*
-    auto [glfwWindow, callbackData] = RenderContext::StartUp_GetWindow();
+    auto [glfwWindow, callbackData] = RenderContext::WindowPtr_and_CallbackDataPtr {
+        RenderContext::StartUp_GetWindow()
+    };
     Window window;
     window.StartUp(glfwWindow, callbackData);
     ImGuiManager::StartUp(glfwWindow);

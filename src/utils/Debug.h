@@ -1,7 +1,5 @@
 #pragma once
 
-#include "src/pch/pch.h"
-
 
 #ifdef HNCRSP_DEBUG
     #define GLCall(x) GLClearError();\

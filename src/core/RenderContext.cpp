@@ -52,7 +52,7 @@ HNCRSP_NAMESPACE_START
     // blending
     // GLCall(glEnable(GL_BLEND));
 
-    GLCall(glViewport(0, 0, callbackData.windowWidth, callbackData.windowHeight));
+    GLCall(glViewport(500, 0, callbackData.windowWidth-500, callbackData.windowHeight));
 
     return { glfwWindow, &callbackData };
 }

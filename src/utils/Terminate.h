@@ -1,7 +1,5 @@
 #pragma once
 
-#include "src/pch/pch.h"
-
 
 #define HNCRSP_TERMINATE(msg) Honeycrisp::terminate(msg, __FILE__, __LINE__);
 

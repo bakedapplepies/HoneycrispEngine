@@ -40,6 +40,6 @@ if (NOT EXISTS "${CMAKE_SOURCE_DIR}/vendor/assimp/include/assimp/config.h")
     message("-- Building assimp")
     execute_process(
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/vendor/assimp
-        COMMAND cmake . -G "Ninja"
+        COMMAND cmake . -G "Ninja" -DASSIMP_BUILD_NO_EXPORT
     )
 endif()

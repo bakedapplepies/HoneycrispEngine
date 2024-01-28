@@ -20,7 +20,7 @@ private:
 
     bool continueProgram = true;
     float deltaTime;
-    float totalTime = 0;
+    float totalTime = 0.0f;
     unsigned int frames = 0;
 
 public:

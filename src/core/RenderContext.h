@@ -13,15 +13,20 @@ namespace RenderContext
     struct CallbackData
     {
         bool capFPS = true;
+
         bool showMouse = false;
         bool firstMouse = true;
-        int windowHeight;
-        int windowWidth;
         float lastX;
         float lastY;
         float yaw = -90.0f;
         float pitch = 0.0f;
         float fov = 45.0f;
+
+        int windowWidth;
+        int windowHeight;
+        int viewportWidth;
+        int viewportHeight;
+
         glm::vec3 cameraDirection = glm::vec3(0, 0, -1.0f);  // initial camera direction or it would look at origin by default
     };
 

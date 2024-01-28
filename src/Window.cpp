@@ -64,22 +64,31 @@ void Window::Loop()
         ImGui_ImplOpenGL3_NewFrame(); 
         ImGui::NewFrame();
 
-        ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
-        ImGui::SetNextWindowSize(ImVec2(100.0f, 100.0f));
+        ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Once);
+        ImGui::SetNextWindowSize(ImVec2(500.0f, 1000.0f), ImGuiCond_Once);
         ImGui::Begin("Settings");
+
+        HNCRSP_LOG_INFO(ImGui::GetWindowWidth());
+        HNCRSP_LOG_INFO(ImGui::GetWindowHeight());
+
         static float lightSizeScale = 0.2f;
-        static float waveSpeed = 1.0f;
-        static float renderingTime = 0.0f;
-        
         ImGui::SliderFloat("Light Size", &lightSizeScale, 0.0f, 1.0f);
+        
+        static float waveSpeed = 1.0f;
         ImGui::SliderFloat("Wave Speed", &waveSpeed, 0.0f, 10.0f);
+
+        static float renderingTime = 0.0f;
         ImGui::Text("Rendering time: %fms (%f%%)", renderingTime * 1000, renderingTime/deltaTime*100);
         ImGui::Text("Total time: %fms", deltaTime * 1000);
 
         static glm::vec3 lightColor = glm::vec3(0.0f);
-        static glm::vec3 lightDir = glm::vec3(1.0f);
         ImGui::SliderFloat3("Light Color", glm::value_ptr(lightColor), 0.0f, 1.0f);
+        
+        static glm::vec3 lightDir = glm::vec3(1.0f);
         ImGui::SliderFloat3("Light Dir", glm::value_ptr(lightDir), 0.0f, 1.0f);
+
+        // ImGui::Image();
+        
         ImGui::End();
 
         // Update camera
@@ -88,7 +97,7 @@ void Window::Loop()
         // TODO: put in m_callbackData
         projectionMatrix = glm::perspective(
             glm::radians(45.0f),
-            (float)m_callbackData->windowWidth/(float)m_callbackData->windowHeight,
+            (float)(m_callbackData->windowWidth - 500.0f)/(float)m_callbackData->windowHeight,
             0.1f,
             100.0f
         );
