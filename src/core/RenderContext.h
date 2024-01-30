@@ -36,13 +36,6 @@ namespace RenderContext
         CallbackData* callbackData;
     };
 
-    // ===== Namespace stuff =====
-
-    namespace
-    {
-        CallbackData callbackData;
-    }
-
     [[nodiscard]] WindowPtr_and_CallbackDataPtr StartUp_GetWindow();
 }
 

@@ -11,15 +11,6 @@ HNCRSP_NAMESPACE_START
 // Manages texture retrieving
 namespace Texture2DManager
 {
-    namespace
-    {
-        // TODO: see if this should be used (std::unordered_map)
-        std::unordered_map<std::string, Texture2D> m_texture2Ds;
-
-        int m_maxTextureUnitsPerStage;
-        // void Create
-    }
-
     extern std::unique_ptr<Texture2D> mainTextureMap;
     extern std::unique_ptr<Texture2D> mainTextureSpecularMap;
 

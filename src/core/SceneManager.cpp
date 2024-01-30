@@ -17,7 +17,15 @@ SceneManager& SceneManager::Get()
 void SceneManager::Update()
 {
     // maybe add if-statements to check availability
-    m_scenesMap[m_activeSceneIndex]->onUpdate();
+    // or assert
+    // but this function is called every frame so it's expensive
+    m_scenesMap[m_activeSceneIndex]->OnUpdate();
+}
+
+void SceneManager::UpdateImGui()
+{
+    // same comment as this->Update
+    m_scenesMap[m_activeSceneIndex]->OnImGui();
 }
 
 void SceneManager::ClearAllScenes()

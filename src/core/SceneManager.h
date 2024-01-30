@@ -24,7 +24,6 @@ public:
     void SetSceneBgColor(const glm::vec3& bgColor);
     glm::vec3 GetSceneBgColor();
 
-public:
     template <typename T>
     void CreateScene(T&& t, size_t index)
     {
@@ -40,6 +39,7 @@ public:
 
     static SceneManager& Get();
     void Update();
+    void UpdateImGui();
     void ClearAllScenes();
     void SetActiveScene(size_t index);
 };

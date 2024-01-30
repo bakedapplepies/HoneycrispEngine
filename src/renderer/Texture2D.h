@@ -61,9 +61,11 @@ public:
     void GenerateTextureCoords();
 
 public:
-    GLuint getID() const;
+    const GLuint& getID() const;
     GLuint getTextureUnit() const;
     ETextureType getTextureType() const;
+    int getWidth() const;
+    int getHeight() const;
 
     void Bind() const;
     void Unbind() const;

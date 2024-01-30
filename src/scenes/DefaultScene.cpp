@@ -1,6 +1,7 @@
 #include "DefaultScene.h"
 
 #include "../utils/utils.h"
+#include "imgui/imgui.h"
 #include "src/core/Texture2DManager.h"
 
 
@@ -168,7 +169,7 @@ DefaultScene::~DefaultScene()
 {
 }
 
-void DefaultScene::onUpdate()
+void DefaultScene::OnUpdate()
 {
     Draw();
 }
@@ -204,4 +205,9 @@ void DefaultScene::SetInitialUniforms(void)
     shader->setFloatUnf("u_spotLight.constant", 1.0f);
     shader->setFloatUnf("u_spotLight.linear", 0.07f);
     shader->setFloatUnf("u_spotLight.quadratic", 0.0045f);
+}
+
+void DefaultScene::OnImGui() const
+{
+    ImGui::Text("Some text in DefaultScene.cpp");
 }

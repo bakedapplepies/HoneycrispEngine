@@ -3,24 +3,32 @@
 
 HNCRSP_NAMESPACE_START
 
-void GLFWContext::StartUp()
+namespace GLFWContext
 {
-    if (m_alreadyStarted)
-        return;
-        
-    if(!glfwInit())
+    namespace
     {
-        HNCRSP_TERMINATE("GLFW Initialization failed.");
+        bool m_alreadyStarted = false;
     }
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-}
+    void StartUp()
+    {
+        if (m_alreadyStarted)
+            return;
+            
+        if(!glfwInit())
+        {
+            HNCRSP_TERMINATE("GLFW Initialization failed.");
+        }
 
-void GLFWContext::ShutDown()
-{
-    glfwTerminate();
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    }
+
+    void ShutDown()
+    {
+        glfwTerminate();
+    }
 }
 
 HNCRSP_NAMESPACE_END

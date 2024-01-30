@@ -1,3 +1,5 @@
+#include "src/Scene.h"
+#include "src/core/Texture2DManager.h"
 #include "src/pch/pch.h"
 
 #include "Window.h"
@@ -65,11 +67,8 @@ void Window::Loop()
         ImGui::NewFrame();
 
         ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Once);
-        ImGui::SetNextWindowSize(ImVec2(500.0f, 1000.0f), ImGuiCond_Once);
-        ImGui::Begin("Settings");
-
-        HNCRSP_LOG_INFO(ImGui::GetWindowWidth());
-        HNCRSP_LOG_INFO(ImGui::GetWindowHeight());
+        ImGui::SetNextWindowSize(ImVec2(500.0f, 600.0f), ImGuiCond_Once);
+        ImGui::Begin("Global settings");
 
         static float lightSizeScale = 0.2f;
         ImGui::SliderFloat("Light Size", &lightSizeScale, 0.0f, 1.0f);
@@ -87,8 +86,16 @@ void Window::Loop()
         static glm::vec3 lightDir = glm::vec3(1.0f);
         ImGui::SliderFloat3("Light Dir", glm::value_ptr(lightDir), 0.0f, 1.0f);
 
-        // ImGui::Image();
+        // ImGui::Image((void*)&Texture2DManager::mainTextureMap->getID(), ImVec2(100.0f, 100.0f));
         
+        ImGui::End();
+
+        ImGui::SetNextWindowPos(ImVec2(0.0f, 600.0f), ImGuiCond_Once);
+        ImGui::SetNextWindowSize(ImVec2(500.0f, 600.0f), ImGuiCond_Once);
+        ImGui::Begin("Scene settings");
+
+        SceneManager::Get().UpdateImGui();
+
         ImGui::End();
 
         // Update camera
@@ -122,7 +129,7 @@ void Window::Loop()
         SceneManager::Get().Update();
         renderingTime = glfwGetTime() - renderingTime;
 
-        ImGui::Render();
+        ImGui::Render();  // always render after scene so it doesn't get drawn over
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
                 
         glfwSwapBuffers(m_glfwWindow);

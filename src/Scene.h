@@ -174,6 +174,8 @@ protected:
         const Honeycrisp::FileSystem::Path& back
     );
     void Draw(void) const;
+    virtual void InitializeShaders(void) {}
+    virtual void SetInitialUniforms(void) {}
 
 public:
     Scene();
@@ -199,9 +201,8 @@ public:
     Scene(Scene&& other) noexcept;
     Scene& operator=(Scene&& other) noexcept;
 
-    virtual void onUpdate() = 0;  // force overload
-    virtual void InitializeShaders(void) {}
-    virtual void SetInitialUniforms(void) {}
+    virtual void OnUpdate() = 0;  // force overload
+    virtual void OnImGui(void) const {}
 
     virtual size_t genSceneObjectID() final;
     virtual void deleteSceneObjectID(size_t id) final;

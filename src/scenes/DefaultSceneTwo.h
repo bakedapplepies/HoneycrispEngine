@@ -25,7 +25,7 @@ public:
     ~DefaultSceneTwo();
     DefaultSceneTwo(DefaultSceneTwo&& other) noexcept = default;
     DefaultSceneTwo& operator=(DefaultSceneTwo&& other) noexcept = default;
-    virtual void onUpdate();
-    void InitializeShaders(void);
-    void SetInitialUniforms(void);
+    void OnUpdate() override;
+    void InitializeShaders(void) override;
+    void SetInitialUniforms(void) override;
 };

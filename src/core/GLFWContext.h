@@ -9,10 +9,6 @@ HNCRSP_NAMESPACE_START
 
 namespace GLFWContext
 {
-    namespace
-    {
-        bool m_alreadyStarted = false;
-    }
     void StartUp();
     void ShutDown();
 }

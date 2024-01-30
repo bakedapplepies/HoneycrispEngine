@@ -1,4 +1,5 @@
 #include "Texture2D.h"
+#include "src/renderer/Texture2D.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -146,7 +147,7 @@ Texture2D::~Texture2D()
     Delete();
 }
 
-GLuint Texture2D::getID() const
+const GLuint& Texture2D::getID() const
 {
     return m_textureID;
 }
@@ -224,6 +225,16 @@ void Texture2D::GenerateTextureCoords()
 TextureCoords& Texture2D::GetTextureCoords(uint32_t x, uint32_t y)
 {
     return m_textureCoords[y][x];
+}
+
+int Texture2D::getWidth() const
+{
+    return m_pixelWidth;
+}
+
+int Texture2D::getHeight() const
+{
+    return m_pixelHeight;
 }
 
 HNCRSP_NAMESPACE_END

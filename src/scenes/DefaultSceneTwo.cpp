@@ -97,7 +97,7 @@ DefaultSceneTwo::~DefaultSceneTwo()
 {
 }
 
-void DefaultSceneTwo::onUpdate()
+void DefaultSceneTwo::OnUpdate()
 {
     cube->transforms.back().eulerAngles += glm::vec3(0.01f, 0.02f, 0.04f);
     Draw();
