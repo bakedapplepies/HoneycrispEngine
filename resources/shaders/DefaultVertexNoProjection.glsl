@@ -26,5 +26,11 @@ uniform mat3 u_normalMatrix;
 
 void main()
 {
-    
+    vs_out.VertColor = aColor;
+    vs_out.TexCoord = aTexCoord;
+    vs_out.Normal = u_normalMatrix * aNormal;
+    vec4 worldPos = u_model * vec4(aPos, 1.0);
+    vs_out.FragPos = vec3(worldPos);
+
+    gl_Position = u_view * worldPos;
 }

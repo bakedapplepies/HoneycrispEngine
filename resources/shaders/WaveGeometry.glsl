@@ -12,10 +12,10 @@ in VS_OUT {
     vec3 FragPos;
 } gs_in[];
 
-in VS_OUT_WAVE_DATA {
-    float AngularVelocity;
-    float InitialPhase;
-} gs_in_wave_data[];
+// in VS_OUT_WAVE_DATA {
+//     float AngularVelocity;
+//     float InitialPhase;
+// } gs_in_wave_data[];
 
 // Export Vertex Attributes to next shader stage
 out VS_OUT {
@@ -44,8 +44,8 @@ void UpdateVertAttribs(int index, vec3 normal)
 
 vec3 GetNormal()
 {
-    vec3 a = vec3(gl_in[0].gl_Position) - vec3(gl_in[1].gl_Position);
-    vec3 b = vec3(gl_in[2].gl_Position) - vec3(gl_in[1].gl_Position);
+    vec3 a = vec3(gl_in[0].FragPos) - vec3(gl_in[1].FragPos);
+    vec3 b = vec3(gl_in[2].FragPos) - vec3(gl_in[1].FragPos);
 
     return normalize(cross(a, b));
 }

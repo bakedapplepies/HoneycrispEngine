@@ -69,9 +69,6 @@ void Window::Loop()
         ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Once);
         ImGui::SetNextWindowSize(ImVec2(500.0f, 600.0f), ImGuiCond_Once);
         ImGui::Begin("Global settings");
-
-        static float lightSizeScale = 0.2f;
-        ImGui::SliderFloat("Light Size", &lightSizeScale, 0.0f, 1.0f);
         
         static float waveSpeed = 1.0f;
         ImGui::SliderFloat("Wave Speed", &waveSpeed, 0.0f, 10.0f);
@@ -79,7 +76,7 @@ void Window::Loop()
         static float renderingTime = 0.0f;
         ImGui::Text("Rendering time: %fms (%f%%)", renderingTime * 1000, renderingTime/deltaTime*100);
         ImGui::Text("Total time: %fms", deltaTime * 1000);
-        
+
         // ImGui::Image((void*)&Texture2DManager::mainTextureMap->getID(), ImVec2(100.0f, 100.0f));
         
         ImGui::End();
@@ -104,7 +101,7 @@ void Window::Loop()
         );
 
         // Global uniforms
-        float u_time = begin*waveSpeed;
+        float u_time = begin * waveSpeed;
         uboMatrices.Bind();
         uboMatrices.Update(
             glm::value_ptr(camera.GetViewMatrix()),
