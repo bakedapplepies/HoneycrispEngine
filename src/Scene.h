@@ -12,6 +12,7 @@ HNCRSP_NAMESPACE_START
 class Scene  // : public std::enable_shared_from_this<Scene>
 {
 protected:
+    // TODO: SceneObject is really just a Renderable, redesign this, maybe switch to just a shared/unique_ptr
     template <class T>
     class SceneObject : public T, public std::enable_shared_from_this<SceneObject<T>>
     {
@@ -157,11 +158,11 @@ protected:
         // TODO: use forward to check for regular refs
         if (movement_type == EObjectMovement::DYNAMIC)
         {
-            return CreateMovable<T>(std::is_base_of<Renderable, T>(), args...);
+            return CreateMovable<T>(std::is_base_of<Renderable, T>(), std::forward<Args>(args)...);
         }
         else
         {
-            return CreateImmovable<T>(std::is_base_of<Renderable, T>(), args...);
+            return CreateImmovable<T>(std::is_base_of<Renderable, T>(), std::forward<Args>(args)...);
         }
     }
 
@@ -202,7 +203,7 @@ public:
     Scene& operator=(Scene&& other) noexcept;
 
     virtual void OnUpdate() = 0;  // force overload
-    virtual void OnImGui(void) const {}
+    virtual void OnImGui(void) {}
 
     virtual size_t genSceneObjectID() final;
     virtual void deleteSceneObjectID(size_t id) final;

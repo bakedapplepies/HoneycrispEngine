@@ -129,11 +129,11 @@ void Cubemap::SetMesh()
     cubemapMesh.addTransform(Transform(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f)));
 }
 
-void Cubemap::Draw(std::shared_ptr<Shader> shader) const
+void Cubemap::Draw(Shader* shader) const
 {
     // GLCall(glDepthMask(GL_FALSE));  // TODO: ????
     GLCall(glDepthFunc(GL_LEQUAL));
-    GLCall(glActiveTexture(GL_TEXTURE0 + 10));
+    GLCall(glActiveTexture(GL_TEXTURE0 + 10));  // TODO: +10 isn't good
     GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemapTextureID));
     cubemapMesh.Draw(shader);
     GLCall(glDepthFunc(GL_LESS));

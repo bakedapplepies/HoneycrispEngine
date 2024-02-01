@@ -62,7 +62,7 @@ void Scene::Draw(void) const
         iter->second.shader->Use();
         for (std::pair< size_t, std::shared_ptr<Renderable> > obj : iter->second.objectShaderGroup)
         {
-            obj.second->Draw(iter->second.shader);
+            obj.second->Draw(iter->second.shader.get());
         }
     }
     if (m_cubemap)
@@ -75,7 +75,7 @@ void Scene::Draw(void) const
             );
             m_cubemapShader->setIntUnf("cubemap", 10);
         }
-        m_cubemap->Draw(m_cubemapShader);
+        m_cubemap->Draw(m_cubemapShader.get());
     }
 }
 

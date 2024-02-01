@@ -32,7 +32,7 @@ public:
         transforms.push_back(transform);
     }
 
-    virtual void Draw(std::shared_ptr<Shader> shader) const = 0;
+    virtual void Draw(Shader* shader) const = 0;
     virtual ~Renderable() {}
 };
 

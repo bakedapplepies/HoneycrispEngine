@@ -79,13 +79,7 @@ void Window::Loop()
         static float renderingTime = 0.0f;
         ImGui::Text("Rendering time: %fms (%f%%)", renderingTime * 1000, renderingTime/deltaTime*100);
         ImGui::Text("Total time: %fms", deltaTime * 1000);
-
-        static glm::vec3 lightColor = glm::vec3(0.0f);
-        ImGui::SliderFloat3("Light Color", glm::value_ptr(lightColor), 0.0f, 1.0f);
         
-        static glm::vec3 lightDir = glm::vec3(1.0f);
-        ImGui::SliderFloat3("Light Dir", glm::value_ptr(lightDir), 0.0f, 1.0f);
-
         // ImGui::Image((void*)&Texture2DManager::mainTextureMap->getID(), ImVec2(100.0f, 100.0f));
         
         ImGui::End();

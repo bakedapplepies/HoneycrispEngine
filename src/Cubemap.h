@@ -23,8 +23,8 @@ private:
 
 public:
     Cubemap(const std::vector<std::string>& faces);
-    void onUpdate() override {};
-    void Draw(std::shared_ptr<Shader> shader) const override;
+    void OnUpdate() override {};
+    void Draw(Shader* shader) const override;
 
 private:
     void SetMesh();

@@ -21,5 +21,5 @@ public:
     DefaultScene& operator=(DefaultScene&& other) noexcept = default;
     void OnUpdate() override;
     void SetInitialUniforms(void) override;
-    void OnImGui() const override;
+    void OnImGui(void) override;
 };

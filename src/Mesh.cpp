@@ -224,7 +224,7 @@ Mesh& Mesh::operator=(Mesh&& other) noexcept
     return *this;
 }
 
-void Mesh::Draw(std::shared_ptr<Shader> shader) const
+void Mesh::Draw(Shader* shader) const
 {
     m_VAO->Bind();
     shader->Use();

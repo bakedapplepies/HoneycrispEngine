@@ -16,8 +16,7 @@ namespace RenderContext
         const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         callbackData.windowWidth = mode->width * 0.75f;
         callbackData.windowHeight = mode->height * 0.75f;
-        HNCRSP_LOG_INFO(callbackData.windowWidth);
-        HNCRSP_LOG_INFO(callbackData.windowHeight);
+        HNCRSP_LOG_INFO(fmt::format("Resolution: {}x{}", callbackData.windowWidth, callbackData.windowHeight));
         GLFWwindow* glfwWindow = glfwCreateWindow(
             callbackData.windowWidth,
             callbackData.windowHeight,

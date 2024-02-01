@@ -1,4 +1,7 @@
 #include "DefaultSceneTwo.h"
+#include "glm/gtc/type_ptr.hpp"
+#include "imgui/imgui.h"
+#include "src/scenes/DefaultSceneTwo.h"
 
 
 using namespace Honeycrisp;
@@ -6,6 +9,7 @@ using namespace Honeycrisp;
 DefaultSceneTwo::DefaultSceneTwo()
 {
     bgColor = glm::vec3(1.0f);
+    pointLight = std::make_unique<PointLight>(glm::vec3(0.0f), glm::vec3(0.0f));
 
     InitializeShaders();
 
@@ -101,7 +105,7 @@ void DefaultSceneTwo::OnUpdate()
 {
     cube->transforms.back().eulerAngles += glm::vec3(0.01f, 0.02f, 0.04f);
     Draw();
-    mesh->Draw(normalWaveShader);
+    mesh->Draw(normalWaveShader.get());
 }
 
 void DefaultSceneTwo::InitializeShaders(void)
@@ -140,7 +144,7 @@ void DefaultSceneTwo::SetInitialUniforms(void)
     shader->setVec3Unf("u_dirLight.specular", glm::vec3(1, 1, 1));
 
     // point light
-    shader->setVec3Unf("u_pointLight.position", glm::vec3(10, 2, 50));
+    shader->setVec3Unf("u_pointLight.position", pointLight->position);
     shader->setVec3Unf("u_pointLight.ambient", 0.1f * glm::vec3(1.0));
     shader->setVec3Unf("u_pointLight.diffuse", 0.5f * glm::vec3(1.0));
     shader->setVec3Unf("u_pointLight.specular", 1.0f * glm::vec3(1.0));
@@ -170,7 +174,7 @@ void DefaultSceneTwo::SetInitialUniforms(void)
     wackyShader->setVec3Unf("u_dirLight.specular", glm::vec3(1, 1, 1));
 
     // point light
-    wackyShader->setVec3Unf("u_pointLight.position", glm::vec3(10, 2, 10));
+    wackyShader->setVec3Unf("u_pointLight.position", pointLight->position);
     wackyShader->setVec3Unf("u_pointLight.ambient", 0.1f * glm::vec3(1.0));
     wackyShader->setVec3Unf("u_pointLight.diffuse", 0.5f * glm::vec3(1.0));
     wackyShader->setVec3Unf("u_pointLight.specular", 1.0f * glm::vec3(1.0));
@@ -199,7 +203,7 @@ void DefaultSceneTwo::SetInitialUniforms(void)
     backpackShader->setVec3Unf("u_dirLight.specular", glm::vec3(1, 1, 1));
 
     // point light
-    backpackShader->setVec3Unf("u_pointLight.position", glm::vec3(15, 4, 15));
+    backpackShader->setVec3Unf("u_pointLight.position", pointLight->position);
     backpackShader->setVec3Unf("u_pointLight.ambient", 0.1f * glm::vec3(1.0));
     backpackShader->setVec3Unf("u_pointLight.diffuse", 0.6f * glm::vec3(1.0));
     backpackShader->setVec3Unf("u_pointLight.specular", 1.0f * glm::vec3(1.0));
@@ -216,4 +220,10 @@ void DefaultSceneTwo::SetInitialUniforms(void)
     backpackShader->setFloatUnf("u_spotLight.constant", 1.0f);
     backpackShader->setFloatUnf("u_spotLight.linear", 0.07f);
     backpackShader->setFloatUnf("u_spotLight.quadratic", 0.0045f);
+}
+
+void DefaultSceneTwo::OnImGui(void)
+{
+    ImGui::Text("Point light");
+    ImGui::SliderFloat3("position", glm::value_ptr(pointLight->position), -100.0f, 100.0f);
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "src/pch/pch.h"
+#include "src/PointLight.h"
 
 #include "src/Scene.h"
 #include "src/Cube.h"
@@ -19,6 +20,7 @@ private:
     std::shared_ptr< SceneObject<Honeycrisp::Cube> > cube;
     std::shared_ptr< SceneObject<Honeycrisp::Mesh> > mesh;
     std::shared_ptr< SceneObject<Honeycrisp::Model> > model;
+    std::unique_ptr<Honeycrisp::PointLight> pointLight;
 
 public:
     DefaultSceneTwo();
@@ -28,4 +30,5 @@ public:
     void OnUpdate() override;
     void InitializeShaders(void) override;
     void SetInitialUniforms(void) override;
+    void OnImGui(void) override;
 };

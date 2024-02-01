@@ -14,7 +14,7 @@ private:
     std::filesystem::path m_modelDirectory;
 
 public:
-    void Draw(std::shared_ptr<Shader> shader) const;
+    void Draw(Shader* shader) const override;
 
 public:
     Model(const FileSystem::Path& path);
@@ -26,8 +26,8 @@ private:
     std::vector< std::shared_ptr<Texture2D> > loadMaterialTextures(aiMaterial* material, aiTextureType assimp_texture_type);
 
 public:
-    void onUpdate() {}
-    void addTransform(const Transform& transform);  // acts as interface for meshes
+    void OnUpdate() override {}
+    void addTransform(const Transform& transform) override;  // acts as interface for meshes
 };
 
 HNCRSP_NAMESPACE_END

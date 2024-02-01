@@ -39,8 +39,8 @@ public:
     void EnableVertexAttribUV(bool on) const;
     void EnableVertexAttribNormals(bool on) const;
 
-    virtual void onUpdate() override {}
-    void Draw(std::shared_ptr<Shader> shader) const override;
+    void OnUpdate() override {}
+    void Draw(Shader* shader) const override;
     void Translate(const glm::vec3& vec);
     void Scale(const float& multiplier);
     void Rotate(const float& rX, const float& rY, const float& rZ);

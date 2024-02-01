@@ -23,3 +23,5 @@ gets is the Draw-calls-queue.
 - TODO: Replace std::vector with std::array whenever possible
 - TODO: Look into glNamed... functions
 - TODO: Use asynchronous operations to speed up model loading (nodes)
+- TODO: replace all smart-pointer arguments to raw pointers -> faster speed
+        only use smart pointers to manage the lifetime of objects

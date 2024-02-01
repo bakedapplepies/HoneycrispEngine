@@ -1,0 +1,29 @@
+#pragma once
+
+#include "src/pch/pch.h"
+#include "Object.h"
+#include "types/Transform.h"
+
+
+HNCRSP_NAMESPACE_START
+
+class PointLight : public Object
+{
+public:
+    glm::vec3 position;
+    glm::vec3 colorEmit;
+
+public:
+    PointLight(const glm::vec3& position, const glm::vec3& color);
+    PointLight(const PointLight& other);
+    PointLight(PointLight&& other) noexcept;
+    PointLight& operator=(const PointLight& other);
+    PointLight& operator=(PointLight&& other) noexcept;
+    ~PointLight() = default;
+
+    void OnUpdate() override {}
+
+    glm::vec3& GetColor();
+};
+
+HNCRSP_NAMESPACE_END

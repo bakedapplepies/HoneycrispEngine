@@ -58,8 +58,12 @@ set(SOURCE
     ${CMAKE_SOURCE_DIR}/src/Camera.cpp
     ${CMAKE_SOURCE_DIR}/src/Cube.h
     ${CMAKE_SOURCE_DIR}/src/Cube.cpp
-    ${CMAKE_SOURCE_DIR}/src/Light.h
-    ${CMAKE_SOURCE_DIR}/src/Light.cpp
+    ${CMAKE_SOURCE_DIR}/src/DirectionalLight.h
+    ${CMAKE_SOURCE_DIR}/src/DirectionalLight.cpp
+    ${CMAKE_SOURCE_DIR}/src/PointLight.h
+    ${CMAKE_SOURCE_DIR}/src/PointLight.cpp
+    ${CMAKE_SOURCE_DIR}/src/SpotLight.h
+    ${CMAKE_SOURCE_DIR}/src/SpotLight.cpp
     ${CMAKE_SOURCE_DIR}/src/Cubemap.h
     ${CMAKE_SOURCE_DIR}/src/Cubemap.cpp
     ${CMAKE_SOURCE_DIR}/src/Mesh.h

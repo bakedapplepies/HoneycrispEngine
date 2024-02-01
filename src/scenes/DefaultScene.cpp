@@ -207,7 +207,7 @@ void DefaultScene::SetInitialUniforms(void)
     shader->setFloatUnf("u_spotLight.quadratic", 0.0045f);
 }
 
-void DefaultScene::OnImGui() const
+void DefaultScene::OnImGui(void)
 {
     ImGui::Text("Some text in DefaultScene.cpp");
 }

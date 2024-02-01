@@ -6,5 +6,6 @@
 class Object
 {
 public:
-    virtual void onUpdate() = 0;
+    virtual void OnUpdate() = 0;
+    virtual ~Object() = default;
 };
