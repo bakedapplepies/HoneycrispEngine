@@ -1,7 +1,6 @@
 #pragma once
 
 #include "src/pch/pch.h"
-#include "../utils/utils.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -25,7 +24,7 @@ public:
     Shader& operator=(Shader&& other) noexcept;
     ~Shader();
 
-    std::string parseShader(const std::string_view& path);
+    std::string parseShader(std::string_view path);
     
     GLuint getID() const;
     void Use() const;

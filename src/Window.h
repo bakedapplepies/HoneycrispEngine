@@ -1,7 +1,5 @@
 #pragma once
 
-#include "src/pch/pch.h"
-
 #include "src/core/RenderContext.h"
 #include "renderer/UniformBuffer.h"
 #include "Camera.h"
@@ -18,10 +16,15 @@ private:
 
     glm::mat4 projectionMatrix;
 
-    bool continueProgram = true;
-    float deltaTime;
-    float totalTime = 0.0f;
-    unsigned int frames = 0;
+    int m_windowWidth;
+    int m_windowHeight;
+    float m_windowWidthScalar;
+    float m_windowHeightScalar;
+
+    bool m_continueProgram = true;
+    float m_deltaTime;
+    float m_totalTime = 0.0f;
+    unsigned int m_frames = 0;
 
 public:
     void StartUp(GLFWwindow* glfwWindow, RenderContext::CallbackData* callbackData);

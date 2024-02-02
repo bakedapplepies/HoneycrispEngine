@@ -1,15 +1,19 @@
 #include "Callbacks.h"
+#include "src/core/RenderContext.h"
+#include "src/core/SceneManager.h"
 
 
 HNCRSP_NAMESPACE_START
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-    
     static RenderContext::CallbackData* callbackData = static_cast<RenderContext::CallbackData*>(glfwGetWindowUserPointer(window));
-    glViewport(0, 0, width, height);
+    
     callbackData->windowWidth = width;
     callbackData->windowHeight = height;  // to reconstruct perspective matrix
+    
+    int viewportWidth = callbackData->viewportWidthPercentage * callbackData->windowWidth;
+    GLCall(glViewport(callbackData->windowWidth - viewportWidth, 0, viewportWidth, callbackData->windowHeight));
 }
 
 void error_callback(int error, const char* msg)

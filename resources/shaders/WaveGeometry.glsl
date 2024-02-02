@@ -44,8 +44,8 @@ void UpdateVertAttribs(int index, vec3 normal)
 
 vec3 GetNormal()
 {
-    vec3 a = vec3(gl_in[0].FragPos) - vec3(gl_in[1].FragPos);
-    vec3 b = vec3(gl_in[2].FragPos) - vec3(gl_in[1].FragPos);
+    vec3 a = vec3(gs_in[0].FragPos) - vec3(gs_in[1].FragPos);
+    vec3 b = vec3(gs_in[2].FragPos) - vec3(gs_in[1].FragPos);
 
     return normalize(cross(a, b));
 }

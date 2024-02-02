@@ -9,9 +9,15 @@
 
 HNCRSP_NAMESPACE_START
 
-// get dependencies via depedency injection
 void Application::Run()
-{    
+{
+    // get dependencies via depedency injection
+    // SetProcessDPIAware();
+
+    // uint32_t dpi_x, dpi_y;
+    // PFN_GetDpiForMonitor();
+    // SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
+
     GLFWContext::StartUp();
     auto [glfwWindow, callbackData] = RenderContext::WindowPtr_and_CallbackDataPtr {
         RenderContext::StartUp_GetWindow()

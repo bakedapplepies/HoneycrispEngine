@@ -1,27 +1,25 @@
 - TODO: batch/instance rendering; prioritize instancing
 - TODO: ShaderConfig object to pass into draw calls?
 - TODO: optimize shader system
-- TODO: move all enums to a separate file (?)
 - TODO: cache texture (ktx) & store model in reuseable binary format
 - TODO: check if shared_ptr in SceneManager is necessary
 - TODO: Manage texture units (including GL_TEXTURE_CUBE_MAP)
 - TODO: LOD (mesh subdivision via geometry shader for now, mesh shader later)
 - TODO: Make model loading asynchronous
-- TODO: Add libraries as submodules (premake)
 - TODO: Mark constructors as explicit
 - TODO: Quaternion implementation
-- TODO: Use std::string_view whenever possible
 - TODO: Separate the program in 2 threads: Rendering and Everything else. The only input the Rendering thread
 gets is the Draw-calls-queue.
 - TODO: rename protected members with p_ prefixes
 - TODO: Render priority
-- TODO: Add libs to vendor and compile them in cmake
 - TODO: What the hell is noexcept
 - TODO: Continuous maps
 - TODO: Add type-checking for UBOs
 - TODO: Texture2D Min/Mag filter (nearest/linear), Wrap (repeat/clamp/...)
-- TODO: Replace std::vector with std::array whenever possible
 - TODO: Look into glNamed... functions
 - TODO: Use asynchronous operations to speed up model loading (nodes)
 - TODO: replace all smart-pointer arguments to raw pointers -> faster speed
         only use smart pointers to manage the lifetime of objects
+- TODO: Entity-Component-System for Renderable objects (SceneObject - Renderable Component - Renderer)
+- TODO: Bind light and uniforms and stuff together
+- TODO: Texture2DManager

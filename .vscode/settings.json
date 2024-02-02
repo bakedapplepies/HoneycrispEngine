@@ -104,13 +104,14 @@
     "cmake.generator": "Ninja",
     "cmake.buildDirectory": "${workspaceFolder}/build/${buildType}",
     "cmake.configureSettings": {
-        "-DCMAKE_EXPORT_COMPILE_COMMANDS": 1,
-        "-DCMAKE_CXX_COMPILER": "C:/MinGW-W64/MinGW-W64/bin/clang++.exe",
-        "-DCMAKE_CXX_STANDARD": 20
+        "CMAKE_EXPORT_COMPILE_COMMANDS": true,
+        "CMAKE_CXX_COMPILER": "C:/MinGW-W64/MinGW-W64/bin/clang++.exe",
+        "CMAKE_CXX_STANDARD": "20"
     },
     "clangd.arguments": [
         "--compile-commands-dir=${workspaceFolder}/build/Debug/",
-        "--header-insertion=never"
+        "--header-insertion=never",
+        "--query-driver=C:/MinGW-W64/MinGW-W64/bin/clang++.exe"
     ],
     "C_Cpp.intelliSenseEngine": "disabled"
 }

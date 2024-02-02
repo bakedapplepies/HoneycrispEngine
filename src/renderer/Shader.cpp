@@ -3,11 +3,11 @@
 
 HNCRSP_NAMESPACE_START
 
-std::string Shader::parseShader(const std::string_view& path)
+std::string Shader::parseShader(std::string_view path)
 {
     std::string line;
     std::stringstream ss;
-    std::ifstream infile(path);
+    std::ifstream infile(path.data());
     while (std::getline(infile, line))
     {
         ss << line << '\n';
@@ -41,7 +41,8 @@ Shader::Shader(
     if (!success)
     {
         GLCall(glGetShaderInfoLog(vertexShader, 1024, NULL, infoLog));
-        HNCRSP_LOG_ERROR(fmt::format("Vertex Shader compilation failed at {}:\n\t", vertexFile.string()), infoLog);
+        std::filesystem::path errorPath = std::filesystem::relative(vertexFile.string(), HNCRSP_PROJECT_DIR);
+        HNCRSP_LOG_ERROR(fmt::format("Vertex Shader compilation failed ~{}:\n\t", errorPath.string()), infoLog);
         // HNCRSP_LOG_ERROR(fmt::format("Vertex Shader compilation failed at {}:\n\t", ), infoLog);
 
         GLCall(glDeleteShader(vertexShader));
@@ -57,7 +58,8 @@ Shader::Shader(
     if (!success)
     {
         GLCall(glGetShaderInfoLog(fragmentShader, 1024, NULL, infoLog));
-        HNCRSP_LOG_ERROR(fmt::format("Fragment Shader compilation failed at {}:\n\t", fragmentFile.string()), infoLog);
+        std::filesystem::path errorPath = std::filesystem::relative(fragmentFile.string(), HNCRSP_PROJECT_DIR);
+        HNCRSP_LOG_ERROR(fmt::format("Fragment Shader compilation failed ~{}:\n\t", errorPath.string()), infoLog);
 
         GLCall(glDeleteShader(fragmentShader));
         HNCRSP_TERMINATE("Fragment Shader compilation error.");
@@ -73,7 +75,8 @@ Shader::Shader(
         if (!success)
         {
             GLCall(glGetShaderInfoLog(geometryShader, 1024, NULL, infoLog));
-            HNCRSP_LOG_ERROR(fmt::format("Geometry Shader compilation failed at {}:\n\t", geometryFile.string()), infoLog);
+            std::filesystem::path errorPath = std::filesystem::relative(geometryFile.string(), HNCRSP_PROJECT_DIR);
+            HNCRSP_LOG_ERROR(fmt::format("Geometry Shader compilation failed ~{}:\n\t", errorPath.string()), infoLog);
 
             GLCall(glDeleteShader(fragmentShader));
             HNCRSP_TERMINATE("Geometry Shader compilation error.");
@@ -155,11 +158,11 @@ GLuint Shader::getID() const
 
 GLint Shader::getUniformLocation(const std::string& name) const
 {
+    // TODO: Supposedly a quick & dirty way, find a better way?
     if (m_uniformLocationCache.find(name) != m_uniformLocationCache.end())  // uniform location could be 0
     {
         return m_uniformLocationCache[name];
     }
-
     GLint location = glGetUniformLocation(m_shaderID, name.c_str());
     m_uniformLocationCache[name] = location;
     return location;

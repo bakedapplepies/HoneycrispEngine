@@ -1,4 +1,5 @@
 #include "RenderContext.h"
+#include "src/Callbacks.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -60,7 +61,8 @@ namespace RenderContext
         // blending
         // GLCall(glEnable(GL_BLEND));
 
-        GLCall(glViewport(500, 0, callbackData.windowWidth-500, callbackData.windowHeight));
+        int viewportWidth = callbackData.viewportWidthPercentage * callbackData.windowWidth;
+        GLCall(glViewport(callbackData.windowWidth - viewportWidth, 0, viewportWidth, callbackData.windowHeight));
 
         return { glfwWindow, &callbackData };
     }

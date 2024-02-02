@@ -2,9 +2,9 @@
 
 #include "src/pch/pch.h"
 
-#include "../Scene.h"
-#include "../renderer/Shader.h"
-#include "../Cube.h"
+#include "src/Scene.h"
+#include "src/renderer/Shader.h"
+#include "src/Cube.h"
 
 
 class DefaultScene : public Honeycrisp::Scene

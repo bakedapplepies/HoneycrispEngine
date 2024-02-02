@@ -12,6 +12,7 @@ void ImGuiManager::StartUp(GLFWwindow* glfwWindow)
     ImGui_ImplGlfw_InitForOpenGL(glfwWindow, true);
 
     ImGui::StyleColorsDark();
+    // ImGui::GetStyle().ScaleAllSizes(2.0f);
 }
 
 void ImGuiManager::ShutDown()

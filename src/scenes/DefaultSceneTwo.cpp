@@ -1,8 +1,5 @@
 #include "DefaultSceneTwo.h"
-#include "glm/gtc/type_ptr.hpp"
-#include "imgui/imgui.h"
 #include "src/scenes/DefaultSceneTwo.h"
-#include "src/utils/Logging.h"
 
 
 using namespace Honeycrisp;
@@ -132,8 +129,8 @@ void DefaultSceneTwo::InitializeShaders(void)
     );
     wackyShader = std::make_shared<Shader>(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
-        FileSystem::Path("resources/shaders/PhongShadingFragment.glsl"),
-        FileSystem::Path("resources/shaders/WaveGeometry.glsl")  // TODO: just to calculate normals, maybe rename file to CalcNormGeometry.glsl
+        FileSystem::Path("resources/shaders/PhongShadingFragment.glsl")
+        // FileSystem::Path("resources/shaders/WaveGeometry.glsl")  // TODO: just to calculate normals, maybe rename file to CalcNormGeometry.glsl
     );
     normalWaveShader = std::make_shared<Shader>(
         FileSystem::Path("resources/shaders/WaveNormalVertex.glsl"),
@@ -147,7 +144,7 @@ void DefaultSceneTwo::SetInitialUniforms(void)
     // lighting
     shader->setIntUnf("u_material.albedo", Texture2DManager::mainTextureMap->getTextureUnit());
     shader->setIntUnf("u_material.specular", Texture2DManager::mainTextureSpecularMap->getTextureUnit());
-    shader->setFloatUnf("u_material.shininess", 32.0f);
+    shader->setFloatUnf("u_material.shininess", 128.0f);
 
     // dir light
     shader->setVec3Unf("u_dirLight.direction", glm::normalize(glm::vec3(0, -1, 0)));
@@ -177,7 +174,7 @@ void DefaultSceneTwo::SetInitialUniforms(void)
     // lighting
     wackyShader->setIntUnf("u_material.albedo", Texture2DManager::mainTextureMap->getTextureUnit());
     wackyShader->setIntUnf("u_material.specular", Texture2DManager::mainTextureSpecularMap->getTextureUnit());
-    wackyShader->setFloatUnf("u_material.shininess", 32.0f);
+    wackyShader->setFloatUnf("u_material.shininess", 128.0f);
 
     // dir light
     wackyShader->setVec3Unf("u_dirLight.direction", glm::normalize(glm::vec3(0, -1, 0)));
@@ -206,7 +203,7 @@ void DefaultSceneTwo::SetInitialUniforms(void)
 
     // backpackShader->setIntUnf("cubemap", 10);
     // lighting
-    backpackShader->setFloatUnf("u_material.shininess", 32.0f);
+    backpackShader->setFloatUnf("u_material.shininess", 128.0f);
 
     // dir light
     backpackShader->setVec3Unf("u_dirLight.direction", glm::normalize(glm::vec3(0, -1, 0)));

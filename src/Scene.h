@@ -4,7 +4,6 @@
 
 #include "Renderable.h"
 #include "Cubemap.h"
-#include "utils/utils.h"
 
 
 HNCRSP_NAMESPACE_START

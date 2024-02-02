@@ -96,6 +96,7 @@ target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
     -Wno-unused-parameter
     -Wno-unused-variable
     -Wno-unused-private-field
+    -Wno-
 )
 
 target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE GLM_FORCE_SWIZZLE HNCRSP_PROJECT_DIR="${CMAKE_SOURCE_DIR}")

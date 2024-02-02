@@ -1,12 +1,10 @@
-#include "src/Scene.h"
-#include "src/core/Texture2DManager.h"
 #include "src/pch/pch.h"
+#include "src/core/Texture2DManager.h"
 
 #include "Window.h"
 #include "src/core/SceneManager.h"
 #include "src/scenes/DefaultScene.h"
 #include "src/scenes/DefaultSceneTwo.h"
-#include "Callbacks.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -15,6 +13,12 @@ void Window::StartUp(GLFWwindow* glfwWindow, RenderContext::CallbackData* callba
 {
     m_glfwWindow = glfwWindow;
     m_callbackData = callbackData;
+
+    m_windowWidth = callbackData->windowWidth;
+    m_windowHeight = callbackData->windowHeight;
+    m_windowWidthScalar = callbackData->windowWidth / 1920.0f;
+    m_windowHeightScalar = callbackData->windowHeight / 1080.0f;
+    HNCRSP_LOG_INFO(m_windowHeightScalar);
 
     projectionMatrix = glm::perspective(
         glm::radians(45.0f),
@@ -28,7 +32,7 @@ void Window::StartUp(GLFWwindow* glfwWindow, RenderContext::CallbackData* callba
 
 void Window::Loop()
 {
-    if (!continueProgram) return;
+    if (!m_continueProgram) return;
 
     SceneManager::Get().CreateScene(DefaultScene(), 0);
     SceneManager::Get().CreateScene(DefaultSceneTwo(), 1);
@@ -47,7 +51,7 @@ void Window::Loop()
 
     while(!glfwWindowShouldClose(m_glfwWindow))
     {
-        deltaTime = glfwGetTime() - begin;
+        m_deltaTime = glfwGetTime() - begin;
         begin = glfwGetTime();
 
         calcFPS();
@@ -67,23 +71,25 @@ void Window::Loop()
         ImGui::NewFrame();
 
         ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Once);
-        ImGui::SetNextWindowSize(ImVec2(500.0f, 600.0f), ImGuiCond_Once);
+        ImGui::SetNextWindowSize(ImVec2(m_windowWidth * (1.0f - m_callbackData->viewportWidthPercentage), m_windowHeight * 0.5f), ImGuiCond_Once);
         ImGui::Begin("Global settings");
+        ImGui::GetCurrentWindow()->FontWindowScale = m_windowHeightScalar;
         
         static float waveSpeed = 1.0f;
         ImGui::SliderFloat("Wave Speed", &waveSpeed, 0.0f, 10.0f);
 
         static float renderingTime = 0.0f;
-        ImGui::Text("Rendering time: %fms (%f%%)", renderingTime * 1000, renderingTime/deltaTime*100);
-        ImGui::Text("Total time: %fms", deltaTime * 1000);
+        ImGui::Text("Rendering time: %fms (%f%%)", renderingTime * 1000, renderingTime/m_deltaTime*100);
+        ImGui::Text("Total time: %fms", m_deltaTime * 1000);
 
         // ImGui::Image((void*)&Texture2DManager::mainTextureMap->getID(), ImVec2(100.0f, 100.0f));
         
         ImGui::End();
 
-        ImGui::SetNextWindowPos(ImVec2(0.0f, 600.0f), ImGuiCond_Once);
-        ImGui::SetNextWindowSize(ImVec2(500.0f, 600.0f), ImGuiCond_Once);
+        ImGui::SetNextWindowPos(ImVec2(0.0f, m_windowHeight * 0.5f), ImGuiCond_Once);
+        ImGui::SetNextWindowSize(ImVec2(m_windowWidth * (1.0f - m_callbackData->viewportWidthPercentage), m_windowHeight * 0.5f), ImGuiCond_Once);
         ImGui::Begin("Scene settings");
+        ImGui::GetCurrentWindow()->FontWindowScale = m_windowHeightScalar;
 
         SceneManager::Get().UpdateImGui();
 
@@ -132,47 +138,47 @@ void Window::processInput()
 {
     if (glfwGetKey(m_glfwWindow, GLFW_KEY_W) == GLFW_PRESS)
     {
-        camera.ChangePos(glm::normalize(glm::vec3(camera.direction.x, 0.0f, camera.direction.z)) * camera.speed * deltaTime);
+        camera.ChangePos(glm::normalize(glm::vec3(camera.direction.x, 0.0f, camera.direction.z)) * camera.speed * m_deltaTime);
     }
 
     if (glfwGetKey(m_glfwWindow, GLFW_KEY_S) == GLFW_PRESS)
     {
-        camera.ChangePos(-glm::normalize(glm::vec3(camera.direction.x, 0.0f, camera.direction.z)) * camera.speed * deltaTime);
+        camera.ChangePos(-glm::normalize(glm::vec3(camera.direction.x, 0.0f, camera.direction.z)) * camera.speed * m_deltaTime);
     }
 
     if (glfwGetKey(m_glfwWindow, GLFW_KEY_A) == GLFW_PRESS)
     {
         glm::vec3 direction = glm::normalize(glm::cross(camera.direction, camera.cameraUp));
-        camera.ChangePos(-glm::vec3(direction.x, 0.0f, direction.z) * camera.speed * deltaTime);
+        camera.ChangePos(-glm::vec3(direction.x, 0.0f, direction.z) * camera.speed * m_deltaTime);
     }
 
     if (glfwGetKey(m_glfwWindow, GLFW_KEY_D) == GLFW_PRESS)
     {
         glm::vec3 direction = glm::normalize(glm::cross(camera.direction, camera.cameraUp));
-        camera.ChangePos(glm::vec3(direction.x, 0.0f, direction.z) * camera.speed * deltaTime);
+        camera.ChangePos(glm::vec3(direction.x, 0.0f, direction.z) * camera.speed * m_deltaTime);
     }
 
     if (glfwGetKey(m_glfwWindow, GLFW_KEY_SPACE) == GLFW_PRESS)
     {
-        camera.ChangePos(glm::vec3(0.0f, 1.0f, 0.0f) * camera.speed * deltaTime);
+        camera.ChangePos(glm::vec3(0.0f, 1.0f, 0.0f) * camera.speed * m_deltaTime);
     }
 
     if (glfwGetKey(m_glfwWindow, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
     {
-        camera.ChangePos(glm::vec3(0.0f, -1.0f, 0.0f) * camera.speed * deltaTime);
+        camera.ChangePos(glm::vec3(0.0f, -1.0f, 0.0f) * camera.speed * m_deltaTime);
     }
 }
 
 void Window::calcFPS()
 {
-    totalTime += deltaTime;
-    frames++;
-    if (totalTime >= 1.0f)
+    m_totalTime += m_deltaTime;
+    m_frames++;
+    if (m_totalTime >= 1.0f)
     {
-        std::string title = "LearnOpenGL - FPS: " + fmt::to_string(frames);
+        std::string title = "LearnOpenGL - FPS: " + fmt::to_string(m_frames);
         glfwSetWindowTitle(m_glfwWindow, title.c_str());
-        frames = 0;
-        totalTime = 0.0f;
+        m_frames = 0;
+        m_totalTime = 0.0f;
     }
 }
 

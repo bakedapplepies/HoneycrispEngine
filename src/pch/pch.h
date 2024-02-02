@@ -50,6 +50,8 @@
 #include <queue>
 #include <type_traits>
 #include <array>
+#include <signal.h>
+#include <windows.h>
 
 // COMMON HEADERS
 #include "src/utils/Debug.h"

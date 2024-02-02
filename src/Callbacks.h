@@ -1,10 +1,5 @@
 #pragma once
 
-#include "src/pch/pch.h"
-
-#include "src/core/RenderContext.h"
-#include "src/core/SceneManager.h"
-
 
 HNCRSP_NAMESPACE_START
 
