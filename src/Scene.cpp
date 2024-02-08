@@ -103,7 +103,7 @@ void Scene::deleteSceneObjectID(size_t id)
     }
 }
 
-// Make sure vector is already sorted
+// To make sure vector is already sorted
 // template <template<typename> typename T, typename U>
 void Scene::binary_insert_ptr(
     std::vector<std::pair<size_t, std::shared_ptr<Renderable>>>& vec, const std::pair<size_t, std::shared_ptr<Renderable>>& pair)

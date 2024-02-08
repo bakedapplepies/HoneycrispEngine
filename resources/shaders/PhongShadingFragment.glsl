@@ -87,6 +87,7 @@ vec3 CalcPointLight(PointLight pointLight, vec3 normal, vec3 dirToView, vec3 alb
 {
     vec3 fragToLight = pointLight.position - fs_in.FragPos;
     vec3 dirToLight = normalize(fragToLight);
+    vec3 halfwayVec = normalize(dirToLight + dirToView);
 
     // ambient - diffuse - specular
     vec3 ambient = pointLight.ambient * albedoFrag;
@@ -94,8 +95,7 @@ vec3 CalcPointLight(PointLight pointLight, vec3 normal, vec3 dirToView, vec3 alb
     float diffuseCoef = max(dot(normal, dirToLight), 0.0);
     vec3 diffuse = pointLight.diffuse * diffuseCoef * albedoFrag;
 
-    vec3 reflectDir = reflect(-dirToLight, normal);
-    float specularCoef = pow(max(dot(reflectDir, dirToView), 0.0), u_material.shininess);
+    float specularCoef = pow(max(dot(normal, halfwayVec), 0.0), u_material.shininess);
     vec3 specular = pointLight.specular * specularCoef * specularFrag;
     
     // attenuation

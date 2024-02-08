@@ -23,3 +23,5 @@ gets is the Draw-calls-queue.
 - TODO: Entity-Component-System for Renderable objects (SceneObject - Renderable Component - Renderer)
 - TODO: Bind light and uniforms and stuff together
 - TODO: Texture2DManager
+- TODO: Add FBX support
+- TODO: Make settings/inspector extendable/retractable

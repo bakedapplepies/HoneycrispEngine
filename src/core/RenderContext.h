@@ -23,7 +23,8 @@ namespace RenderContext
 
         int windowWidth;
         int windowHeight;
-        float viewportWidthPercentage = 0.8f;
+        int settingsWidth;
+        float settingsWidthPercentage = 0.2f;
 
         glm::vec3 cameraDirection = glm::vec3(0, 0, -1.0f);  // initial camera direction or it would look at origin by default
     };

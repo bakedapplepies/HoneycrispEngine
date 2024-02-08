@@ -16,8 +16,6 @@ private:
 
     glm::mat4 projectionMatrix;
 
-    int m_windowWidth;
-    int m_windowHeight;
     float m_windowWidthScalar;
     float m_windowHeightScalar;
 

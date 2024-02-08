@@ -112,7 +112,7 @@ std::vector< std::shared_ptr<Texture2D> > Model::loadMaterialTextures(aiMaterial
     switch (assimp_texture_type)
     {
     case aiTextureType_DIFFUSE:
-        textureType = ETextureType::DIFFUSE;
+        textureType = ETextureType::ALBEDO;
         break;
     case aiTextureType_SPECULAR:
         textureType = ETextureType::SPECULAR;

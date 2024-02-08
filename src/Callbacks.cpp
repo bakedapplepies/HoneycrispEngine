@@ -11,8 +11,9 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     
     callbackData->windowWidth = width;
     callbackData->windowHeight = height;  // to reconstruct perspective matrix
+    callbackData->settingsWidthPercentage = (float)callbackData->settingsWidth / width;
     
-    int viewportWidth = callbackData->viewportWidthPercentage * callbackData->windowWidth;
+    int viewportWidth = (1.0f - callbackData->settingsWidthPercentage) * callbackData->windowWidth;
     GLCall(glViewport(callbackData->windowWidth - viewportWidth, 0, viewportWidth, callbackData->windowHeight));
 }
 

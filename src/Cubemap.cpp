@@ -28,7 +28,7 @@ Cubemap::Cubemap(const std::vector<std::string>& faces)
             GLCall(glTexImage2D(
                 GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
                 0,
-                GL_RGB,
+                GL_SRGB,
                 width,
                 height,
                 0,

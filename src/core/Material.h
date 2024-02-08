@@ -2,6 +2,7 @@
 
 #include "src/pch/pch.h"
 #include "src/renderer/Texture2D.h"
+#include "src/renderer/Shader.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -9,6 +10,8 @@ HNCRSP_NAMESPACE_START
 class Material
 {
 private:
+    std::shared_ptr<Shader> m_shader;
+
     Texture2D m_albedo;
     Texture2D m_roughness;
     Texture2D m_ao;
@@ -18,7 +21,7 @@ private:
     float m_shininess;
 
 public:
-    Material() = default;
+    Material(std::shared_ptr<Shader> shader);
     ~Material();
 
     void setAlbedoMap(const FileSystem::Path& path);
@@ -26,6 +29,7 @@ public:
     void setAoMap(const FileSystem::Path& path);
     void setNormalMap(const FileSystem::Path& path);
     void setSpecularMap(const FileSystem::Path& path);
+    // void bindMaterial(Shader* shader);
 };
 
 HNCRSP_NAMESPACE_END

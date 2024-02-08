@@ -14,11 +14,8 @@ void Window::StartUp(GLFWwindow* glfwWindow, RenderContext::CallbackData* callba
     m_glfwWindow = glfwWindow;
     m_callbackData = callbackData;
 
-    m_windowWidth = callbackData->windowWidth;
-    m_windowHeight = callbackData->windowHeight;
-    m_windowWidthScalar = callbackData->windowWidth / 1920.0f;
+    m_windowWidthScalar = callbackData->windowWidth / 1920.0f;  // TODO: Recalculate in callbacks
     m_windowHeightScalar = callbackData->windowHeight / 1080.0f;
-    HNCRSP_LOG_INFO(m_windowHeightScalar);
 
     projectionMatrix = glm::perspective(
         glm::radians(45.0f),
@@ -58,7 +55,7 @@ void Window::Loop()
 
         processInput();
 
-        // Set background
+        // Set window background color
         glm::vec3 bgColor = SceneManager::Get().GetSceneBgColor();
         GLCall(glClearColor(bgColor.r, bgColor.g, bgColor.b, 1.0f));
 
@@ -66,14 +63,16 @@ void Window::Loop()
         GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 
         // ImGui
+        m_callbackData->settingsWidth = m_callbackData->settingsWidthPercentage * m_callbackData->windowWidth;
+
         ImGui_ImplGlfw_NewFrame();
         ImGui_ImplOpenGL3_NewFrame(); 
         ImGui::NewFrame();
 
-        ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Once);
-        ImGui::SetNextWindowSize(ImVec2(m_windowWidth * (1.0f - m_callbackData->viewportWidthPercentage), m_windowHeight * 0.5f), ImGuiCond_Once);
+        ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(m_callbackData->settingsWidth, m_callbackData->windowHeight * 0.5f), ImGuiCond_Always);
         ImGui::Begin("Global settings");
-        ImGui::GetCurrentWindow()->FontWindowScale = m_windowHeightScalar;
+        ImGui::GetCurrentWindow()->FontWindowScale = m_windowHeightScalar;  // scale the ui based on window height
         
         static float waveSpeed = 1.0f;
         ImGui::SliderFloat("Wave Speed", &waveSpeed, 0.0f, 10.0f);
@@ -86,8 +85,8 @@ void Window::Loop()
         
         ImGui::End();
 
-        ImGui::SetNextWindowPos(ImVec2(0.0f, m_windowHeight * 0.5f), ImGuiCond_Once);
-        ImGui::SetNextWindowSize(ImVec2(m_windowWidth * (1.0f - m_callbackData->viewportWidthPercentage), m_windowHeight * 0.5f), ImGuiCond_Once);
+        ImGui::SetNextWindowPos(ImVec2(0.0f, m_callbackData->windowHeight * 0.5f), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(m_callbackData->settingsWidth, m_callbackData->windowHeight * 0.5f), ImGuiCond_Always);
         ImGui::Begin("Scene settings");
         ImGui::GetCurrentWindow()->FontWindowScale = m_windowHeightScalar;
 
@@ -175,7 +174,7 @@ void Window::calcFPS()
     m_frames++;
     if (m_totalTime >= 1.0f)
     {
-        std::string title = "LearnOpenGL - FPS: " + fmt::to_string(m_frames);
+        std::string title = "Honeycrisp - FPS: " + fmt::to_string(m_frames);
         glfwSetWindowTitle(m_glfwWindow, title.c_str());
         m_frames = 0;
         m_totalTime = 0.0f;

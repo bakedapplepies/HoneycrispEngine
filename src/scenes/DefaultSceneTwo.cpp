@@ -6,7 +6,7 @@ using namespace Honeycrisp;
 
 DefaultSceneTwo::DefaultSceneTwo()
 {
-    bgColor = glm::vec3(1.0f);
+    bgColor = glm::vec3(0.0f);
     pointLight = std::make_unique<PointLight>(glm::vec3(0.0f), glm::vec3(0.0f));
 
     InitializeShaders();

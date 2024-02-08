@@ -232,7 +232,7 @@ void Mesh::Draw(Shader* shader) const
     for (unsigned int i = 0; i < textures.size(); i++)  // TODO: Fix repetition
     {
         textures[i]->Bind();
-        if (textures[i]->getTextureType() == ETextureType::DIFFUSE)
+        if (textures[i]->getTextureType() == ETextureType::ALBEDO)
         {
             shader->setIntUnf("u_material.albedo", textures[i]->getTextureUnit());
         }

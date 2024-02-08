@@ -41,7 +41,7 @@ namespace Texture2DManager
 
         mainTextureMap = std::make_unique<Texture2D>(
             FileSystem::Path("resources/textures/grass_textures.png"),
-            ETextureType::DIFFUSE,
+            ETextureType::ALBEDO,
             3, 1
         );
         mainTextureSpecularMap = std::make_unique<Texture2D>(
