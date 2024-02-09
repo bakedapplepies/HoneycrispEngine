@@ -25,3 +25,4 @@ gets is the Draw-calls-queue.
 - TODO: Texture2DManager
 - TODO: Add FBX support
 - TODO: Make settings/inspector extendable/retractable
+- TODO: Should ambient and diffuse have r-g-b components different from each other?

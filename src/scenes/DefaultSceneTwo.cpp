@@ -7,7 +7,11 @@ using namespace Honeycrisp;
 DefaultSceneTwo::DefaultSceneTwo()
 {
     bgColor = glm::vec3(0.0f);
-    pointLight = std::make_unique<PointLight>(glm::vec3(0.0f), glm::vec3(0.0f));
+    pointLight = std::make_unique<PointLight>(
+        glm::vec3(0.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        0.1f, 0.5f, 1.0f
+    );
 
     InitializeShaders();
 
@@ -154,9 +158,9 @@ void DefaultSceneTwo::SetInitialUniforms(void)
 
     // point light
     shader->setVec3Unf("u_pointLight.position", pointLight->position);
-    shader->setVec3Unf("u_pointLight.ambient", glm::vec3(0.1f));
-    shader->setVec3Unf("u_pointLight.diffuse", glm::vec3(0.5f));
-    shader->setVec3Unf("u_pointLight.specular", glm::vec3(1.0f));
+    shader->setVec3Unf("u_pointLight.ambient", pointLight->getAmbient());
+    shader->setVec3Unf("u_pointLight.diffuse", pointLight->getDiffuse());
+    shader->setVec3Unf("u_pointLight.specular", pointLight->getSpecular());
     shader->setFloatUnf("u_pointLight.constant", 1.0f);
     shader->setFloatUnf("u_pointLight.linear", 0.001f);
     shader->setFloatUnf("u_pointLight.quadratic", 0.0002f);
@@ -184,9 +188,9 @@ void DefaultSceneTwo::SetInitialUniforms(void)
 
     // point light
     wackyShader->setVec3Unf("u_pointLight.position", pointLight->position);
-    wackyShader->setVec3Unf("u_pointLight.ambient", glm::vec3(0.1f));
-    wackyShader->setVec3Unf("u_pointLight.diffuse", glm::vec3(0.5f));
-    wackyShader->setVec3Unf("u_pointLight.specular", glm::vec3(1.0f));
+    wackyShader->setVec3Unf("u_pointLight.ambient", pointLight->getAmbient());
+    wackyShader->setVec3Unf("u_pointLight.diffuse", pointLight->getDiffuse());
+    wackyShader->setVec3Unf("u_pointLight.specular", pointLight->getSpecular());
     wackyShader->setFloatUnf("u_pointLight.constant", 1.0f);
     wackyShader->setFloatUnf("u_pointLight.linear", 0.001f);
     wackyShader->setFloatUnf("u_pointLight.quadratic", 0.0002f);
@@ -213,9 +217,9 @@ void DefaultSceneTwo::SetInitialUniforms(void)
 
     // point light
     backpackShader->setVec3Unf("u_pointLight.position", pointLight->position);
-    backpackShader->setVec3Unf("u_pointLight.ambient", glm::vec3(0.1f));
-    backpackShader->setVec3Unf("u_pointLight.diffuse", glm::vec3(0.6f));
-    backpackShader->setVec3Unf("u_pointLight.specular", glm::vec3(1.0f));
+    backpackShader->setVec3Unf("u_pointLight.ambient", pointLight->getAmbient());
+    backpackShader->setVec3Unf("u_pointLight.diffuse", pointLight->getDiffuse());
+    backpackShader->setVec3Unf("u_pointLight.specular", pointLight->getSpecular());
     backpackShader->setFloatUnf("u_pointLight.constant", 1.0f);
     backpackShader->setFloatUnf("u_pointLight.linear", 0.001f);
     backpackShader->setFloatUnf("u_pointLight.quadratic", 0.0002f);

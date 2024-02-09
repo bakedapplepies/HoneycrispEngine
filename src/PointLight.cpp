@@ -3,8 +3,8 @@
 
 HNCRSP_NAMESPACE_START
 
-PointLight::PointLight(const glm::vec3& position, const glm::vec3& color)
-    : position(position), colorEmit(color)
+PointLight::PointLight(const glm::vec3& position, const glm::vec3& color, float ambient, float diffuse, float specular)
+    : position(position), colorEmit(color), ambient(ambient), diffuse(diffuse), specular(specular)
 {
 }
 
@@ -42,9 +42,19 @@ PointLight& PointLight::operator=(PointLight&& other) noexcept
     return *this;
 }
 
-glm::vec3& PointLight::GetColor()
+glm::vec3 PointLight::getAmbient() const
 {
-    return colorEmit;
+    return ambient * colorEmit;
+}
+
+glm::vec3 PointLight::getDiffuse() const
+{
+    return diffuse * colorEmit;
+}
+
+glm::vec3 PointLight::getSpecular() const
+{
+    return specular * colorEmit;
 }
 
 HNCRSP_NAMESPACE_END
