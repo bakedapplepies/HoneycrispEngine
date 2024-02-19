@@ -1,8 +1,8 @@
 #pragma once
 
 #include "src/pch/pch.h"
-
-#include "Renderable.h"
+#include "src/Renderable.h"
+#include "src/Object.h"
 #include "Cubemap.h"
 
 
@@ -11,7 +11,7 @@ HNCRSP_NAMESPACE_START
 class Scene  // : public std::enable_shared_from_this<Scene>
 {
 protected:
-    // TODO: SceneObject is really just a Renderable, redesign this, maybe switch to just a shared/unique_ptr
+    // TODO: SceneObject is really just a Mesh, redesign this, maybe switch to just a shared/unique_ptr
     template <class T>
     class SceneObject : public T, public std::enable_shared_from_this<SceneObject<T>>
     {
@@ -56,7 +56,7 @@ protected:
     };
 
 private:
-    struct RenderableShaderGroupInfo
+    struct RenderablesWSharedShaderInfo
     {
         std::vector< std::pair< size_t, std::shared_ptr<Renderable> > > objectShaderGroup;
         std::shared_ptr<Shader> shader;
@@ -82,16 +82,15 @@ private:
     std::priority_queue< size_t, std::vector<size_t>, std::greater<size_t> > sceneObjectIDQueue;
 
 protected:
-    std::unordered_map<GLuint, RenderableShaderGroupInfo> m_renderObjectPtrs;
-    std::vector< std::shared_ptr<Object> > m_nonRenderObjectPtrs;
+    std::unordered_map<GLuint, RenderablesWSharedShaderInfo> m_renderObjectPtrs;
 
 public:
     glm::vec3 bgColor = glm::vec3(0.0f, 0.0f, 0.0f);
 
 private:
     template <typename T, typename... Args>
-    std::shared_ptr< SceneObject<T> > CreateMovable(std::true_type, Args&&... args)
-    {  // SceneObject<T> is still of type Renderable, can be added normally to m_renderObjectPtrs
+    std::shared_ptr< SceneObject<T> > CreateMovable(Args&&... args)
+    {  // SceneObject<T> is still of type Mesh, can be added normally to m_renderObjectPtrs
         std::shared_ptr< SceneObject<T> > objPtr = std::make_shared< SceneObject<T> >(this, std::forward<Args>(args)...);
         
         // TODO: batching
@@ -107,7 +106,7 @@ private:
     }
 
     template <typename T, typename... Args>
-    std::shared_ptr< SceneObject<T> > CreateImmovable(std::true_type, Args&&... args)
+    std::shared_ptr< SceneObject<T> > CreateImmovable(Args&&... args)
     {
         std::shared_ptr< SceneObject<T> > objPtr = std::make_shared< SceneObject<T> >(this, std::forward<Args>(args)...);
         
@@ -123,30 +122,14 @@ private:
         return objPtr;
     }
 
-    template <typename T, typename... Args>
-    std::shared_ptr< SceneObject<T> > CreateMovable(std::false_type, Args&&... args)
-    {
-        std::shared_ptr< SceneObject<T> > objPtr = std::make_shared< SceneObject<T> >(this, std::forward<Args>(args)...);
-        m_nonRenderObjectPtrs.push_back(objPtr);
-        return objPtr;
-    }
-
-    template <typename T, typename... Args>
-    std::shared_ptr< SceneObject<T> > CreateImmovable(std::false_type, Args&&... args)
-    {
-        std::shared_ptr< SceneObject<T> > objPtr = std::make_shared< SceneObject<T> >(this, std::forward<Args>(args)...);
-        m_nonRenderObjectPtrs.push_back(objPtr);
-        return objPtr;
-    }
-
 protected:
     template <typename T, EObjectMovement movement_type, typename... Args>
     std::shared_ptr< SceneObject<T> > CreateObject(Args&&... args)
     {
-        static_assert(std::is_base_of<Object, T>());
+        static_assert(std::is_base_of<Renderable, T>());
         
         using namespace Honeycrisp::FileSystem;
-        if (!m_basicShader)  // just initializing basic shader
+        if (!m_basicShader)  // initializing basic shader
         {
             m_basicShader = std::make_shared<Shader>(
                 Path("resources/shaders/DefaultVertex.glsl"),
@@ -154,14 +137,13 @@ protected:
             );
         }
         
-        // TODO: use forward to check for regular refs
         if (movement_type == EObjectMovement::DYNAMIC)
         {
-            return CreateMovable<T>(std::is_base_of<Renderable, T>(), std::forward<Args>(args)...);
+            return CreateMovable<T>(std::forward<Args>(args)...);
         }
         else
         {
-            return CreateImmovable<T>(std::is_base_of<Renderable, T>(), std::forward<Args>(args)...);
+            return CreateImmovable<T>(std::forward<Args>(args)...);
         }
     }
 

@@ -1,53 +1,82 @@
 #pragma once
 
 #include "src/pch/pch.h"
-
-#include "Renderable.h"
+#include "src/types/Transform.h"
 #include "renderer/VertexArray.h"
 #include "src/renderer/Texture2D.h"
+#include "src/core/Material.h"
+#include "src/Object.h"
 
 
 HNCRSP_NAMESPACE_START
 
-class Mesh : public Renderable
+class Mesh : public Object
 {
 public:
+    // scene data
+    std::vector<Transform> transforms;
+
+    // mesh data
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec3> colors;
     std::vector<glm::vec3> normals;
     std::vector<glm::vec2> uvs;
     std::vector<GLuint> indices;
-    std::vector< std::shared_ptr<Texture2D> > textures;
+
+    // mesh props
+    std::unique_ptr<Material> material;
 
 private:
-    std::vector<glm::vec3> m_eulerAngles;
-    std::vector<float> m_scalars;
-    glm::mat4 m_modelMatrix;
+    // mesh data
     std::vector<float> m_vertData;
-    std::shared_ptr<VertexArray> m_VAO;
+    VertexArray m_VAO;
+    glm::mat4 m_modelMatrix;
+
+    // scene data
+    glm::vec3 m_relativeOrigin = glm::vec3(0.0f);
+    std::vector<glm::vec3> m_eulerAngles;
+
 
 public:
-    Mesh();
+    Mesh() = default;
     Mesh(const Mesh& other) = delete;
     Mesh& operator=(const Mesh& other) = delete;
     Mesh(Mesh&& other) noexcept;
     Mesh& operator=(Mesh&& other) noexcept;
-    ~Mesh() = default;
+    virtual ~Mesh() = default;
 
     void EnableVertexAttribPosition(bool on) const;
     void EnableVertexAttribColor(bool on) const;
     void EnableVertexAttribUV(bool on) const;
     void EnableVertexAttribNormals(bool on) const;
 
-    void OnUpdate() override {}
-    void Draw(Shader* shader) const override;
+    virtual void OnUpdate() override;
+    virtual void Draw(Shader* shader) const;
     void Translate(const glm::vec3& vec);
     void Scale(const float& multiplier);
     void Rotate(const float& rX, const float& rY, const float& rZ);
     glm::mat4 GetModelMatrix(const Transform& position) const;
 
     void ConstructMesh();
-    std::weak_ptr<VertexArray> GetVAO();
+
+public:
+
+    inline glm::vec3 getRelativeOrigin() const
+    {
+        return m_relativeOrigin;
+    }
+
+    inline void setRelativeOrigin(const glm::vec3& relOrigin)
+    {
+        m_relativeOrigin = relOrigin;
+    }
+
+    virtual inline void addTransform(const Transform& transform)
+    {
+        transforms.push_back(transform);
+    }
+
+    virtual void Draw(Shader* shader);
 };
 
 HNCRSP_NAMESPACE_END

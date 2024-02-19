@@ -3,7 +3,6 @@
 - TODO: optimize shader system
 - TODO: cache texture (ktx) & store model in reuseable binary format
 - TODO: check if shared_ptr in SceneManager is necessary
-- TODO: Manage texture units (including GL_TEXTURE_CUBE_MAP)
 - TODO: LOD (mesh subdivision via geometry shader for now, mesh shader later)
 - TODO: Make model loading asynchronous
 - TODO: Mark constructors as explicit
@@ -22,7 +21,10 @@ gets is the Draw-calls-queue.
         only use smart pointers to manage the lifetime of objects
 - TODO: Entity-Component-System for Renderable objects (SceneObject - Renderable Component - Renderer)
 - TODO: Bind light and uniforms and stuff together
-- TODO: Texture2DManager
 - TODO: Add FBX support
 - TODO: Make settings/inspector extendable/retractable
 - TODO: Should ambient and diffuse have r-g-b components different from each other?
+- TODO: Manage texture units (including GL_TEXTURE_CUBE_MAP)
+- TODO: Texture2DManager
+- TODO: Use Texture2DManager when using stuff that has textures
+- TODO: ShaderManager

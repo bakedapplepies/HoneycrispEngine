@@ -16,7 +16,6 @@ Scene::Scene(Scene&& other) noexcept
 {
     m_cubemap = std::move(other.m_cubemap);
     m_renderObjectPtrs = std::move(other.m_renderObjectPtrs);
-    m_nonRenderObjectPtrs = std::move(other.m_nonRenderObjectPtrs);
     bgColor = std::move(other.bgColor);
 
     other.m_std_moved = true;
@@ -26,7 +25,6 @@ Scene& Scene::operator=(Scene&& other) noexcept
 {
     m_cubemap = std::move(other.m_cubemap);
     m_renderObjectPtrs = std::move(other.m_renderObjectPtrs);
-    m_nonRenderObjectPtrs = std::move(other.m_nonRenderObjectPtrs);
     bgColor = std::move(other.bgColor);
 
     other.m_std_moved = true;
@@ -60,7 +58,7 @@ void Scene::Draw(void) const
     for (auto iter = m_renderObjectPtrs.begin(); iter != m_renderObjectPtrs.end(); iter++)
     {
         iter->second.shader->Use();
-        for (std::pair< size_t, std::shared_ptr<Renderable> > obj : iter->second.objectShaderGroup)
+        for (std::pair< size_t, std::shared_ptr<Mesh> > obj : iter->second.objectShaderGroup)
         {
             obj.second->Draw(iter->second.shader.get());
         }
@@ -106,7 +104,7 @@ void Scene::deleteSceneObjectID(size_t id)
 // To make sure vector is already sorted
 // template <template<typename> typename T, typename U>
 void Scene::binary_insert_ptr(
-    std::vector<std::pair<size_t, std::shared_ptr<Renderable>>>& vec, const std::pair<size_t, std::shared_ptr<Renderable>>& pair)
+    std::vector<std::pair<size_t, std::shared_ptr<Mesh>>>& vec, const std::pair<size_t, std::shared_ptr<Mesh>>& pair)
 {
     // static_assert(std::is_arithmetic_v<T>, "Type T is not of arithmetic type");
 
@@ -139,7 +137,7 @@ void Scene::binary_insert_ptr(
 }
 
 // template <typename T>
-void Scene::binary_delete_ptr(std::vector<std::pair<size_t, std::shared_ptr<Renderable>>>& vec, const size_t& objID)
+void Scene::binary_delete_ptr(std::vector<std::pair<size_t, std::shared_ptr<Mesh>>>& vec, const size_t& objID)
 {
     // static_assert(std::is_arithmetic_v<T>, "Type T is not of arithmetic type");
 

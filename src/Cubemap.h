@@ -1,13 +1,12 @@
 #pragma once
 
 #include "src/pch/pch.h"
-#include "Renderable.h"
 #include "Mesh.h"
 
 
 HNCRSP_NAMESPACE_START
 
-class Cubemap : public Renderable
+class Cubemap
 {
 private:
     GLuint m_cubemapTextureID, m_VBO_ID, m_EBO_ID, m_VAO_ID;
@@ -23,8 +22,8 @@ private:
 
 public:
     Cubemap(const std::vector<std::string>& faces);
-    void OnUpdate() override {};
-    void Draw(Shader* shader) const override;
+    void OnUpdate() {};
+    void Draw(Shader* shader) const;
 
 private:
     void SetMesh();

@@ -12,8 +12,14 @@ public:
     glm::vec3 direction;
     glm::vec3 colorEmit;
 
+    float ambient;
+    float diffuse;
+    float specular;
+
 public:
-    DirectionalLight(const glm::vec3& direction, const glm::vec3& color);
+    DirectionalLight(const glm::vec3& direction, const glm::vec3& color,
+        float ambient, float diffuse, float specular);
+
     DirectionalLight(const DirectionalLight& other);
     DirectionalLight(DirectionalLight&& other) noexcept;
     DirectionalLight& operator=(const DirectionalLight& other);

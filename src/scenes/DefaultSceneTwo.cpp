@@ -161,9 +161,9 @@ void DefaultSceneTwo::SetInitialUniforms(void)
     shader->setVec3Unf("u_pointLight.ambient", pointLight->getAmbient());
     shader->setVec3Unf("u_pointLight.diffuse", pointLight->getDiffuse());
     shader->setVec3Unf("u_pointLight.specular", pointLight->getSpecular());
-    shader->setFloatUnf("u_pointLight.constant", 1.0f);
-    shader->setFloatUnf("u_pointLight.linear", 0.001f);
-    shader->setFloatUnf("u_pointLight.quadratic", 0.0002f);
+    shader->setFloatUnf("u_pointLight.constant", pointLight->attenuation_constant);
+    shader->setFloatUnf("u_pointLight.linear", pointLight->attenuation_linear);
+    shader->setFloatUnf("u_pointLight.quadratic", pointLight->attenuation_quadratic);
 
     // spot light
     shader->setFloatUnf("u_spotLight.cutOff", glm::cos(glm::radians(15.0f)));
@@ -191,9 +191,9 @@ void DefaultSceneTwo::SetInitialUniforms(void)
     wackyShader->setVec3Unf("u_pointLight.ambient", pointLight->getAmbient());
     wackyShader->setVec3Unf("u_pointLight.diffuse", pointLight->getDiffuse());
     wackyShader->setVec3Unf("u_pointLight.specular", pointLight->getSpecular());
-    wackyShader->setFloatUnf("u_pointLight.constant", 1.0f);
-    wackyShader->setFloatUnf("u_pointLight.linear", 0.001f);
-    wackyShader->setFloatUnf("u_pointLight.quadratic", 0.0002f);
+    wackyShader->setFloatUnf("u_pointLight.constant", pointLight->attenuation_constant);
+    wackyShader->setFloatUnf("u_pointLight.linear", pointLight->attenuation_linear);
+    wackyShader->setFloatUnf("u_pointLight.quadratic", pointLight->attenuation_quadratic);
 
     // spot light
     wackyShader->setFloatUnf("u_spotLight.cutOff", glm::cos(glm::radians(15.0f)));
@@ -212,7 +212,7 @@ void DefaultSceneTwo::SetInitialUniforms(void)
     // dir light
     backpackShader->setVec3Unf("u_dirLight.direction", glm::normalize(glm::vec3(0, -1, 0)));
     backpackShader->setVec3Unf("u_dirLight.ambient", glm::vec3(1.0f));
-    backpackShader->setVec3Unf("u_dirLight.diffuse", glm::vec3(1.0f) * 0.7f);
+    backpackShader->setVec3Unf("u_dirLight.diffuse", glm::vec3(0.7f));
     backpackShader->setVec3Unf("u_dirLight.specular", glm::vec3(1.0f));
 
     // point light
@@ -220,9 +220,9 @@ void DefaultSceneTwo::SetInitialUniforms(void)
     backpackShader->setVec3Unf("u_pointLight.ambient", pointLight->getAmbient());
     backpackShader->setVec3Unf("u_pointLight.diffuse", pointLight->getDiffuse());
     backpackShader->setVec3Unf("u_pointLight.specular", pointLight->getSpecular());
-    backpackShader->setFloatUnf("u_pointLight.constant", 1.0f);
-    backpackShader->setFloatUnf("u_pointLight.linear", 0.001f);
-    backpackShader->setFloatUnf("u_pointLight.quadratic", 0.0002f);
+    backpackShader->setFloatUnf("u_pointLight.constant", pointLight->attenuation_constant);
+    backpackShader->setFloatUnf("u_pointLight.linear", pointLight->attenuation_linear);
+    backpackShader->setFloatUnf("u_pointLight.quadratic", pointLight->attenuation_quadratic);
 
     // spot light
     backpackShader->setFloatUnf("u_spotLight.cutOff", glm::cos(glm::radians(15.0f)));

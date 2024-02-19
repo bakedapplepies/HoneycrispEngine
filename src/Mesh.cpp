@@ -3,13 +3,9 @@
 
 HNCRSP_NAMESPACE_START
 
-Mesh::Mesh()
-{
-    m_VAO = std::make_shared<VertexArray>();
-}
-
 void Mesh::ConstructMesh()
 {
+    // m_VAO = std::make_shared<VertexArray>();
     if (!m_vertData.empty())
     {
         HNCRSP_LOG_WARN("Mesh already constructed.");
@@ -64,7 +60,7 @@ void Mesh::ConstructMesh()
         }
     }
 
-    m_VAO->CreateVAO(
+    m_VAO.CreateVAO(
         m_vertData.data(),
         m_vertData.size() * sizeof(float),
         indices.data(),
@@ -142,7 +138,7 @@ void Mesh::ConstructMesh()
 void Mesh::EnableVertexAttribPosition(bool on) const
 {
     // Becareful of these binds
-    m_VAO->Bind();
+    m_VAO.Bind();
     if (on)
     {
         GLCall(glEnableVertexAttribArray(0));
@@ -155,7 +151,7 @@ void Mesh::EnableVertexAttribPosition(bool on) const
 
 void Mesh::EnableVertexAttribColor(bool on) const
 {
-    m_VAO->Bind();
+    m_VAO.Bind();
     if (on)
     {
         GLCall(glEnableVertexAttribArray(1));
@@ -168,7 +164,7 @@ void Mesh::EnableVertexAttribColor(bool on) const
 
 void Mesh::EnableVertexAttribUV(bool on) const
 {
-    m_VAO->Bind();
+    m_VAO.Bind();
     if (on)
     {
         GLCall(glEnableVertexAttribArray(2));
@@ -181,7 +177,7 @@ void Mesh::EnableVertexAttribUV(bool on) const
 
 void Mesh::EnableVertexAttribNormals(bool on) const
 {
-    m_VAO->Bind();
+    m_VAO.Bind();
     if (on)
     {
         GLCall(glEnableVertexAttribArray(3));
@@ -201,7 +197,7 @@ Mesh::Mesh(Mesh&& other) noexcept
     normals = std::move(other.normals);
     uvs = std::move(other.uvs);
     indices = std::move(other.indices);
-    textures = std::move(other.textures);
+    material = std::move(other.material);
 
     m_vertData = std::move(other.m_vertData);
     m_VAO = std::move(other.m_VAO);
@@ -216,7 +212,7 @@ Mesh& Mesh::operator=(Mesh&& other) noexcept
     normals = std::move(other.normals);
     uvs = std::move(other.uvs);
     indices = std::move(other.indices);
-    textures = std::move(other.textures);
+    material = std::move(other.material);
 
     m_vertData = std::move(other.m_vertData);
     m_VAO = std::move(other.m_VAO);
@@ -226,20 +222,33 @@ Mesh& Mesh::operator=(Mesh&& other) noexcept
 
 void Mesh::Draw(Shader* shader) const
 {
-    m_VAO->Bind();
+    m_VAO.Bind();
     shader->Use();
 
-    for (unsigned int i = 0; i < textures.size(); i++)  // TODO: Fix repetition
+    if (std::shared_ptr<Texture2D> albedoMap = material->getAlbedoMap().lock())
     {
-        textures[i]->Bind();
-        if (textures[i]->getTextureType() == ETextureType::ALBEDO)
-        {
-            shader->setIntUnf("u_material.albedo", textures[i]->getTextureUnit());
-        }
-        else if (textures[i]->getTextureType() == ETextureType::SPECULAR)
-        {
-            shader->setIntUnf("u_material.specular", textures[i]->getTextureUnit());
-        }
+        albedoMap->Bind();
+        shader->setIntUnf("u_material.albedo", albedoMap->getTextureUnit());
+    }
+    if (std::shared_ptr<Texture2D> roughnessMap = material->getRoughnessMap().lock())
+    {
+        roughnessMap->Bind();
+        shader->setIntUnf("u_material.roughness", roughnessMap->getTextureUnit());
+    }
+    if (std::shared_ptr<Texture2D> aoMap = material->getAoMap().lock())
+    {
+        aoMap->Bind();
+        shader->setIntUnf("u_material.ao", aoMap->getTextureUnit());
+    }
+    if (std::shared_ptr<Texture2D> normalMap = material->getNormalMap().lock())
+    {
+        normalMap->Bind();
+        shader->setIntUnf("u_material.normal", normalMap->getTextureUnit());
+    }
+    if (std::shared_ptr<Texture2D> specularMap = material->getSpecularMap().lock())
+    {
+        specularMap->Bind();
+        shader->setIntUnf("u_material.specular", specularMap->getTextureUnit());
     }
 
     for (const Transform& i_transform : transforms)
@@ -247,7 +256,7 @@ void Mesh::Draw(Shader* shader) const
         glm::mat4 modelMatrix = GetModelMatrix(i_transform);
         shader->setMat3Unf("u_normalMatrix", glm::mat3(glm::transpose(glm::inverse(modelMatrix))));
         shader->setMat4Unf("u_model", modelMatrix);
-        GLCall( glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (GLvoid*)0) );
+        GLCall(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr));
     }
 }
 
@@ -264,11 +273,6 @@ glm::mat4 Mesh::GetModelMatrix(const Transform& transform) const
     modelMatrix = glm::scale(modelMatrix, transform.scale);
 
     return modelMatrix;
-}
-
-std::weak_ptr<VertexArray> Mesh::GetVAO()
-{
-    return std::weak_ptr<VertexArray>(m_VAO);
 }
 
 HNCRSP_NAMESPACE_END

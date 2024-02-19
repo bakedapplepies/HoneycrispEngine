@@ -51,14 +51,4 @@ GLuint VertexArray::getID()
     return m_VAO_ID;
 }
 
-VertexBuffer* VertexArray::getVBO()
-{
-    return &m_vertexBuffer;
-}
-
-ElementBuffer* VertexArray::getEBO()
-{
-    return &m_elementBuffer;
-}
-
 HNCRSP_NAMESPACE_END

@@ -27,9 +27,6 @@ public:
     void Bind() const;
     void Unbind() const;
 
-    VertexBuffer* getVBO();
-    ElementBuffer* getEBO();
-
     GLuint getID();
 };
 

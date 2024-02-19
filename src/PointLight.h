@@ -17,8 +17,14 @@ public:
     float diffuse;
     float specular;
 
+    float attenuation_constant = 1.0f;
+    float attenuation_linear = 0.001f;
+    float attenuation_quadratic = 0.0002f;
+
 public:
-    PointLight(const glm::vec3& position, const glm::vec3& color, float ambient, float diffuse, float specular);
+    PointLight(const glm::vec3& position, const glm::vec3& color,
+        float ambient, float diffuse, float specular);
+        
     PointLight(const PointLight& other);
     PointLight(PointLight&& other) noexcept;
     PointLight& operator=(const PointLight& other);

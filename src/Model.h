@@ -7,14 +7,14 @@
 
 HNCRSP_NAMESPACE_START
 
-class Model : public Renderable
+class Model : public Object
 {
 private:
     std::vector<Mesh> m_meshes;
     std::filesystem::path m_modelDirectory;
 
 public:
-    void Draw(Shader* shader) const override;
+    void Draw(Shader* shader) const;
 
 public:
     Model(const FileSystem::Path& path);
@@ -27,7 +27,7 @@ private:
 
 public:
     void OnUpdate() override {}
-    void addTransform(const Transform& transform) override;  // acts as interface for meshes
+    void addTransform(const Transform& transform);  // acts as interface for meshes
 };
 
 HNCRSP_NAMESPACE_END
