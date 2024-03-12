@@ -34,12 +34,19 @@ Mesh& Mesh::operator=(Mesh&& other) noexcept
     return *this;
 }
 
-void Mesh::virt_AddMeshDataToRenderer(EntityUID entityUID)
+void Mesh::virt_AddMeshDataToRenderer(EntityUID entityUID, std::shared_ptr<Material> material)
 {
     MeshData meshData;
     meshData.VAO_id = m_VAO->getID();
     meshData.num_vertices = m_numVertices;
-    meshData.material = std::make_shared<Material>(g_ShaderManager.basicShader);
+    if (material)
+    {
+        meshData.material = material;
+    }
+    else
+    {
+        meshData.material = std::make_shared<Material>(g_ShaderManager.basicShader);
+    }
 
     g_ECSManager->AddComponent<MeshData>(entityUID, meshData);
 }

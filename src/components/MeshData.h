@@ -11,7 +11,7 @@ struct MeshData
 {
     GLuint VAO_id;
     uint32_t num_vertices;
-    std::shared_ptr<Material> material;
+    std::shared_ptr<Material> material = nullptr;
     // if material is shared between multiple meshes, it shouldn't be too bad
     // especially in this amateur project lul
 };

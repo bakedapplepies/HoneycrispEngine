@@ -22,6 +22,7 @@ VertexArray::VertexArray(
         HNCRSP_LOG_WARN("Mesh already constructed.");
         return;
     }
+
     if (vertices->empty())
     {
         HNCRSP_TERMINATE("No data to construct mesh.");
@@ -30,24 +31,31 @@ VertexArray::VertexArray(
     {
         HNCRSP_TERMINATE("No indices to draw mesh.");
     }
-    size_t normalsCount = vertices->size() & normals->size();
-    if (normalsCount != vertices->size() && normalsCount != 0)
+    if (normals)
     {
-        HNCRSP_TERMINATE("Normals data not uniform with vertex positions.");
+        if (normals->size() != vertices->size() && normals->size() != 0)
+        {
+            HNCRSP_TERMINATE("Normals data not uniform with vertex positions.");
+        }
     }
-    size_t colorsCount = vertices->size() & colors->size();
-    if (colorsCount != vertices->size() && colorsCount != 0)
+    if (colors)
     {
-        HNCRSP_TERMINATE("Color data not uniform with vertex positions.");
+        if (colors->size() != vertices->size() && colors->size() != 0)
+        {
+            HNCRSP_TERMINATE("Color data not uniform with vertex positions.");
+        }
     }
-    size_t uvsCount = vertices->size() & uvs->size();
-    if (uvsCount != vertices->size() && uvsCount != 0)
+    if (uvs)
     {
-        HNCRSP_TERMINATE("UV data not uniform with vertex positions.");
+        if (uvs->size() != vertices->size() && uvs->size() != 0)
+        {
+            HNCRSP_TERMINATE("UV data not uniform with vertex positions.");
+        }
     }
-
     
-    size_t vertArrayDataSize = vertices->size()*3 + vertices->size()*3 + normals->size()*3 + uvs->size()*2;
+    size_t vertArrayDataSize = vertices->size()*3 + vertices->size()*3;
+    if (normals) vertArrayDataSize += normals->size();
+    if (uvs) vertArrayDataSize += uvs->size();
     m_vertData.reserve(vertArrayDataSize);
 
     for (size_t vertIndex = 0; vertIndex < vertices->size(); vertIndex++)
@@ -59,7 +67,7 @@ VertexArray::VertexArray(
             m_vertData.push_back(vertices->at(vertIndex).z);
         }
 
-        if (colors->empty())  // even if color is not available there should be a default color
+        if (!colors)  // even if color is not available there should be a default color
         {
             m_vertData.push_back(1.0f);
             m_vertData.push_back(1.0f);
@@ -72,13 +80,13 @@ VertexArray::VertexArray(
             m_vertData.push_back(colors->at(vertIndex).z);
         }
 
-        if (!uvs->empty())
+        if (uvs)
         {
             m_vertData.push_back(uvs->at(vertIndex).x);
             m_vertData.push_back(uvs->at(vertIndex).y);
         }
 
-        if (!normals->empty())
+        if (normals)
         {
             m_vertData.push_back(normals->at(vertIndex).x);
             m_vertData.push_back(normals->at(vertIndex).y);
@@ -98,8 +106,8 @@ VertexArray::VertexArray(
     size_t numAttribElements = 
         3 +
         3 +
-        2 * !uvs->empty()       +
-        3 * !normals->empty();
+        2 * !uvs +
+        3 * !normals;
     unsigned int currentOffset = 0;
 
     // Postions XYZ
@@ -126,7 +134,7 @@ VertexArray::VertexArray(
     EnableVertexAttribColor(true);
     currentOffset += 3;
 
-    if (!uvs->empty())
+    if (uvs)
     {
         // Texture Coordinates XY
         GLCall(glVertexAttribPointer(
@@ -142,7 +150,7 @@ VertexArray::VertexArray(
     }
     else { EnableVertexAttribUV(false); }
 
-    if (!normals->empty())
+    if (normals)
     {
         // Normals XYZ (Normalized vectors)
         GLCall(glVertexAttribPointer(

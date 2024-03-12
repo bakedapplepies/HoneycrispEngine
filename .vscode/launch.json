@@ -6,8 +6,13 @@
             "request": "launch",
             "name": "Debug Application",
             "program": "${workspaceFolder}/build/Debug/src/Honeycrisp.exe",
-            "args": [],
-            "cwd": "${workspaceFolder}/build/Debug/src"
+            "args": [
+            ],
+            "cwd": "${workspaceFolder}/build/Debug/src",
+            // "sourceMap": {
+            //     "${workspaceFolder}/build/Debug/src": "${workspaceFolder}"
+            // }
+            "breakpointMode": "path"
         }
     ]
 }

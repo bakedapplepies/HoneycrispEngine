@@ -21,7 +21,7 @@ public:
     Cube& operator=(Cube&& other) noexcept;
     ~Cube() = default;
     
-    void virt_AddMeshDataToRenderer(EntityUID entityUID) override final;
+    void virt_AddMeshDataToRenderer(EntityUID entityUID, std::shared_ptr<Material> material = nullptr) override final;
 
 private:
     void InitializeAttributeData();

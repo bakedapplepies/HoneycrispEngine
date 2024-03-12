@@ -72,11 +72,13 @@ public:
     }
 
     template <typename TSystem>
-    void RegisterSystem(const ComponentBitset& component_bitset) const
+    void RegisterSystem(const ComponentBitset& component_bitset)
     {
         static_assert(std::is_base_of_v<System, TSystem>, "TSystem is not a base of 'System'.");
 
-        m_systemManager->RegisterSystem<TSystem>(component_bitset);
+        std::shared_ptr<System> system = m_systemManager->RegisterSystem<TSystem>(component_bitset);
+
+        if constexpr(std::is_same_v<TSystem, Renderer>) m_renderer = std::static_pointer_cast<Renderer>(system).get();
     }
 
     template <typename TSystem>

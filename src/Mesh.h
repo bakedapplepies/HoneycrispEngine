@@ -45,7 +45,7 @@ public:
     void Scale(const float& multiplier);
     void Rotate(const float& rX, const float& rY, const float& rZ);
 
-    void virt_AddMeshDataToRenderer(EntityUID entityUID) override final;
+    void virt_AddMeshDataToRenderer(EntityUID entityUID, std::shared_ptr<Material> material = nullptr) override final;
 
 public:
 

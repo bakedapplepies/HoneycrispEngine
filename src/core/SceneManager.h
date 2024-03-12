@@ -55,7 +55,6 @@ public:
         m_application_ECS_register_systems();
 
         m_scenesMap[m_nextSceneIndex] = std::make_unique<TScene>();
-        HNCRSP_LOG_INFO("reached");
         return m_nextSceneIndex++;
     }
 };

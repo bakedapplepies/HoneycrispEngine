@@ -27,7 +27,7 @@ public:
     void StartUp() {}
 
     template <typename TSystem>
-    std::shared_ptr<TSystem> RegisterSystem(const ComponentBitset& component_bitset)
+    [[nodiscard]] std::shared_ptr<TSystem> RegisterSystem(const ComponentBitset& component_bitset)
     {
         static_assert(std::is_base_of_v<System, TSystem>, "TSystem is not a base of 'System'.");
 

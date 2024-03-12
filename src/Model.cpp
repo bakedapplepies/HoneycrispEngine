@@ -4,7 +4,8 @@
 
 HNCRSP_NAMESPACE_START
 
-Model::Model(const FileSystem::Path& path)
+Model::Model(const FileSystem::Path& path, std::shared_ptr<Shader> shader)
+    : m_shader(shader)
 {
     // Model loading
     float beginTime = glfwGetTime();
@@ -46,6 +47,10 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 {
     EntityUID newMeshID = g_ECSManager->NewEntityUID();
     m_meshIDs.push_back(newMeshID);
+
+    g_ECSManager->AddComponent<Transform>(newMeshID, {});  // dummy data to change later
+
+    m_material = std::make_shared<Material>(m_shader);
 
     std::vector<glm::vec3> verticesPos;
     std::vector<glm::vec3> colors;
@@ -98,9 +103,8 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
         Texture2D& diffuseMap = getMaterialTexture(material, aiTextureType_DIFFUSE);
         Texture2D& specularMap = getMaterialTexture(material, aiTextureType_SPECULAR);
 
-        MeshData& meshData = g_ECSManager->GetComponent<MeshData>(newMeshID);
-        meshData.material->setAlbedoMap(diffuseMap);
-        meshData.material->setSpecularMap(specularMap);
+        m_material->setAlbedoMap(diffuseMap);
+        m_material->setSpecularMap(specularMap);
     }
 
     return resultMesh;
@@ -142,11 +146,11 @@ void Model::setAllMeshTransform(const Transform& transform)
     }
 }
 
-void Model::virt_AddMeshDataToRenderer(EntityUID entityUID)
+void Model::virt_AddMeshDataToRenderer(EntityUID entityUID, std::shared_ptr<Material> material)
 {
     for (size_t i = 0; i < m_meshes.size(); i++)
     {
-        m_meshes[i].virt_AddMeshDataToRenderer(m_meshIDs[i]);
+        m_meshes[i].virt_AddMeshDataToRenderer(m_meshIDs[i], material);
     }
 }
 

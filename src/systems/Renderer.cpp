@@ -61,13 +61,6 @@ void Renderer::Render() const
     }
 }
 
-// Each scene has a "range" of entities to render.
-// The renderer chooses which "range" to render out of everything (the packed data).
-void Renderer::SwitchSceneToRender()
-{
-
-}
-
 // TODO: quaternions
 glm::mat4 Renderer::GetModelMatrix(Transform& transform) const 
 {

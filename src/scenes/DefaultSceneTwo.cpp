@@ -90,9 +90,10 @@ DefaultSceneTwo::DefaultSceneTwo()
 
     mesh->setTransform(Transform(glm::vec3(0.0f, -6.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
 
-    model = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/backpack/backpack.obj"));
-    model->setShader(backpackShader);
+    model = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/backpack/backpack.obj"), backpackShader);
+    // model->setShader(backpackShader);  // TODO when changing shaders, samplers have to be re-sent to gpu
     model->setTransform(Transform(glm::vec3(10.0f, 2.0f, 7.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(5.0f)));
+
 
     CreateCubemap(
         FileSystem::Path("resources/textures/cubemaps/skybox/right.jpg"),

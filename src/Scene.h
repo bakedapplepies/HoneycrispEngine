@@ -14,7 +14,7 @@ class Scene
 {
 protected:
     template <class T>
-    class SceneRenderObj : public T, std::enable_shared_from_this<SceneRenderObj<T>>
+    class SceneRenderObj : public T, public std::enable_shared_from_this<SceneRenderObj<T>>
     {
     public:
         size_t entityUID;
