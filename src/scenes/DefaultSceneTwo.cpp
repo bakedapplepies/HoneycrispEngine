@@ -5,6 +5,7 @@
 using namespace Honeycrisp;
 
 DefaultSceneTwo::DefaultSceneTwo()
+    : Scene()
 {
     bgColor = glm::vec3(0.0f);
     pointLight = std::make_unique<PointLight>(
@@ -15,13 +16,11 @@ DefaultSceneTwo::DefaultSceneTwo()
 
     InitializeShaders();
 
-    cube = CreateObject<Cube, EObjectMovement::NONE>();
+    cube = CreateStaticRenderObj<Cube>();
     cube->setShader(shader);
-    cube->addTransform(Transform(glm::vec3(1.0f, 3.0f ,5.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
-    cube->addTransform(Transform(glm::vec3(3.0f, 2.0f ,1.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
-    cube->addTransform(Transform(glm::vec3(-5.0f, -2.0f ,3.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+    cube->setTransform(Transform(glm::vec3(1.0f, 3.0f ,5.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
 
-    TextureCoords& grassUV = Texture2DManager::mainTextureMap->GetTextureCoords(0, 0);
+    TextureCoords& grassUV = g_Texture2DManager.mainTextureMap->GetTextureCoords(0, 0);
     unsigned int width = 50, height = 50;
     unsigned int vertW = width+1, vertH = height+1;
     unsigned int totalVerts = vertW * vertH;
@@ -80,20 +79,20 @@ DefaultSceneTwo::DefaultSceneTwo()
         }
     }
 
-    mesh = CreateObject<Mesh, EObjectMovement::NONE>();
+    mesh = CreateStaticRenderObj<Mesh>(
+        &vertices,
+        &indices,
+        &normals,
+        &colors,
+        &uvs
+    );
     mesh->setShader(wackyShader);
-    mesh->vertices = vertices;
-    mesh->colors = colors;
-    mesh->normals = normals;
-    mesh->uvs = uvs;
-    mesh->indices = indices;
 
-    mesh->ConstructMesh();
-    mesh->addTransform(Transform(glm::vec3(0.0f, -6.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+    mesh->setTransform(Transform(glm::vec3(0.0f, -6.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
 
-    model = CreateObject<Model, EObjectMovement::NONE>(FileSystem::Path("resources/models/backpack/backpack.obj"));
+    model = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/backpack/backpack.obj"));
     model->setShader(backpackShader);
-    model->addTransform(Transform(glm::vec3(10.0f, 2.0f, 7.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(5.0f)));
+    model->setTransform(Transform(glm::vec3(10.0f, 2.0f, 7.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(5.0f)));
 
     CreateCubemap(
         FileSystem::Path("resources/textures/cubemaps/skybox/right.jpg"),
@@ -116,27 +115,29 @@ void DefaultSceneTwo::OnUpdate()
     shader->setVec3Unf("u_pointLight.position", pointLight->position);
     wackyShader->setVec3Unf("u_pointLight.position", pointLight->position);
     backpackShader->setVec3Unf("u_pointLight.position", pointLight->position);
-    cube->transforms.back().eulerAngles += glm::vec3(0.01f, 0.02f, 0.04f);
-    Draw();
+
+    Transform& cubeTransform = g_ECSManager->GetComponent<Transform>(cube->entityUID);
+    cubeTransform.eulerAngles += glm::vec3(0.01f, 0.02f, 0.04f);
+    DrawCubemap();
     // mesh->Draw(normalWaveShader.get());  // using another shader to render normals
 }
 
 void DefaultSceneTwo::InitializeShaders(void)
 {
-    shader = std::make_shared<Shader>(
+    shader = g_ShaderManager.GetShader(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
         FileSystem::Path("resources/shaders/PhongShadingFragment.glsl")
     );
-    backpackShader = std::make_shared<Shader>(
+    backpackShader = g_ShaderManager.GetShader(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
         FileSystem::Path("resources/shaders/PhongShadingFragment.glsl")  // update cubemap texture unit uniform
     );
-    wackyShader = std::make_shared<Shader>(
+    wackyShader = g_ShaderManager.GetShader(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
         FileSystem::Path("resources/shaders/PhongShadingFragment.glsl")
         // FileSystem::Path("resources/shaders/WaveGeometry.glsl")  // TODO: just to calculate normals, maybe rename file to CalcNormGeometry.glsl
     );
-    normalWaveShader = std::make_shared<Shader>(
+    normalWaveShader = g_ShaderManager.GetShader(
         FileSystem::Path("resources/shaders/WaveNormalVertex.glsl"),
         FileSystem::Path("resources/shaders/YellowFragment.glsl"),
         FileSystem::Path("resources/shaders/NormalGeometry.glsl")
@@ -146,8 +147,8 @@ void DefaultSceneTwo::InitializeShaders(void)
 void DefaultSceneTwo::SetInitialUniforms(void)
 {
     // lighting
-    shader->setIntUnf("u_material.albedo", Texture2DManager::mainTextureMap->getTextureUnit());
-    shader->setIntUnf("u_material.specular", Texture2DManager::mainTextureSpecularMap->getTextureUnit());
+    shader->setIntUnf("u_material.albedo", g_Texture2DManager.mainTextureMap->getTextureUnit());
+    shader->setIntUnf("u_material.specular", g_Texture2DManager.mainTextureSpecularMap->getTextureUnit());
     shader->setFloatUnf("u_material.shininess", 128.0f);
 
     // dir light
@@ -176,8 +177,8 @@ void DefaultSceneTwo::SetInitialUniforms(void)
     shader->setFloatUnf("u_spotLight.quadratic", 0.0045f);
     
     // lighting
-    wackyShader->setIntUnf("u_material.albedo", Texture2DManager::mainTextureMap->getTextureUnit());
-    wackyShader->setIntUnf("u_material.specular", Texture2DManager::mainTextureSpecularMap->getTextureUnit());
+    wackyShader->setIntUnf("u_material.albedo", g_Texture2DManager.mainTextureMap->getTextureUnit());
+    wackyShader->setIntUnf("u_material.specular", g_Texture2DManager.mainTextureSpecularMap->getTextureUnit());
     wackyShader->setFloatUnf("u_material.shininess", 128.0f);
 
     // dir light

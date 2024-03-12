@@ -10,22 +10,18 @@
 using namespace Honeycrisp;
 
 DefaultScene::DefaultScene()
+    : Scene()
 {
-    // Texture2D& texture2d = Texture2DManager::getTexture2D(FileSystem::Path("resources/textures/grass_textures.png"));
-    shader = std::make_shared<Shader>(
+    shader = g_ShaderManager.GetShader(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
         FileSystem::Path("resources/shaders/PhongShadingFragment.glsl")
     );
 
-    cube = CreateObject<Cube, EObjectMovement::NONE>();
+    cube = CreateStaticRenderObj<Cube>();
     cube->setShader(shader);
-    cube->addTransform(Transform(glm::vec3(-1.0f, -3.0f, -1.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
-    cube->addTransform(Transform(glm::vec3(2.0f, 0.0f, 2.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
-    cube->addTransform(Transform(glm::vec3(-3.0f, 3.0f, 4.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+    cube->setTransform(Transform(glm::vec3(-1.0f, -3.0f, -1.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
 
-    customMesh = CreateObject<Mesh, EObjectMovement::NONE>();
-
-    customMesh->vertices = std::vector<glm::vec3> {
+    std::vector<glm::vec3> vertices = {
         // front
         glm::vec3(-0.5f,  0.5f,  0.5f),
         glm::vec3( 0.5f,  0.5f,  0.5f),
@@ -63,7 +59,7 @@ DefaultScene::DefaultScene()
         glm::vec3(-0.5f, -0.5f, -0.5f),
     };
 
-    customMesh->colors = std::vector<glm::vec3> {
+    std::vector<glm::vec3> colors = {
         glm::vec3(RAND, RAND, RAND),
         glm::vec3(RAND, RAND, RAND),
         glm::vec3(RAND, RAND, RAND),
@@ -95,7 +91,7 @@ DefaultScene::DefaultScene()
         glm::vec3(RAND, RAND, RAND),
     };
 
-    customMesh->normals = std::vector<glm::vec3> {
+    std::vector<glm::vec3> normals = {
         // front
         glm::vec3(0.0f,  0.0f,  1.0f), 
         glm::vec3(0.0f,  0.0f,  1.0f), 
@@ -133,7 +129,7 @@ DefaultScene::DefaultScene()
         glm::vec3(0.0f, -1.0f,  0.0f), 
     };
 
-    customMesh->indices = std::vector<GLuint> {
+    std::vector<GLuint> indices = {
         // front
         0, 1, 2,
         0, 2, 3,
@@ -159,8 +155,14 @@ DefaultScene::DefaultScene()
         20, 22, 23
     };
 
-    customMesh->ConstructMesh();
-    customMesh->addTransform(Transform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+    customMesh = CreateStaticRenderObj<Mesh>(
+        &vertices,
+        &indices,
+        &normals,
+        &colors,
+        nullptr
+    );
+    customMesh->setTransform(Transform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
 
     SetInitialUniforms();
 }
@@ -171,14 +173,14 @@ DefaultScene::~DefaultScene()
 
 void DefaultScene::OnUpdate()
 {
-    Draw();
+    DrawCubemap();
 }
 
 void DefaultScene::SetInitialUniforms(void)
 {
     // lighting
-    shader->setIntUnf("u_material.albedo", Texture2DManager::mainTextureMap->getTextureUnit());
-    shader->setIntUnf("u_material.specular", Texture2DManager::mainTextureSpecularMap->getTextureUnit());
+    shader->setIntUnf("u_material.albedo", g_Texture2DManager.mainTextureMap->getTextureUnit());
+    shader->setIntUnf("u_material.specular", g_Texture2DManager.mainTextureSpecularMap->getTextureUnit());
     shader->setFloatUnf("u_material.shininess", 32.0f);
 
     // dir light

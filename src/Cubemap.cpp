@@ -59,7 +59,7 @@ Cubemap::Cubemap(const std::vector<std::string>& faces)
 
 void Cubemap::SetMesh()
 {
-    verticesPos = {
+    std::vector<glm::vec3> verticesPos = {
         glm::vec3(-1.0f,  1.0f,  1.0f),
         glm::vec3( 1.0f,  1.0f,  1.0f),
         glm::vec3( 1.0f, -1.0f,  1.0f),
@@ -96,7 +96,7 @@ void Cubemap::SetMesh()
         glm::vec3(-1.0f, -1.0f, -1.0f),
     };
 
-    indicesData = {
+    std::vector<GLuint> indicesData = {
         // front
         0, 2, 1,
         0, 3, 2,
@@ -122,11 +122,14 @@ void Cubemap::SetMesh()
         20, 23, 22
     };
 
-    cubemapMesh.vertices = verticesPos;
-    cubemapMesh.indices = indicesData;
-
-    cubemapMesh.ConstructMesh();
-    cubemapMesh.addTransform(Transform(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f)));
+    m_VAO = std::make_unique<VertexArray>(
+        &verticesPos,
+        &indicesData,
+        nullptr,
+        nullptr,
+        nullptr
+    );
+    m_verticesCount = indicesData.size();
 }
 
 void Cubemap::Draw(Shader* shader) const
@@ -135,7 +138,8 @@ void Cubemap::Draw(Shader* shader) const
     GLCall(glDepthFunc(GL_LEQUAL));
     GLCall(glActiveTexture(GL_TEXTURE0 + 10));  // TODO: +10 isn't good
     GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemapTextureID));
-    cubemapMesh.Draw(shader);
+    shader->Use();
+    GLCall(glDrawElements(GL_TRIANGLES, m_verticesCount, GL_UNSIGNED_INT, nullptr));
     GLCall(glDepthFunc(GL_LESS));
     // GLCall(glDepthMask(GL_TRUE));
 }

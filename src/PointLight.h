@@ -2,7 +2,7 @@
 
 #include "src/pch/pch.h"
 #include "Object.h"
-#include "types/Transform.h"
+#include "components/Transform.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -30,8 +30,6 @@ public:
     PointLight& operator=(const PointLight& other);
     PointLight& operator=(PointLight&& other) noexcept;
     ~PointLight() = default;
-
-    void OnUpdate() override {}
 
     glm::vec3 getAmbient() const;
     glm::vec3 getDiffuse() const;

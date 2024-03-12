@@ -1,6 +1,7 @@
 #pragma once
 
 #include "src/pch/pch.h"
+#include "src/core/SceneManager.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -26,16 +27,10 @@ namespace RenderContext
         int settingsWidth;
         float settingsWidthPercentage = 0.2f;
 
-        glm::vec3 cameraDirection = glm::vec3(0, 0, -1.0f);  // initial camera direction or it would look at origin by default
+        glm::vec3 cameraDirection = glm::vec3(0, 0, -1.0f);  // initial camera direction or it would look at origin by default        
     };
 
-    struct WindowPtr_and_CallbackDataPtr
-    {
-        GLFWwindow* glfwWindow;
-        CallbackData* callbackData;
-    };
-
-    [[nodiscard]] WindowPtr_and_CallbackDataPtr StartUp_GetWindow();
+    [[nodiscard]] CallbackData* StartUp_GetWindow();
 }
 
 HNCRSP_NAMESPACE_END

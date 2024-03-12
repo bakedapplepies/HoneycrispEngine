@@ -9,9 +9,9 @@
 
 HNCRSP_NAMESPACE_START
 
-void Window::StartUp(GLFWwindow* glfwWindow, RenderContext::CallbackData* callbackData)
+void Window::StartUp(RenderContext::CallbackData* callbackData)
 {
-    m_glfwWindow = glfwWindow;
+    m_glfwWindow = glfwGetCurrentContext();
     m_callbackData = callbackData;
 
     m_windowWidthScalar = callbackData->windowWidth / 1920.0f;  // TODO: Recalculate in callbacks
@@ -31,20 +31,21 @@ void Window::Loop()
 {
     if (!m_continueProgram) return;
 
-    SceneManager::Get().CreateScene(DefaultScene(), 0);
-    SceneManager::Get().CreateScene(DefaultSceneTwo(), 1);
-    SceneManager::Get().SetActiveScene(0);
-
+    size_t scene_one = g_SceneManager.CreateScene<DefaultScene>();
+    size_t scene_two = g_SceneManager.CreateScene<DefaultSceneTwo>();
+    g_SceneManager.SetActiveScene(scene_one);
 
     float begin = glfwGetTime();
-    Texture2DManager::mainTextureMap->Bind();
-    Texture2DManager::mainTextureSpecularMap->Bind();
+    g_Texture2DManager.mainTextureMap->Bind();
+    g_Texture2DManager.mainTextureSpecularMap->Bind();
     camera.SetPos(camera.cameraPos + glm::vec3(0, 10, 0));
 
     // view matrix, proj matrix, time
     UniformBuffer<glm::mat4, glm::mat4, float> uboMatrices(0);  // binding index
     // viewPos, spotlightPos, spotlightDir
     UniformBuffer<glm::vec3, glm::vec3, glm::vec3> uboOther(1);
+
+    Renderer* renderer = g_ECSManager->GetSystem<Renderer>().get();
 
     while(!glfwWindowShouldClose(m_glfwWindow))
     {
@@ -56,7 +57,7 @@ void Window::Loop()
         processInput();
 
         // Set window background color
-        glm::vec3 bgColor = SceneManager::Get().GetSceneBgColor();
+        glm::vec3 bgColor = g_SceneManager.GetSceneBgColor();
         GLCall(glClearColor(bgColor.r, bgColor.g, bgColor.b, 1.0f));
 
         // Clear buffers
@@ -90,7 +91,7 @@ void Window::Loop()
         ImGui::Begin("Scene settings");
         ImGui::GetCurrentWindow()->FontWindowScale = m_windowHeightScalar;
 
-        SceneManager::Get().UpdateImGui();
+        g_SceneManager.UpdateImGui();
 
         ImGui::End();
 
@@ -121,8 +122,9 @@ void Window::Loop()
             glm::value_ptr(camera.direction)
         );
 
+        g_SceneManager.Update();  // TODO: Move cubemap rendering to Renderer
         renderingTime = glfwGetTime();
-        SceneManager::Get().Update();
+        g_ECSManager->Update(m_deltaTime);
         renderingTime = glfwGetTime() - renderingTime;
 
         ImGui::Render();  // always render after scene so it doesn't get drawn over

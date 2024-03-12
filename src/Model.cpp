@@ -1,4 +1,5 @@
 #include "Model.h"
+#include "src/core/Texture2DManager.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -43,13 +44,14 @@ void Model::processNode(aiNode* node, const aiScene* scene)
 
 Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 {
-    Mesh resultMesh;
+    EntityUID newMeshID = g_ECSManager->NewEntityUID();
+    m_meshIDs.push_back(newMeshID);
+
     std::vector<glm::vec3> verticesPos;
     std::vector<glm::vec3> colors;
     std::vector<glm::vec3> normals;
     std::vector<glm::vec2> uvs;
     std::vector<unsigned int> indices;
-    std::vector< std::shared_ptr<Texture2D> > textures;
 
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
@@ -82,74 +84,70 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
         }
     }
 
-    resultMesh.vertices = verticesPos;
-    resultMesh.normals = normals;
-    resultMesh.uvs = uvs;
-    resultMesh.indices = indices;
+    Mesh resultMesh(
+        &verticesPos,
+        &indices,
+        &normals,
+        nullptr,
+        &uvs
+    );
 
     if (mesh->mMaterialIndex >= 0)
     {
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-        std::vector< std::shared_ptr<Texture2D> > diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE);
-        std::vector< std::shared_ptr<Texture2D> > specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR);
-        
-        textures.reserve(diffuseMaps.size() + specularMaps.size());
-        textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-        textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-    }
-    resultMesh.textures = textures;
+        Texture2D& diffuseMap = getMaterialTexture(material, aiTextureType_DIFFUSE);
+        Texture2D& specularMap = getMaterialTexture(material, aiTextureType_SPECULAR);
 
-    resultMesh.ConstructMesh();
+        MeshData& meshData = g_ECSManager->GetComponent<MeshData>(newMeshID);
+        meshData.material->setAlbedoMap(diffuseMap);
+        meshData.material->setSpecularMap(specularMap);
+    }
 
     return resultMesh;
 }
 
-std::vector< std::shared_ptr<Texture2D> > Model::loadMaterialTextures(aiMaterial* material, aiTextureType assimp_texture_type)
+Texture2D& Model::getMaterialTexture(aiMaterial* material, aiTextureType assimp_texture_type)
 {
-    std::vector< std::shared_ptr<Texture2D> > textures;
-
-    ETextureType textureType;
+    ETextureType textureType = ETextureType::NONE;
     switch (assimp_texture_type)
     {
     case aiTextureType_DIFFUSE:
         textureType = ETextureType::ALBEDO;
         break;
+
     case aiTextureType_SPECULAR:
         textureType = ETextureType::SPECULAR;
         break;
+
     default:
-        HNCRSP_LOG_WARN("Texture2D type not recognized.");
+        HNCRSP_TERMINATE("Texture2D type not recognized.");
         break;
     }
 
-    std::unordered_map<std::string, bool> m_loadedTexturePaths;
-    for (unsigned int i = 0; i < material->GetTextureCount(assimp_texture_type); i++)
-    {
-        aiString textureFilename;
-        material->GetTexture(assimp_texture_type, i, &textureFilename);
-        std::filesystem::path texturePath = m_modelDirectory / textureFilename.C_Str();
-        FileSystem::Path project_texturePath(texturePath.string());
-        textures.push_back(std::make_shared<Texture2D>(project_texturePath, textureType, 1, 1));
-        m_loadedTexturePaths[textureFilename.C_Str()] = true;
-    }
-    return textures;
+    aiString textureFilename;
+    material->GetTexture(assimp_texture_type, 0, &textureFilename);
+    std::filesystem::path texturePath = m_modelDirectory / textureFilename.C_Str();
+    FileSystem::Path project_texture_path(texturePath.string());
+    
+    Texture2D& texture = g_Texture2DManager.getTexture2D(project_texture_path, textureType, 1, 1);
+
+    return texture;
 }
 
-void Model::Draw(Shader* shader) const
+void Model::setAllMeshTransform(const Transform& transform)
 {
-    for (unsigned int i = 0; i < m_meshes.size(); i++)
+    for (const EntityUID& entityUID : m_meshIDs)
     {
-        m_meshes[i].Draw(shader);
+        g_ECSManager->GetComponent<Transform>(entityUID) = transform;
     }
 }
 
-void Model::addTransform(const Transform& transform)
+void Model::virt_AddMeshDataToRenderer(EntityUID entityUID)
 {
-    for (unsigned int i = 0; i < m_meshes.size(); i++)
+    for (size_t i = 0; i < m_meshes.size(); i++)
     {
-        m_meshes[i].addTransform(transform);
+        m_meshes[i].virt_AddMeshDataToRenderer(m_meshIDs[i]);
     }
-    transforms.push_back(transform);
-};
+}
 
 HNCRSP_NAMESPACE_END

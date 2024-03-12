@@ -19,8 +19,8 @@ std::string Shader::parseShader(std::string_view path)
 Shader::Shader(
     const FileSystem::Path& vertexFile,
     const FileSystem::Path& fragmentFile,
-    const FileSystem::Path& geometryFile)
-{
+    const FileSystem::Path& geometryFile
+) {
     const std::string vertexShaderSource = parseShader(vertexFile.string());
     const std::string fragmentShaderSource = parseShader(fragmentFile.string());
     const std::string geometryShaderSource = geometryFile.string().size() ? parseShader(geometryFile.string()) : "";

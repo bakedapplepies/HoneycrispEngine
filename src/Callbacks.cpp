@@ -74,12 +74,12 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
             // Switch scene #1
             case GLFW_KEY_1:
-                SceneManager::Get().SetActiveScene(0);
+                g_SceneManager.SetActiveScene(0);
                 break;
 
             // Switch scene #2
             case GLFW_KEY_2:
-                SceneManager::Get().SetActiveScene(1);
+                g_SceneManager.SetActiveScene(1);
                 break;
 
             default:

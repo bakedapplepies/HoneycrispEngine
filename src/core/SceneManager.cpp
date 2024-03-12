@@ -3,20 +3,30 @@
 
 HNCRSP_NAMESPACE_START
 
-SceneManager* SceneManager::m_instance = nullptr;
+SceneManager g_SceneManager;
 
-SceneManager& SceneManager::Get()
+void SceneManager::StartUp(
+    const std::function<void()>& application_ECS_register_systems,
+    const std::function<void()>& application_ECS_register_components
+) {
+    m_application_ECS_register_systems = application_ECS_register_systems;
+    m_application_ECS_register_components = application_ECS_register_components;
+}
+
+void SceneManager::ShutDown()
 {
-    if (!m_instance)
+    m_scenesMap.clear();
+    
+    for (auto& i : m_ECSManagers)
     {
-        m_instance = new SceneManager();
+        ECSManager& ecsManager = i.second;
+        ecsManager.ShutDown();
     }
-    return *m_instance;
 }
 
 void SceneManager::Update()
 {
-    // maybe add if-statements to check availability
+    // TODO: maybe add if-statements to check availability
     // or assert
     // but this function is called every frame so it's expensive
     m_scenesMap[m_activeSceneIndex]->OnUpdate();
@@ -41,6 +51,12 @@ void SceneManager::SetActiveScene(size_t index)
         return;
     }
     m_activeSceneIndex = index;
+    g_ECSManager = &m_ECSManagers[m_activeSceneIndex];
+}
+
+size_t SceneManager::GetCurrentSceneIndex() const
+{
+    return m_activeSceneIndex;
 }
 
 void SceneManager::SetSceneBgColor(const glm::vec3& bgColor)

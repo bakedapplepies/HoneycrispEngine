@@ -22,7 +22,7 @@ ElementBuffer::~ElementBuffer()
     GLCall(glDeleteBuffers(1, &m_EBO_ID));
 }
 
-void ElementBuffer::CreateEBO(GLuint* data, size_t& dataSize, GLenum mode)
+void ElementBuffer::CreateEBO(const GLuint* data, size_t dataSize, GLenum mode)
 {
     GLCall(glGenBuffers(1, &m_EBO_ID));
     Bind();

@@ -1,46 +1,65 @@
 #pragma once
 
-#include "src/types/Singleton.h"
+#include "src/ecs/ECSManager.h"
+#include "src/core/ShaderManager.h"
 #include "src/Scene.h"
 
 
 HNCRSP_NAMESPACE_START
 
-class SceneManager : public Singleton
+class SceneManager
 {
 private:
+    size_t m_nextSceneIndex = 0;
     size_t m_activeSceneIndex = 0;
     std::unordered_map< size_t, std::unique_ptr<Scene> > m_scenesMap;
-    static SceneManager* m_instance;
+    std::unordered_map< size_t, ECSManager > m_ECSManagers;
 
-private:
-    SceneManager() = default;
-    SceneManager& operator=(const SceneManager&) = delete;
-    SceneManager& operator=(SceneManager&&) = delete;
+    // application is high-level, this is just some kind of forward declaration stuff
+    // so the compiler can figure out the function ptrs out later
+    std::function<void()> m_application_ECS_register_systems;
+    std::function<void()> m_application_ECS_register_components;
 
 public:
+    SceneManager() = default;
+    SceneManager(const SceneManager&) = delete;
+    SceneManager& operator=(const SceneManager&) = delete;
+    SceneManager(SceneManager&&) = delete;
+    SceneManager& operator=(SceneManager&&) = delete;
     ~SceneManager() = default;
+
+    void StartUp(
+        const std::function<void()>& application_ECS_register_systems,
+        const std::function<void()>& application_ECS_register_components
+    );
+    void ShutDown();
+
     void SetSceneBgColor(const glm::vec3& bgColor);
     glm::vec3 GetSceneBgColor();
-
-    template <typename T>
-    void CreateScene(T&& t, size_t index)
-    {
-        static_assert(std::is_base_of<Scene, T>(), "Method SceneManager::CreateScene didn't receive a scene object.");
-        if (m_scenesMap[index])
-        {
-            HNCRSP_LOG_ERROR(fmt::format("Scene index[{}] already occupied.", index));
-            return;
-        }
-        std::unique_ptr<T> temp_ptr = std::make_unique<T>(std::move(t));
-        m_scenesMap[index] = std::move(temp_ptr);
-    }
-
-    static SceneManager& Get();
-    void Update();
-    void UpdateImGui();
     void ClearAllScenes();
     void SetActiveScene(size_t index);
+    size_t GetCurrentSceneIndex() const;
+
+    void Update();
+    void UpdateImGui();
+
+    template <typename TScene>
+    [[nodiscard]] size_t CreateScene()
+    {
+        static_assert(std::is_base_of<Scene, TScene>(), "SceneManager::CreateScene didn't receive a scene object.");
+
+        m_ECSManagers[m_nextSceneIndex] = ECSManager();
+        g_ECSManager = &m_ECSManagers[m_nextSceneIndex];
+        g_ECSManager->StartUp();
+        m_application_ECS_register_components();
+        m_application_ECS_register_systems();
+
+        m_scenesMap[m_nextSceneIndex] = std::make_unique<TScene>();
+        HNCRSP_LOG_INFO("reached");
+        return m_nextSceneIndex++;
+    }
 };
+
+extern SceneManager g_SceneManager;
 
 HNCRSP_NAMESPACE_END

@@ -15,20 +15,21 @@ set(SOURCE
     ${CMAKE_SOURCE_DIR}/src/utils/Logging.cpp
     ${CMAKE_SOURCE_DIR}/src/utils/FileSystem.h
     ${CMAKE_SOURCE_DIR}/src/utils/FileSystem.cpp
+    ${CMAKE_SOURCE_DIR}/src/utils/binary_insert_delete.h
 
     # OpenGL stuff
-    ${CMAKE_SOURCE_DIR}/src/renderer/VertexBuffer.h
-    ${CMAKE_SOURCE_DIR}/src/renderer/VertexBuffer.cpp
-    ${CMAKE_SOURCE_DIR}/src/renderer/ElementBuffer.h
-    ${CMAKE_SOURCE_DIR}/src/renderer/ElementBuffer.cpp
-    ${CMAKE_SOURCE_DIR}/src/renderer/VertexArray.h
-    ${CMAKE_SOURCE_DIR}/src/renderer/VertexArray.cpp
-    ${CMAKE_SOURCE_DIR}/src/renderer/Shader.h
-    ${CMAKE_SOURCE_DIR}/src/renderer/Shader.cpp
-    ${CMAKE_SOURCE_DIR}/src/renderer/Texture2D.h
-    ${CMAKE_SOURCE_DIR}/src/renderer/Texture2D.cpp
-    ${CMAKE_SOURCE_DIR}/src/renderer/UniformBuffer.h
-    ${CMAKE_SOURCE_DIR}/src/renderer/UniformBuffer.cpp
+    ${CMAKE_SOURCE_DIR}/src/opengl/VertexBuffer.h
+    ${CMAKE_SOURCE_DIR}/src/opengl/VertexBuffer.cpp
+    ${CMAKE_SOURCE_DIR}/src/opengl/ElementBuffer.h
+    ${CMAKE_SOURCE_DIR}/src/opengl/ElementBuffer.cpp
+    ${CMAKE_SOURCE_DIR}/src/opengl/VertexArray.h
+    ${CMAKE_SOURCE_DIR}/src/opengl/VertexArray.cpp
+    ${CMAKE_SOURCE_DIR}/src/opengl/Shader.h
+    ${CMAKE_SOURCE_DIR}/src/opengl/Shader.cpp
+    ${CMAKE_SOURCE_DIR}/src/opengl/Texture2D.h
+    ${CMAKE_SOURCE_DIR}/src/opengl/Texture2D.cpp
+    ${CMAKE_SOURCE_DIR}/src/opengl/UniformBuffer.h
+    ${CMAKE_SOURCE_DIR}/src/opengl/UniformBuffer.cpp
 
     # managers
     ${CMAKE_SOURCE_DIR}/src/core/GLFWContext.h
@@ -39,13 +40,32 @@ set(SOURCE
     ${CMAKE_SOURCE_DIR}/src/core/SceneManager.cpp
     ${CMAKE_SOURCE_DIR}/src/core/Texture2DManager.h
     ${CMAKE_SOURCE_DIR}/src/core/Texture2DManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/core/ShaderManager.h
+    ${CMAKE_SOURCE_DIR}/src/core/ShaderManager.cpp
     ${CMAKE_SOURCE_DIR}/src/core/ImGuiManager.h
     ${CMAKE_SOURCE_DIR}/src/core/ImGuiManager.cpp
 
-    # types
-    ${CMAKE_SOURCE_DIR}/src/types/Transform.h
-    ${CMAKE_SOURCE_DIR}/src/types/Transform.cpp
-    ${CMAKE_SOURCE_DIR}/src/types/Singleton.h
+    # ecs
+    ${CMAKE_SOURCE_DIR}/src/ecs/ComponentArray.h
+    ${CMAKE_SOURCE_DIR}/src/ecs/ComponentCounter.h
+    ${CMAKE_SOURCE_DIR}/src/ecs/ComponentManager.h
+    ${CMAKE_SOURCE_DIR}/src/ecs/ECSManager.h
+    ${CMAKE_SOURCE_DIR}/src/ecs/ECSManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/ecs/EntityManager.h
+    ${CMAKE_SOURCE_DIR}/src/ecs/EntityManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/ecs/ECSTypes.h
+    ${CMAKE_SOURCE_DIR}/src/ecs/System.h
+    ${CMAKE_SOURCE_DIR}/src/ecs/SystemManager.h
+    ${CMAKE_SOURCE_DIR}/src/ecs/SystemManager.cpp
+
+    # types/components
+    ${CMAKE_SOURCE_DIR}/src/components/Transform.h
+    ${CMAKE_SOURCE_DIR}/src/components/Transform.cpp
+    
+    # systems
+    ${CMAKE_SOURCE_DIR}/src/systems/Renderer.h
+    ${CMAKE_SOURCE_DIR}/src/systems/Renderer.cpp
+
 
     # Application stuff
     ${CMAKE_SOURCE_DIR}/src/core/Material.h

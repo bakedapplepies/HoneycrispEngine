@@ -1,29 +1,33 @@
 #pragma once
 
 #include "src/pch/pch.h"
-
-#include "Mesh.h"
+#include "src/ecs/ECSManager.h"
+#include "src/Renderable.h"
+#include "src/opengl/VertexArray.h"
 
 
 HNCRSP_NAMESPACE_START
 
-class Cube : public Mesh
+class Cube : public Renderable
 {
+private:
+    GLuint m_numVertices;
+
 public:
     Cube();
-    Cube(Cube&& other) noexcept = default;
-    Cube& operator=(Cube&& other) noexcept = default;
+    Cube(const Cube& other) = delete;
+    Cube& operator=(const Cube& other) = delete;
+    Cube(Cube&& other) noexcept;
+    Cube& operator=(Cube&& other) noexcept;
     ~Cube() = default;
+    
+    void virt_AddMeshDataToRenderer(EntityUID entityUID) override final;
 
 private:
     void InitializeAttributeData();
 
 private:
-    std::vector<glm::vec3> _verticesPos;
-    std::vector<glm::vec3> _colors;
-    std::vector<glm::vec3> _normals;
-    std::vector<glm::vec2> _uvs;
-    std::vector<GLuint> _indices;
+    std::unique_ptr<VertexArray> m_VAO;
 };
 
 HNCRSP_NAMESPACE_END

@@ -7,6 +7,7 @@ HNCRSP_NAMESPACE_START
 
 enum ETextureType
 {
+    NONE = -1,
     ALBEDO,
     ROUGHNESS,
     AO,

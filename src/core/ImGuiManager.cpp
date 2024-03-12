@@ -3,13 +3,15 @@
 
 HNCRSP_NAMESPACE_START
 
-void ImGuiManager::StartUp(GLFWwindow* glfwWindow)
+ImGuiManager g_ImGuiManager;
+
+void ImGuiManager::StartUp()
 {
     IMGUI_CHECKVERSION();
 
     ImGui::CreateContext();
     ImGui_ImplOpenGL3_Init();
-    ImGui_ImplGlfw_InitForOpenGL(glfwWindow, true);
+    ImGui_ImplGlfw_InitForOpenGL(glfwGetCurrentContext(), true);
 
     ImGui::StyleColorsDark();
     // ImGui::GetStyle().ScaleAllSizes(2.0f);

@@ -14,11 +14,8 @@ namespace FileSystem
 
     public:
         Path(std::string_view path);
-        std::string string() const
-        {
-            std::string str = m_path.string();
-            return str;
-        }
+        [[nodiscard]] std::string string() const;
+        [[nodiscard]] std::string relative_string() const;
     };
 }
 

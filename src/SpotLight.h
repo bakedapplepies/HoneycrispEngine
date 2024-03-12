@@ -31,8 +31,6 @@ public:
     SpotLight& operator=(SpotLight&& other) noexcept;
     ~SpotLight() = default;
 
-    void OnUpdate() override {}
-
     glm::vec3 getAmbient() const;
     glm::vec3 getDiffuse() const;
     glm::vec3 getSpecular() const;

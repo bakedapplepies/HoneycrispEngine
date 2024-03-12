@@ -22,7 +22,7 @@ VertexBuffer::~VertexBuffer()
     GLCall(glDeleteBuffers(1, &m_VBO_ID));
 }
 
-void VertexBuffer::CreateVBO(float* data, size_t& dataSize, GLenum mode)
+void VertexBuffer::CreateVBO(const float* data, size_t dataSize, GLenum mode)
 {
     GLCall(glGenBuffers(1, &m_VBO_ID));
     Bind();

@@ -5,10 +5,9 @@
 
 HNCRSP_NAMESPACE_START
 
-class Object
+class ErrorTickBomb
 {
 public:
-    virtual ~Object() = default;
 };
 
 HNCRSP_NAMESPACE_END

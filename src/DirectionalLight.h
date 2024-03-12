@@ -26,8 +26,6 @@ public:
     DirectionalLight& operator=(DirectionalLight&& other) noexcept;
     ~DirectionalLight() = default;
 
-    void OnUpdate() override {}
-
     glm::vec3& GetColor();    
 };
 

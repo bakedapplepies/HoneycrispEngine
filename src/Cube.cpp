@@ -1,5 +1,6 @@
 #include "Cube.h"
 #include "src/core/Texture2DManager.h"
+#include "src/core/ShaderManager.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -7,26 +8,23 @@ HNCRSP_NAMESPACE_START
 Cube::Cube()
 {
     InitializeAttributeData();
-    ConstructMesh();
 }
 
-// Cube::Cube(Cube&& other) noexcept
-//     : Mesh(std::move(other))
-// {
-    
-// }
+Cube::Cube(Cube&& other) noexcept
+{
+    m_VAO = std::move(other.m_VAO);
+}
 
-// Cube& Cube::operator=(Cube&& other) noexcept
-// {
-//     positions = std::move(other.positions);
-//     this->GetVAO() = std::move(other.GetVAO());
+Cube& Cube::operator=(Cube&& other) noexcept
+{
+    m_VAO = std::move(other.m_VAO);
 
-//     return *this;
-// }
+    return *this;
+}
 
 void Cube::InitializeAttributeData()
 {
-    _verticesPos = std::vector<glm::vec3> {
+    std::vector<glm::vec3> verticesPos = std::vector<glm::vec3> {
         // front
         glm::vec3(-0.5f,  0.5f,  0.5f),
         glm::vec3( 0.5f,  0.5f,  0.5f),
@@ -64,7 +62,7 @@ void Cube::InitializeAttributeData()
         glm::vec3(-0.5f, -0.5f, -0.5f),
     };
 
-    _colors = std::vector<glm::vec3> {
+    std::vector<glm::vec3> colors = std::vector<glm::vec3> {
         glm::vec3(1.0f, 1.0f, 1.0f),
         glm::vec3(1.0f, 1.0f, 1.0f),
         glm::vec3(1.0f, 1.0f, 1.0f),
@@ -96,7 +94,7 @@ void Cube::InitializeAttributeData()
         glm::vec3(1.0f, 1.0f, 1.0f),
     };
 
-    _normals = std::vector<glm::vec3> {
+    std::vector<glm::vec3> normals = std::vector<glm::vec3> {
         // front
         glm::vec3(0.0f,  0.0f,  1.0f), 
         glm::vec3(0.0f,  0.0f,  1.0f), 
@@ -134,11 +132,11 @@ void Cube::InitializeAttributeData()
         glm::vec3(0.0f, -1.0f,  0.0f), 
     };
 
-    TextureCoords& grassSideCoords = Texture2DManager::mainTextureMap->GetTextureCoords(1, 0);
-    TextureCoords& grassTopCoords = Texture2DManager::mainTextureMap->GetTextureCoords(0, 0);
-    TextureCoords& dirtCoords = Texture2DManager::mainTextureMap->GetTextureCoords(2, 0);
+    TextureCoords& grassSideCoords = g_Texture2DManager.mainTextureMap->GetTextureCoords(1, 0);
+    TextureCoords& grassTopCoords = g_Texture2DManager.mainTextureMap->GetTextureCoords(0, 0);
+    TextureCoords& dirtCoords = g_Texture2DManager.mainTextureMap->GetTextureCoords(2, 0);
 
-    _uvs = std::vector<glm::vec2> {
+    std::vector<glm::vec2> uvs = std::vector<glm::vec2> {
         // top
         glm::vec2(grassSideCoords.tl.x, grassSideCoords.tl.y),
         glm::vec2(grassSideCoords.tr.x, grassSideCoords.tr.y),
@@ -176,7 +174,7 @@ void Cube::InitializeAttributeData()
         glm::vec2(dirtCoords.bl.x, dirtCoords.bl.y),
     };
 
-    _indices = std::vector<GLuint> {
+    std::vector<GLuint> indices = std::vector<GLuint> {
         // front
         0, 1, 2,
         0, 2, 3,
@@ -202,11 +200,23 @@ void Cube::InitializeAttributeData()
         20, 22, 23
     };
 
-    static_cast<Mesh*>(this)->vertices = _verticesPos;
-    static_cast<Mesh*>(this)->colors = _colors;
-    static_cast<Mesh*>(this)->normals = _normals;
-    static_cast<Mesh*>(this)->uvs = _uvs;
-    static_cast<Mesh*>(this)->indices = _indices;
+    m_VAO = std::make_unique<VertexArray>(
+        &verticesPos,
+        &indices,
+        &normals,
+        &colors,
+        &uvs
+    );
+}
+
+void Cube::virt_AddMeshDataToRenderer(EntityUID entityUID)
+{
+    MeshData meshData;
+    meshData.VAO_id = m_VAO->getID();
+    meshData.num_vertices = m_numVertices;
+    meshData.material = std::make_shared<Material>(g_ShaderManager.basicShader);
+
+    g_ECSManager->AddComponent<MeshData>(entityUID, meshData);
 }
 
 HNCRSP_NAMESPACE_END

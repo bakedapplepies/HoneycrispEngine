@@ -9,10 +9,9 @@ HNCRSP_NAMESPACE_START
 class Cubemap
 {
 private:
-    GLuint m_cubemapTextureID, m_VBO_ID, m_EBO_ID, m_VAO_ID;
-    std::vector<glm::vec3> verticesPos;
-    std::vector<unsigned int> indicesData;
-    Mesh cubemapMesh;
+    GLuint m_cubemapTextureID;
+    std::unique_ptr<VertexArray> m_VAO = nullptr;
+    GLuint m_verticesCount;
 
 private:
     Cubemap(const Cubemap&) = delete;
@@ -20,13 +19,12 @@ private:
     Cubemap(Cubemap&&) = delete;
     Cubemap& operator=(Cubemap&&) = delete;
 
+    void SetMesh();
+
 public:
     Cubemap(const std::vector<std::string>& faces);
-    void OnUpdate() {};
+    ~Cubemap() = default;
     void Draw(Shader* shader) const;
-
-private:
-    void SetMesh();
 };
 
 HNCRSP_NAMESPACE_END

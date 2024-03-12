@@ -18,7 +18,7 @@ public:
     VertexBuffer& operator=(VertexBuffer&& other) noexcept;
     ~VertexBuffer();
     
-    void CreateVBO(float* data, size_t& dataSize, GLenum mode);
+    void CreateVBO(const float* data, size_t dataSize, GLenum mode);
     void Bind() const;
     void Unbind() const;
 };

@@ -1,18 +1,35 @@
 #pragma once
 
 #include "src/pch/pch.h"
-#include "src/renderer/Texture2D.h"
+#include "src/opengl/Texture2D.h"
 #include "src/types/Singleton.h"
-#include "src/renderer/Texture2D.h"
+#include "src/opengl/Texture2D.h"
 
 
 HNCRSP_NAMESPACE_START
 
 // Manages texture retrieving
-namespace Texture2DManager
+class Texture2DManager
 {
-    extern std::unique_ptr<Texture2D> mainTextureMap;
-    extern std::unique_ptr<Texture2D> mainTextureSpecularMap;
+private:
+    // TODO: see if this should be used (std::unordered_map)
+    std::unordered_map<std::string, Texture2D> m_cachedTexture2Ds;
+    int m_maxTextureUnitsPerStage;
+    
+public:
+    std::unique_ptr<Texture2D> mainTextureMap;  // TODO: just use texture as regular path, no need for this
+    std::unique_ptr<Texture2D> mainTextureSpecularMap;
+
+public:
+    Texture2DManager() = default;
+    Texture2DManager(const Texture2DManager&) = delete;
+    Texture2DManager& operator=(const Texture2DManager&) = delete;
+    Texture2DManager(Texture2DManager&&) = delete;
+    Texture2DManager& operator=(Texture2DManager&&) = delete;
+    ~Texture2DManager() = default;
+
+    void StartUp();
+    void ShutDown();
 
     Texture2D& getTexture2D(
         const FileSystem::Path& path,
@@ -22,9 +39,8 @@ namespace Texture2DManager
     );
 
     int getMaxTextureUnits();
+};
 
-    void StartUp();
-    void ShutDown();
-}
+extern Texture2DManager g_Texture2DManager;
 
 HNCRSP_NAMESPACE_END

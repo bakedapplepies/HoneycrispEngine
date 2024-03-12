@@ -19,7 +19,7 @@ gets is the Draw-calls-queue.
 - TODO: Use asynchronous operations to speed up model loading (nodes)
 - TODO: replace all smart-pointer arguments to raw pointers -> faster speed
         only use smart pointers to manage the lifetime of objects
-- TODO: Entity-Component-System for Renderable objects (SceneObject - Renderable Component - Renderer)
+- TODO: Entity-Component-System for Renderable objects (SceneRenderObj - Renderable Component - Renderer)
 - TODO: Bind light and uniforms and stuff together
 - TODO: Add FBX support
 - TODO: Make settings/inspector extendable/retractable
@@ -27,4 +27,15 @@ gets is the Draw-calls-queue.
 - TODO: Manage texture units (including GL_TEXTURE_CUBE_MAP)
 - TODO: Texture2DManager
 - TODO: Use Texture2DManager when using stuff that has textures
-- TODO: ShaderManager
+- TODO: ShaderManager: returns a shared_ptr<Shader>
+- TODO: SPIR-V & Shader cache
+- TODO: .clangd format feature seems useful
+- TODO: Ticking bomb-style error (doesn't crash program, but will crash if you use the erroneous data)
+- TODO: Automatic handling of nullptrs that doesn't use weakptrs (somehow)
+
+- TODO: Systems that actually need ECS:
+    + Renderer
+    + Physics
+
+- TODO: Everything doesn't have to be not static cuz between the Logic & Render thread we could transfer data
+over 2 threads all at once, and only the Logic thread needs the static class.

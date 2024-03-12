@@ -11,7 +11,7 @@ namespace RenderContext
         CallbackData callbackData;
     }
 
-    [[nodiscard]] WindowPtr_and_CallbackDataPtr StartUp_GetWindow()
+    [[nodiscard]] CallbackData* StartUp_GetWindow()
     {
         /* Create and assign OpenGL window context */
         const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -66,7 +66,7 @@ namespace RenderContext
         int viewportWidth = (1.0f - callbackData.settingsWidthPercentage) * callbackData.windowWidth;
         GLCall(glViewport(callbackData.windowWidth - viewportWidth, 0, viewportWidth, callbackData.windowHeight));
 
-        return { glfwWindow, &callbackData };
+        return &callbackData;
     }
 }
 

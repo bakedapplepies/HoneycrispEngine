@@ -5,10 +5,21 @@
 
 HNCRSP_NAMESPACE_START
 
-namespace ImGuiManager
+class ImGuiManager
 {
-    void StartUp(GLFWwindow* glfwWindow);
+public:
+    ImGuiManager() = default;
+    ImGuiManager(const ImGuiManager&) = delete;
+    ImGuiManager& operator=(const ImGuiManager&) = delete;
+    ImGuiManager(ImGuiManager&&) = delete;
+    ImGuiManager& operator=(ImGuiManager&&) = delete;
+    ~ImGuiManager() = default;
+
+public:
+    void StartUp();
     void ShutDown();
-}
+};
+
+extern ImGuiManager g_ImGuiManager;
 
 HNCRSP_NAMESPACE_END
