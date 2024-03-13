@@ -53,9 +53,9 @@ VertexArray::VertexArray(
         }
     }
     
-    size_t vertArrayDataSize = vertices->size()*3 + vertices->size()*3;
-    if (normals) vertArrayDataSize += normals->size();
-    if (uvs) vertArrayDataSize += uvs->size();
+    size_t vertArrayDataSize = vertices->size() * 3 + vertices->size() * 3;  // latter is color
+    if (normals) vertArrayDataSize += normals->size() * 3;
+    if (uvs) vertArrayDataSize += uvs->size() * 2;
     m_vertData.reserve(vertArrayDataSize);
 
     for (size_t vertIndex = 0; vertIndex < vertices->size(); vertIndex++)
@@ -102,12 +102,11 @@ VertexArray::VertexArray(
         GL_STATIC_DRAW
     );
 
-
     size_t numAttribElements = 
         3 +
         3 +
-        2 * !uvs +
-        3 * !normals;
+        2 * (bool)(uvs) +
+        3 * (bool)(normals);
     unsigned int currentOffset = 0;
 
     // Postions XYZ

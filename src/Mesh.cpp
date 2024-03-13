@@ -1,6 +1,7 @@
 #include "Mesh.h"
 #include "src/components/MeshData.h"
 #include "src/core/ShaderManager.h"
+#include "src/core/SceneManager.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -12,7 +13,7 @@ Mesh::Mesh(
     std::vector<glm::vec3>* colors,
     std::vector<glm::vec2>* uvs
 ) {
-    m_VAO = std::make_unique<VertexArray>(
+    m_VAO = std::make_shared<VertexArray>(
         vertices,
         indices,
         normals,
@@ -22,14 +23,36 @@ Mesh::Mesh(
     m_numVertices = indices->size();
 }
 
+Mesh::Mesh(const Mesh& other)
+{
+    m_VAO = other.m_VAO;
+    m_numVertices = other.m_numVertices;
+    m_relativeOrigin = other.m_relativeOrigin;
+}
+
+Mesh& Mesh::operator=(const Mesh& other)
+{
+    m_VAO = other.m_VAO;
+    m_numVertices = other.m_numVertices;
+    m_relativeOrigin = other.m_relativeOrigin;
+
+    return *this;
+}
+
 Mesh::Mesh(Mesh&& other) noexcept
 {
     m_VAO = std::move(other.m_VAO);
+    m_numVertices = other.m_numVertices;
+    other.m_numVertices = 0;
+    m_relativeOrigin = std::move(other.m_relativeOrigin);
 }
 
 Mesh& Mesh::operator=(Mesh&& other) noexcept
 {
     m_VAO = std::move(other.m_VAO);
+    m_numVertices = other.m_numVertices;
+    other.m_numVertices = 0;
+    m_relativeOrigin = std::move(other.m_relativeOrigin);
 
     return *this;
 }

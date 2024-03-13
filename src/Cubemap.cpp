@@ -135,6 +135,7 @@ void Cubemap::SetMesh()
 void Cubemap::Draw(Shader* shader) const
 {
     // GLCall(glDepthMask(GL_FALSE));  // TODO: ????
+    m_VAO->Bind();
     GLCall(glDepthFunc(GL_LEQUAL));
     GLCall(glActiveTexture(GL_TEXTURE0 + 10));  // TODO: +10 isn't good
     GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemapTextureID));

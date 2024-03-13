@@ -1,6 +1,7 @@
 #include "Cube.h"
 #include "src/core/Texture2DManager.h"
 #include "src/core/ShaderManager.h"
+#include "src/core/SceneManager.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -200,6 +201,8 @@ void Cube::InitializeAttributeData()
         20, 22, 23
     };
 
+    m_numVertices = indices.size();
+
     m_VAO = std::make_unique<VertexArray>(
         &verticesPos,
         &indices,
@@ -215,6 +218,9 @@ void Cube::virt_AddMeshDataToRenderer(EntityUID entityUID, std::shared_ptr<Mater
     meshData.VAO_id = m_VAO->getID();
     meshData.num_vertices = m_numVertices;
     meshData.material = std::make_shared<Material>(g_ShaderManager.basicShader);
+
+    meshData.material->setAlbedoMap(*g_Texture2DManager.mainTextureMap);
+    meshData.material->setSpecularMap(*g_Texture2DManager.mainTextureSpecularMap);
 
     g_ECSManager->AddComponent<MeshData>(entityUID, meshData);
 }

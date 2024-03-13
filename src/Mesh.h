@@ -15,7 +15,7 @@ class Mesh : public Renderable
 {
 private:
     // still has to be here to manange gpu memory
-    std::unique_ptr<VertexArray> m_VAO;
+    std::shared_ptr<VertexArray> m_VAO;
     uint32_t m_numVertices;
 
     // scene data
@@ -29,8 +29,8 @@ public:
         std::vector<glm::vec3>* colors,
         std::vector<glm::vec2>* uvs
     );
-    Mesh(const Mesh& other) = delete;
-    Mesh& operator=(const Mesh& other) = delete;
+    Mesh(const Mesh& other);
+    Mesh& operator=(const Mesh& other);
     Mesh(Mesh&& other) noexcept;
     Mesh& operator=(Mesh&& other) noexcept;
     virtual ~Mesh() = default;

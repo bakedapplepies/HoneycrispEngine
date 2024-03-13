@@ -119,6 +119,18 @@ Texture2D& Model::getMaterialTexture(aiMaterial* material, aiTextureType assimp_
         textureType = ETextureType::ALBEDO;
         break;
 
+    case aiTextureType_DIFFUSE_ROUGHNESS:
+        textureType = ETextureType::ROUGHNESS;
+        break;
+
+    case aiTextureType_AMBIENT_OCCLUSION:
+        textureType = ETextureType::AO;
+        break;
+
+    case aiTextureType_NORMALS:
+        textureType = ETextureType::NORMAL;
+        break;
+
     case aiTextureType_SPECULAR:
         textureType = ETextureType::SPECULAR;
         break;
@@ -150,7 +162,7 @@ void Model::virt_AddMeshDataToRenderer(EntityUID entityUID, std::shared_ptr<Mate
 {
     for (size_t i = 0; i < m_meshes.size(); i++)
     {
-        m_meshes[i].virt_AddMeshDataToRenderer(m_meshIDs[i], material);
+        m_meshes[i].virt_AddMeshDataToRenderer(m_meshIDs[i], m_material);
     }
 }
 

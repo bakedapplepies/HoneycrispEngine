@@ -28,8 +28,10 @@ void Renderer::Render() const
         GLCall(glBindVertexArray(meshData.VAO_id));
         meshData.material->getShader()->Use();
 
-        if (Texture2D const* albedoMap = material->getAlbedoMap())
+        // HNCRSP_LOG_INFO(material->getAlbedoMap());
+        if (Texture2D const* albedoMap = material->getAlbedoMap())  // TODO: optimize this mess
         {
+            // HNCRSP_LOG_INFO(albedoMap->getID());
             albedoMap->Bind();
             shader->setIntUnf("u_material.albedo", albedoMap->getTextureUnit());
         }

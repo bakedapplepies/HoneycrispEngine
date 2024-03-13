@@ -54,7 +54,12 @@ public:
         m_application_ECS_register_components();
         m_application_ECS_register_systems();
 
+        size_t tempSceneIndex = m_activeSceneIndex;  // just for easier debugging between scenes
+        m_activeSceneIndex = m_nextSceneIndex;
+
         m_scenesMap[m_nextSceneIndex] = std::make_unique<TScene>();
+        m_activeSceneIndex = tempSceneIndex;
+        g_ECSManager = &m_ECSManagers[m_activeSceneIndex];
         return m_nextSceneIndex++;
     }
 };

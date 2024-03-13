@@ -7,7 +7,6 @@ HNCRSP_NAMESPACE_START
 GLuint Texture2D::sm_textureUnitCounter = 0;
 std::unordered_map<std::string, TextureInfo> Texture2D::sm_initiatedTextures;
 std::unordered_map<GLuint, GLint> Texture2D::sm_textureUnits;  // key: ID -> texture unit
-std::unordered_map<GLuint, unsigned int> Texture2D::sm_textureIDCount;
 
 Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureType,
     uint32_t atlasWidth, uint32_t atlasHeight
@@ -23,12 +22,9 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureTy
             m_textureCoords = sm_initiatedTextures[texturePath.string()].textureCoords;
             m_textureType = textureType;
 
-            sm_textureIDCount[m_textureID]++;
-
             return;
         }
     }
-
 
     GLCall(glGenTextures(1, &m_textureID));
     sm_initiatedTextures[texturePath.string()].id = m_textureID;
@@ -36,7 +32,6 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureTy
 
     sm_textureUnits[m_textureID] = sm_textureUnitCounter;
     sm_textureUnitCounter = (sm_textureUnitCounter + 1) % 32;
-    sm_textureIDCount[m_textureID]++;
 
     int nrChannels;
     int desiredChannels = 0;
@@ -75,8 +70,6 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureTy
     }
 
     GenerateTextureCoords();  // for quads
-
-    Bind();
 }
 
 Texture2D::Texture2D(const Texture2D& other)
@@ -89,7 +82,6 @@ Texture2D::Texture2D(const Texture2D& other)
 
     path = other.path;
     m_textureID = other.m_textureID;
-    sm_textureIDCount[m_textureID]++;
     m_textureCoords = sm_initiatedTextures[other.path].textureCoords;
 }
 
@@ -103,7 +95,6 @@ Texture2D& Texture2D::operator=(const Texture2D& other)
 
     path = other.path;
     m_textureID = sm_initiatedTextures[other.path].id;
-    sm_textureIDCount[m_textureID]++;
     m_textureCoords = sm_initiatedTextures[other.path].textureCoords;
 
     return *this;
@@ -164,7 +155,7 @@ ETextureType Texture2D::getTextureType() const
 
 void Texture2D::Bind() const
 {
-    GLCall(glActiveTexture(GL_TEXTURE0 + sm_textureUnits[m_textureID]));
+    GLCall(glActiveTexture(GL_TEXTURE0 + sm_textureUnits[m_textureID]));  // TODO
     GLCall(glBindTexture(GL_TEXTURE_2D, m_textureID));
 }
 
@@ -175,26 +166,9 @@ void Texture2D::Unbind() const
 
 void Texture2D::Delete()
 {
-    if (sm_textureIDCount[m_textureID] == 0) return;
-
-    if (--sm_textureIDCount[m_textureID] == 0)  // only all textures with the same ID are gone then do this
-    {
-        if (m_textureID) GLCall(glDeleteTextures(1, &m_textureID));
-        m_textureID = 0;
-        sm_textureUnitCounter--;
-    }
-}
-
-// we are storing textures in static lists so that must be deleted before going out of context
-void Texture2D::DeleteAllTextures()
-{
-    for (auto iter = sm_textureIDCount.begin(); iter != sm_textureIDCount.end(); iter++)
-    {
-        iter->second = 0;
-        GLCall(glDeleteTextures(1, &iter->first));
-        sm_textureUnitCounter--;
-    }
-    HNCRSP_LOG_INFO("Deleted all textures.");
+    if (m_textureID) GLCall(glDeleteTextures(1, &m_textureID));
+    m_textureID = 0;
+    sm_textureUnitCounter--;
 }
 
 void Texture2D::GenerateTextureCoords()

@@ -68,60 +68,70 @@ Material& Material::operator=(Material&& other) noexcept
 void Material::setAlbedoMap(const FileSystem::Path& path)
 {
     m_albedo = &g_Texture2DManager.getTexture2D(path, ETextureType::ALBEDO, 1, 1);
+    m_shader->Use();
     m_shader->setIntUnf("u_material.albedo", m_albedo->getTextureUnit());
 }
 
 void Material::setAlbedoMap(Texture2D& textureObj)
 {
     m_albedo = &textureObj;
+    m_shader->Use();
     m_shader->setIntUnf("u_material.albedo", m_albedo->getTextureUnit());
 }
 
 void Material::setRoughnessMap(const FileSystem::Path& path)
 {
     m_roughness = &g_Texture2DManager.getTexture2D(path, ETextureType::ROUGHNESS, 1, 1);
+    m_shader->Use();
     m_shader->setIntUnf("u_material.roughness", m_roughness->getTextureUnit());
 }
 
 void Material::setRoughnessMap(Texture2D& textureObj)
 {
     m_roughness = &textureObj;
+    m_shader->Use();
     m_shader->setIntUnf("u_material.roughness", m_roughness->getTextureUnit());
 }
 
 void Material::setAoMap(const FileSystem::Path& path)
 {
     m_ao = &g_Texture2DManager.getTexture2D(path, ETextureType::AO, 1, 1);
+    m_shader->Use();
     m_shader->setIntUnf("u_material.ao", m_ao->getTextureUnit());
 }
 
 void Material::setAoMap(Texture2D& textureObj)
 {
     m_ao = &textureObj;
+    m_shader->Use();
     m_shader->setIntUnf("u_material.ao", m_ao->getTextureUnit());
 }
 
 void Material::setNormalMap(const FileSystem::Path& path)
 {
     m_normal = &g_Texture2DManager.getTexture2D(path, ETextureType::NORMAL, 1, 1);
+    m_shader->Use();
     m_shader->setIntUnf("u_material.normal", m_normal->getTextureUnit());
 }
 
 void Material::setNormalMap(Texture2D& textureObj)
 {
     m_normal = &textureObj;
+    m_shader->Use();
     m_shader->setIntUnf("u_material.normal", m_normal->getTextureUnit());
 }
 
 void Material::setSpecularMap(const FileSystem::Path& path)
 {
     m_specular = &g_Texture2DManager.getTexture2D(path, ETextureType::SPECULAR, 1, 1);
+    m_shader->Use();
     m_shader->setIntUnf("u_material.specular", m_specular->getTextureUnit());
 }
 
 void Material::setSpecularMap(Texture2D& textureObj)
 {
     m_specular = &textureObj;
+    m_shader->Use();
     m_shader->setIntUnf("u_material.specular", m_specular->getTextureUnit());
 }
 
