@@ -40,7 +40,7 @@ public:
     void SetActiveScene(size_t index);
     size_t GetCurrentSceneIndex() const;
 
-    void Update();
+    void Update(const float& dt);
     void UpdateImGui();
 
     template <typename TScene>

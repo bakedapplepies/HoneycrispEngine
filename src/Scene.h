@@ -38,7 +38,6 @@ protected:
             g_ECSManager->AddComponent<Transform>(entityUID, newTransform);
         }
 
-        // TODO: private everything & befriend parent class, only expose class type to the outside
         void setShader(std::shared_ptr<Shader> newShader)
         {
             MeshData& thisMeshData = g_ECSManager->GetComponent<MeshData>(entityUID);
@@ -100,7 +99,7 @@ public:
     Scene(Scene&& other) noexcept;
     Scene& operator=(Scene&& other) noexcept;
 
-    virtual void OnUpdate() = 0;
+    virtual void OnUpdate(const float& dt) = 0;
     virtual void OnImGui(void) {}
 };
 

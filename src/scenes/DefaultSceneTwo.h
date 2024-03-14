@@ -13,6 +13,7 @@
 class DefaultSceneTwo : public Honeycrisp::Scene
 {
 private:
+    // scene objects
     std::shared_ptr<Honeycrisp::Shader> shader;
     std::shared_ptr<Honeycrisp::Shader> backpackShader;
     std::shared_ptr<Honeycrisp::Shader> wackyShader;
@@ -21,13 +22,16 @@ private:
     std::shared_ptr< SceneRenderObj<Honeycrisp::Mesh> > mesh;
     std::shared_ptr< SceneRenderObj<Honeycrisp::Model> > model;
     std::unique_ptr<Honeycrisp::PointLight> pointLight;
+    
+    // components
+    Transform* cubeTransform = nullptr;
 
 public:
     DefaultSceneTwo();
     ~DefaultSceneTwo();
     DefaultSceneTwo(DefaultSceneTwo&& other) noexcept = default;
     DefaultSceneTwo& operator=(DefaultSceneTwo&& other) noexcept = default;
-    void OnUpdate() override;
+    void OnUpdate(const float& dt) override;
     void InitializeShaders(void) override;
     void SetInitialUniforms(void) override;
     void OnImGui(void) override;

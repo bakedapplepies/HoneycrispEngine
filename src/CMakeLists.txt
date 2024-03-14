@@ -102,6 +102,8 @@ set(SCENES
     ${CMAKE_SOURCE_DIR}/src/scenes/DefaultScene.cpp
     ${CMAKE_SOURCE_DIR}/src/scenes/DefaultSceneTwo.h
     ${CMAKE_SOURCE_DIR}/src/scenes/DefaultSceneTwo.cpp
+    ${CMAKE_SOURCE_DIR}/src/scenes/SpaceScene.h
+    ${CMAKE_SOURCE_DIR}/src/scenes/SpaceScene.cpp
 )
 
 add_executable(${CMAKE_PROJECT_NAME}

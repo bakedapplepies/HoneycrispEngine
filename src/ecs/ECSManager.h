@@ -29,7 +29,7 @@ public:
 
     void StartUp();
     void ShutDown();
-    void Update(const float& dt_) const;
+    void Update() const;
 
     EntityUID NewEntityUID() const;
     void DestroyEntity(EntityUID uid) const;

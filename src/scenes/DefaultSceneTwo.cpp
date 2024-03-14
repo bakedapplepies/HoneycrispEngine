@@ -7,6 +7,7 @@ using namespace Honeycrisp;
 DefaultSceneTwo::DefaultSceneTwo()
     : Scene()
 {
+    cubeTransform = &g_ECSManager->GetComponent<Transform>(cube->entityUID);
     bgColor = glm::vec3(0.0f);
     pointLight = std::make_unique<PointLight>(
         glm::vec3(0.0f),
@@ -92,7 +93,7 @@ DefaultSceneTwo::DefaultSceneTwo()
 
     model = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/backpack/backpack.obj"), backpackShader);
     // model->setShader(backpackShader);  // TODO when changing shaders, samplers have to be re-sent to gpu
-    model->setTransform(Transform(glm::vec3(10.0f, 2.0f, 7.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(5.0f)));
+    model->setTransform(Transform(glm::vec3(10.0f, 2.0f, 7.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(5.0f)));
 
 
     CreateCubemap(
@@ -111,14 +112,14 @@ DefaultSceneTwo::~DefaultSceneTwo()
 {
 }
 
-void DefaultSceneTwo::OnUpdate()
+void DefaultSceneTwo::OnUpdate(const float& dt)
 {
     shader->setVec3Unf("u_pointLight.position", pointLight->position);
     wackyShader->setVec3Unf("u_pointLight.position", pointLight->position);
     backpackShader->setVec3Unf("u_pointLight.position", pointLight->position);
 
-    Transform& cubeTransform = g_ECSManager->GetComponent<Transform>(cube->entityUID);
-    cubeTransform.eulerAngles += glm::vec3(0.01f, 0.02f, 0.04f);
+    cubeTransform->eulerAngles += glm::vec3(0.01f, 0.02f, 0.04f);
+    cubeTransform->position = glm::vec3(0.0f, sinf(glfwGetTime()) * 0.1f, 0.0f);
     DrawCubemap();
     // mesh->Draw(normalWaveShader.get());  // using another shader to render normals
 }

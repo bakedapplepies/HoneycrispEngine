@@ -1,7 +1,5 @@
 #include "DefaultScene.h"
 
-#include "../utils/utils.h"
-#include "imgui/imgui.h"
 #include "src/core/Texture2DManager.h"
 
 
@@ -171,7 +169,7 @@ DefaultScene::~DefaultScene()
 {
 }
 
-void DefaultScene::OnUpdate()
+void DefaultScene::OnUpdate(const float& dt)
 {
     DrawCubemap();
 }

@@ -15,7 +15,7 @@ void ECSManager::StartUp()
     m_systemManager->StartUp();
 }
 
-void ECSManager::Update(const float& dt_) const
+void ECSManager::Update() const
 {
     m_renderer->Render();
 }

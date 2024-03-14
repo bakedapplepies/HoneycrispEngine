@@ -5,6 +5,7 @@
 #include "src/core/SceneManager.h"
 #include "src/scenes/DefaultScene.h"
 #include "src/scenes/DefaultSceneTwo.h"
+#include "src/scenes/SpaceScene.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -33,6 +34,7 @@ void Window::Loop()
 
     size_t scene_one = g_SceneManager.CreateScene<DefaultScene>();
     size_t scene_two = g_SceneManager.CreateScene<DefaultSceneTwo>();
+    size_t space_scene = g_SceneManager.CreateScene<SpaceScene>();
     g_SceneManager.SetActiveScene(scene_one);
 
     float begin = glfwGetTime();
@@ -98,7 +100,6 @@ void Window::Loop()
         // Update camera
         camera.SetDirection(glm::normalize(m_callbackData->cameraDirection));
 
-        // TODO: put in m_callbackData
         projectionMatrix = glm::perspective(
             glm::radians(45.0f),
             (float)(m_callbackData->windowWidth - 500.0f)/(float)m_callbackData->windowHeight,
@@ -122,9 +123,9 @@ void Window::Loop()
             glm::value_ptr(camera.direction)
         );
 
-        g_SceneManager.Update();  // TODO: Move cubemap rendering to Renderer
+        g_SceneManager.Update(m_deltaTime);  // TODO: Move cubemap rendering to Renderer
         renderingTime = glfwGetTime();
-        g_ECSManager->Update(m_deltaTime);
+        g_ECSManager->Update();
         renderingTime = glfwGetTime() - renderingTime;
 
         ImGui::Render();  // always render after scene so it doesn't get drawn over
