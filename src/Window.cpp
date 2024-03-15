@@ -10,7 +10,7 @@
 
 HNCRSP_NAMESPACE_START
 
-void Window::StartUp(RenderContext::CallbackData* callbackData)
+Window::Window(RenderContext::CallbackData* callbackData)
 {
     m_glfwWindow = glfwGetCurrentContext();
     m_callbackData = callbackData;
@@ -171,17 +171,31 @@ void Window::processInput()
     }
 }
 
+static unsigned int lowFPS  = 0xFFFFFFFF;
+static unsigned int highFPS = 0;
 void Window::calcFPS()
 {
     m_totalTime += m_deltaTime;
     m_frames++;
     if (m_totalTime >= 1.0f)
     {
+        if (m_frames > highFPS) highFPS = m_frames;
+        if (m_frames < lowFPS) lowFPS = m_frames;
         std::string title = "Honeycrisp - FPS: " + fmt::to_string(m_frames);
         glfwSetWindowTitle(m_glfwWindow, title.c_str());
         m_frames = 0;
         m_totalTime = 0.0f;
     }
+}
+
+Window::~Window()
+{
+    std::filesystem::create_directory("data_report");
+    std::ofstream report_file("data_report/fps_report.txt", std::ios::out | std::ios::trunc);
+
+    report_file << "Low FPS: " << lowFPS << '\n';
+    report_file << "High FPS: " << highFPS;
+    report_file.close();
 }
 
 HNCRSP_NAMESPACE_END

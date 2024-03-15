@@ -36,9 +36,7 @@ void Application::Run()
 
     // resources in Window class are mostly managed by other managers
     // regular members don't have to be processed
-    Window window;
-    window.StartUp(callbackData);
-
+    Window window(callbackData);
     window.Loop();
 
 
