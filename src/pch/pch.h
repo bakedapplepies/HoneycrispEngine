@@ -52,8 +52,8 @@
 #include <array>
 #include <signal.h>
 #include <set>
-#include <exception>
 #include <functional>
+#include <future>
 
 // COMMON HEADERS
 #include "src/utils/Debug.h"

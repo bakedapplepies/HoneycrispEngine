@@ -1,4 +1,6 @@
 #include "Application.h"
+
+// Managers
 #include "src/core/GLFWContext.h"
 #include "src/core/RenderContext.h"
 #include "src/core/ImGuiManager.h"
@@ -9,18 +11,23 @@
 #include "src/Window.h"
 #include "src/ecs/ECSManager.h"
 
+// Components
 #include "src/components/Transform.h"
 #include "src/components/MeshData.h"
 
+// ECS Systems
 #include "src/systems/Renderer.h"
 
 
 HNCRSP_NAMESPACE_START
 
+static void GetExtensions();
 void Application::Run()
 {
     GLFWContext::StartUp();
     RenderContext::CallbackData* callbackData = RenderContext::StartUp_GetWindow();
+    GetExtensions();
+
     g_ImGuiManager.StartUp();
     g_ShaderManager.StartUp();
     g_Texture2DManager.StartUp();
@@ -55,6 +62,20 @@ void Application_RegisterSystems()
     renderer_component_bitset.set(GetBitIndex<MeshData>());
     renderer_component_bitset.set(GetBitIndex<Transform>());
     g_ECSManager->RegisterSystem<Renderer>(renderer_component_bitset);
+}
+
+static void GetExtensions()
+{
+    std::filesystem::create_directories("cache/extensions");
+    std::ofstream extensionOutFile("cache/extensions/extensions.txt", std::ios::trunc | std::ios::out);
+
+    int extensions;
+    glGetIntegerv(GL_NUM_EXTENSIONS, &extensions);
+    for (int i = 0; i < extensions; i++)
+    {
+        extensionOutFile << glGetStringi(GL_EXTENSIONS, i) << '\n';
+    }
+    extensionOutFile.close();
 }
 
 HNCRSP_NAMESPACE_END

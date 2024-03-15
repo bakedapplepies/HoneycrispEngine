@@ -21,10 +21,8 @@ public:
     Model(const FileSystem::Path& path, std::shared_ptr<Shader> shader);
     Model(Model&& other) = default;  // TODO: Proper constructors
 
-public:
     void Draw(Shader* shader) const;
-    void setAllMeshTransform(const Transform& transform);
-
+    void setAllMeshTransform(const Transform& transform) const;
     void virt_AddMeshDataToRenderer(EntityUID entityUID, std::shared_ptr<Material> material = nullptr) override final;
 
 private:

@@ -7,7 +7,6 @@ using namespace Honeycrisp;
 DefaultSceneTwo::DefaultSceneTwo()
     : Scene()
 {
-    cubeTransform = &g_ECSManager->GetComponent<Transform>(cube->entityUID);
     bgColor = glm::vec3(0.0f);
     pointLight = std::make_unique<PointLight>(
         glm::vec3(0.0f),
@@ -18,6 +17,7 @@ DefaultSceneTwo::DefaultSceneTwo()
     InitializeShaders();
 
     cube = CreateStaticRenderObj<Cube>();
+    cubeTransform = &g_ECSManager->GetComponent<Transform>(cube->entityUID);
     cube->setShader(shader);
     cube->setTransform(Transform(glm::vec3(1.0f, 3.0f ,5.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
 
@@ -119,7 +119,7 @@ void DefaultSceneTwo::OnUpdate(const float& dt)
     backpackShader->setVec3Unf("u_pointLight.position", pointLight->position);
 
     cubeTransform->eulerAngles += glm::vec3(0.01f, 0.02f, 0.04f);
-    cubeTransform->position = glm::vec3(0.0f, sinf(glfwGetTime()) * 0.1f, 0.0f);
+    cubeTransform->position = glm::vec3(0.0f, sinf(glfwGetTime()) * 7.0f, 0.0f);
     DrawCubemap();
     // mesh->Draw(normalWaveShader.get());  // using another shader to render normals
 }
