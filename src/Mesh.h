@@ -40,11 +40,6 @@ public:
     void EnableVertexAttribUV(bool on) const;
     void EnableVertexAttribNormals(bool on) const;
 
-    // TODO: maybe make this part of the Transform class
-    void Translate(const glm::vec3& vec);
-    void Scale(const float& multiplier);
-    void Rotate(const float& rX, const float& rY, const float& rZ);
-
     void virt_AddMeshDataToRenderer(EntityUID entityUID, std::shared_ptr<Material> material = nullptr) override final;
 
 public:

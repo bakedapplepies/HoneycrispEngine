@@ -29,8 +29,6 @@ private:
 public:
     DefaultSceneTwo();
     ~DefaultSceneTwo();
-    DefaultSceneTwo(DefaultSceneTwo&& other) noexcept = default;
-    DefaultSceneTwo& operator=(DefaultSceneTwo&& other) noexcept = default;
     void OnUpdate(const float& dt) override;
     void InitializeShaders(void) override;
     void SetInitialUniforms(void) override;

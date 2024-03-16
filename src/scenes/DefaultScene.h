@@ -18,8 +18,6 @@ private:
 public:
     DefaultScene();
     ~DefaultScene();
-    DefaultScene(DefaultScene&& other) noexcept = default;
-    DefaultScene& operator=(DefaultScene&& other) noexcept = default;
     void OnUpdate(const float& dt) override;
     void SetInitialUniforms(void) override;
     void OnImGui(void) override;

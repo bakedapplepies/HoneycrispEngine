@@ -4,3 +4,10 @@
 #define HNCRSP_NAMESPACE_END }
 #define HNCRSP_STRINGIFY(x) #x
 #define HNCRSP_CONST_AUTO_REF const auto&
+
+// HNCRSP_NAMESPACE_START
+
+// template <typename T>
+// using const_ptr = T const* const;
+
+// HNCRSP_NAMESPACE_END

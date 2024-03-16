@@ -8,7 +8,6 @@
 using namespace Honeycrisp;
 
 DefaultScene::DefaultScene()
-    : Scene()
 {
     shader = g_ShaderManager.GetShader(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),

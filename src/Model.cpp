@@ -112,9 +112,9 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
         &uvs
     );
 
-    if (mesh->mMaterialIndex >= 0)
+    if (mesh->mMaterialIndex >= 0 && m_material->getAlbedoMap() == nullptr)  // TODO: process multiple materials, only 1 material per model for now
     {
-        aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+        static aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
         Texture2D& diffuseMap = getMaterialTexture(material, aiTextureType_DIFFUSE);
         Texture2D& specularMap = getMaterialTexture(material, aiTextureType_SPECULAR);
 

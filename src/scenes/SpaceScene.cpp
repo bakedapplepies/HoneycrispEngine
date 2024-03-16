@@ -4,7 +4,6 @@
 using namespace Honeycrisp;
 
 SpaceScene::SpaceScene()
-    : Scene()
 {
     CreateCubemap(
         FileSystem::Path("resources/textures/cubemaps/space/right.png"),

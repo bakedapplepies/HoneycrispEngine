@@ -13,9 +13,7 @@ private:
 public:
     TemplateScene();
     ~TemplateScene();
-    TemplateScene(TemplateScene&& other) noexcept = default;
-    TemplateScene& operator=(TemplateScene&& other) noexcept = default;
-    void OnUpdate() override;
+    void OnUpdate(const float& dt) override;
     void SetInitialUniforms(void) override {};
     void OnImGui(void) override {};
 };

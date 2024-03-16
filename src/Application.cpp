@@ -35,16 +35,15 @@ void Application::Run()
 
 
     // resources in Window class are mostly managed by other managers
-    // regular members don't have to be processed
+    // regular members don't have to be processed post-application
     Window window(callbackData);
     window.Loop();
 
-
+    g_SceneManager.ClearAllScenes();
     g_SceneManager.ShutDown();
     g_Texture2DManager.ShutDown();
     g_ShaderManager.ShutDown();
     g_ImGuiManager.ShutDown();
-    g_SceneManager.ClearAllScenes();
     GLFWContext::ShutDown();
 }
 

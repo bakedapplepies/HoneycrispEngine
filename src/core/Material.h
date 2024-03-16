@@ -43,11 +43,11 @@ public:
 
     std::shared_ptr<Shader>  getShader() const;
     void setShader(std::shared_ptr<Shader> newShader);
-    Texture2D const* getAlbedoMap();
-    Texture2D const* getRoughnessMap();
-    Texture2D const* getAoMap();
-    Texture2D const* getNormalMap();
-    Texture2D const* getSpecularMap();
+    Texture2D const* const getAlbedoMap();
+    Texture2D const* const getRoughnessMap();
+    Texture2D const* const getAoMap();
+    Texture2D const* const getNormalMap();
+    Texture2D const* const getSpecularMap();
     float getShininess() const;
 
     // void bindMaterial(Shader* shader);

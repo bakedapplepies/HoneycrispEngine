@@ -18,4 +18,8 @@ struct Transform
     Transform(Transform&& other) noexcept;
     Transform& operator=(Transform&& other) noexcept;
     ~Transform() = default;
+
+    // void translate(const glm::vec3& vec);
+    // void scale(const float& multiplier);
+    // void rotate(const float& rX, const float& rY, const float& rZ);
 };

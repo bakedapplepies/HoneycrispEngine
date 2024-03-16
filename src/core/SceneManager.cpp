@@ -26,9 +26,6 @@ void SceneManager::ShutDown()
 
 void SceneManager::Update(const float& dt)
 {
-    // TODO: maybe add if-statements to check availability
-    // or assert
-    // but this function is called every frame so it's expensive
     m_scenesMap[m_activeSceneIndex]->OnUpdate(dt);
 }
 

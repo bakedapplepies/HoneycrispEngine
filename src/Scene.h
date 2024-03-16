@@ -57,10 +57,8 @@ protected:
     };
 
 private:
-    static size_t m_sceneCount;
     static std::shared_ptr<Shader> m_cubemapShader;
     std::unique_ptr<Cubemap> m_cubemap;
-    bool m_std_moved = false;
 
 public:
     glm::vec3 bgColor = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -91,13 +89,13 @@ protected:
     virtual void SetInitialUniforms(void) {}
 
 public:
-    Scene();
-    virtual ~Scene();  // TODO: Why would there be a scene count here past-me???
+    Scene() = default;
+    virtual ~Scene() = default;
 
     Scene(const Scene&) = delete;
     Scene& operator=(const Scene&) = delete;
-    Scene(Scene&& other) noexcept;
-    Scene& operator=(Scene&& other) noexcept;
+    Scene(Scene&& other) noexcept = delete;
+    Scene& operator=(Scene&& other) noexcept = delete;
 
     virtual void OnUpdate(const float& dt) = 0;
     virtual void OnImGui(void) {}

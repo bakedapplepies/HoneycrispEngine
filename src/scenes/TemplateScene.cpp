@@ -4,14 +4,13 @@
 using namespace Honeycrisp;
 
 TemplateScene::TemplateScene()
-    : Scene()
 {
     
 }
 
 TemplateScene::~TemplateScene() {}
 
-void TemplateScene::OnUpdate()
+void TemplateScene::OnUpdate(const float& dt)
 {
     
 }

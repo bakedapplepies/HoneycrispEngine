@@ -29,28 +29,28 @@ void Renderer::Render() const
         meshData.material->getShader()->Use();
 
         // HNCRSP_LOG_INFO(material->getAlbedoMap());
-        if (Texture2D const* albedoMap = material->getAlbedoMap())  // TODO: optimize this mess
+        if (Texture2D const* const albedoMap = material->getAlbedoMap())  // TODO: optimize this mess
         {
             // HNCRSP_LOG_INFO(albedoMap->getID());
             albedoMap->Bind();
             shader->setIntUnf("u_material.albedo", albedoMap->getTextureUnit());
         }
-        if (Texture2D const* roughnessMap = material->getRoughnessMap())
+        if (Texture2D const* const roughnessMap = material->getRoughnessMap())
         {
             roughnessMap->Bind();
             shader->setIntUnf("u_material.roughness", roughnessMap->getTextureUnit());
         }
-        if (Texture2D const* aoMap = material->getAoMap())
+        if (Texture2D const* const aoMap = material->getAoMap())
         {
             aoMap->Bind();
             shader->setIntUnf("u_material.ao", aoMap->getTextureUnit());
         }
-        if (Texture2D const* normalMap = material->getNormalMap())
+        if (Texture2D const* const normalMap = material->getNormalMap())
         {
             normalMap->Bind();
             shader->setIntUnf("u_material.normal", normalMap->getTextureUnit());
         }
-        if (Texture2D const* specularMap = material->getSpecularMap())
+        if (Texture2D const* const specularMap = material->getSpecularMap())
         {
             specularMap->Bind();
             shader->setIntUnf("u_material.specular", specularMap->getTextureUnit());

@@ -45,7 +45,7 @@ private:
     
     static GLuint sm_textureUnitCounter;
     static std::unordered_map<std::string, TextureInfo> sm_initiatedTextures;
-    static std::unordered_map<GLuint, GLint> sm_textureUnits;  // TODO: Convert GLint to vector to reuse texture units
+    static std::unordered_map<GLuint, GLint> sm_textureUnits;  // TODO: Reuse texture units somehow
 
 public:
     Texture2D() = default;

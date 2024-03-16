@@ -31,7 +31,6 @@ void ECSManager::ShutDown()
 
 [[nodiscard]] EntityUID ECSManager::NewEntityUID() const
 {
-    // TODO: Renderer can reorganize the render queue here
     return m_entityManager->CreateEntity();
 }
 

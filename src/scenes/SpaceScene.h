@@ -4,7 +4,8 @@
 #include "src/Scene.h"
 
 
-// 3cpuyabhwq00
+// Cubemap seed: 3cpuyabhwq00
+// tools.wwwtyro.net/space-3d/index.html
 class SpaceScene : public Honeycrisp::Scene
 {
 private:
@@ -13,8 +14,6 @@ private:
 public:
     SpaceScene();
     ~SpaceScene();
-    SpaceScene(SpaceScene&& other) noexcept = default;
-    SpaceScene& operator=(SpaceScene&& other) noexcept = default;
     void OnUpdate(const float& dt) override;
     void SetInitialUniforms(void) override {};
     void OnImGui(void) override {};

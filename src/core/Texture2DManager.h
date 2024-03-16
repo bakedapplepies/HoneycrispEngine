@@ -12,7 +12,7 @@ HNCRSP_NAMESPACE_START
 class Texture2DManager
 {
 private:
-    // TODO: see if this should be used (std::unordered_map)
+    // TODO: is caching with paths the best?
     std::unordered_map<std::string, Texture2D> m_cachedTexture2Ds;
     int m_maxTextureUnitsPerStage;
     
