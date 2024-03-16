@@ -4,7 +4,7 @@ out vec4 FragColor;
 precision mediump float;
 
 in vec3 TexCoords;
-uniform samplerCube cubemap;
+uniform samplerCube u_cubemap;
 
 layout (std140, binding = 1) uniform GlobUniforms
 {
@@ -15,5 +15,5 @@ layout (std140, binding = 1) uniform GlobUniforms
 
 void main()
 {
-    FragColor = texture(cubemap, TexCoords);
+    FragColor = texture(u_cubemap, TexCoords);
 }

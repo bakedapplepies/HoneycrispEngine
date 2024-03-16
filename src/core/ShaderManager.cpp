@@ -11,12 +11,17 @@ void ShaderManager::StartUp()
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
         FileSystem::Path("resources/shaders/DefaultFragment.glsl")
     );
+    cubemapShader = std::make_shared<Shader>(
+        FileSystem::Path("resources/shaders/CubemapVertex.glsl"),
+        FileSystem::Path("resources/shaders/CubemapFragment.glsl")
+    );
 }
 
 void ShaderManager::ShutDown()
 {
     m_cachedShaders.clear();
     basicShader.reset();
+    cubemapShader.reset();
 }
 
 std::shared_ptr<Shader> ShaderManager::GetShader(

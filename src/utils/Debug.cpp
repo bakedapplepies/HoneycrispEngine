@@ -2,6 +2,8 @@
 #include "src/pch/pch.h"
 
 
+HNCRSP_NAMESPACE_START
+
 void GLClearError()
 {
     while (glGetError() != GL_NO_ERROR);
@@ -30,3 +32,5 @@ bool GLLogCall(const char* function, const char* file, unsigned int line)
     }
     return true;
 }
+
+HNCRSP_NAMESPACE_END

@@ -166,17 +166,21 @@ VertexArray::VertexArray(
     else { EnableVertexAttribNormals(false); }
 }
 
+#define VERTEX_ATTRIB_POSITION 0
+#define VERTEX_ATTRIB_COLOR    1
+#define VERTEX_ATTRIB_UV       2
+#define VERTEX_ATTRIB_NORMAL   3
+
 void VertexArray::EnableVertexAttribPosition(bool on) const
 {
-    // Becareful of these binds
     Bind();
     if (on)
     {
-        GLCall(glEnableVertexAttribArray(0));
+        GLCall(glEnableVertexAttribArray(VERTEX_ATTRIB_POSITION));
     }
     else
     {
-        GLCall(glDisableVertexAttribArray(0));
+        GLCall(glDisableVertexAttribArray(VERTEX_ATTRIB_POSITION));
     }
 }
 
@@ -185,11 +189,11 @@ void VertexArray::EnableVertexAttribColor(bool on) const
     Bind();
     if (on)
     {
-        GLCall(glEnableVertexAttribArray(1));
+        GLCall(glEnableVertexAttribArray(VERTEX_ATTRIB_COLOR));
     }
     else
     {
-        GLCall(glDisableVertexAttribArray(1));
+        GLCall(glDisableVertexAttribArray(VERTEX_ATTRIB_COLOR));
     }
 }
 
@@ -198,11 +202,11 @@ void VertexArray::EnableVertexAttribUV(bool on) const
     Bind();
     if (on)
     {
-        GLCall(glEnableVertexAttribArray(2));
+        GLCall(glEnableVertexAttribArray(VERTEX_ATTRIB_UV));
     }
     else
     {
-        GLCall(glDisableVertexAttribArray(2));
+        GLCall(glDisableVertexAttribArray(VERTEX_ATTRIB_UV));
     }
 }
 
@@ -211,11 +215,11 @@ void VertexArray::EnableVertexAttribNormals(bool on) const
     Bind();
     if (on)
     {
-        GLCall(glEnableVertexAttribArray(3));
+        GLCall(glEnableVertexAttribArray(VERTEX_ATTRIB_NORMAL));
     }
     else
     {
-        GLCall(glDisableVertexAttribArray(3));
+        GLCall(glDisableVertexAttribArray(VERTEX_ATTRIB_NORMAL));
     }
 }
 

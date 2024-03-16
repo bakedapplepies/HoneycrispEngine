@@ -44,6 +44,7 @@ public:
         Update(index, offset, args...);
     }
 
+private:
     template <typename T, typename... Args>
     void Update(size_t index, size_t offset, const T* const t, const Args* const... args) const
     {
@@ -59,6 +60,7 @@ public:
         GLCall(glBufferSubData(GL_UNIFORM_BUFFER, offset, m_sizes[index], t));
     }
 
+public:
     template <typename T>
     void Update(size_t index, const T* const t) const
     {

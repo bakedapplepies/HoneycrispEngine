@@ -24,7 +24,7 @@ private:
 public:
     Cubemap(const std::vector<std::string>& faces);
     ~Cubemap() = default;
-    void Draw(Shader* shader) const;
+    void Draw() const;
 };
 
 HNCRSP_NAMESPACE_END

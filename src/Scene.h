@@ -57,7 +57,6 @@ protected:
     };
 
 private:
-    static std::shared_ptr<Shader> m_cubemapShader;
     std::unique_ptr<Cubemap> m_cubemap;
 
 public:

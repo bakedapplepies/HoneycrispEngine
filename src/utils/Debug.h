@@ -1,5 +1,7 @@
 #pragma once
 
+#include "utils.h"
+
 
 #ifdef HNCRSP_DEBUG
     #define GLCall(x) GLClearError();\
@@ -9,5 +11,9 @@
     #define GLCall(x) x;
 #endif
 
+HNCRSP_NAMESPACE_START
+
 void GLClearError();
 bool GLLogCall(const char* function, const char* file, unsigned int line);
+
+HNCRSP_NAMESPACE_END

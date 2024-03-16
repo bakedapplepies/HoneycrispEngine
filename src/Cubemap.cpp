@@ -1,4 +1,5 @@
 #include "Cubemap.h"
+#include "src/core/ShaderManager.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -132,14 +133,23 @@ void Cubemap::SetMesh()
     m_verticesCount = indicesData.size();
 }
 
-void Cubemap::Draw(Shader* shader) const
+static GLuint vao_id = -1;
+void Cubemap::Draw() const
 {
     // GLCall(glDepthMask(GL_FALSE));  // TODO: ????
     m_VAO->Bind();
     GLCall(glDepthFunc(GL_LEQUAL));
-    GLCall(glActiveTexture(GL_TEXTURE0 + 10));  // TODO: +10 isn't good
-    GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemapTextureID));
-    shader->Use();
+
+    g_ShaderManager.cubemapShader->Use();
+    if (vao_id != m_VAO->getID())
+    {
+        GLCall(glActiveTexture(GL_TEXTURE0 + 10));  // TODO: +10 isn't good
+        GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemapTextureID));  // TODO: don't rebind every frame
+        g_ShaderManager.cubemapShader->setIntUnf("u_cubemap", 10);
+
+        vao_id = m_VAO->getID();
+    }
+
     GLCall(glDrawElements(GL_TRIANGLES, m_verticesCount, GL_UNSIGNED_INT, nullptr));
     GLCall(glDepthFunc(GL_LESS));
     // GLCall(glDepthMask(GL_TRUE));

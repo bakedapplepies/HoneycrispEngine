@@ -113,5 +113,8 @@
         "--header-insertion=never",
         "--query-driver=C:/MinGW-W64/MinGW-W64/bin/clang++.exe"
     ],
-    "C_Cpp.intelliSenseEngine": "disabled"
+    "C_Cpp.intelliSenseEngine": "disabled",
+    "cmake.debugConfig": {
+        "cwd": "${workspaceFolder}/build/Debug/src"
+    }
 }

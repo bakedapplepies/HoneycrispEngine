@@ -13,6 +13,7 @@ private:
 
 public:
     std::shared_ptr<Shader> basicShader;
+    std::shared_ptr<Shader> cubemapShader;
 
 public:
     ShaderManager() = default;

@@ -9,10 +9,10 @@
             "args": [
             ],
             "cwd": "${workspaceFolder}/build/Debug/src",
-            // "sourceMap": {
-            //     "${workspaceFolder}/build/Debug/src": "${workspaceFolder}"
-            // }
-            "breakpointMode": "path"
+            // "stopAtEntry": true,
+            // "MIMode": "lldb",
+            // "externalConsole": false,
+            // "miDebuggerPath": "C:/MinGW-W64/MinGW-W64/bin/lldb-mi.exe"
         }
     ]
 }
