@@ -28,10 +28,8 @@ void Renderer::Render() const
         GLCall(glBindVertexArray(meshData.VAO_id));
         meshData.material->getShader()->Use();
 
-        // HNCRSP_LOG_INFO(material->getAlbedoMap());
         if (Texture2D const* const albedoMap = material->getAlbedoMap())  // TODO: optimize this mess
         {
-            // HNCRSP_LOG_INFO(albedoMap->getID());
             albedoMap->Bind();
             shader->setIntUnf("u_material.albedo", albedoMap->getTextureUnit());
         }
@@ -60,6 +58,32 @@ void Renderer::Render() const
         shader->setMat3Unf("u_normalMatrix", glm::mat3(glm::transpose(glm::inverse(modelMatrix))));
         shader->setMat4Unf("u_model", modelMatrix);
         GLCall(glDrawElements(GL_TRIANGLES, meshData.num_vertices, GL_UNSIGNED_INT, nullptr));
+
+        if (Texture2D const* const albedoMap = material->getAlbedoMap())  // TODO: optimize this mess
+        {
+            albedoMap->Unbind();
+            shader->setIntUnf("u_material.albedo", albedoMap->getTextureUnit());
+        }
+        if (Texture2D const* const roughnessMap = material->getRoughnessMap())
+        {
+            roughnessMap->Unbind();
+            shader->setIntUnf("u_material.roughness", roughnessMap->getTextureUnit());
+        }
+        if (Texture2D const* const aoMap = material->getAoMap())
+        {
+            aoMap->Unbind();
+            shader->setIntUnf("u_material.ao", aoMap->getTextureUnit());
+        }
+        if (Texture2D const* const normalMap = material->getNormalMap())
+        {
+            normalMap->Unbind();
+            shader->setIntUnf("u_material.normal", normalMap->getTextureUnit());
+        }
+        if (Texture2D const* const specularMap = material->getSpecularMap())
+        {
+            specularMap->Unbind();
+            shader->setIntUnf("u_material.specular", specularMap->getTextureUnit());
+        }
     }
 }
 

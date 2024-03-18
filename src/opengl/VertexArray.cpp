@@ -17,7 +17,6 @@ VertexArray::VertexArray(
         HNCRSP_TERMINATE("Missing vertex positions and indices.");
     }
 
-
     if (!m_vertData.empty())
     {
         HNCRSP_LOG_WARN("Mesh already constructed.");
@@ -58,6 +57,12 @@ VertexArray::VertexArray(
     if (normals) vertArrayDataSize += normals->size() * 3;
     if (uvs) vertArrayDataSize += uvs->size() * 2;
     m_vertData.reserve(vertArrayDataSize);
+    // HNCRSP_LOG_INFO(vertices->size());
+    
+#define MAX_VERTICES_PER_PROCESS 3000
+    unsigned int num_processes =
+        static_cast<unsigned int>(1.0 * vertArrayDataSize / MAX_VERTICES_PER_PROCESS + 0.5);
+    if (num_processes == 0) num_processes = 1;
 
     for (size_t vertIndex = 0; vertIndex < vertices->size(); vertIndex++)
     {

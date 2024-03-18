@@ -2,7 +2,6 @@
 - TODO: ShaderConfig object to pass into draw calls?
 - TODO: cache texture (ktx) & store model in reuseable binary format
 - TODO: LOD (mesh subdivision via geometry shader for now, mesh shader later)
-- TODO: Make model loading asynchronous
 - TODO: Mark constructors as explicit
 - TODO: Quaternion implementation
 - TODO: Separate the program in 2 threads: Rendering and Everything else. The only input the Rendering thread
@@ -13,7 +12,6 @@ gets is the Draw-calls-queue.
 - TODO: Continuous maps
 - TODO: Texture2D Min/Mag filter (nearest/linear), Wrap (repeat/clamp/...)
 - TODO: Look into glNamed... functions
-- TODO: Use asynchronous operations to speed up model loading (nodes)
 - TODO: replace all smart-pointer arguments to raw pointers -> faster speed
         only use smart pointers to manage the lifetime of objects
 - TODO: Bind light and uniforms and stuff together
@@ -25,6 +23,7 @@ gets is the Draw-calls-queue.
 - TODO: .clangd format feature seems useful
 - TODO: Ticking bomb-style error (doesn't crash program, but will crash if you use the erroneous data)
 - TODO: Automatic handling of nullptrs that doesn't use weakptrs (somehow)
+- TODO: Load models using mapped buffers (can't use VAOs) so everything goes faster
 
 - TODO: Systems that actually need ECS:
     + Physics

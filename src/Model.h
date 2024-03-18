@@ -18,7 +18,7 @@ private:
     std::shared_ptr<Material> m_material;
 
 public:
-    Model(const FileSystem::Path& path, std::shared_ptr<Shader> shader);
+    Model(const FileSystem::Path& path, std::shared_ptr<Shader> shader, bool flip_uv);
     Model(Model&& other) = default;  // TODO: Proper constructors
 
     void Draw(Shader* shader) const;
@@ -26,9 +26,9 @@ public:
     void virt_AddMeshDataToRenderer(EntityUID entityUID, std::shared_ptr<Material> material = nullptr) override final;
 
 private:
-    void processNode(aiNode* node, const aiScene*);
+    void processNode(aiNode* node, const aiScene*, std::vector< std::future< std::future<Mesh> > >& future_meshes);
     std::future<Mesh> processMesh(aiMesh* node, const aiScene*);
-    Texture2D& getMaterialTexture(aiMaterial* material, aiTextureType assimp_texture_type);
+    Texture2D& getMaterialTexture(aiString& textureFilename, aiTextureType assimp_texture_type);
 };
 
 HNCRSP_NAMESPACE_END

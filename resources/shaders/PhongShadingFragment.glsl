@@ -141,7 +141,14 @@ void main()
     vec3 specularFrag = vec3(texture(u_material.specular, fs_in.TexCoord));
 
     // result += CalcDirLight(u_dirLight, fs_in.Normal, dirToView, albedoFrag, specularFrag);
-    result += CalcPointLight(u_pointLight, fs_in.Normal, dirToView, albedoFrag, specularFrag);
+    // if (u_material.normal)
+    // {
+    result += CalcPointLight(u_pointLight, vec3(texture(u_material.normal, fs_in.TexCoord)), dirToView, albedoFrag, specularFrag);
+    // }
+    // else
+    // {
+    //     result += CalcPointLight(u_pointLight, fs_in.Normal, dirToView, albedoFrag, specularFrag);
+    // }
     // result += CalcSpotLight(u_spotLight, fs_in.Normal, dirToView, albedoFrag, specularFrag);
 
     FragColor = vec4(fs_in.VertColor, 1.0) * vec4(result, 1.0);

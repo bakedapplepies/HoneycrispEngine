@@ -16,11 +16,13 @@ private:
     // scene objects
     std::shared_ptr<Honeycrisp::Shader> shader;
     std::shared_ptr<Honeycrisp::Shader> backpackShader;
+    std::shared_ptr<Honeycrisp::Shader> appleShader;
     std::shared_ptr<Honeycrisp::Shader> wackyShader;
     std::shared_ptr<Honeycrisp::Shader> normalWaveShader;
     std::shared_ptr< SceneRenderObj<Honeycrisp::Cube> > cube;
     std::shared_ptr< SceneRenderObj<Honeycrisp::Mesh> > mesh;
-    std::shared_ptr< SceneRenderObj<Honeycrisp::Model> > model;
+    std::shared_ptr< SceneRenderObj<Honeycrisp::Model> > backpackModel;
+    std::shared_ptr< SceneRenderObj<Honeycrisp::Model> > appleModel;
     std::unique_ptr<Honeycrisp::PointLight> pointLight;
     
     // components

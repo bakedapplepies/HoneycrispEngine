@@ -90,9 +90,12 @@ DefaultSceneTwo::DefaultSceneTwo()
 
     mesh->setTransform(Transform(glm::vec3(0.0f, -6.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
 
-    model = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/backpack/backpack.obj"), backpackShader);
+    backpackModel = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/backpack/backpack.obj"), backpackShader, false);
     // model->setShader(backpackShader);  // TODO when changing shaders, samplers have to be re-sent to gpu
-    model->setTransform(Transform(glm::vec3(10.0f, 2.0f, 7.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(5.0f)));
+    backpackModel->setTransform(Transform(glm::vec3(10.0f, 2.0f, 7.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(3.0f)));
+    appleModel = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/apple/source/apple.fbx"), appleShader, true);
+    // model->setShader(backpackShader);  // TODO when changing shaders, samplers have to be re-sent to gpu
+    appleModel->setTransform(Transform(glm::vec3(10.0f, 2.0f, 17.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.3f)));
 
 
     CreateCubemap(
@@ -116,6 +119,7 @@ void DefaultSceneTwo::OnUpdate(const float& dt)
     shader->setVec3Unf("u_pointLight.position", pointLight->position);
     wackyShader->setVec3Unf("u_pointLight.position", pointLight->position);
     backpackShader->setVec3Unf("u_pointLight.position", pointLight->position);
+    appleShader->setVec3Unf("u_pointLight.position", pointLight->position);
 
     cubeTransform->eulerAngles += glm::vec3(0.01f, 0.02f, 0.04f);
     cubeTransform->position = glm::vec3(0.0f, sinf(glfwGetTime()) * 7.0f, 0.0f);
@@ -130,6 +134,10 @@ void DefaultSceneTwo::InitializeShaders(void)
         FileSystem::Path("resources/shaders/PhongShadingFragment.glsl")
     );
     backpackShader = g_ShaderManager.GetShader(
+        FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
+        FileSystem::Path("resources/shaders/PhongShadingFragment.glsl")  // update cubemap texture unit uniform
+    );
+    appleShader = g_ShaderManager.GetShader(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
         FileSystem::Path("resources/shaders/PhongShadingFragment.glsl")  // update cubemap texture unit uniform
     );
@@ -239,6 +247,31 @@ void DefaultSceneTwo::SetInitialUniforms(void)
     backpackShader->setFloatUnf("u_spotLight.constant", 1.0f);
     backpackShader->setFloatUnf("u_spotLight.linear", 0.07f);
     backpackShader->setFloatUnf("u_spotLight.quadratic", 0.0045f);
+
+    // dir light
+    appleShader->setVec3Unf("u_dirLight.direction", glm::normalize(glm::vec3(0, -1, 0)));
+    appleShader->setVec3Unf("u_dirLight.ambient", glm::vec3(1.0f));
+    appleShader->setVec3Unf("u_dirLight.diffuse", glm::vec3(0.7f));
+    appleShader->setVec3Unf("u_dirLight.specular", glm::vec3(1.0f));
+
+    // point light
+    appleShader->setVec3Unf("u_pointLight.position", pointLight->position);
+    appleShader->setVec3Unf("u_pointLight.ambient", pointLight->getAmbient());
+    appleShader->setVec3Unf("u_pointLight.diffuse", pointLight->getDiffuse());
+    appleShader->setVec3Unf("u_pointLight.specular", pointLight->getSpecular());
+    appleShader->setFloatUnf("u_pointLight.constant", pointLight->attenuation_constant);
+    appleShader->setFloatUnf("u_pointLight.linear", pointLight->attenuation_linear);
+    appleShader->setFloatUnf("u_pointLight.quadratic", pointLight->attenuation_quadratic);
+
+    // spot light
+    appleShader->setFloatUnf("u_spotLight.cutOff", glm::cos(glm::radians(15.0f)));
+    appleShader->setFloatUnf("u_spotLight.outerCutOff", glm::cos(glm::radians(25.0f)));
+    appleShader->setVec3Unf("u_spotLight.ambient", glm::vec3(0.1f));
+    appleShader->setVec3Unf("u_spotLight.diffuse", glm::vec3(0.5f));
+    appleShader->setVec3Unf("u_spotLight.specular", glm::vec3(1.0f));
+    appleShader->setFloatUnf("u_spotLight.constant", 1.0f);
+    appleShader->setFloatUnf("u_spotLight.linear", 0.07f);
+    appleShader->setFloatUnf("u_spotLight.quadratic", 0.0045f);
 }
 
 void DefaultSceneTwo::OnImGui(void)
