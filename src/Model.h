@@ -2,7 +2,7 @@
 
 #include "src/pch/pch.h"
 #include "Mesh.h"
-#include "src/opengl/Texture2D.h"
+#include "src/utils/Command.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -27,7 +27,7 @@ public:
 
 private:
     void processNode(aiNode* node, const aiScene*);
-    Mesh processMesh(aiMesh* node, const aiScene*);
+    std::future<Mesh> processMesh(aiMesh* node, const aiScene*);
     Texture2D& getMaterialTexture(aiMaterial* material, aiTextureType assimp_texture_type);
 };
 

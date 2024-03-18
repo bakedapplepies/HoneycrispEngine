@@ -17,6 +17,7 @@ VertexArray::VertexArray(
         HNCRSP_TERMINATE("Missing vertex positions and indices.");
     }
 
+
     if (!m_vertData.empty())
     {
         HNCRSP_LOG_WARN("Mesh already constructed.");
