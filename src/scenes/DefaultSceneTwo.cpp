@@ -93,6 +93,8 @@ DefaultSceneTwo::DefaultSceneTwo()
     backpackModel = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/backpack/backpack.obj"), backpackShader, false);
     // model->setShader(backpackShader);  // TODO when changing shaders, samplers have to be re-sent to gpu
     backpackModel->setTransform(Transform(glm::vec3(10.0f, 2.0f, 7.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(3.0f)));
+
+    // Author: Eydeet (https://skfb.ly/ouB6N)
     appleModel = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/apple/source/apple.fbx"), appleShader, true);
     // model->setShader(backpackShader);  // TODO when changing shaders, samplers have to be re-sent to gpu
     appleModel->setTransform(Transform(glm::vec3(10.0f, 2.0f, 17.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.3f)));
