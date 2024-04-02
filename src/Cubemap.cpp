@@ -143,9 +143,9 @@ void Cubemap::Draw() const
     g_ShaderManager.cubemapShader->Use();
     if (vao_id != m_VAO->getID())
     {
-        GLCall(glActiveTexture(GL_TEXTURE0 + 10));  // TODO: +10 isn't good
+        GLCall(glActiveTexture(GL_TEXTURE0 + 16));  // TODO: +10 isn't good
         GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemapTextureID));  // TODO: don't rebind every frame
-        g_ShaderManager.cubemapShader->setIntUnf("u_cubemap", 10);
+        g_ShaderManager.cubemapShader->setIntUnf("u_cubemap", 16);
 
         vao_id = m_VAO->getID();
     }

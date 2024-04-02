@@ -1,7 +1,7 @@
 - TODO: batch/instance rendering; prioritize instancing
 - TODO: ShaderConfig object to pass into draw calls?
 - TODO: cache texture (ktx) & store model in reuseable binary format
-- TODO: LOD (mesh subdivision via geometry shader for now, mesh shader later)
+- TODO: LOD (tesselation shader, mesh shader; latter is quite hard)
 - TODO: Mark constructors as explicit
 - TODO: Quaternion implementation
 - TODO: Separate the program in 2 threads: Rendering and Everything else. The only input the Rendering thread

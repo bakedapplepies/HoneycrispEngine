@@ -33,7 +33,7 @@ public:
     void InsertData(EntityUID uid, const TComponent& componentData)
     {
         if (m_entityUIDToIndexMap.find(uid) != m_entityUIDToIndexMap.end())
-            HNCRSP_TERMINATE("Component already added to entity.");
+            HNCRSP_TERMINATE(fmt::format("{} already added to entity.", typeid(TComponent).name()).c_str());
 
         size_t newIndex = m_nextFinalIndex;
         m_entityUIDToIndexMap[uid] = newIndex;
@@ -45,7 +45,7 @@ public:
     void RemoveData(EntityUID uid)
     {
         if (m_entityUIDToIndexMap.find(uid) == m_entityUIDToIndexMap.end())
-            HNCRSP_TERMINATE("Component not yet added to entity.");
+            HNCRSP_TERMINATE(fmt::format("{} not yet added to entity.", typeid(TComponent).name()).c_str());
 
         size_t indexOfRemoveData = m_entityUIDToIndexMap[uid];
         EntityUID lastEntityUID = m_indexToEntityUIDMap[m_nextFinalIndex - 1];
@@ -63,7 +63,7 @@ public:
     TComponent& GetData(EntityUID uid)
     {
         if (m_entityUIDToIndexMap.find(uid) == m_entityUIDToIndexMap.end())
-            HNCRSP_TERMINATE("Component not yet added to entity.");
+            HNCRSP_TERMINATE(fmt::format("{} not yet added to entity.", typeid(TComponent).name()).c_str());
 
         return m_componentArray[m_entityUIDToIndexMap[uid]];
     }

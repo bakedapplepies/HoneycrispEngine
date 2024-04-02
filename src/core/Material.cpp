@@ -150,27 +150,27 @@ void Material::setShader(std::shared_ptr<Shader> newShader)
     m_shader = newShader;
 }
 
-Texture2D const* const Material::getAlbedoMap()
+const Texture2D* Material::getAlbedoMap()
 {
     return m_albedo;
 }
 
-Texture2D const* const Material::getRoughnessMap()
+const Texture2D* Material::getRoughnessMap()
 {
     return m_roughness;
 }
 
-Texture2D const* const Material::getAoMap()
+const Texture2D* Material::getAoMap()
 {
     return m_ao;
 }
 
-Texture2D const* const Material::getNormalMap()
+const Texture2D* Material::getNormalMap()
 {
     return m_normal;
 }
 
-Texture2D const* const Material::getSpecularMap()
+const Texture2D* Material::getSpecularMap()
 {
     return m_specular;
 }

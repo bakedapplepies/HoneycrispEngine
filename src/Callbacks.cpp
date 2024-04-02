@@ -47,7 +47,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             case GLFW_KEY_RIGHT_ALT:
                 if (!callbackData->capFPS)
                 {
-                    glfwSwapInterval(1);
+                    glfwSwapInterval(0);
                     callbackData->capFPS = true;
                 }
                 else
