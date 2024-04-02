@@ -65,7 +65,11 @@ set(SOURCE
     # systems
     ${CMAKE_SOURCE_DIR}/src/systems/Renderer.h
     ${CMAKE_SOURCE_DIR}/src/systems/Renderer.cpp
-
+    
+    # serializer
+    ${CMAKE_SOURCE_DIR}/src/serialize/Serializer.h
+    ${CMAKE_SOURCE_DIR}/src/serialize/ModelSerializer.h
+    ${CMAKE_SOURCE_DIR}/src/serialize/ModelSerializer.cpp
 
     # Application stuff
     ${CMAKE_SOURCE_DIR}/src/core/Material.h
@@ -110,15 +114,17 @@ add_executable(${CMAKE_PROJECT_NAME}
     ${SOURCE}
     ${SCENES}
 )
+# -ffile-prefix-map=${CMAKE_SOURCE_DIR}=. messes up the debugger
 target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
-    -ffile-prefix-map=${CMAKE_SOURCE_DIR}=.
+    # -ffile-prefix-map=${CMAKE_SOURCE_DIR}=.
+    # -fdebug-prefix-map=${CMAKE_SOURCE_DIR}=.
     -Wall
     -Wextra
     -pedantic
     -Wno-unused-parameter
     -Wno-unused-variable
     -Wno-unused-private-field
-    -Wno-
+    # -Wno-
 )
 
 target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE GLM_FORCE_SWIZZLE HNCRSP_PROJECT_DIR="${CMAKE_SOURCE_DIR}")

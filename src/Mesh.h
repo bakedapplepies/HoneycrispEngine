@@ -19,7 +19,7 @@ private:
     uint32_t m_numVertices;
 
     // scene data
-    glm::vec3 m_relativeOrigin = glm::vec3(0.0f);
+    // glm::vec3 m_relativeOrigin = glm::vec3(0.0f);
 
 public:
     Mesh(
@@ -28,6 +28,13 @@ public:
         std::vector<glm::vec3>* normals,
         std::vector<glm::vec3>* colors,
         std::vector<glm::vec2>* uvs
+    );
+    Mesh(
+        unsigned char vertex_attrib_bits,
+        const float* vertex_data,
+        size_t vertex_data_len,
+        const GLuint* indices_data,
+        size_t indices_data_len
     );
     Mesh(const Mesh& other);
     Mesh& operator=(const Mesh& other);
@@ -39,20 +46,20 @@ public:
     void EnableVertexAttribColor(bool on) const;
     void EnableVertexAttribUV(bool on) const;
     void EnableVertexAttribNormals(bool on) const;
+    const VertexArray* GetVAO() const;
 
     void virt_AddMeshDataToRenderer(EntityUID entityUID, std::shared_ptr<Material> material = nullptr) override final;
 
-public:
+// public:
+//     inline glm::vec3 getRelativeOrigin() const
+//     {
+//         return m_relativeOrigin;
+//     }
 
-    inline glm::vec3 getRelativeOrigin() const
-    {
-        return m_relativeOrigin;
-    }
-
-    inline void setRelativeOrigin(const glm::vec3& relOrigin)
-    {
-        m_relativeOrigin = relOrigin;
-    }
+//     inline void setRelativeOrigin(const glm::vec3& relOrigin)
+//     {
+//         m_relativeOrigin = relOrigin;
+//     }
 };
 
 HNCRSP_NAMESPACE_END

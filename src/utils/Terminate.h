@@ -1,9 +1,11 @@
 #pragma once
 
+#include "src/utils/FileSystem.h"
 
-#define HNCRSP_TERMINATE(msg) Honeycrisp::terminate(msg, __FILE__, __LINE__);
+
+#define HNCRSP_TERMINATE(msg) Honeycrisp::terminate(msg, FileSystem::Path(__FILE__), __LINE__);
 
 namespace Honeycrisp
 {
-    void terminate(const char* msg, const char* file, unsigned int line);
+    void terminate(const char* msg, const FileSystem::Path& file, unsigned int line);
 }

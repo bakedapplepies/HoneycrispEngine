@@ -15,12 +15,6 @@ std::ostream& operator<<(std::ostream& stream, const glm::vec3& vec3)
 
 HNCRSP_NAMESPACE_START
 
-namespace Log
-{
-    // namespace
-    // {
-    //     bool beganLine = true;
-    // }
-}
+
 
 HNCRSP_NAMESPACE_END

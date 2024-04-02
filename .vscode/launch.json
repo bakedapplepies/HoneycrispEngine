@@ -6,13 +6,8 @@
             "request": "launch",
             "name": "Debug Application",
             "program": "${workspaceFolder}/build/Debug/src/Honeycrisp.exe",
-            "args": [
-            ],
+            "args": [],
             "cwd": "${workspaceFolder}/build/Debug/src",
-            // "stopAtEntry": true,
-            // "MIMode": "lldb",
-            // "externalConsole": false,
-            // "miDebuggerPath": "C:/MinGW-W64/MinGW-W64/bin/lldb-mi.exe"
         }
     ]
 }

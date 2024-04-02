@@ -87,18 +87,22 @@ DefaultSceneTwo::DefaultSceneTwo()
         &uvs
     );
     mesh->setShader(wackyShader);
+    std::shared_ptr<Material> meshMaterial = g_ECSManager->GetComponent<MeshData>(mesh->entityUID).material;
+    meshMaterial->setAlbedoMap(*g_Texture2DManager.mainTextureMap);
+    meshMaterial->setSpecularMap(*g_Texture2DManager.mainTextureSpecularMap);
 
     mesh->setTransform(Transform(glm::vec3(0.0f, -6.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
 
-    backpackModel = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/backpack/backpack.obj"), backpackShader, false);
-    // model->setShader(backpackShader);  // TODO when changing shaders, samplers have to be re-sent to gpu
+    backpackModel = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/backpack/backpack.obj"), backpackShader, true);
     backpackModel->setTransform(Transform(glm::vec3(10.0f, 2.0f, 7.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(3.0f)));
+    Material* backpackMaterial = backpackModel->getMaterial();
+    backpackMaterial->setShininess(32);
 
     // Author: Eydeet (https://skfb.ly/ouB6N)
-    appleModel = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/apple/source/apple.fbx"), appleShader, true);
-    // model->setShader(backpackShader);  // TODO when changing shaders, samplers have to be re-sent to gpu
+    appleModel = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/apple/source/apple.fbx"), appleShader, false);
     appleModel->setTransform(Transform(glm::vec3(10.0f, 2.0f, 17.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.3f)));
-
+    Material* appleMaterial = appleModel->getMaterial();
+    appleMaterial->setShininess(32);
 
     CreateCubemap(
         FileSystem::Path("resources/textures/cubemaps/skybox/right.jpg"),
@@ -108,7 +112,7 @@ DefaultSceneTwo::DefaultSceneTwo()
         FileSystem::Path("resources/textures/cubemaps/skybox/front.jpg"),
         FileSystem::Path("resources/textures/cubemaps/skybox/back.jpg")
     );
-    
+
     SetInitialUniforms();
 }
 
@@ -137,11 +141,12 @@ void DefaultSceneTwo::InitializeShaders(void)
     );
     backpackShader = g_ShaderManager.GetShader(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
-        FileSystem::Path("resources/shaders/PhongShadingFragment.glsl")  // update cubemap texture unit uniform
+        FileSystem::Path("resources/shaders/PhongShadingFragment.glsl")
     );
     appleShader = g_ShaderManager.GetShader(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
-        FileSystem::Path("resources/shaders/PhongShadingFragment.glsl")  // update cubemap texture unit uniform
+        FileSystem::Path("resources/shaders/PhongShadingFragment.glsl")
+        // FileSystem::Path("resources/shaders/NormalGeometry.glsl")
     );
     wackyShader = g_ShaderManager.GetShader(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),

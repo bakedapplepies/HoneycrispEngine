@@ -30,16 +30,18 @@ std::shared_ptr<Shader> ShaderManager::GetShader(
     const FileSystem::Path& geometryFile
 ) {
     // TODO: use different hash
-    std::string hash_string = vertexFile.relative_string() +
-        fragmentFile.relative_string() +
-        geometryFile.relative_string();
+    // std::string hash_string = vertexFile.relative_string() +
+    //     fragmentFile.relative_string() +
+    //     geometryFile.relative_string();
 
-    if (m_cachedShaders[hash_string] == nullptr)
-    {
-        m_cachedShaders[hash_string] = std::make_shared<Shader>(vertexFile, fragmentFile, geometryFile);
-    }
+    // if (m_cachedShaders[hash_string] == nullptr)
+    // {
+    //     m_cachedShaders[hash_string] = std::make_shared<Shader>(vertexFile, fragmentFile, geometryFile);
+    // }
 
-    return m_cachedShaders[hash_string];
+    // return m_cachedShaders[hash_string];
+
+    return std::make_shared<Shader>(vertexFile, fragmentFile, geometryFile);
 }
 
 HNCRSP_NAMESPACE_END

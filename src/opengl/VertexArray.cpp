@@ -9,20 +9,20 @@ VertexArray::VertexArray(
     const std::vector<glm::vec3>* normals,
     const std::vector<glm::vec3>* colors,
     const std::vector<glm::vec2>* uvs
-)
-{
+) {
     // Preliminary checks
     if (vertices == nullptr || indices == nullptr)
     {
         HNCRSP_TERMINATE("Missing vertex positions and indices.");
     }
 
-    if (!m_vertData.empty())
+    if (m_VAO_ID != 0)
     {
         HNCRSP_LOG_WARN("Mesh already constructed.");
         return;
     }
 
+    // Check if vectors contain anything
     if (vertices->empty())
     {
         HNCRSP_TERMINATE("No data to construct mesh.");
@@ -57,12 +57,12 @@ VertexArray::VertexArray(
     if (normals) vertArrayDataSize += normals->size() * 3;
     if (uvs) vertArrayDataSize += uvs->size() * 2;
     m_vertData.reserve(vertArrayDataSize);
-    // HNCRSP_LOG_INFO(vertices->size());
     
-#define MAX_VERTICES_PER_PROCESS 3000
-    unsigned int num_processes =
-        static_cast<unsigned int>(1.0 * vertArrayDataSize / MAX_VERTICES_PER_PROCESS + 0.5);
-    if (num_processes == 0) num_processes = 1;
+    // HNCRSP_LOG_INFO(vertices->size());
+// #define MAX_VERTICES_PER_PROCESS 3000
+//     unsigned int num_processes =
+//         static_cast<unsigned int>(1.0 * vertArrayDataSize / MAX_VERTICES_PER_PROCESS + 0.5);
+//     if (num_processes == 0) num_processes = 1;
 
     for (size_t vertIndex = 0; vertIndex < vertices->size(); vertIndex++)
     {
@@ -117,7 +117,7 @@ VertexArray::VertexArray(
 
     // Postions XYZ
     GLCall(glVertexAttribPointer(
-        0,
+        HNCRSP_VERTEX_ATTRIB_POSITION_INDEX,
         3,
         GL_FLOAT,
         GL_FALSE,
@@ -129,7 +129,7 @@ VertexArray::VertexArray(
 
     // Color RGB
     GLCall(glVertexAttribPointer(
-        1,
+        HNCRSP_VERTEX_ATTRIB_COLOR_INDEX,
         3,
         GL_FLOAT,
         GL_FALSE,
@@ -143,7 +143,7 @@ VertexArray::VertexArray(
     {
         // Texture Coordinates XY
         GLCall(glVertexAttribPointer(
-            2,
+            HNCRSP_VERTEX_ATTRIB_UV_INDEX,
             2,
             GL_FLOAT,
             GL_FALSE,
@@ -159,7 +159,7 @@ VertexArray::VertexArray(
     {
         // Normals XYZ (Normalized vectors)
         GLCall(glVertexAttribPointer(
-            3,
+            HNCRSP_VERTEX_ATTRIB_NORMAL_INDEX,
             3,
             GL_FLOAT, 
             GL_FALSE,
@@ -172,21 +172,101 @@ VertexArray::VertexArray(
     else { EnableVertexAttribNormals(false); }
 }
 
-#define VERTEX_ATTRIB_POSITION 0
-#define VERTEX_ATTRIB_COLOR    1
-#define VERTEX_ATTRIB_UV       2
-#define VERTEX_ATTRIB_NORMAL   3
+VertexArray::VertexArray(
+    unsigned char vertex_attrib_bits,
+    const float* vertex_data,
+    size_t vertex_data_len,
+    const GLuint* indices_data,
+    size_t indices_data_len  
+) {
+    CreateVAO(
+        vertex_data,
+        vertex_data_len * sizeof(float),
+        indices_data,
+        indices_data_len * sizeof(GLuint),
+        GL_STATIC_DRAW
+    );
+    bool pos = (vertex_attrib_bits & VERTEX_ATTRIB_POSITION_BIT) == VERTEX_ATTRIB_POSITION_BIT;
+    bool color = (vertex_attrib_bits & VERTEX_ATTRIB_COLOR_BIT) == VERTEX_ATTRIB_COLOR_BIT;
+    bool uv = (vertex_attrib_bits & VERTEX_ATTRIB_UV_BIT) == VERTEX_ATTRIB_UV_BIT;
+    bool normal = (vertex_attrib_bits & VERTEX_ATTRIB_NORMAL_BIT) == VERTEX_ATTRIB_NORMAL_BIT;
+
+    size_t numAttribElements = 
+        3 +
+        3 +
+        2 * uv +
+        3 * normal;
+    unsigned int currentOffset = 0;
+
+    // Postions XYZ
+    GLCall(glVertexAttribPointer(
+        HNCRSP_VERTEX_ATTRIB_POSITION_INDEX,
+        3,
+        GL_FLOAT,
+        GL_FALSE,
+        numAttribElements * sizeof(float),
+        (void*)(currentOffset * sizeof(float))
+    ));
+    EnableVertexAttribPosition(true);
+    currentOffset += 3;
+
+    // Color RGB
+    GLCall(glVertexAttribPointer(
+        HNCRSP_VERTEX_ATTRIB_COLOR_INDEX,
+        3,
+        GL_FLOAT,
+        GL_FALSE,
+        numAttribElements * sizeof(float),
+        (void*)(currentOffset * sizeof(float))
+    ));
+    EnableVertexAttribColor(true);
+    currentOffset += 3;
+
+    if (uv)
+    {
+        // Texture Coordinates XY
+        GLCall(glVertexAttribPointer(
+            HNCRSP_VERTEX_ATTRIB_UV_INDEX,
+            2,
+            GL_FLOAT,
+            GL_FALSE,
+            numAttribElements * sizeof(float),
+            (void*)(currentOffset * sizeof(float))
+        ));
+        EnableVertexAttribUV(true);
+        currentOffset += 2;
+    }
+    else { EnableVertexAttribUV(false); }
+
+    if (normal)
+    {
+        // Normals XYZ (Normalized vectors)
+        GLCall(glVertexAttribPointer(
+            HNCRSP_VERTEX_ATTRIB_NORMAL_INDEX,
+            3,
+            GL_FLOAT, 
+            GL_FALSE,
+            numAttribElements * sizeof(float),
+            (void*)(currentOffset * sizeof(float))
+        ));
+        EnableVertexAttribNormals(true);
+        currentOffset += 3;
+    }
+
+    EnableVertexAttribUV(uv);
+    EnableVertexAttribNormals(normal);
+}
 
 void VertexArray::EnableVertexAttribPosition(bool on) const
 {
     Bind();
     if (on)
     {
-        GLCall(glEnableVertexAttribArray(VERTEX_ATTRIB_POSITION));
+        GLCall(glEnableVertexAttribArray(HNCRSP_VERTEX_ATTRIB_POSITION_INDEX));
     }
     else
     {
-        GLCall(glDisableVertexAttribArray(VERTEX_ATTRIB_POSITION));
+        GLCall(glDisableVertexAttribArray(HNCRSP_VERTEX_ATTRIB_POSITION_INDEX));
     }
 }
 
@@ -195,11 +275,11 @@ void VertexArray::EnableVertexAttribColor(bool on) const
     Bind();
     if (on)
     {
-        GLCall(glEnableVertexAttribArray(VERTEX_ATTRIB_COLOR));
+        GLCall(glEnableVertexAttribArray(HNCRSP_VERTEX_ATTRIB_COLOR_INDEX));
     }
     else
     {
-        GLCall(glDisableVertexAttribArray(VERTEX_ATTRIB_COLOR));
+        GLCall(glDisableVertexAttribArray(HNCRSP_VERTEX_ATTRIB_COLOR_INDEX));
     }
 }
 
@@ -208,11 +288,11 @@ void VertexArray::EnableVertexAttribUV(bool on) const
     Bind();
     if (on)
     {
-        GLCall(glEnableVertexAttribArray(VERTEX_ATTRIB_UV));
+        GLCall(glEnableVertexAttribArray(HNCRSP_VERTEX_ATTRIB_UV_INDEX));
     }
     else
     {
-        GLCall(glDisableVertexAttribArray(VERTEX_ATTRIB_UV));
+        GLCall(glDisableVertexAttribArray(HNCRSP_VERTEX_ATTRIB_UV_INDEX));
     }
 }
 
@@ -221,11 +301,11 @@ void VertexArray::EnableVertexAttribNormals(bool on) const
     Bind();
     if (on)
     {
-        GLCall(glEnableVertexAttribArray(VERTEX_ATTRIB_NORMAL));
+        GLCall(glEnableVertexAttribArray(HNCRSP_VERTEX_ATTRIB_NORMAL_INDEX));
     }
     else
     {
-        GLCall(glDisableVertexAttribArray(VERTEX_ATTRIB_NORMAL));
+        GLCall(glDisableVertexAttribArray(HNCRSP_VERTEX_ATTRIB_NORMAL_INDEX));
     }
 }
 
@@ -233,6 +313,7 @@ VertexArray::VertexArray(VertexArray&& other) noexcept
 {
     m_VAO_ID = other.m_VAO_ID;
     other.m_VAO_ID = 0;
+    m_vertData = std::move(other.m_vertData);
 
     m_vertexBuffer = std::move(other.m_vertexBuffer);
     m_elementBuffer = std::move(other.m_elementBuffer);
@@ -242,6 +323,7 @@ VertexArray& VertexArray::operator=(VertexArray&& other) noexcept
 {
     m_VAO_ID = other.m_VAO_ID;
     other.m_VAO_ID = 0;
+    m_vertData = std::move(other.m_vertData);
 
     m_vertexBuffer = std::move(other.m_vertexBuffer);
     m_elementBuffer = std::move(other.m_elementBuffer);
@@ -256,6 +338,10 @@ VertexArray::~VertexArray()
 
 void VertexArray::CreateVAO(const float* vboData, size_t vboSize, const GLuint* eboData, size_t eboSize, GLenum mode)
 {
+    if (m_VAO_ID != 0)
+    {
+        HNCRSP_TERMINATE("VAO already created");
+    }
     GLCall(glGenVertexArrays(1, &m_VAO_ID));
     Bind();
     m_vertexBuffer.CreateVBO(vboData, vboSize, mode);
@@ -275,6 +361,16 @@ void VertexArray::Unbind() const
 GLuint VertexArray::getID()
 {
     return m_VAO_ID;
+}
+
+const float* VertexArray::getData() const
+{
+    return m_vertData.data();
+}
+
+size_t VertexArray::getDataLen() const
+{
+    return m_vertData.size();
 }
 
 HNCRSP_NAMESPACE_END

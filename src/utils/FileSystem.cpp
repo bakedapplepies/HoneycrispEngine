@@ -21,4 +21,9 @@ FileSystem::Path::Path(std::string_view path)
     return std::filesystem::relative(m_path, HNCRSP_PROJECT_DIR).string();
 }
 
+void FileSystem::Path::remove_filename()
+{
+    m_path.remove_filename();
+}
+
 HNCRSP_NAMESPACE_END

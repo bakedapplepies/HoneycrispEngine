@@ -16,6 +16,7 @@ namespace FileSystem
         Path(std::string_view path);
         [[nodiscard]] std::string string() const;
         [[nodiscard]] std::string relative_string() const;
+        void remove_filename();
     };
 }
 

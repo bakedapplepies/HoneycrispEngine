@@ -1,0 +1,28 @@
+namespace Honeycrisp.Serialized;
+
+// Basic Model schema
+
+table Mesh
+{
+    vertex_attrib_bits: uint8;
+    vertex_data: [float];
+    indices: [uint32];
+}
+
+table Material
+{
+    albedo_path: string;
+    roughness_path: string;
+    ao_path: string;
+    normal_path: string;
+    specular_path: string;
+}
+
+table Model
+{
+    meshes: [Mesh];
+    material: Material;
+    last_write_time: int64;
+}
+
+root_type Model;

@@ -23,18 +23,35 @@ Mesh::Mesh(
     m_numVertices = indices->size();
 }
 
+Mesh::Mesh(
+    unsigned char vertex_attrib_bits,
+    const float* vertex_data,
+    size_t vertex_data_len,
+    const GLuint* indices_data,
+    size_t indices_data_len
+) {
+    m_VAO = std::make_shared<VertexArray>(
+        vertex_attrib_bits,
+        vertex_data,
+        vertex_data_len,
+        indices_data,
+        indices_data_len
+    );
+    m_numVertices = indices_data_len;
+}
+
 Mesh::Mesh(const Mesh& other)
 {
     m_VAO = other.m_VAO;
     m_numVertices = other.m_numVertices;
-    m_relativeOrigin = other.m_relativeOrigin;
+    // m_relativeOrigin = other.m_relativeOrigin;
 }
 
 Mesh& Mesh::operator=(const Mesh& other)
 {
     m_VAO = other.m_VAO;
     m_numVertices = other.m_numVertices;
-    m_relativeOrigin = other.m_relativeOrigin;
+    // // m_relativeOrigin = other.m_relativeOrigin;
 
     return *this;
 }
@@ -44,7 +61,7 @@ Mesh::Mesh(Mesh&& other) noexcept
     m_VAO = std::move(other.m_VAO);
     m_numVertices = other.m_numVertices;
     other.m_numVertices = 0;
-    m_relativeOrigin = std::move(other.m_relativeOrigin);
+    // // m_relativeOrigin = std::move(other.m_relativeOrigin);
 }
 
 Mesh& Mesh::operator=(Mesh&& other) noexcept
@@ -52,7 +69,7 @@ Mesh& Mesh::operator=(Mesh&& other) noexcept
     m_VAO = std::move(other.m_VAO);
     m_numVertices = other.m_numVertices;
     other.m_numVertices = 0;
-    m_relativeOrigin = std::move(other.m_relativeOrigin);
+    // m_relativeOrigin = std::move(other.m_relativeOrigin);
 
     return *this;
 }
@@ -72,6 +89,11 @@ void Mesh::virt_AddMeshDataToRenderer(EntityUID entityUID, std::shared_ptr<Mater
     }
 
     g_ECSManager->AddComponent<MeshData>(entityUID, meshData);
+}
+
+const VertexArray* Mesh::GetVAO() const
+{
+    return m_VAO.get();
 }
 
 HNCRSP_NAMESPACE_END
