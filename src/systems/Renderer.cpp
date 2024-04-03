@@ -20,6 +20,11 @@ void Renderer::StartUp()
 
 void Renderer::Render() const
 {
+    const Texture2D* albedoMap;
+    const Texture2D* roughnessMap;
+    const Texture2D* aoMap;
+    const Texture2D* normalMap;
+    const Texture2D* specularMap;
     for (const EntityUID& uid : entityUIDs)
     {
         MeshData& meshData = g_ECSManager->GetComponent<MeshData>(uid);
@@ -31,51 +36,28 @@ void Renderer::Render() const
         GLCall(glBindVertexArray(meshData.VAO_id));
         meshData.material->getShader()->Use();
 
-        if (const Texture2D* albedoMap = material->getAlbedoMap())  // TODO: optimize this mess
-        {
-            albedoMap->Bind();
-        }
-        else
-        {
-            albedoMap->Unbind();
-        }
-        if (const Texture2D* roughnessMap = material->getRoughnessMap())
-        {
-            roughnessMap->Bind();
-        }
-        else
-        {
-            roughnessMap->Unbind();
-        }
-        if (const Texture2D* aoMap = material->getAoMap())
-        {
-            aoMap->Bind();
-        }
-        else
-        {
-            aoMap->Unbind();
-        }
-        if (const Texture2D* normalMap = material->getNormalMap())
-        {
-            normalMap->Bind();
-        }
-        else
-        {
-            normalMap->Unbind();
-        }
-        if (const Texture2D* specularMap = material->getSpecularMap())
-        {
-            specularMap->Bind();
-        }
-        else
-        {
-            specularMap->Unbind();
-        }
+        albedoMap = material->getAlbedoMap();
+        roughnessMap = material->getRoughnessMap();
+        aoMap = material->getAoMap();
+        normalMap = material->getNormalMap();
+        specularMap = material->getSpecularMap();
+
+        if (albedoMap) albedoMap->Bind();
+        if (roughnessMap) roughnessMap->Bind();
+        if (aoMap) aoMap->Bind();
+        if (normalMap) albedoMap->Bind();
+        if (specularMap) specularMap->Bind();
 
         glm::mat4 modelMatrix = GetModelMatrix(transform);
         shader->setMat3Unf("u_normalMatrix", glm::mat3(glm::transpose(glm::inverse(modelMatrix))));
         shader->setMat4Unf("u_model", modelMatrix);
         GLCall(glDrawElements(GL_TRIANGLES, meshData.num_vertices, GL_UNSIGNED_INT, nullptr));
+
+        if (albedoMap) albedoMap->Unbind();
+        if (roughnessMap) roughnessMap->Unbind();
+        if (aoMap) aoMap->Unbind();
+        if (normalMap) albedoMap->Unbind();
+        if (specularMap) specularMap->Unbind();
     }
 }
 

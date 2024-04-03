@@ -1,6 +1,7 @@
 #include "Callbacks.h"
 #include "src/core/RenderContext.h"
 #include "src/core/SceneManager.h"
+#include "src/utils/Logging.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -47,7 +48,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             case GLFW_KEY_RIGHT_ALT:
                 if (!callbackData->capFPS)
                 {
-                    glfwSwapInterval(0);
+                    glfwSwapInterval(1);
                     callbackData->capFPS = true;
                 }
                 else
@@ -55,6 +56,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
                     glfwSwapInterval(0);
                     callbackData->capFPS = false;
                 }
+                HNCRSP_LOG_INFO("Toggle frame swap interval: ", callbackData->capFPS);
                 break;
 
             // Toggle cursor

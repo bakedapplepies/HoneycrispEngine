@@ -257,21 +257,19 @@ void Model::loadDeserializedModel(
     std::string_view normal = material->normal_path()->string_view();
     std::string_view specular = material->specular_path()->string_view();
 
-    std::string projDir = FileSystem::Path("").string();
-
-    if (albedo != projDir) m_material->setAlbedoMap(
+    if (albedo != "") m_material->setAlbedoMap(
         FileSystem::Path(albedo)
     );
-    if (roughness != projDir) m_material->setRoughnessMap(
+    if (roughness != "") m_material->setRoughnessMap(
         FileSystem::Path(roughness)
     );
-    if (ao != projDir) m_material->setAoMap(
+    if (ao != "") m_material->setAoMap(
         FileSystem::Path(ao)
     );
-    if (normal != projDir) m_material->setNormalMap(
+    if (normal != "") m_material->setNormalMap(
         FileSystem::Path(normal)
     );
-    if (specular != projDir) m_material->setSpecularMap(
+    if (specular != "") m_material->setSpecularMap(
         FileSystem::Path(specular)
     );
 }

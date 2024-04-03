@@ -44,7 +44,10 @@ void Texture2DManager::ShutDown()
 {
     mainTextureMap.reset();
     mainTextureSpecularMap.reset();
-    m_cachedTexture2Ds.clear();
+    for (auto iter : m_cachedTexture2Ds)
+    {
+        iter.second.Delete();
+    }
 }
 
 HNCRSP_NAMESPACE_END

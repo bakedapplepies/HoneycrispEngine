@@ -31,7 +31,7 @@ namespace RenderContext
             HNCRSP_TERMINATE("GLFW Window Initialization failed.");
         }
         glfwMakeContextCurrent(glfwWindow);
-        glfwSwapInterval(1);  // vsync
+        glfwSwapInterval(0);  // vsync
 
         /* Callbacks */
         glfwSetErrorCallback(error_callback);

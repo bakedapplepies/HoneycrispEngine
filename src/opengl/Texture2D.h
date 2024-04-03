@@ -40,7 +40,7 @@ private:
     
     GLuint m_textureID;
     ETextureType m_textureType;
-    std::string path;
+    std::string m_path;
     std::vector< std::vector<TextureCoords> > m_textureCoords;
     
     static GLuint sm_textureUnitCounter;
@@ -49,13 +49,13 @@ private:
 
 public:
     Texture2D() = default;
-    ~Texture2D();
     Texture2D(
         const FileSystem::Path& texturePath,
         ETextureType textureType,
         uint32_t atlasWidth,
         uint32_t atlasHeight
     );    
+    ~Texture2D() = default;
     Texture2D(const Texture2D&);
     Texture2D& operator=(const Texture2D&);
     Texture2D(Texture2D&& other) noexcept;

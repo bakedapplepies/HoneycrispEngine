@@ -80,9 +80,9 @@ Texture2D::Texture2D(const Texture2D& other)
     m_atlasHeight = other.m_atlasHeight;
     m_textureType = other.m_textureType;
 
-    path = other.path;
+    m_path = other.m_path;
     m_textureID = other.m_textureID;
-    m_textureCoords = sm_initiatedTextures[other.path].textureCoords;
+    m_textureCoords = sm_initiatedTextures[other.m_path].textureCoords;
 }
 
 Texture2D& Texture2D::operator=(const Texture2D& other)
@@ -93,9 +93,9 @@ Texture2D& Texture2D::operator=(const Texture2D& other)
     m_atlasHeight = other.m_atlasHeight;
     m_textureType = other.m_textureType;
 
-    path = other.path;
-    m_textureID = sm_initiatedTextures[other.path].id;
-    m_textureCoords = sm_initiatedTextures[other.path].textureCoords;
+    m_path = other.m_path;
+    m_textureID = sm_initiatedTextures[other.m_path].id;
+    m_textureCoords = sm_initiatedTextures[other.m_path].textureCoords;
 
     return *this;
 }
@@ -109,7 +109,7 @@ Texture2D::Texture2D(Texture2D&& other) noexcept
     m_textureType = other.m_textureType;
 
     m_textureCoords = std::move(other.m_textureCoords);
-    path = other.path;
+    m_path = other.m_path;
 
     m_textureID = other.m_textureID;
     other.m_textureID = 0;
@@ -124,18 +124,12 @@ Texture2D& Texture2D::operator=(Texture2D&& other) noexcept
     m_textureType = other.m_textureType;
 
     m_textureCoords = std::move(other.m_textureCoords);
-    path = other.path;
+    m_path = other.m_path;
 
     m_textureID = other.m_textureID;
     other.m_textureID = 0;
 
     return *this;
-}
-
-Texture2D::~Texture2D()
-{
-    if (m_textureID == 0) return;
-    Delete();
 }
 
 const GLuint& Texture2D::getID() const
@@ -161,12 +155,13 @@ void Texture2D::Bind() const
 
 void Texture2D::Unbind() const
 {
+    GLCall(glActiveTexture(GL_TEXTURE0 + sm_textureUnits[m_textureID]));  // TODO
     GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
 void Texture2D::Delete()
 {
-    if (m_textureID) GLCall(glDeleteTextures(1, &m_textureID));
+    GLCall(glDeleteTextures(1, &m_textureID));
     m_textureID = 0;
     sm_textureUnitCounter--;
 }
@@ -193,7 +188,7 @@ void Texture2D::GenerateTextureCoords()
         }
     }
 
-    sm_initiatedTextures[path].textureCoords = m_textureCoords;
+    sm_initiatedTextures[m_path].textureCoords = m_textureCoords;
 }
 
 TextureCoords& Texture2D::GetTextureCoords(uint32_t x, uint32_t y)

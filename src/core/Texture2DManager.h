@@ -2,7 +2,6 @@
 
 #include "src/pch/pch.h"
 #include "src/opengl/Texture2D.h"
-#include "src/types/Singleton.h"
 #include "src/opengl/Texture2D.h"
 
 

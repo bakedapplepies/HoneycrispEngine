@@ -5,11 +5,11 @@ HNCRSP_NAMESPACE_START
 
 ModelSerializer::ModelSerializer()
 {
-    AddAlbedo(FileSystem::Path(""));  // dummy data
-    AddRoughness(FileSystem::Path(""));
-    AddAo(FileSystem::Path(""));
-    AddNormal(FileSystem::Path(""));
-    AddSpecular(FileSystem::Path(""));
+    m_albedo = m_builder.CreateString("");  // dummy data
+    m_roughness = m_builder.CreateString("");
+    m_ao = m_builder.CreateString("");
+    m_normal = m_builder.CreateString("");
+    m_specular = m_builder.CreateString("");
 }
 
 ModelSerializer::~ModelSerializer()

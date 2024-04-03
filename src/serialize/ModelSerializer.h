@@ -10,7 +10,7 @@ HNCRSP_NAMESPACE_START
 class ModelSerializer : public Serializer<Serialized::Model>
 {
 private:
-    flatbuffers::FlatBufferBuilder m_builder;// = flatbuffers::FlatBufferBuilder(1024);
+    flatbuffers::FlatBufferBuilder m_builder;
     std::vector< flatbuffers::Offset<Serialized::Mesh> > m_meshes;
     std::unique_ptr<Serialized::MaterialBuilder> m_material_builder;
 
