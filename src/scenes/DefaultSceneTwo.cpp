@@ -98,6 +98,7 @@ DefaultSceneTwo::DefaultSceneTwo()
     Material* backpackMaterial = backpackModel->getMaterial();
     backpackMaterial->setShininess(32);
 
+    // Author: Eydeet (https://skfb.ly/ouB6N)
     appleModel = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/apple/source/apple.fbx"), appleShader, false);
     appleModel->setTransform(Transform(glm::vec3(10.0f, 2.0f, 17.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.3f)));
     Material* appleMaterial = appleModel->getMaterial();
