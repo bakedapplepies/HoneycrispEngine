@@ -22,11 +22,14 @@ void ECSManager::Update() const
 
 void ECSManager::ShutDown()
 {
-    //  I still like the ownership idea of not sharing pointers,
-    // so I'm keeping these as unique_ptrs
     m_entityManager.reset();
     m_componentManager.reset();
     m_systemManager.reset();
+}
+
+void ECSManager::Renderer_SetCubemap(std::weak_ptr<Cubemap> weak_cubemap)
+{
+    m_renderer->SwitchCubemap(weak_cubemap);
 }
 
 [[nodiscard]] EntityUID ECSManager::NewEntityUID() const

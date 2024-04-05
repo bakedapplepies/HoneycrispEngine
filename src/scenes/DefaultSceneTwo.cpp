@@ -104,6 +104,10 @@ DefaultSceneTwo::DefaultSceneTwo()
     Material* appleMaterial = appleModel->getMaterial();
     appleMaterial->setShininess(32);
 
+    appleModelNormal = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/apple/source/apple.fbx"), normalShader, false);
+    appleModelNormal->setTransform(Transform(glm::vec3(10.0f, 2.0f, 17.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.3f)));
+    appleModelNormal->getMaterial()->setShininess(32);
+
     CreateCubemap(
         FileSystem::Path("resources/textures/cubemaps/skybox/right.jpg"),
         FileSystem::Path("resources/textures/cubemaps/skybox/left.jpg"),
@@ -126,11 +130,10 @@ void DefaultSceneTwo::OnUpdate(const float& dt)
     wackyShader->setVec3Unf("u_pointLight.position", pointLight->position);
     backpackShader->setVec3Unf("u_pointLight.position", pointLight->position);
     appleShader->setVec3Unf("u_pointLight.position", pointLight->position);
+    normalShader->setFloatUnf("u_normal_length", m_u_normal_length);
 
     cubeTransform->eulerAngles += glm::vec3(0.01f, 0.02f, 0.04f);
     cubeTransform->position = glm::vec3(0.0f, sinf(glfwGetTime()) * 7.0f, 0.0f);
-    DrawCubemap();
-    // mesh->Draw(normalWaveShader.get());  // using another shader to render normals
 }
 
 void DefaultSceneTwo::InitializeShaders(void)
@@ -146,15 +149,15 @@ void DefaultSceneTwo::InitializeShaders(void)
     appleShader = g_ShaderManager.GetShader(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
         FileSystem::Path("resources/shaders/PhongShadingFragment.glsl")
-        // FileSystem::Path("resources/shaders/NormalGeometry.glsl")
+        // FileSystem::Path("resources/shaders/CalculateNormalGeometry.glsl")
     );
     wackyShader = g_ShaderManager.GetShader(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
         FileSystem::Path("resources/shaders/PhongShadingFragment.glsl")
         // FileSystem::Path("resources/shaders/WaveGeometry.glsl")  // TODO: just to calculate normals, maybe rename file to CalcNormGeometry.glsl
     );
-    normalWaveShader = g_ShaderManager.GetShader(
-        FileSystem::Path("resources/shaders/WaveNormalVertex.glsl"),
+    normalShader = g_ShaderManager.GetShader(
+        FileSystem::Path("resources/shaders/NormalVertex.glsl"),
         FileSystem::Path("resources/shaders/YellowFragment.glsl"),
         FileSystem::Path("resources/shaders/NormalGeometry.glsl")
     );
@@ -285,4 +288,6 @@ void DefaultSceneTwo::OnImGui(void)
 {
     ImGui::Text("Point light");
     ImGui::SliderFloat3("position", glm::value_ptr(pointLight->position), -100.0f, 100.0f);
+
+    ImGui::SliderFloat("u_normal_length", &m_u_normal_length, 0.001f, 1.0f);
 }

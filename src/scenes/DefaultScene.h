@@ -19,6 +19,8 @@ public:
     DefaultScene();
     ~DefaultScene();
     void OnUpdate(const float& dt) override;
+
+private:
     void SetInitialUniforms(void) override;
     void OnImGui(void) override;
 };

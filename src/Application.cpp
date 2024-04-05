@@ -24,10 +24,10 @@ HNCRSP_NAMESPACE_START
 static void GetExtensions();
 void Application::Run()
 {
-    std::filesystem::create_directory("error");
-    std::ofstream stderr_redirect("error/error.txt", std::ios::out | std::ios::trunc);
-    std::streambuf* cerrBuf = std::cerr.rdbuf();  // save cerr buffer
-    std::cerr.rdbuf(stderr_redirect.rdbuf());  // redirect to file buffer
+    // std::filesystem::create_directory("error");
+    // std::ofstream stderr_redirect("error/error.txt", std::ios::out | std::ios::trunc);
+    // std::streambuf* cerrBuf = std::cerr.rdbuf();  // save cerr buffer
+    // std::cerr.rdbuf(stderr_redirect.rdbuf());  // redirect to file buffer
 
     GLFWContext::StartUp();
     RenderContext::CallbackData* callbackData = RenderContext::StartUp_GetWindow();
@@ -51,8 +51,8 @@ void Application::Run()
     g_ImGuiManager.ShutDown();
     GLFWContext::ShutDown();
 
-    std::cerr.rdbuf(cerrBuf);  // reset cerr
-    stderr_redirect.close();
+    // std::cerr.rdbuf(cerrBuf);  // reset cerr
+    // stderr_redirect.close();
 }
 
 void Application_RegisterComponents()

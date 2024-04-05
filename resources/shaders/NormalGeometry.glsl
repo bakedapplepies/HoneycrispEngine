@@ -23,6 +23,8 @@ layout (std140, binding = 0) uniform Matrices
     float u_time;
 };
 
+uniform float u_normal_length;
+
 void UpdateVertAttribs(int index)
 {
     gs_out.VertColor = gs_in[index].VertColor;
@@ -45,7 +47,7 @@ void GenerateLine(int index, vec3 normal)
     UpdateVertAttribs(index);
     EmitVertex();
 
-    gl_Position = u_projection * (gl_in[index].gl_Position + vec4(normal, 0.0) * 0.7);
+    gl_Position = u_projection * (gl_in[index].gl_Position + vec4(normal, 0.0) * u_normal_length);
     UpdateVertAttribs(index);
     EmitVertex();
 

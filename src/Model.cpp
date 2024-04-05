@@ -1,5 +1,6 @@
 #include "Model.h"
 #include "src/core/Texture2DManager.h"
+#include "src/ecs/ECSManager.h"
 #include "src/serialize/schemas/model_generated.h"
 
 

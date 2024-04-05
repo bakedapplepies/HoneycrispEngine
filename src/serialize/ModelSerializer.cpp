@@ -72,14 +72,14 @@ flatbuffers::Offset<Serialized::Material> ModelSerializer::FinishMaterial()
     return m_material_builder->Finish();
 }
 
-void ModelSerializer::Serialize(const FileSystem::Path& path_to_serialized_obj)
+void ModelSerializer::Serialize(const FileSystem::Path& path_to_model)
 {
     std::filesystem::create_directories("serialized/models");
-    int64_t path_hash = std::hash<std::string>{}(path_to_serialized_obj.string());
-    std::string serialized_model_path = fmt::format("serialized/models/{}.dat", path_hash);
+    int64_t path_hash = std::hash<std::string>{}(path_to_model.string());
+    std::string serialized_model_path = fmt::format("serialized/models/{}.hncmdl", path_hash);
 
     auto last_write_time_since_epoch =
-        std::filesystem::last_write_time(path_to_serialized_obj.string()).time_since_epoch();
+        std::filesystem::last_write_time(path_to_model.string()).time_since_epoch();
     auto time_count = std::chrono::duration_cast<std::chrono::seconds>(last_write_time_since_epoch);
 
     auto serialized_material = FinishMaterial();
@@ -90,20 +90,23 @@ void ModelSerializer::Serialize(const FileSystem::Path& path_to_serialized_obj)
     // store buffer
     void* buffer = m_builder.GetBufferPointer();
     unsigned int buffer_size = m_builder.GetSize();
-    std::ofstream outFile(serialized_model_path, std::ios::out | std::ios::binary);
+    std::ofstream outFile(serialized_model_path, std::ios::out | std::ios::binary | std::ios::trunc);
     outFile.write((char*)buffer, buffer_size);
     outFile.close();
 }
 
-const Serialized::Model* ModelSerializer::GetDeserializedObject(const FileSystem::Path& path_to_serialized_obj)
+const Serialized::Model* ModelSerializer::GetDeserializedObject(const FileSystem::Path& path_to_model)
 {
-    int64_t path_hash = std::hash<std::string>{}(path_to_serialized_obj.string());
-    std::string serialized_model_path = fmt::format("serialized/models/{}.dat", path_hash);
+    int64_t path_hash = std::hash<std::string>{}(path_to_model.string());
+    std::string serialized_model_path = fmt::format("serialized/models/{}.hncmdl", path_hash);
     if(!std::filesystem::exists(serialized_model_path))
     {
-        // HNCRSP_TERMINATE("Model not serialized to load yet!");
         return nullptr;
     }
+
+    auto last_write_time_since_epoch =
+        std::filesystem::last_write_time(path_to_model.string()).time_since_epoch();
+    auto time_count = std::chrono::duration_cast<std::chrono::seconds>(last_write_time_since_epoch);
 
     // read serialized data
     std::ifstream inFile(serialized_model_path, std::ios::in | std::ios::binary);
@@ -115,6 +118,11 @@ const Serialized::Model* ModelSerializer::GetDeserializedObject(const FileSystem
     inFile.close();
 
     const Serialized::Model* serialized_model = Serialized::GetModel(m_serialized_data.get());
+
+    if (serialized_model->last_write_time() != time_count.count())
+    {
+        return nullptr;
+    }
     
     return serialized_model;
 }

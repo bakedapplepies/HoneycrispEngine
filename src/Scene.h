@@ -57,7 +57,7 @@ protected:
     };
 
 private:
-    std::unique_ptr<Cubemap> m_cubemap;
+    std::shared_ptr<Cubemap> m_cubemap;
 
 public:
     glm::vec3 bgColor = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -83,14 +83,12 @@ protected:
         const Honeycrisp::FileSystem::Path& front,
         const Honeycrisp::FileSystem::Path& back
     );
-    void DrawCubemap(void) const;
     virtual void InitializeShaders(void) {}
     virtual void SetInitialUniforms(void) {}
 
 public:
     Scene() = default;
     virtual ~Scene() = default;
-
     Scene(const Scene&) = delete;
     Scene& operator=(const Scene&) = delete;
     Scene(Scene&& other) noexcept = delete;

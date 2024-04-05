@@ -123,7 +123,7 @@ void Window::Loop()
             glm::value_ptr(camera.direction)
         );
 
-        g_SceneManager.Update(m_deltaTime);  // TODO: Move cubemap rendering to Renderer
+        g_SceneManager.Update(m_deltaTime);  // update scene before rendering
         renderingTime = glfwGetTime();
         g_ECSManager->Update();
         renderingTime = glfwGetTime() - renderingTime;

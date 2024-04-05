@@ -4,17 +4,24 @@
 #include "src/Scene.h"
 
 
-// Cubemap seed: 3cpuyabhwq00
 // tools.wwwtyro.net/space-3d/index.html
+// Cubemap seed: 3cpuyabhwq00
 class SpaceScene : public Honeycrisp::Scene
 {
 private:
-    
+    std::shared_ptr<Honeycrisp::Mesh> m_sphere;
 
 public:
     SpaceScene();
     ~SpaceScene();
     void OnUpdate(const float& dt) override;
+
+    std::shared_ptr<Honeycrisp::Mesh> GenerateCubeSphere(
+        unsigned int resolution,
+        float radius
+    );
+
+private:
     void SetInitialUniforms(void) override {};
-    void OnImGui(void) override {};
+    void OnImGui(void) override;
 };

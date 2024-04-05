@@ -4,6 +4,7 @@
 #include "src/opengl/Shader.h"
 #include "src/ecs/System.h"
 #include "src/components/Transform.h"
+#include "src/Cubemap.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -11,8 +12,8 @@ HNCRSP_NAMESPACE_START
 class Renderer : public System
 {
 private:
-    bool m_startedUp = false;
     std::shared_ptr<Shader> m_basicShader;
+    std::weak_ptr<Cubemap> m_weak_currentCubemap;
 
 public:
     Renderer() = default;
@@ -25,6 +26,7 @@ public:
     void StartUp();
     void Render() const;
     void SwitchSceneToRender();
+    void SwitchCubemap(std::weak_ptr<Cubemap> weak_cubemap);
 
 private:
     glm::mat4 GetModelMatrix(Transform& transform) const;

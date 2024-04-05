@@ -7,11 +7,6 @@ HNCRSP_NAMESPACE_START
 
 void Renderer::StartUp()
 {
-    if (m_startedUp == true)
-    {
-        HNCRSP_TERMINATE("Renderer already started up.");
-    }
-    m_startedUp = true;
     m_basicShader = std::make_shared<Shader>(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
         FileSystem::Path("resources/shaders/DefaultFragment.glsl")
@@ -20,6 +15,11 @@ void Renderer::StartUp()
 
 void Renderer::Render() const
 {
+    if (auto cubemap = m_weak_currentCubemap.lock())
+    {
+        cubemap->Draw();
+    }
+
     const Texture2D* albedoMap;
     const Texture2D* roughnessMap;
     const Texture2D* aoMap;
@@ -27,6 +27,7 @@ void Renderer::Render() const
     const Texture2D* specularMap;
     for (const EntityUID& uid : entityUIDs)
     {
+        // HNCRSP_LOG_INFO(uid);
         MeshData& meshData = g_ECSManager->GetComponent<MeshData>(uid);
         std::shared_ptr<Material> material = meshData.material;
         std::shared_ptr<Shader> shader = material->getShader();
@@ -75,6 +76,11 @@ glm::mat4 Renderer::GetModelMatrix(Transform& transform) const
     modelMatrix = glm::scale(modelMatrix, transform.scale);
 
     return modelMatrix;
+}
+
+void Renderer::SwitchCubemap(std::weak_ptr<Cubemap> weak_cubemap)
+{
+    m_weak_currentCubemap = weak_cubemap;
 }
 
 HNCRSP_NAMESPACE_END

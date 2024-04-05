@@ -30,6 +30,7 @@ public:
     void StartUp();
     void ShutDown();
     void Update() const;
+    void Renderer_SetCubemap(std::weak_ptr<Cubemap> weak_cubemap);
 
     EntityUID NewEntityUID() const;
     void DestroyEntity(EntityUID uid) const;

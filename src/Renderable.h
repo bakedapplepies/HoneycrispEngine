@@ -1,7 +1,8 @@
 #pragma once
 
 #include "src/pch/pch.h"
-#include "src/ecs/ECSManager.h"
+#include "src/core/Material.h"
+#include "src/ecs/ECSTypes.h"
 #include "src/Object.h"
 
 

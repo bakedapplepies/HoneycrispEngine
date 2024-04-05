@@ -159,7 +159,11 @@ DefaultScene::DefaultScene()
         &colors,
         nullptr
     );
-    customMesh->setTransform(Transform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+    customMesh->setTransform(Transform(
+        glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::vec3(0.0f),
+        glm::vec3(1.0f)
+    ));
 
     SetInitialUniforms();
 }
@@ -170,7 +174,6 @@ DefaultScene::~DefaultScene()
 
 void DefaultScene::OnUpdate(const float& dt)
 {
-    DrawCubemap();
 }
 
 void DefaultScene::SetInitialUniforms(void)
