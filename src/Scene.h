@@ -14,17 +14,11 @@ class Scene
 {
 protected:
     template <class T>
-    class SceneRenderObj : public T, public std::enable_shared_from_this<SceneRenderObj<T>>
+    class SceneRenderObj : public T
     {
     public:
         size_t entityUID;
         friend Scene;
-
-    private:
-        void AddMeshDataToRenderer()
-        {
-            this->shared_from_this()->virt_AddMeshDataToRenderer(entityUID);
-        }
 
     public:
         template <typename... Args>
@@ -36,6 +30,14 @@ protected:
             Transform newTransform;
             newTransform.position = glm::vec3(0.0f);
             g_ECSManager->AddComponent<Transform>(entityUID, newTransform);
+
+            this->virt_AddMeshDataToRenderer(entityUID);
+        }
+
+        ~SceneRenderObj()
+        {
+            g_ECSManager->DestroyEntity(entityUID);
+            HNCRSP_LOG_INFO("deleted");
         }
 
         void setShader(std::shared_ptr<Shader> newShader)
@@ -51,7 +53,7 @@ protected:
 
             if constexpr(std::is_same_v<T, Model>)
             {
-                this->shared_from_this()->setAllMeshTransform(newTransform);
+                this->setAllMeshTransform(newTransform);
             }
         }
     };
@@ -64,13 +66,12 @@ public:
 
 protected:
     template <typename TRenderable, typename... Args>
-    std::shared_ptr< SceneRenderObj<TRenderable> > CreateStaticRenderObj(Args&&... args)
+    std::unique_ptr< SceneRenderObj<TRenderable> > CreateStaticRenderObj(Args&&... args)
     {
         static_assert(std::is_base_of<Renderable, TRenderable>());
 
-        std::shared_ptr< SceneRenderObj<TRenderable> > renderable =
-            std::make_shared< SceneRenderObj<TRenderable> >(std::forward<Args>(args)...);
-        renderable->AddMeshDataToRenderer();
+        std::unique_ptr< SceneRenderObj<TRenderable> > renderable =
+            std::make_unique< SceneRenderObj<TRenderable> >(std::forward<Args>(args)...);
 
         return renderable;
     }

@@ -58,19 +58,25 @@ VertexArray::VertexArray(
     if (uvs) vertArrayDataSize += uvs->size() * 2;
     m_vertData.reserve(vertArrayDataSize);
     
+    // TODO: Somehow fill this asynchronously
     // HNCRSP_LOG_INFO(vertices->size());
 // #define MAX_VERTICES_PER_PROCESS 3000
 //     unsigned int num_processes =
 //         static_cast<unsigned int>(1.0 * vertArrayDataSize / MAX_VERTICES_PER_PROCESS + 0.5);
 //     if (num_processes == 0) num_processes = 1;
 
+    const std::vector<glm::vec3>& verticesRef = *vertices;
+    const std::vector<glm::vec3>& colorsRef = *colors;
+    const std::vector<glm::vec2>& uvsRef = *uvs;
+    const std::vector<glm::vec3>& normalsRef = *normals;
+
     for (size_t vertIndex = 0; vertIndex < vertices->size(); vertIndex++)
     {
         if (!vertices->empty())
         {
-            m_vertData.push_back(vertices->at(vertIndex).x);
-            m_vertData.push_back(vertices->at(vertIndex).y);
-            m_vertData.push_back(vertices->at(vertIndex).z);
+            m_vertData.push_back(verticesRef[vertIndex].x);
+            m_vertData.push_back(verticesRef[vertIndex].y);
+            m_vertData.push_back(verticesRef[vertIndex].z);
         }
 
         if (!colors)  // even if color is not available there should be a default color
@@ -81,22 +87,22 @@ VertexArray::VertexArray(
         }
         else
         {
-            m_vertData.push_back(colors->at(vertIndex).x);
-            m_vertData.push_back(colors->at(vertIndex).y);
-            m_vertData.push_back(colors->at(vertIndex).z);
+            m_vertData.push_back(colorsRef[vertIndex].x);
+            m_vertData.push_back(colorsRef[vertIndex].y);
+            m_vertData.push_back(colorsRef[vertIndex].z);
         }
 
         if (uvs)
         {
-            m_vertData.push_back(uvs->at(vertIndex).x);
-            m_vertData.push_back(uvs->at(vertIndex).y);
+            m_vertData.push_back(uvsRef[vertIndex].x);
+            m_vertData.push_back(uvsRef[vertIndex].y);
         }
 
         if (normals)
         {
-            m_vertData.push_back(normals->at(vertIndex).x);
-            m_vertData.push_back(normals->at(vertIndex).y);
-            m_vertData.push_back(normals->at(vertIndex).z);
+            m_vertData.push_back(normalsRef[vertIndex].x);
+            m_vertData.push_back(normalsRef[vertIndex].y);
+            m_vertData.push_back(normalsRef[vertIndex].z);
         }
     }
 

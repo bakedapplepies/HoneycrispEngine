@@ -63,13 +63,13 @@ public:
     TComponent& GetData(EntityUID uid)
     {
         if (m_entityUIDToIndexMap.find(uid) == m_entityUIDToIndexMap.end())
-            HNCRSP_TERMINATE(fmt::format("{} not yet added to entity.", typeid(TComponent).name()).c_str());
+            HNCRSP_TERMINATE(fmt::format("{} not yet added to entity {}.", typeid(TComponent).name(), uid).c_str());
 
         return m_componentArray[m_entityUIDToIndexMap[uid]];
     }
 
     // Is called when an entity is destroyed to delete all components.
-    // If entity doesn't have component, component doesn't get deleted.
+    // If entity doesn't have component, nothing gets deleted.
     void EntityDestroyed(EntityUID uid) override
     {
         if (m_entityUIDToIndexMap.find(uid) != m_entityUIDToIndexMap.end())

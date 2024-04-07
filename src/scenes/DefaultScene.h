@@ -12,8 +12,8 @@ class DefaultScene : public Honeycrisp::Scene
 {
 private:
     std::shared_ptr<Honeycrisp::Shader> shader;
-    std::shared_ptr< SceneRenderObj<Honeycrisp::Cube> > cube;
-    std::shared_ptr< SceneRenderObj<Honeycrisp::Mesh> > customMesh;
+    std::unique_ptr< SceneRenderObj<Honeycrisp::Cube> > cube;
+    std::unique_ptr< SceneRenderObj<Honeycrisp::Mesh> > customMesh;
 
 public:
     DefaultScene();

@@ -10,6 +10,11 @@
 
 HNCRSP_NAMESPACE_START
 
+struct TimeBySystems
+{
+    float renderer;
+};
+
 class ECSManager
 {
 private:

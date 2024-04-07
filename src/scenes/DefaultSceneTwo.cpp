@@ -18,7 +18,7 @@ DefaultSceneTwo::DefaultSceneTwo()
     cube = CreateStaticRenderObj<Cube>();
     cubeTransform = &g_ECSManager->GetComponent<Transform>(cube->entityUID);
     cube->setShader(shader);
-    cube->setTransform(Transform(glm::vec3(1.0f, 3.0f ,5.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+    cube->setTransform(Transform(glm::vec3(1.0f, 10.0f ,5.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
 
     TextureCoords& grassUV = g_Texture2DManager.mainTextureMap->GetTextureCoords(0, 0);
     unsigned int width = 50, height = 50;
@@ -120,10 +120,6 @@ DefaultSceneTwo::DefaultSceneTwo()
     SetInitialUniforms();
 }
 
-DefaultSceneTwo::~DefaultSceneTwo()
-{
-}
-
 void DefaultSceneTwo::OnUpdate(const float& dt)
 {
     shader->setVec3Unf("u_pointLight.position", pointLight->position);
@@ -132,8 +128,8 @@ void DefaultSceneTwo::OnUpdate(const float& dt)
     appleShader->setVec3Unf("u_pointLight.position", pointLight->position);
     normalShader->setFloatUnf("u_normal_length", m_u_normal_length);
 
-    cubeTransform->eulerAngles += glm::vec3(0.01f, 0.02f, 0.04f);
-    cubeTransform->position = glm::vec3(0.0f, sinf(glfwGetTime()) * 7.0f, 0.0f);
+    cubeTransform->eulerAngles += glm::vec3(1.0f, 1.0f, 0.0f) * dt;
+    // cubeTransform->position = glm::vec3(0.0f, sinf(glfwGetTime()) * 7.0f, 0.0f);
 }
 
 void DefaultSceneTwo::InitializeShaders(void)

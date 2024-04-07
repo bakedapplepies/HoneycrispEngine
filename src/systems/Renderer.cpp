@@ -7,10 +7,6 @@ HNCRSP_NAMESPACE_START
 
 void Renderer::StartUp()
 {
-    m_basicShader = std::make_shared<Shader>(
-        FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
-        FileSystem::Path("resources/shaders/DefaultFragment.glsl")
-    );
 }
 
 void Renderer::Render() const
@@ -71,7 +67,9 @@ glm::mat4 Renderer::GetModelMatrix(Transform& transform) const
     
     glm::quat quaternion = glm::quat(transform.eulerAngles);
     glm::mat4 rotationMatrix = glm::toMat4(quaternion);
+    // glm::rotate()
     modelMatrix *= rotationMatrix;
+    // modelMatrix *= quaternion;
 
     modelMatrix = glm::scale(modelMatrix, transform.scale);
 

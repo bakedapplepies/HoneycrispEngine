@@ -3,8 +3,6 @@
 #include "src/core/Texture2DManager.h"
 
 
-#define RAND rand()/double(RAND_MAX)
-
 using namespace Honeycrisp;
 
 DefaultScene::DefaultScene()
@@ -55,6 +53,11 @@ DefaultScene::DefaultScene()
         glm::vec3( 0.5f, -0.5f, -0.5f),
         glm::vec3(-0.5f, -0.5f, -0.5f),
     };
+
+    std::random_device rd;
+    std::mt19937 mt(rd());
+    std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+    #define RAND dist(mt)
 
     std::vector<glm::vec3> colors = {
         glm::vec3(RAND, RAND, RAND),

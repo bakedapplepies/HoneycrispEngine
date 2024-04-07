@@ -12,7 +12,6 @@ HNCRSP_NAMESPACE_START
 class Renderer : public System
 {
 private:
-    std::shared_ptr<Shader> m_basicShader;
     std::weak_ptr<Cubemap> m_weak_currentCubemap;
 
 public:

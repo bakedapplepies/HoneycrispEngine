@@ -9,14 +9,16 @@
 class SpaceScene : public Honeycrisp::Scene
 {
 private:
-    std::shared_ptr<Honeycrisp::Mesh> m_sphere;
+    std::unique_ptr< SceneRenderObj<Honeycrisp::Mesh> > m_sphere;
+    float m_sphere_radius = 1.0f;
+    bool m_change_sphere;
 
 public:
     SpaceScene();
-    ~SpaceScene();
+    ~SpaceScene() = default;
     void OnUpdate(const float& dt) override;
 
-    std::shared_ptr<Honeycrisp::Mesh> GenerateCubeSphere(
+    std::unique_ptr< SceneRenderObj<Honeycrisp::Mesh> > GenerateCubeSphere(
         unsigned int resolution,
         float radius
     );

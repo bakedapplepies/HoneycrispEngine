@@ -60,7 +60,7 @@ public:
     {
         for (const auto& i : m_systems)
         {
-            System* const system = i.second.get();
+            System* system = i.second.get();
 
             std::vector<EntityUID>& systemEUIDs = system->entityUIDs;
             const auto& EUID_iter = std::find(systemEUIDs.begin(), systemEUIDs.end(), uid);
