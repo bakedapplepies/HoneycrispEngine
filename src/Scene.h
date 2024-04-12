@@ -37,7 +37,6 @@ protected:
         ~SceneRenderObj()
         {
             g_ECSManager->DestroyEntity(entityUID);
-            HNCRSP_LOG_INFO("deleted");
         }
 
         void setShader(std::shared_ptr<Shader> newShader)
@@ -70,10 +69,7 @@ protected:
     {
         static_assert(std::is_base_of<Renderable, TRenderable>());
 
-        std::unique_ptr< SceneRenderObj<TRenderable> > renderable =
-            std::make_unique< SceneRenderObj<TRenderable> >(std::forward<Args>(args)...);
-
-        return renderable;
+        return std::make_unique< SceneRenderObj<TRenderable> >(std::forward<Args>(args)...);
     }
 
     void CreateCubemap(

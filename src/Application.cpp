@@ -22,7 +22,7 @@
 HNCRSP_NAMESPACE_START
 
 static void GetExtensions();
-void Application::Run()
+void Application::Run()  // this is where the main control flow happens
 {
     // std::filesystem::create_directory("error");
     // std::ofstream stderr_redirect("error/error.txt", std::ios::out | std::ios::trunc);

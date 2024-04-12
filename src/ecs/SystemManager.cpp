@@ -41,4 +41,19 @@ void SystemManager::EntityComponentBitsetChanged(EntityUID uid, const ComponentB
     }
 }
 
+void SystemManager::EntityDestroyed(EntityUID uid)
+{
+    for (const auto& i : m_systems)
+    {
+        System* system = i.second.get();
+
+        std::vector<EntityUID>& systemEUIDs = system->entityUIDs;
+        const auto& EUID_iter = std::find(systemEUIDs.begin(), systemEUIDs.end(), uid);
+        if (EUID_iter != systemEUIDs.end())
+        {
+            system->entityUIDs.erase(EUID_iter);
+        }
+    }
+}
+
 HNCRSP_NAMESPACE_END

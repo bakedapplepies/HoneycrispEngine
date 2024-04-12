@@ -17,7 +17,7 @@ private:
 
 public:
     DefaultScene();
-    ~DefaultScene();
+    ~DefaultScene() = default;
     void OnUpdate(const float& dt) override;
 
 private:

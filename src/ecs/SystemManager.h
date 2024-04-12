@@ -4,7 +4,6 @@
 #include "System.h"
 #include "ComponentCounter.h"
 #include "src/utils/binary_insert_delete.h"
-#include "src/components/MeshData.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -55,19 +54,7 @@ public:
     }
 
     void EntityComponentBitsetChanged(EntityUID uid, const ComponentBitset& entity_component_bitset);
-
-    void EntityDestroyed(EntityUID uid)
-    {
-        for (const auto& i : m_systems)
-        {
-            System* system = i.second.get();
-
-            std::vector<EntityUID>& systemEUIDs = system->entityUIDs;
-            const auto& EUID_iter = std::find(systemEUIDs.begin(), systemEUIDs.end(), uid);
-
-            system->entityUIDs.erase(EUID_iter);
-        }
-    }
+    void EntityDestroyed(EntityUID uid);
 };
 
 HNCRSP_NAMESPACE_END

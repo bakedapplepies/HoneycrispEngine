@@ -171,10 +171,6 @@ DefaultScene::DefaultScene()
     SetInitialUniforms();
 }
 
-DefaultScene::~DefaultScene()
-{
-}
-
 void DefaultScene::OnUpdate(const float& dt)
 {
 }
