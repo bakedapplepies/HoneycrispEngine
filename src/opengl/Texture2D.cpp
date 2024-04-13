@@ -5,29 +5,11 @@
 HNCRSP_NAMESPACE_START
 
 GLuint Texture2D::sm_textureUnitCounter = 0;
-std::unordered_map<std::string, TextureInfo> Texture2D::sm_initiatedTextures;
 std::unordered_map<GLuint, GLint> Texture2D::sm_textureUnits;  // key: ID -> texture unit
 
-Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureType,
-    uint32_t atlasWidth, uint32_t atlasHeight
-) : m_atlasWidth(atlasWidth), m_atlasHeight(atlasHeight)
+Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureType)
 {
-    if (sm_initiatedTextures[texturePath.string()].id > 0)
-    {
-        GLuint id = sm_initiatedTextures[texturePath.string()].id;
-        if (id)
-        {
-            // setting up stored texture
-            m_textureID = id;
-            m_textureCoords = sm_initiatedTextures[texturePath.string()].textureCoords;
-            m_textureType = textureType;
-
-            return;
-        }
-    }
-
     GLCall(glGenTextures(1, &m_textureID));
-    sm_initiatedTextures[texturePath.string()].id = m_textureID;
     m_textureType = textureType;
 
     sm_textureUnits[m_textureID] = sm_textureUnitCounter;
@@ -40,7 +22,7 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureTy
     
     if (data)
     {
-        GLenum format = -1;
+        GLenum format = 0;
         if (nrChannels == 1)
             format = GL_RED;
         else if (nrChannels == 3)
@@ -68,34 +50,22 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureTy
         stbi_image_free(data);
         HNCRSP_TERMINATE("Texture failed to load.");
     }
-
-    GenerateTextureCoords();  // for quads
 }
 
 Texture2D::Texture2D(const Texture2D& other)
 {
     m_pixelWidth = other.m_pixelWidth;
     m_pixelHeight = other.m_pixelHeight;
-    m_atlasWidth = other.m_atlasWidth;
-    m_atlasHeight = other.m_atlasHeight;
     m_textureType = other.m_textureType;
-
-    m_path = other.m_path;
     m_textureID = other.m_textureID;
-    m_textureCoords = sm_initiatedTextures[other.m_path].textureCoords;
 }
 
 Texture2D& Texture2D::operator=(const Texture2D& other)
 {
     m_pixelWidth = other.m_pixelWidth;
     m_pixelHeight = other.m_pixelHeight;
-    m_atlasWidth = other.m_atlasWidth;
-    m_atlasHeight = other.m_atlasHeight;
     m_textureType = other.m_textureType;
-
-    m_path = other.m_path;
-    m_textureID = sm_initiatedTextures[other.m_path].id;
-    m_textureCoords = sm_initiatedTextures[other.m_path].textureCoords;
+    m_textureID = other.m_textureID;
 
     return *this;
 }
@@ -104,13 +74,7 @@ Texture2D::Texture2D(Texture2D&& other) noexcept
 {
     m_pixelWidth = other.m_pixelWidth;
     m_pixelHeight = other.m_pixelHeight;
-    m_atlasWidth = other.m_atlasWidth;
-    m_atlasHeight = other.m_atlasHeight;
     m_textureType = other.m_textureType;
-
-    m_textureCoords = std::move(other.m_textureCoords);
-    m_path = other.m_path;
-
     m_textureID = other.m_textureID;
     other.m_textureID = 0;
 }
@@ -119,13 +83,7 @@ Texture2D& Texture2D::operator=(Texture2D&& other) noexcept
 {
     m_pixelWidth = other.m_pixelWidth;
     m_pixelHeight = other.m_pixelHeight;
-    m_atlasWidth = other.m_atlasWidth;
-    m_atlasHeight = other.m_atlasHeight;
     m_textureType = other.m_textureType;
-
-    m_textureCoords = std::move(other.m_textureCoords);
-    m_path = other.m_path;
-
     m_textureID = other.m_textureID;
     other.m_textureID = 0;
 
@@ -164,36 +122,6 @@ void Texture2D::Delete()
     GLCall(glDeleteTextures(1, &m_textureID));
     m_textureID = 0;
     sm_textureUnitCounter--;
-}
-
-void Texture2D::GenerateTextureCoords()
-{
-    m_textureCoords.reserve(m_atlasHeight);
-
-    // Reminder: OpenGL has (0, 0) at Bottom left
-    for (unsigned int row = 0; row < (unsigned int)m_atlasHeight; row++)
-    {
-        m_textureCoords.push_back(std::vector<TextureCoords>(m_atlasWidth));
-        for (unsigned int col = 0; col < (unsigned int)m_atlasWidth; col++)
-        {
-            float topRow = 1.0f - (float)(row)/(m_atlasHeight);         // flipping y-coords
-            float bottomRow = 1.0f - (float)(row + 1)/(m_atlasHeight);
-            
-            m_textureCoords[row][col] = {
-                glm::vec2((float)(col    )/(m_atlasWidth), topRow),     // tl
-                glm::vec2((float)(col + 1)/(m_atlasWidth), topRow),     // tr
-                glm::vec2((float)(col    )/(m_atlasWidth), bottomRow),  // bl
-                glm::vec2((float)(col + 1)/(m_atlasWidth), bottomRow)   // br
-            };
-        }
-    }
-
-    sm_initiatedTextures[m_path].textureCoords = m_textureCoords;
-}
-
-TextureCoords& Texture2D::GetTextureCoords(uint32_t x, uint32_t y)
-{
-    return m_textureCoords[y][x];
 }
 
 int Texture2D::getWidth() const

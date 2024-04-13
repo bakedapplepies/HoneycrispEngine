@@ -178,8 +178,8 @@ void DefaultScene::OnUpdate(const float& dt)
 void DefaultScene::SetInitialUniforms(void)
 {
     MeshData& meshData = g_ECSManager->GetComponent<MeshData>(customMesh->entityUID);
-    meshData.material->setAlbedoMap(*g_Texture2DManager.mainTextureMap);
-    meshData.material->setSpecularMap(*g_Texture2DManager.mainTextureSpecularMap);
+    meshData.material->setAlbedoMap(g_Texture2DManager.mainTextureMap);
+    meshData.material->setSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
 
     // lighting
     shader->setIntUnf("u_material.albedo", g_Texture2DManager.mainTextureMap->getTextureUnit());

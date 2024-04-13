@@ -44,6 +44,7 @@ void Application::Run()  // this is where the main control flow happens
     Window window(callbackData);
     window.Loop();
 
+    // ECS Managers are also deleted, which is before the Texture2DManager, so raw Texture pointers are safe to use
     g_SceneManager.ClearAllScenes();
     g_SceneManager.ShutDown();
     g_Texture2DManager.ShutDown();

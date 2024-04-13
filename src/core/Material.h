@@ -29,15 +29,15 @@ public:
     ~Material();
 
     void setAlbedoMap(const FileSystem::Path& path);
-    void setAlbedoMap(Texture2D& textureObj);
+    void setAlbedoMap(std::shared_ptr<Texture2D> textureObj);
     void setRoughnessMap(const FileSystem::Path& path);
-    void setRoughnessMap(Texture2D& textureObj);
+    void setRoughnessMap(std::shared_ptr<Texture2D> textureObj);
     void setAoMap(const FileSystem::Path& path);
-    void setAoMap(Texture2D& textureObj);
+    void setAoMap(std::shared_ptr<Texture2D> textureObj);
     void setNormalMap(const FileSystem::Path& path);
-    void setNormalMap(Texture2D& textureObj);
+    void setNormalMap(std::shared_ptr<Texture2D> textureObj);
     void setSpecularMap(const FileSystem::Path& path);
-    void setSpecularMap(Texture2D& textureObj);
+    void setSpecularMap(std::shared_ptr<Texture2D> textureObj);
 
     void setShininess(float shininess);
 

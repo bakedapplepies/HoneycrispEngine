@@ -133,46 +133,47 @@ void Cube::InitializeAttributeData()
         glm::vec3(0.0f, -1.0f,  0.0f), 
     };
 
-    TextureCoords& grassSideCoords = g_Texture2DManager.mainTextureMap->GetTextureCoords(1, 0);
-    TextureCoords& grassTopCoords = g_Texture2DManager.mainTextureMap->GetTextureCoords(0, 0);
-    TextureCoords& dirtCoords = g_Texture2DManager.mainTextureMap->GetTextureCoords(2, 0);
+    TextureAtlas& grassAtlas = g_Texture2DManager.GetAtlas(3, 1);
+    QuadUV& grassSideUVs = grassAtlas.GetQuadUVs(1, 0);
+    QuadUV& grassTopUVs = grassAtlas.GetQuadUVs(0, 0);
+    QuadUV& dirtUVs = grassAtlas.GetQuadUVs(2, 0);
 
     std::vector<glm::vec2> uvs = std::vector<glm::vec2> {
         // top
-        glm::vec2(grassSideCoords.tl.x, grassSideCoords.tl.y),
-        glm::vec2(grassSideCoords.tr.x, grassSideCoords.tr.y),
-        glm::vec2(grassSideCoords.br.x, grassSideCoords.br.y),
-        glm::vec2(grassSideCoords.bl.x, grassSideCoords.bl.y),
+        grassSideUVs.tl,
+        grassSideUVs.tr,
+        grassSideUVs.br,
+        grassSideUVs.bl,
 
         // right
-        glm::vec2(grassSideCoords.tl.x, grassSideCoords.tl.y),
-        glm::vec2(grassSideCoords.tr.x, grassSideCoords.tr.y),
-        glm::vec2(grassSideCoords.br.x, grassSideCoords.br.y),
-        glm::vec2(grassSideCoords.bl.x, grassSideCoords.bl.y),
+        grassSideUVs.tl,
+        grassSideUVs.tr,
+        grassSideUVs.br,
+        grassSideUVs.bl,
 
         // back
-        glm::vec2(grassSideCoords.tl.x, grassSideCoords.tl.y),
-        glm::vec2(grassSideCoords.tr.x, grassSideCoords.tr.y),
-        glm::vec2(grassSideCoords.br.x, grassSideCoords.br.y),
-        glm::vec2(grassSideCoords.bl.x, grassSideCoords.bl.y),
+        grassSideUVs.tl,
+        grassSideUVs.tr,
+        grassSideUVs.br,
+        grassSideUVs.bl,
 
         // left
-        glm::vec2(grassSideCoords.tl.x, grassSideCoords.tl.y),
-        glm::vec2(grassSideCoords.tr.x, grassSideCoords.tr.y),
-        glm::vec2(grassSideCoords.br.x, grassSideCoords.br.y),
-        glm::vec2(grassSideCoords.bl.x, grassSideCoords.bl.y),
+        grassSideUVs.tl,
+        grassSideUVs.tr,
+        grassSideUVs.br,
+        grassSideUVs.bl,
 
         // top
-        glm::vec2(grassTopCoords.tl.x, grassTopCoords.tl.y),
-        glm::vec2(grassTopCoords.tr.x, grassTopCoords.tr.y),
-        glm::vec2(grassTopCoords.br.x, grassTopCoords.br.y),
-        glm::vec2(grassTopCoords.bl.x, grassTopCoords.bl.y),
+        grassTopUVs.tl,
+        grassTopUVs.tr,
+        grassTopUVs.br,
+        grassTopUVs.bl,
 
         // bottom
-        glm::vec2(dirtCoords.tl.x, dirtCoords.tl.y),
-        glm::vec2(dirtCoords.tr.x, dirtCoords.tr.y),
-        glm::vec2(dirtCoords.br.x, dirtCoords.br.y),
-        glm::vec2(dirtCoords.bl.x, dirtCoords.bl.y),
+        dirtUVs.tl,
+        dirtUVs.tr,
+        dirtUVs.br,
+        dirtUVs.bl,
     };
 
     std::vector<GLuint> indices = std::vector<GLuint> {
@@ -219,8 +220,8 @@ void Cube::virt_AddMeshDataToRenderer(EntityUID entityUID, std::shared_ptr<Mater
     meshData.num_vertices = m_numVertices;
     meshData.material = std::make_shared<Material>(g_ShaderManager.basicShader);
 
-    meshData.material->setAlbedoMap(*g_Texture2DManager.mainTextureMap);
-    meshData.material->setSpecularMap(*g_Texture2DManager.mainTextureSpecularMap);
+    meshData.material->setAlbedoMap(g_Texture2DManager.mainTextureMap);
+    meshData.material->setSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
 
     g_ECSManager->AddComponent<MeshData>(entityUID, meshData);
 }

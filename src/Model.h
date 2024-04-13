@@ -37,7 +37,7 @@ private:  // building model
         const FileSystem::Path& modelDirectory,
         ModelSerializer& modelSerializer
     );
-    Texture2D& getMaterialTexture(
+    std::shared_ptr<Texture2D> getMaterialTexture(
         std::string_view texturePath,
         aiTextureType assimp_texture_type
     );

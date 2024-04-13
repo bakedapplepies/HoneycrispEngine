@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.26.0)
 
 project(Honeycrisp CXX C)
 
+find_package(Git REQUIRED)
+
 add_subdirectory(vendor)
 add_subdirectory(src)
 

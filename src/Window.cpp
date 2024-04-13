@@ -191,10 +191,13 @@ void Window::calcFPS()
 Window::~Window()
 {
     std::filesystem::create_directory("data_report");
-    std::ofstream report_file("data_report/fps_report.txt", std::ios::out | std::ios::trunc);
+    std::ofstream report_file("data_report/fps_report.txt", std::ios::out | std::ios::app);
 
-    report_file << "Low FPS: " << lowFPS << '\n';
-    report_file << "High FPS: " << highFPS;
+    auto time_point = std::chrono::system_clock::now();
+    auto time = std::chrono::system_clock::to_time_t(time_point);
+    char* date = strtok(std::ctime(&time), "\n");
+
+    report_file << fmt::format("[{}, {}] Low - High FPS: {} - {}\n", HNCRSP_GIT_COMMIT_ID, date, lowFPS, highFPS);
     report_file.close();
 }
 

@@ -132,35 +132,37 @@ Mesh Model::processMesh(
         {
             texturePath = modelDirectory.string() + textureFilename.C_Str();
             modelSerializer.AddAlbedo(FileSystem::Path(texturePath));
-            Texture2D& diffuseMap = getMaterialTexture(texturePath.c_str(), aiTextureType_DIFFUSE);
+            std::shared_ptr<Texture2D> diffuseMap = getMaterialTexture(texturePath.c_str(), aiTextureType_DIFFUSE);
             m_material->setAlbedoMap(diffuseMap);
         }
         if (material->GetTexture(aiTextureType_NORMALS, 0, &textureFilename) != -1)
         {
             texturePath = modelDirectory.string() + textureFilename.C_Str();
             modelSerializer.AddRoughness(FileSystem::Path(texturePath));
-            Texture2D& normalMap = getMaterialTexture(texturePath.c_str(), aiTextureType_NORMALS);
+            std::shared_ptr<Texture2D> normalMap = getMaterialTexture(texturePath.c_str(), aiTextureType_NORMALS);
             m_material->setNormalMap(normalMap);
         }
         if (material->GetTexture(aiTextureType_SPECULAR, 0, &textureFilename) != -1)
         {
             texturePath = modelDirectory.string() + textureFilename.C_Str();
+            HNCRSP_LOG_INFO(texturePath);
             modelSerializer.AddSpecular(FileSystem::Path(texturePath));
-            Texture2D& specularMap = getMaterialTexture(texturePath.c_str(), aiTextureType_SPECULAR);
+            std::shared_ptr<Texture2D> specularMap = getMaterialTexture(texturePath.c_str(), aiTextureType_SPECULAR);
             m_material->setSpecularMap(specularMap);
         }
         if (material->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &textureFilename) != -1)
         {
             texturePath = modelDirectory.string() + textureFilename.C_Str();
+            HNCRSP_LOG_INFO(texturePath);
             modelSerializer.AddRoughness(FileSystem::Path(texturePath));
-            Texture2D& roughnessMap = getMaterialTexture(texturePath.c_str(), aiTextureType_DIFFUSE_ROUGHNESS);
+            std::shared_ptr<Texture2D> roughnessMap = getMaterialTexture(texturePath.c_str(), aiTextureType_DIFFUSE_ROUGHNESS);
             m_material->setRoughnessMap(roughnessMap);
         }
         if (material->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &textureFilename) != -1)
         {
             texturePath = modelDirectory.string() + textureFilename.C_Str();
             modelSerializer.AddAo(FileSystem::Path(texturePath));
-            Texture2D& aoMap = getMaterialTexture(texturePath.c_str(), aiTextureType_AMBIENT_OCCLUSION);
+            std::shared_ptr<Texture2D> aoMap = getMaterialTexture(texturePath.c_str(), aiTextureType_AMBIENT_OCCLUSION);
             m_material->setAoMap(aoMap);
         }
     }
@@ -190,7 +192,7 @@ Mesh Model::processMesh(
     return newMesh;
 }
 
-Texture2D& Model::getMaterialTexture(
+std::shared_ptr<Texture2D> Model::getMaterialTexture(
     std::string_view texturePath,
     aiTextureType assimp_texture_type
 ) {
@@ -222,7 +224,7 @@ Texture2D& Model::getMaterialTexture(
         break;
     }
     
-    return g_Texture2DManager.getTexture2D(FileSystem::Path(texturePath), textureType, 1, 1);
+    return g_Texture2DManager.GetTexture2D(FileSystem::Path(texturePath), textureType);
 }
 
 void Model::loadDeserializedModel(
@@ -253,7 +255,7 @@ void Model::loadDeserializedModel(
     m_shader = shader;
     m_material = std::make_shared<Material>(shader);
     std::string_view albedo = material->albedo_path()->string_view();
-    std::string_view roughness = material->specular_path()->string_view();
+    std::string_view roughness = material->roughness_path()->string_view();
     std::string_view ao = material->ao_path()->string_view();
     std::string_view normal = material->normal_path()->string_view();
     std::string_view specular = material->specular_path()->string_view();

@@ -2,7 +2,7 @@
 
 #include "src/pch/pch.h"
 #include "src/opengl/Texture2D.h"
-#include "src/opengl/Texture2D.h"
+#include "src/opengl/TextureAtlas.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -11,13 +11,13 @@ HNCRSP_NAMESPACE_START
 class Texture2DManager
 {
 private:
-    // TODO: is caching with paths the best?
-    std::unordered_map<std::string, Texture2D> m_cachedTexture2Ds;
+    std::unordered_map< std::string, std::shared_ptr<Texture2D> > m_cachedTexture2Ds;
+    std::unordered_map< std::string, TextureAtlas > m_cachedTextureAtlases;
     int m_maxTextureUnitsPerStage;
     
 public:
-    std::unique_ptr<Texture2D> mainTextureMap;  // TODO: just use texture as regular path, no need for this
-    std::unique_ptr<Texture2D> mainTextureSpecularMap;
+    std::shared_ptr<Texture2D> mainTextureMap;  // TODO: just use texture as regular path, no need for this
+    std::shared_ptr<Texture2D> mainTextureSpecularMap;
 
 public:
     Texture2DManager() = default;
@@ -30,14 +30,13 @@ public:
     void StartUp();
     void ShutDown();
 
-    Texture2D& getTexture2D(
+    std::shared_ptr<Texture2D> GetTexture2D(
         const FileSystem::Path& path,
-        ETextureType texture_type,
-        unsigned int atlasVerticalRes,
-        unsigned int atlasHorizontalRes
+        ETextureType texture_type
     );
+    TextureAtlas& GetAtlas(uint32_t width, uint32_t height);
 
-    int getMaxTextureUnits();
+    int GetMaxTextureUnits();
 };
 
 extern Texture2DManager g_Texture2DManager;

@@ -16,22 +16,22 @@ void Renderer::Render() const
         cubemap->Draw();
     }
 
-    const Texture2D* albedoMap;
-    const Texture2D* roughnessMap;
-    const Texture2D* aoMap;
-    const Texture2D* normalMap;
-    const Texture2D* specularMap;
+    const Texture2D* albedoMap = nullptr;
+    const Texture2D* roughnessMap = nullptr;
+    const Texture2D* aoMap = nullptr;
+    const Texture2D* normalMap = nullptr;
+    const Texture2D* specularMap = nullptr;
     for (const EntityUID& uid : entityUIDs)
     {
         // HNCRSP_LOG_INFO(uid);
         MeshData& meshData = g_ECSManager->GetComponent<MeshData>(uid);
-        std::shared_ptr<Material> material = meshData.material;
-        std::shared_ptr<Shader> shader = material->getShader();
+        Material* material = meshData.material.get();
+        Shader* shader = material->getShader().get();
 
         Transform& transform = g_ECSManager->GetComponent<Transform>(uid);
 
         GLCall(glBindVertexArray(meshData.VAO_id));
-        meshData.material->getShader()->Use();
+        shader->Use();
 
         albedoMap = material->getAlbedoMap();
         roughnessMap = material->getRoughnessMap();
@@ -40,7 +40,8 @@ void Renderer::Render() const
         specularMap = material->getSpecularMap();
 
         if (albedoMap) albedoMap->Bind();
-        if (roughnessMap) roughnessMap->Bind();
+        if (roughnessMap)
+            roughnessMap->Bind();
         if (aoMap) aoMap->Bind();
         if (normalMap) albedoMap->Bind();
         if (specularMap) specularMap->Bind();

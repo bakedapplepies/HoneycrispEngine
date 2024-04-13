@@ -28,6 +28,8 @@ set(SOURCE
     ${CMAKE_SOURCE_DIR}/src/opengl/Shader.cpp
     ${CMAKE_SOURCE_DIR}/src/opengl/Texture2D.h
     ${CMAKE_SOURCE_DIR}/src/opengl/Texture2D.cpp
+    ${CMAKE_SOURCE_DIR}/src/opengl/TextureAtlas.h
+    ${CMAKE_SOURCE_DIR}/src/opengl/TextureAtlas.cpp
     ${CMAKE_SOURCE_DIR}/src/opengl/UniformBuffer.h
     ${CMAKE_SOURCE_DIR}/src/opengl/UniformBuffer.cpp
 
@@ -127,7 +129,15 @@ target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
     # -Wno-
 )
 
-target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE GLM_FORCE_SWIZZLE HNCRSP_PROJECT_DIR="${CMAKE_SOURCE_DIR}")
+execute_process(
+    COMMAND ${GIT_EXECUTABLE} rev-parse HEAD OUTPUT_VARIABLE COMMIT_ID OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
+    GLM_FORCE_SWIZZLE
+    HNCRSP_PROJECT_DIR="${CMAKE_SOURCE_DIR}"
+    HNCRSP_GIT_COMMIT_ID="${COMMIT_ID}"
+)
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/vendor

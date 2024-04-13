@@ -20,7 +20,8 @@ DefaultSceneTwo::DefaultSceneTwo()
     cube->setShader(shader);
     cube->setTransform(Transform(glm::vec3(1.0f, 10.0f ,5.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
 
-    TextureCoords& grassUV = g_Texture2DManager.mainTextureMap->GetTextureCoords(0, 0);
+    TextureAtlas& grassAtlas = g_Texture2DManager.GetAtlas(3, 1);
+    QuadUV& grassUV = grassAtlas.GetQuadUVs(0, 0);
     unsigned int width = 50, height = 50;
     unsigned int vertW = width+1, vertH = height+1;
     unsigned int totalVerts = vertW * vertH;
@@ -88,8 +89,8 @@ DefaultSceneTwo::DefaultSceneTwo()
     );
     mesh->setShader(wackyShader);
     std::shared_ptr<Material> meshMaterial = g_ECSManager->GetComponent<MeshData>(mesh->entityUID).material;
-    meshMaterial->setAlbedoMap(*g_Texture2DManager.mainTextureMap);
-    meshMaterial->setSpecularMap(*g_Texture2DManager.mainTextureSpecularMap);
+    meshMaterial->setAlbedoMap(g_Texture2DManager.mainTextureMap);
+    meshMaterial->setSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
 
     mesh->setTransform(Transform(glm::vec3(0.0f, -6.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
 
@@ -162,8 +163,8 @@ void DefaultSceneTwo::InitializeShaders(void)
 void DefaultSceneTwo::SetInitialUniforms(void)
 {
     MeshData& meshData = g_ECSManager->GetComponent<MeshData>(mesh->entityUID);
-    meshData.material->setAlbedoMap(*g_Texture2DManager.mainTextureMap);
-    meshData.material->setSpecularMap(*g_Texture2DManager.mainTextureSpecularMap);
+    meshData.material->setAlbedoMap(g_Texture2DManager.mainTextureMap);
+    meshData.material->setSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
 
     // lighting
     shader->setIntUnf("u_material.albedo", g_Texture2DManager.mainTextureMap->getTextureUnit());
