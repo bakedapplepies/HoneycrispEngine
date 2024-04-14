@@ -2,7 +2,7 @@
 My Custom Renderer used for learning OpenGL.
 
 ## Downloading the engine
-Run the following command.
+Run the following command (Ensure you already have git installed.)
 ```
 git clone https://github.com/bakedapplepies/HoneycrispEngine.git --recursive
 ```
