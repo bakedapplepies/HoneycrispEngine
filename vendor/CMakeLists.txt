@@ -27,7 +27,6 @@ target_include_directories(STB_IMAGE PRIVATE ${CMAKE_SOURCE_DIR}/vendor)
 
 add_subdirectory(glfw)
 add_subdirectory(glm)
-add_subdirectory(assimp)
 add_subdirectory(fmt)
 add_library(OPENFBX STATIC
     ${CMAKE_SOURCE_DIR}/vendor/openfbx/src/libdeflate.c
@@ -40,6 +39,11 @@ if (NOT EXISTS "${CMAKE_SOURCE_DIR}/vendor/assimp/include/assimp/config.h")
     message("-- Building assimp")
     execute_process(
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/vendor/assimp
-        COMMAND cmake . -G "Ninja" -DASSIMP_BUILD_NO_EXPORT
+        COMMAND cmake . -G "Ninja"# -DASSIMP_BUILD_NO_EXPORT:BOOL=TRUE
     )
+    # execute_process(
+    #     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/vendor/assimp/build
+    #     COMMAND ninja
+    # )
 endif()
+add_subdirectory(assimp)

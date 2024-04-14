@@ -150,14 +150,20 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 target_precompile_headers(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src/pch/pch.cpp ${CMAKE_SOURCE_DIR}/src/pch/pch.h)
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/lib)
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/vendor/glfw/src)
+target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/build/vendor/glfw/src)
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/vendor/fmt)
+target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/build/vendor/fmt)
+target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/vendor/assimp/lib)
+target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/build/vendor/assimp/lib)
+target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/vendor/assimp/contrib/zlib)
+target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/build/vendor/assimp/contrib/zlib)
+
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     GLAD
     glfw3
     IMGUI
     STB_IMAGE
     OPENFBX
-    assimp.dll
     opengl32
     gdi32
     user32
@@ -166,17 +172,21 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
 )
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE fmtd)
+    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE assimpd)
+    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE zlibstaticd)
     
 elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
     target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE fmt)
+    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE assimp)
+    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE zlibstatic)
 
 endif()
 
-if (NOT EXISTS "${CMAKE_BINARY_DIR}/libassimp-5.dll")
-    message("-- Copying assimp-5.dll")
-endif()
-add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    "${CMAKE_SOURCE_DIR}/lib/libassimp-5.dll"
-    $<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>
-)
+# if (NOT EXISTS "${CMAKE_BINARY_DIR}/libassimp-5.dll")
+#     message("-- Copying assimp-5.dll")
+# endif()
+# add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+#     COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#     "${CMAKE_SOURCE_DIR}/lib/libassimp-5.dll"
+#     $<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>
+# )
