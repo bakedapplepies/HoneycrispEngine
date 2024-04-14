@@ -64,28 +64,28 @@ std::unique_ptr< Scene::SceneRenderObj<Honeycrisp::Mesh> > SpaceScene::GenerateC
         {
             glm::vec3 newPos = glm::vec3(x, y, 0.0f) - offset_to_origin;
             pos.push_back(glm::normalize(newPos) * radius);
-            color.push_back(glm::vec3(RAND, RAND, RAND));
+            color.push_back(glm::vec3(y/static_cast<float>(resolution - y)));
         }
         // second face
         for (float z = 0.0f; z < static_cast<float>(resolution - 1); z += 1.0f)
         {
             glm::vec3 newPos = glm::vec3(static_cast<float>(resolution - 1), y, z) - offset_to_origin;
             pos.push_back(glm::normalize(newPos) * radius);
-            color.push_back(glm::vec3(RAND, RAND, RAND));
+            color.push_back(glm::vec3(y/static_cast<float>(resolution - y)));
         }
         // third face
         for (float x = static_cast<float>(resolution - 1); x > 0.0f; x -= 1.0f)
         {
             glm::vec3 newPos = glm::vec3(x, y, static_cast<float>(resolution - 1)) - offset_to_origin;
             pos.push_back(glm::normalize(newPos) * radius);
-            color.push_back(glm::vec3(RAND, RAND, RAND));
+            color.push_back(glm::vec3(y/static_cast<float>(resolution - y)));
         }
         // fourth face
         for (float z = static_cast<float>(resolution - 1); z > 0.0f; z -= 1.0f)
         {
             glm::vec3 newPos = glm::vec3(0.0f, y, z) - offset_to_origin;
             pos.push_back(glm::normalize(newPos) * radius);
-            color.push_back(glm::vec3(RAND, RAND, RAND));
+            color.push_back(glm::vec3(y/static_cast<float>(resolution - y)));
         }
     }
 
@@ -120,19 +120,19 @@ std::unique_ptr< Scene::SceneRenderObj<Honeycrisp::Mesh> > SpaceScene::GenerateC
             if (x == strip_length - 1)
             {
                 indices.push_back(strip_length * y + x);
-                indices.push_back(y * strip_length);
                 indices.push_back(strip_length * (y + 1) + x);
                 indices.push_back(y * strip_length);
+                indices.push_back(y * strip_length);
+                indices.push_back(strip_length * (y + 1) + x);
                 indices.push_back((y + 1) * strip_length);
-                indices.push_back(strip_length * (y + 1) + x);
                 continue;
             }
             indices.push_back(strip_length * y + x);
-            indices.push_back(strip_length * y + x + 1);
             indices.push_back(strip_length * (y + 1) + x);
-            indices.push_back(strip_length * y + x + 1);
             indices.push_back(strip_length * (y + 1) + x + 1);
-            indices.push_back(strip_length * (y + 1) + x);
+            indices.push_back(strip_length * y + x);
+            indices.push_back(strip_length * (y + 1) + x + 1);
+            indices.push_back(strip_length * y + x + 1);
         }
     }
 
@@ -167,6 +167,26 @@ std::unique_ptr< Scene::SceneRenderObj<Honeycrisp::Mesh> > SpaceScene::GenerateC
                 indices.push_back(sidesOffsetBottom + (resolution - 2) * (y + 1) + x + 1);
             }
         }
+
+        for (unsigned int x = 1; x < resolution - 2; x++)
+        {
+            indices.push_back(x);
+            indices.push_back(x + 1);
+            indices.push_back(sidesOffsetTop + x);
+            indices.push_back(x);
+            indices.push_back(sidesOffsetTop + x);
+            indices.push_back(sidesOffsetTop + x - 1);
+        }
+        for (unsigned int x = 1; x < resolution - 2; x++)
+        {
+            indices.push_back(x + (resolution - 1) * 1);
+            indices.push_back(x + 1);
+            indices.push_back(sidesOffsetTop + (resolution - 2) * (resolution - 2 - x));
+            indices.push_back(x);
+            indices.push_back(sidesOffsetTop + x);
+            indices.push_back(sidesOffsetTop + x - 1);
+        }
+        
     }
 
     return CreateStaticRenderObj<Honeycrisp::Mesh>(

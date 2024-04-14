@@ -9,13 +9,9 @@ gets is the Draw-calls-queue.
 - TODO: rename protected members with p_ prefixes
 - TODO: Render priority
 - TODO: What the hell is noexcept
-- TODO: Continuous maps
 - TODO: Texture2D Min/Mag filter (nearest/linear), Wrap (repeat/clamp/...)
 - TODO: Look into glNamed... functions
-- TODO: replace all smart-pointer arguments to raw pointers -> faster speed
-        only use smart pointers to manage the lifetime of objects
 - TODO: Bind light and uniforms and stuff together
-- TODO: Add FBX support
 - TODO: Make settings/inspector extendable/retractable
 - TODO: Should ambient and diffuse have r-g-b components different from each other?
 - TODO: Manage texture units (including GL_TEXTURE_CUBE_MAP)
@@ -23,10 +19,7 @@ gets is the Draw-calls-queue.
 - TODO: .clangd format feature seems useful
 - TODO: Ticking bomb-style error (doesn't crash program, but will crash if you use the erroneous data)
 - TODO: Automatic handling of nullptrs that doesn't use weakptrs (somehow)
-- TODO: Load models using mapped buffers (can't use VAOs) so everything goes faster
-
-- TODO: Systems that actually need ECS:
-    + Physics
+- TODO: Relative world positions to parents
 
 - TODO: Everything doesn't have to be not static cuz between the Logic & Render thread we could transfer data
 over 2 threads all at once, and only the Logic thread needs the static class.

@@ -11,6 +11,7 @@ void Renderer::StartUp()
 
 void Renderer::Render() const
 {
+    GLuint shaderID = 0;
     if (auto cubemap = m_weak_currentCubemap.lock())
     {
         cubemap->Draw();
@@ -31,7 +32,11 @@ void Renderer::Render() const
         Transform& transform = g_ECSManager->GetComponent<Transform>(uid);
 
         GLCall(glBindVertexArray(meshData.VAO_id));
-        shader->Use();
+        if (shaderID != shader->getID())
+        {
+            shader->Use();
+            shaderID = shader->getID();
+        }
 
         albedoMap = material->getAlbedoMap();
         roughnessMap = material->getRoughnessMap();

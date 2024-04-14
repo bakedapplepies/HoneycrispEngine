@@ -137,6 +137,7 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
     GLM_FORCE_SWIZZLE
     HNCRSP_PROJECT_DIR="${CMAKE_SOURCE_DIR}"
     HNCRSP_GIT_COMMIT_ID="${COMMIT_ID}"
+    HNCRSP_BUILD_TYPE="${CMAKE_BUILD_TYPE}"
 )
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}
@@ -150,13 +151,9 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 target_precompile_headers(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src/pch/pch.cpp ${CMAKE_SOURCE_DIR}/src/pch/pch.h)
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/lib)
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/vendor/glfw/src)
-target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/build/vendor/glfw/src)
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/vendor/fmt)
-target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/build/vendor/fmt)
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/vendor/assimp/lib)
-target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/build/vendor/assimp/lib)
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/vendor/assimp/contrib/zlib)
-target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/build/vendor/assimp/contrib/zlib)
 
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     GLAD

@@ -21,6 +21,11 @@ FileSystem::Path::Path(std::string_view path)
     return std::filesystem::relative(m_path, HNCRSP_PROJECT_DIR).string();
 }
 
+[[nodiscard]] std::string FileSystem::Path::extension() const
+{
+    return m_path.extension().string();
+}
+
 void FileSystem::Path::remove_filename()
 {
     m_path.remove_filename();

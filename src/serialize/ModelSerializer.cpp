@@ -74,9 +74,10 @@ flatbuffers::Offset<Serialized::Material> ModelSerializer::FinishMaterial()
 
 void ModelSerializer::Serialize(const FileSystem::Path& path_to_model)
 {
-    std::filesystem::create_directories("serialized/models");
+    FileSystem::Path serialized_dir(fmt::format("build/{}/serialized/models", HNCRSP_BUILD_TYPE));
+    std::filesystem::create_directories(serialized_dir.string());
     int64_t path_hash = std::hash<std::string>{}(path_to_model.string());
-    std::string serialized_model_path = fmt::format("serialized/models/{}.hncmdl", path_hash);
+    std::string serialized_model_path = fmt::format("{}/{}.hncmdl", serialized_dir.string(), path_hash);
 
     auto last_write_time_since_epoch =
         std::filesystem::last_write_time(path_to_model.string()).time_since_epoch();
@@ -97,11 +98,19 @@ void ModelSerializer::Serialize(const FileSystem::Path& path_to_model)
 
 const Serialized::Model* ModelSerializer::GetDeserializedObject(const FileSystem::Path& path_to_model)
 {
-    int64_t path_hash = std::hash<std::string>{}(path_to_model.string());
-    std::string serialized_model_path = fmt::format("serialized/models/{}.hncmdl", path_hash);
-    if(!std::filesystem::exists(serialized_model_path))
+    std::string serialized_model_path;
+    if (path_to_model.extension() == ".hncmdl")
     {
-        return nullptr;
+        serialized_model_path = path_to_model.string();
+    }
+    else
+    {
+        int64_t path_hash = std::hash<std::string>{}(path_to_model.string());
+        serialized_model_path = FileSystem::Path(fmt::format("build/{}/serialized/models/{}.hncmdl", HNCRSP_BUILD_TYPE, path_hash)).string();
+        if(!std::filesystem::exists(serialized_model_path))
+        {
+            return nullptr;
+        }
     }
 
     auto last_write_time_since_epoch =
