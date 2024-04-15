@@ -1,8 +1,14 @@
 # Honeycrisp-Engine (Windows-only)
 My Custom Renderer used for learning OpenGL.
 
+## Prerequisites
+- Git
+- CMake
+- Ninja
+- A C++ compiler (g++, clang++, msvc,...)
+
 ## Downloading the engine
-Run the following command (Ensure you already have git installed.)
+Run the following command:
 ```
 git clone https://github.com/bakedapplepies/HoneycrispEngine.git --recursive
 ```
