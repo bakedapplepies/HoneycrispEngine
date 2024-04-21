@@ -190,8 +190,10 @@ void Window::calcFPS()
 
 Window::~Window()
 {
-    std::filesystem::create_directory("data_report");
-    std::ofstream report_file("data_report/fps_report.txt", std::ios::out | std::ios::app);
+    FileSystem::Path data_report_path(fmt::format("build/{}/src/data_report", HNCRSP_BUILD_TYPE));
+    std::filesystem::create_directory(data_report_path.string());
+    std::ofstream report_file(
+        fmt::format("{}/fps_report.txt", data_report_path.string()), std::ios::out | std::ios::app);
 
     auto time_point = std::chrono::system_clock::now();
     auto time = std::chrono::system_clock::to_time_t(time_point);

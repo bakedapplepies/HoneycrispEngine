@@ -9,6 +9,8 @@
 
 HNCRSP_NAMESPACE_START
 
+struct DrawElementsIndirectCommand;
+
 class Renderer : public System
 {
 private:
@@ -29,6 +31,15 @@ public:
 
 private:
     glm::mat4 GetModelMatrix(Transform& transform) const;
+};
+
+struct DrawElementsIndirectCommand
+{
+    GLuint count;
+    GLuint instanceCount;
+    GLuint firstIndex;
+    GLint baseVertex;
+    GLuint baseInstance;
 };
 
 HNCRSP_NAMESPACE_END

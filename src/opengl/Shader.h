@@ -11,6 +11,9 @@ private:
     GLuint m_shaderID;
     mutable std::unordered_map<std::string, GLint> m_uniformLocationCache;
 
+private:
+    std::string parseShader(std::string_view path);
+
 public:
     Shader() = default;
     Shader(
@@ -24,7 +27,6 @@ public:
     Shader& operator=(Shader&& other) noexcept;
     ~Shader();
 
-    std::string parseShader(std::string_view path);
     
     GLuint getID() const;
     void Use() const;

@@ -179,11 +179,7 @@ elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
 
 endif()
 
-# if (NOT EXISTS "${CMAKE_BINARY_DIR}/libassimp-5.dll")
-#     message("-- Copying assimp-5.dll")
-# endif()
-# add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
-#     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-#     "${CMAKE_SOURCE_DIR}/lib/libassimp-5.dll"
-#     $<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>
+# execute_process(
+#     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/scripts
+#     COMMAND python clangd_change_compile_commands.py ${CMAKE_BUILD_TYPE}
 # )

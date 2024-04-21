@@ -4,16 +4,10 @@
 
 HNCRSP_NAMESPACE_START
 
-GLuint Texture2D::sm_textureUnitCounter = 0;
-std::unordered_map<GLuint, GLint> Texture2D::sm_textureUnits;  // key: ID -> texture unit
-
 Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureType)
 {
     GLCall(glGenTextures(1, &m_textureID));
     m_textureType = textureType;
-
-    sm_textureUnits[m_textureID] = sm_textureUnitCounter;
-    sm_textureUnitCounter = (sm_textureUnitCounter + 1) % 32;
 
     int nrChannels;
     int desiredChannels = 0;
@@ -39,7 +33,7 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureTy
         GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
         GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
         GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
-        
+
         // path = texturePath;
         stbi_image_free(data);
     }
@@ -97,7 +91,7 @@ const GLuint& Texture2D::getID() const
 
 GLuint Texture2D::getTextureUnit() const
 {
-    return sm_textureUnits[m_textureID];
+    return static_cast<GLuint>(m_textureType);
 }
 
 ETextureType Texture2D::getTextureType() const
@@ -107,13 +101,13 @@ ETextureType Texture2D::getTextureType() const
 
 void Texture2D::Bind() const
 {
-    GLCall(glActiveTexture(GL_TEXTURE0 + sm_textureUnits[m_textureID]));  // TODO
+    GLCall(glActiveTexture(GL_TEXTURE0 + getTextureUnit()));
     GLCall(glBindTexture(GL_TEXTURE_2D, m_textureID));
 }
 
 void Texture2D::Unbind() const
 {
-    GLCall(glActiveTexture(GL_TEXTURE0 + sm_textureUnits[m_textureID]));  // TODO
+    GLCall(glActiveTexture(GL_TEXTURE0 + getTextureUnit()));
     GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
@@ -121,7 +115,6 @@ void Texture2D::Delete()
 {
     GLCall(glDeleteTextures(1, &m_textureID));
     m_textureID = 0;
-    sm_textureUnitCounter--;
 }
 
 int Texture2D::getWidth() const

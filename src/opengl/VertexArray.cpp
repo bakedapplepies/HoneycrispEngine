@@ -79,13 +79,13 @@ VertexArray::VertexArray(
             m_vertData.push_back(verticesRef[vertIndex].z);
         }
 
-        if (!colors)  // even if color is not available there should be a default color
-        {
-            m_vertData.push_back(1.0f);
-            m_vertData.push_back(1.0f);
-            m_vertData.push_back(1.0f);
-        }
-        else
+        // if (!colors)  // even if color is not available there should be a default color
+        // {
+        //     m_vertData.push_back(1.0f);
+        //     m_vertData.push_back(1.0f);
+        //     m_vertData.push_back(1.0f);
+        // }
+        if (colors)
         {
             m_vertData.push_back(colorsRef[vertIndex].x);
             m_vertData.push_back(colorsRef[vertIndex].y);
@@ -116,7 +116,7 @@ VertexArray::VertexArray(
 
     size_t numAttribElements = 
         3 +
-        3 +
+        3 * (bool)(colors) +
         2 * (bool)(uvs) +
         3 * (bool)(normals);
     unsigned int currentOffset = 0;
@@ -134,16 +134,20 @@ VertexArray::VertexArray(
     currentOffset += 3;
 
     // Color RGB
-    GLCall(glVertexAttribPointer(
-        HNCRSP_VERTEX_ATTRIB_COLOR_INDEX,
-        3,
-        GL_FLOAT,
-        GL_FALSE,
-        numAttribElements * sizeof(float),
-        (void*)(currentOffset * sizeof(float))
-    ));
-    EnableVertexAttribColor(true);
-    currentOffset += 3;
+    if (colors)
+    {
+        GLCall(glVertexAttribPointer(
+            HNCRSP_VERTEX_ATTRIB_COLOR_INDEX,
+            3,
+            GL_FLOAT,
+            GL_FALSE,
+            numAttribElements * sizeof(float),
+            (void*)(currentOffset * sizeof(float))
+        ));
+        EnableVertexAttribColor(true);
+        currentOffset += 3;
+    }
+    else { EnableVertexAttribColor(false); }
 
     if (uvs)
     {

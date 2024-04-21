@@ -14,9 +14,7 @@ class DefaultSceneTwo : public Honeycrisp::Scene
 {
 private:
     // scene objects
-    std::shared_ptr<Honeycrisp::Shader> shader;
-    std::shared_ptr<Honeycrisp::Shader> backpackShader;
-    std::shared_ptr<Honeycrisp::Shader> appleShader;
+    std::shared_ptr<Honeycrisp::Shader> phongShader;
     std::shared_ptr<Honeycrisp::Shader> wackyShader;
     std::shared_ptr<Honeycrisp::Shader> normalShader;
     std::unique_ptr< SceneRenderObj<Honeycrisp::Cube> > cube;

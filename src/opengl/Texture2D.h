@@ -5,7 +5,7 @@
 
 HNCRSP_NAMESPACE_START
 
-enum ETextureType
+enum ETextureType  // also acts as Texture Units
 {
     NONE = -1,
     ALBEDO,
@@ -14,8 +14,6 @@ enum ETextureType
     NORMAL,
     SPECULAR
 };
-
-// static std::vector<Texture> a[32];
 
 class Texture2D
 {
@@ -26,9 +24,6 @@ private:
     GLuint m_textureID;
     ETextureType m_textureType;
     
-    static GLuint sm_textureUnitCounter;
-    static std::unordered_map<GLuint, GLint> sm_textureUnits;  // TODO: Reuse texture units somehow
-
 public:
     Texture2D() = default;
     Texture2D(

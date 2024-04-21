@@ -17,7 +17,7 @@ DefaultSceneTwo::DefaultSceneTwo()
 
     cube = CreateStaticRenderObj<Cube>();
     cubeTransform = &g_ECSManager->GetComponent<Transform>(cube->entityUID);
-    cube->setShader(shader);
+    cube->setShader(phongShader);
     cube->setTransform(Transform(glm::vec3(1.0f, 10.0f ,5.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
 
     TextureAtlas& grassAtlas = g_Texture2DManager.GetAtlas(3, 1);
@@ -94,20 +94,20 @@ DefaultSceneTwo::DefaultSceneTwo()
 
     mesh->setTransform(Transform(glm::vec3(0.0f, -6.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
 
-    backpackModel = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/backpack/backpack.obj"), backpackShader, true);
+    backpackModel = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/backpack/backpack.obj"), phongShader, true);
     backpackModel->setTransform(Transform(glm::vec3(10.0f, 2.0f, 7.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(3.0f)));
     Material* backpackMaterial = backpackModel->getMaterial();
     backpackMaterial->setShininess(32);
 
     // Author: Eydeet (https://skfb.ly/ouB6N)
-    appleModel = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/apple/source/apple.fbx"), appleShader, false);
+    appleModel = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/apple/source/apple.fbx"), phongShader, false);
     appleModel->setTransform(Transform(glm::vec3(10.0f, 2.0f, 17.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.3f)));
     Material* appleMaterial = appleModel->getMaterial();
     appleMaterial->setShininess(32);
 
-    appleModelNormal = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/apple/source/apple.fbx"), normalShader, false);
-    appleModelNormal->setTransform(Transform(glm::vec3(10.0f, 2.0f, 17.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.3f)));
-    appleModelNormal->getMaterial()->setShininess(32);
+    // appleModelNormal = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/apple/source/apple.fbx"), normalShader, false);
+    // appleModelNormal->setTransform(Transform(glm::vec3(10.0f, 2.0f, 17.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.3f)));
+    // appleModelNormal->getMaterial()->setShininess(32);
 
     CreateCubemap(
         FileSystem::Path("resources/textures/cubemaps/skybox/right.jpg"),
@@ -123,10 +123,8 @@ DefaultSceneTwo::DefaultSceneTwo()
 
 void DefaultSceneTwo::OnUpdate(const float& dt)
 {
-    shader->setVec3Unf("u_pointLight.position", pointLight->position);
+    phongShader->setVec3Unf("u_pointLight.position", pointLight->position);
     wackyShader->setVec3Unf("u_pointLight.position", pointLight->position);
-    backpackShader->setVec3Unf("u_pointLight.position", pointLight->position);
-    appleShader->setVec3Unf("u_pointLight.position", pointLight->position);
     normalShader->setFloatUnf("u_normal_length", m_u_normal_length);
 
     cubeTransform->eulerAngles += glm::vec3(1.0f, 1.0f, 0.0f) * dt;
@@ -135,18 +133,9 @@ void DefaultSceneTwo::OnUpdate(const float& dt)
 
 void DefaultSceneTwo::InitializeShaders(void)
 {
-    shader = g_ShaderManager.GetShader(
+    phongShader = g_ShaderManager.GetShader(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
         FileSystem::Path("resources/shaders/PhongShadingFragment.glsl")
-    );
-    backpackShader = g_ShaderManager.GetShader(
-        FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
-        FileSystem::Path("resources/shaders/PhongShadingFragment.glsl")
-    );
-    appleShader = g_ShaderManager.GetShader(
-        FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
-        FileSystem::Path("resources/shaders/PhongShadingFragment.glsl")
-        // FileSystem::Path("resources/shaders/CalculateNormalGeometry.glsl")
     );
     wackyShader = g_ShaderManager.GetShader(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
@@ -167,34 +156,34 @@ void DefaultSceneTwo::SetInitialUniforms(void)
     meshData.material->setSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
 
     // lighting
-    shader->setIntUnf("u_material.albedo", g_Texture2DManager.mainTextureMap->getTextureUnit());
-    shader->setIntUnf("u_material.specular", g_Texture2DManager.mainTextureSpecularMap->getTextureUnit());
-    shader->setFloatUnf("u_material.shininess", 128.0f);
+    phongShader->setIntUnf("u_material.albedo", g_Texture2DManager.mainTextureMap->getTextureUnit());
+    phongShader->setIntUnf("u_material.specular", g_Texture2DManager.mainTextureSpecularMap->getTextureUnit());
+    phongShader->setFloatUnf("u_material.shininess", 128.0f);
 
     // dir light
-    shader->setVec3Unf("u_dirLight.direction", glm::normalize(glm::vec3(0, -1, 0)));
-    shader->setVec3Unf("u_dirLight.ambient", glm::vec3(0.1f));
-    shader->setVec3Unf("u_dirLight.diffuse", glm::vec3(0.7f));
-    shader->setVec3Unf("u_dirLight.specular", glm::vec3(1.0f));
+    phongShader->setVec3Unf("u_dirLight.direction", glm::normalize(glm::vec3(0, -1, 0)));
+    phongShader->setVec3Unf("u_dirLight.ambient", glm::vec3(0.1f));
+    phongShader->setVec3Unf("u_dirLight.diffuse", glm::vec3(0.7f));
+    phongShader->setVec3Unf("u_dirLight.specular", glm::vec3(1.0f));
 
     // point light
-    shader->setVec3Unf("u_pointLight.position", pointLight->position);
-    shader->setVec3Unf("u_pointLight.ambient", pointLight->getAmbient());
-    shader->setVec3Unf("u_pointLight.diffuse", pointLight->getDiffuse());
-    shader->setVec3Unf("u_pointLight.specular", pointLight->getSpecular());
-    shader->setFloatUnf("u_pointLight.constant", pointLight->attenuation_constant);
-    shader->setFloatUnf("u_pointLight.linear", pointLight->attenuation_linear);
-    shader->setFloatUnf("u_pointLight.quadratic", pointLight->attenuation_quadratic);
+    phongShader->setVec3Unf("u_pointLight.position", pointLight->position);
+    phongShader->setVec3Unf("u_pointLight.ambient", pointLight->getAmbient());
+    phongShader->setVec3Unf("u_pointLight.diffuse", pointLight->getDiffuse());
+    phongShader->setVec3Unf("u_pointLight.specular", pointLight->getSpecular());
+    phongShader->setFloatUnf("u_pointLight.constant", pointLight->attenuation_constant);
+    phongShader->setFloatUnf("u_pointLight.linear", pointLight->attenuation_linear);
+    phongShader->setFloatUnf("u_pointLight.quadratic", pointLight->attenuation_quadratic);
 
     // spot light
-    shader->setFloatUnf("u_spotLight.cutOff", glm::cos(glm::radians(15.0f)));
-    shader->setFloatUnf("u_spotLight.outerCutOff", glm::cos(glm::radians(25.0f)));
-    shader->setVec3Unf("u_spotLight.ambient", glm::vec3(0.1f));
-    shader->setVec3Unf("u_spotLight.diffuse", glm::vec3(0.5f));
-    shader->setVec3Unf("u_spotLight.specular", glm::vec3(1.0f));
-    shader->setFloatUnf("u_spotLight.constant", 1.0f);
-    shader->setFloatUnf("u_spotLight.linear", 0.07f);
-    shader->setFloatUnf("u_spotLight.quadratic", 0.0045f);
+    phongShader->setFloatUnf("u_spotLight.cutOff", glm::cos(glm::radians(15.0f)));
+    phongShader->setFloatUnf("u_spotLight.outerCutOff", glm::cos(glm::radians(25.0f)));
+    phongShader->setVec3Unf("u_spotLight.ambient", glm::vec3(0.1f));
+    phongShader->setVec3Unf("u_spotLight.diffuse", glm::vec3(0.5f));
+    phongShader->setVec3Unf("u_spotLight.specular", glm::vec3(1.0f));
+    phongShader->setFloatUnf("u_spotLight.constant", 1.0f);
+    phongShader->setFloatUnf("u_spotLight.linear", 0.07f);
+    phongShader->setFloatUnf("u_spotLight.quadratic", 0.0045f);
     
     // lighting
     wackyShader->setIntUnf("u_material.albedo", g_Texture2DManager.mainTextureMap->getTextureUnit());
@@ -225,60 +214,6 @@ void DefaultSceneTwo::SetInitialUniforms(void)
     wackyShader->setFloatUnf("u_spotLight.constant", 1.0f);
     wackyShader->setFloatUnf("u_spotLight.linear", 0.07f);
     wackyShader->setFloatUnf("u_spotLight.quadratic", 0.0045f);
-
-    // backpackShader->setIntUnf("cubemap", 10);
-    // lighting
-    backpackShader->setFloatUnf("u_material.shininess", 128.0f);
-
-    // dir light
-    backpackShader->setVec3Unf("u_dirLight.direction", glm::normalize(glm::vec3(0, -1, 0)));
-    backpackShader->setVec3Unf("u_dirLight.ambient", glm::vec3(1.0f));
-    backpackShader->setVec3Unf("u_dirLight.diffuse", glm::vec3(0.7f));
-    backpackShader->setVec3Unf("u_dirLight.specular", glm::vec3(1.0f));
-
-    // point light
-    backpackShader->setVec3Unf("u_pointLight.position", pointLight->position);
-    backpackShader->setVec3Unf("u_pointLight.ambient", pointLight->getAmbient());
-    backpackShader->setVec3Unf("u_pointLight.diffuse", pointLight->getDiffuse());
-    backpackShader->setVec3Unf("u_pointLight.specular", pointLight->getSpecular());
-    backpackShader->setFloatUnf("u_pointLight.constant", pointLight->attenuation_constant);
-    backpackShader->setFloatUnf("u_pointLight.linear", pointLight->attenuation_linear);
-    backpackShader->setFloatUnf("u_pointLight.quadratic", pointLight->attenuation_quadratic);
-
-    // spot light
-    backpackShader->setFloatUnf("u_spotLight.cutOff", glm::cos(glm::radians(15.0f)));
-    backpackShader->setFloatUnf("u_spotLight.outerCutOff", glm::cos(glm::radians(25.0f)));
-    backpackShader->setVec3Unf("u_spotLight.ambient", glm::vec3(0.1f));
-    backpackShader->setVec3Unf("u_spotLight.diffuse", glm::vec3(0.5f));
-    backpackShader->setVec3Unf("u_spotLight.specular", glm::vec3(1.0f));
-    backpackShader->setFloatUnf("u_spotLight.constant", 1.0f);
-    backpackShader->setFloatUnf("u_spotLight.linear", 0.07f);
-    backpackShader->setFloatUnf("u_spotLight.quadratic", 0.0045f);
-
-    // dir light
-    appleShader->setVec3Unf("u_dirLight.direction", glm::normalize(glm::vec3(0, -1, 0)));
-    appleShader->setVec3Unf("u_dirLight.ambient", glm::vec3(1.0f));
-    appleShader->setVec3Unf("u_dirLight.diffuse", glm::vec3(0.7f));
-    appleShader->setVec3Unf("u_dirLight.specular", glm::vec3(1.0f));
-
-    // point light
-    appleShader->setVec3Unf("u_pointLight.position", pointLight->position);
-    appleShader->setVec3Unf("u_pointLight.ambient", pointLight->getAmbient());
-    appleShader->setVec3Unf("u_pointLight.diffuse", pointLight->getDiffuse());
-    appleShader->setVec3Unf("u_pointLight.specular", pointLight->getSpecular());
-    appleShader->setFloatUnf("u_pointLight.constant", pointLight->attenuation_constant);
-    appleShader->setFloatUnf("u_pointLight.linear", pointLight->attenuation_linear);
-    appleShader->setFloatUnf("u_pointLight.quadratic", pointLight->attenuation_quadratic);
-
-    // spot light
-    appleShader->setFloatUnf("u_spotLight.cutOff", glm::cos(glm::radians(15.0f)));
-    appleShader->setFloatUnf("u_spotLight.outerCutOff", glm::cos(glm::radians(25.0f)));
-    appleShader->setVec3Unf("u_spotLight.ambient", glm::vec3(0.1f));
-    appleShader->setVec3Unf("u_spotLight.diffuse", glm::vec3(0.5f));
-    appleShader->setVec3Unf("u_spotLight.specular", glm::vec3(1.0f));
-    appleShader->setFloatUnf("u_spotLight.constant", 1.0f);
-    appleShader->setFloatUnf("u_spotLight.linear", 0.07f);
-    appleShader->setFloatUnf("u_spotLight.quadratic", 0.0045f);
 }
 
 void DefaultSceneTwo::OnImGui(void)

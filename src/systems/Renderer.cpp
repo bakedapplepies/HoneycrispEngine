@@ -45,8 +45,8 @@ void Renderer::Render() const
         specularMap = material->getSpecularMap();
 
         if (albedoMap) albedoMap->Bind();
-        if (roughnessMap)
-            roughnessMap->Bind();
+        // else shader->setIntUnf("u_material.albedo", 0);
+        if (roughnessMap) roughnessMap->Bind();
         if (aoMap) aoMap->Bind();
         if (normalMap) albedoMap->Bind();
         if (specularMap) specularMap->Bind();
@@ -54,7 +54,10 @@ void Renderer::Render() const
         glm::mat4 modelMatrix = GetModelMatrix(transform);
         shader->setMat3Unf("u_normalMatrix", glm::mat3(glm::transpose(glm::inverse(modelMatrix))));
         shader->setMat4Unf("u_model", modelMatrix);
-        GLCall(glDrawElements(GL_TRIANGLES, meshData.num_vertices, GL_UNSIGNED_INT, nullptr));
+        GLCall(
+            // glMultiDrawElements(GL_TRIANGLES, (int*)&meshData.num_vertices, GL_UNSIGNED_INT, 0x0, 1)
+            glDrawElementsBaseVertex(GL_TRIANGLES, meshData.num_vertices, GL_UNSIGNED_INT, 0x0, 0)
+        );
 
         if (albedoMap) albedoMap->Unbind();
         if (roughnessMap) roughnessMap->Unbind();
