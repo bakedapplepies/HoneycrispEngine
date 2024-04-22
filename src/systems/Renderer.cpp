@@ -5,6 +5,11 @@
 
 HNCRSP_NAMESPACE_START
 
+Renderer::Renderer()
+{
+    HNCRSP_LOG_INFO("HEH");
+}
+
 void Renderer::StartUp()
 {
 }
@@ -24,14 +29,13 @@ void Renderer::Render() const
     const Texture2D* specularMap = nullptr;
     for (const EntityUID& uid : entityUIDs)
     {
-        // HNCRSP_LOG_INFO(uid);
         MeshData& meshData = g_ECSManager->GetComponent<MeshData>(uid);
         Material* material = meshData.material.get();
         Shader* shader = material->getShader().get();
 
         Transform& transform = g_ECSManager->GetComponent<Transform>(uid);
 
-        GLCall(glBindVertexArray(meshData.VAO_id));
+        // HNCRSP_LOG_INFO(uid);
         if (shaderID != shader->getID())
         {
             shader->Use();
@@ -55,7 +59,6 @@ void Renderer::Render() const
         shader->setMat3Unf("u_normalMatrix", glm::mat3(glm::transpose(glm::inverse(modelMatrix))));
         shader->setMat4Unf("u_model", modelMatrix);
         GLCall(
-            // glMultiDrawElements(GL_TRIANGLES, (int*)&meshData.num_vertices, GL_UNSIGNED_INT, 0x0, 1)
             glDrawElementsBaseVertex(GL_TRIANGLES, meshData.num_vertices, GL_UNSIGNED_INT, 0x0, 0)
         );
 
@@ -88,6 +91,12 @@ glm::mat4 Renderer::GetModelMatrix(Transform& transform) const
 void Renderer::SwitchCubemap(std::weak_ptr<Cubemap> weak_cubemap)
 {
     m_weak_currentCubemap = weak_cubemap;
+}
+
+void Renderer::AddEntityUID(EntityUID entityUID)
+{
+    GLuint shaderID = g_ECSManager->GetComponent<MeshData>(entityUID).material->getShader()->getID();
+    binary_insert_shader_comparator(entityUIDs, m_shaderIDs_Order, entityUID, shaderID);
 }
 
 HNCRSP_NAMESPACE_END

@@ -13,7 +13,6 @@ class SystemManager
 private:
     std::unordered_map<const char*, ComponentBitset> m_systemComponentBitsets;
     std::unordered_map< const char*, std::shared_ptr<System> > m_systems;
-    std::vector<GLuint> m_shaderIDs_Order;
 
 public:
     SystemManager() = default;

@@ -32,11 +32,11 @@ struct Mesh FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
     VT_VERTEX_DATA = 6,
     VT_INDICES = 8
   };
-  uint8_t vertex_attrib_bits() const {
-    return GetField<uint8_t>(VT_VERTEX_ATTRIB_BITS, 0);
+  uint16_t vertex_attrib_bits() const {
+    return GetField<uint16_t>(VT_VERTEX_ATTRIB_BITS, 0);
   }
-  bool mutate_vertex_attrib_bits(uint8_t _vertex_attrib_bits = 0) {
-    return SetField<uint8_t>(VT_VERTEX_ATTRIB_BITS, _vertex_attrib_bits, 0);
+  bool mutate_vertex_attrib_bits(uint16_t _vertex_attrib_bits = 0) {
+    return SetField<uint16_t>(VT_VERTEX_ATTRIB_BITS, _vertex_attrib_bits, 0);
   }
   const ::flatbuffers::Vector<float> *vertex_data() const {
     return GetPointer<const ::flatbuffers::Vector<float> *>(VT_VERTEX_DATA);
@@ -52,7 +52,7 @@ struct Mesh FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyField<uint8_t>(verifier, VT_VERTEX_ATTRIB_BITS, 1) &&
+           VerifyField<uint16_t>(verifier, VT_VERTEX_ATTRIB_BITS, 2) &&
            VerifyOffset(verifier, VT_VERTEX_DATA) &&
            verifier.VerifyVector(vertex_data()) &&
            VerifyOffset(verifier, VT_INDICES) &&
@@ -65,8 +65,8 @@ struct MeshBuilder {
   typedef Mesh Table;
   ::flatbuffers::FlatBufferBuilder &fbb_;
   ::flatbuffers::uoffset_t start_;
-  void add_vertex_attrib_bits(uint8_t vertex_attrib_bits) {
-    fbb_.AddElement<uint8_t>(Mesh::VT_VERTEX_ATTRIB_BITS, vertex_attrib_bits, 0);
+  void add_vertex_attrib_bits(uint16_t vertex_attrib_bits) {
+    fbb_.AddElement<uint16_t>(Mesh::VT_VERTEX_ATTRIB_BITS, vertex_attrib_bits, 0);
   }
   void add_vertex_data(::flatbuffers::Offset<::flatbuffers::Vector<float>> vertex_data) {
     fbb_.AddOffset(Mesh::VT_VERTEX_DATA, vertex_data);
@@ -87,7 +87,7 @@ struct MeshBuilder {
 
 inline ::flatbuffers::Offset<Mesh> CreateMesh(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    uint8_t vertex_attrib_bits = 0,
+    uint16_t vertex_attrib_bits = 0,
     ::flatbuffers::Offset<::flatbuffers::Vector<float>> vertex_data = 0,
     ::flatbuffers::Offset<::flatbuffers::Vector<uint32_t>> indices = 0) {
   MeshBuilder builder_(_fbb);
@@ -99,7 +99,7 @@ inline ::flatbuffers::Offset<Mesh> CreateMesh(
 
 inline ::flatbuffers::Offset<Mesh> CreateMeshDirect(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    uint8_t vertex_attrib_bits = 0,
+    uint16_t vertex_attrib_bits = 0,
     const std::vector<float> *vertex_data = nullptr,
     const std::vector<uint32_t> *indices = nullptr) {
   auto vertex_data__ = vertex_data ? _fbb.CreateVector<float>(*vertex_data) : 0;

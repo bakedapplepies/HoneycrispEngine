@@ -4,7 +4,7 @@ namespace Honeycrisp.Serialized;
 
 table Mesh
 {
-    vertex_attrib_bits: uint8;
+    vertex_attrib_bits: uint16;
     vertex_data: [float];
     indices: [uint32];
 }

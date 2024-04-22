@@ -18,7 +18,7 @@ ModelSerializer::~ModelSerializer()
 }
 
 void ModelSerializer::AddMesh(
-    unsigned char vertex_attrib_bits,
+    unsigned short vertex_attrib_bits,
     const float* vertex_data,
     size_t vertex_data_len,
     const GLuint* indices_data,
@@ -74,7 +74,7 @@ flatbuffers::Offset<Serialized::Material> ModelSerializer::FinishMaterial()
 
 void ModelSerializer::Serialize(const FileSystem::Path& path_to_model)
 {
-    FileSystem::Path serialized_dir(fmt::format("build/{}/serialized/models", HNCRSP_BUILD_TYPE));
+    FileSystem::Path serialized_dir(fmt::format("build/{}/src/serialized/models", HNCRSP_BUILD_TYPE));
     std::filesystem::create_directories(serialized_dir.string());
     int64_t path_hash = std::hash<std::string>{}(path_to_model.string());
     std::string serialized_model_path = fmt::format("{}/{}.hncmdl", serialized_dir.string(), path_hash);
@@ -106,7 +106,7 @@ const Serialized::Model* ModelSerializer::GetDeserializedObject(const FileSystem
     else
     {
         int64_t path_hash = std::hash<std::string>{}(path_to_model.string());
-        serialized_model_path = FileSystem::Path(fmt::format("build/{}/serialized/models/{}.hncmdl", HNCRSP_BUILD_TYPE, path_hash)).string();
+        serialized_model_path = FileSystem::Path(fmt::format("build/{}/src/serialized/models/{}.hncmdl", HNCRSP_BUILD_TYPE, path_hash)).string();
         if(!std::filesystem::exists(serialized_model_path))
         {
             return nullptr;

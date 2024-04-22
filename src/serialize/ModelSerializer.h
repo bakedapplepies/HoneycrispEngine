@@ -27,7 +27,7 @@ public:
     ~ModelSerializer();
 
     void AddMesh(
-        unsigned char vertex_attrib_bits,
+        unsigned short vertex_attrib_bits,
         const float* vertex_data,
         size_t vertex_data_len,
         const GLuint* indices_data,

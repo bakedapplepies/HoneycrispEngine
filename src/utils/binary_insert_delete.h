@@ -6,6 +6,7 @@
 HNCRSP_NAMESPACE_START
 
 // also works with T types that support overloaded operations (<, >)
+// TODO: but there'd also be float-uint comparisons
 template <typename T>
 void binary_insert_shader_comparator(
     std::vector<T>& vec,

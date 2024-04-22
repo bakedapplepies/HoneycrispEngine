@@ -15,9 +15,10 @@ class Renderer : public System
 {
 private:
     std::weak_ptr<Cubemap> m_weak_currentCubemap;
+    std::vector<GLuint> m_shaderIDs_Order;
 
 public:
-    Renderer() = default;
+    Renderer();
     Renderer(const Renderer&) = delete;
     Renderer& operator=(const Renderer&) = delete;
     Renderer(Renderer&&) noexcept = delete;
@@ -28,6 +29,8 @@ public:
     void Render() const;
     void SwitchSceneToRender();
     void SwitchCubemap(std::weak_ptr<Cubemap> weak_cubemap);
+
+    void AddEntityUID(EntityUID entityUID) override;
 
 private:
     glm::mat4 GetModelMatrix(Transform& transform) const;

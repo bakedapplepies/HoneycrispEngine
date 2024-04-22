@@ -27,9 +27,7 @@ protected:
             entityUID = g_ECSManager->NewEntityUID();
 
             // default object position is at origin
-            Transform newTransform;
-            newTransform.position = glm::vec3(0.0f);
-            g_ECSManager->AddComponent<Transform>(entityUID, newTransform);
+            g_ECSManager->AddComponent<Transform>(entityUID, {});
 
             this->virt_AddMeshDataToRenderer(entityUID);
         }
