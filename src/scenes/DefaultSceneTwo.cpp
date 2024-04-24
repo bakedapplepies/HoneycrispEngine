@@ -135,11 +135,11 @@ void DefaultSceneTwo::InitializeShaders(void)
 {
     phongShader = g_ShaderManager.GetShader(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
-        FileSystem::Path("resources/shaders/PhongShadingFragment.glsl")
+        FileSystem::Path("resources/shaders/BlinnPhongFragment.glsl")
     );
     wackyShader = g_ShaderManager.GetShader(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
-        FileSystem::Path("resources/shaders/PhongShadingFragment.glsl")
+        FileSystem::Path("resources/shaders/BlinnPhongTintFragment.glsl")
         // FileSystem::Path("resources/shaders/WaveGeometry.glsl")  // TODO: just to calculate normals, maybe rename file to CalcNormGeometry.glsl
     );
     normalShader = g_ShaderManager.GetShader(

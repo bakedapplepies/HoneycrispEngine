@@ -18,7 +18,7 @@ private:
     std::vector<GLuint> m_shaderIDs_Order;
 
 public:
-    Renderer();
+    Renderer() = default;
     Renderer(const Renderer&) = delete;
     Renderer& operator=(const Renderer&) = delete;
     Renderer(Renderer&&) noexcept = delete;

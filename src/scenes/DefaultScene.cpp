@@ -9,7 +9,7 @@ DefaultScene::DefaultScene()
 {
     shader = g_ShaderManager.GetShader(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
-        FileSystem::Path("resources/shaders/PhongShadingFragment.glsl")
+        FileSystem::Path("resources/shaders/BlinnPhongFragment.glsl")
     );
 
     cube = CreateStaticRenderObj<Cube>();

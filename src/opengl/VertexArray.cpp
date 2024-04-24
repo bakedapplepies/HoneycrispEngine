@@ -203,7 +203,7 @@ VertexArray::VertexArray(
 
     size_t numAttribElements = 
         3 +
-        3 +
+        3 * color +
         2 * uv +
         3 * normal;
     unsigned int currentOffset = 0;
@@ -221,16 +221,19 @@ VertexArray::VertexArray(
     currentOffset += 3;
 
     // Color RGB
-    GLCall(glVertexAttribPointer(
-        HNCRSP_VERTEX_ATTRIB_COLOR_INDEX,
-        3,
-        GL_FLOAT,
-        GL_FALSE,
-        numAttribElements * sizeof(float),
-        (void*)(currentOffset * sizeof(float))
-    ));
-    EnableVertexAttribColor(true);
-    currentOffset += 3;
+    if (color)
+    {
+        GLCall(glVertexAttribPointer(
+            HNCRSP_VERTEX_ATTRIB_COLOR_INDEX,
+            3,
+            GL_FLOAT,
+            GL_FALSE,
+            numAttribElements * sizeof(float),
+            (void*)(currentOffset * sizeof(float))
+        ));
+        EnableVertexAttribColor(true);
+        currentOffset += 3;
+    }
 
     if (uv)
     {

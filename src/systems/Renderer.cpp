@@ -5,11 +5,6 @@
 
 HNCRSP_NAMESPACE_START
 
-Renderer::Renderer()
-{
-    HNCRSP_LOG_INFO("HEH");
-}
-
 void Renderer::StartUp()
 {
 }
@@ -34,8 +29,8 @@ void Renderer::Render() const
         Shader* shader = material->getShader().get();
 
         Transform& transform = g_ECSManager->GetComponent<Transform>(uid);
+        glBindVertexArray(meshData.VAO_id);
 
-        // HNCRSP_LOG_INFO(uid);
         if (shaderID != shader->getID())
         {
             shader->Use();
@@ -49,7 +44,6 @@ void Renderer::Render() const
         specularMap = material->getSpecularMap();
 
         if (albedoMap) albedoMap->Bind();
-        // else shader->setIntUnf("u_material.albedo", 0);
         if (roughnessMap) roughnessMap->Bind();
         if (aoMap) aoMap->Bind();
         if (normalMap) albedoMap->Bind();

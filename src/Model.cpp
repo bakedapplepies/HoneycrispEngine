@@ -89,6 +89,7 @@ Mesh Model::processMesh(
             mesh->mVertices[i].y,
             mesh->mVertices[i].z
         );
+        
         normals.emplace_back(
             mesh->mNormals[i].x,
             mesh->mNormals[i].y,
@@ -177,7 +178,6 @@ Mesh Model::processMesh(
 
     unsigned char vertex_attrib_bits = 
         VERTEX_ATTRIB_POSITION_BIT |
-        VERTEX_ATTRIB_COLOR_BIT |
         VERTEX_ATTRIB_UV_BIT |
         VERTEX_ATTRIB_NORMAL_BIT;
 
