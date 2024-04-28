@@ -16,8 +16,7 @@ static_assert(FLATBUFFERS_VERSION_MAJOR == 24 &&
 namespace Honeycrisp {
 namespace Serialized {
 
-struct Mesh;
-struct MeshBuilder;
+struct MeshMetaData;
 
 struct Material;
 struct MaterialBuilder;
@@ -25,91 +24,34 @@ struct MaterialBuilder;
 struct Model;
 struct ModelBuilder;
 
-struct Mesh FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
-  typedef MeshBuilder Builder;
-  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_VERTEX_ATTRIB_BITS = 4,
-    VT_VERTEX_DATA = 6,
-    VT_INDICES = 8
-  };
-  uint16_t vertex_attrib_bits() const {
-    return GetField<uint16_t>(VT_VERTEX_ATTRIB_BITS, 0);
+FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) MeshMetaData FLATBUFFERS_FINAL_CLASS {
+ private:
+  uint32_t base_index_;
+  uint32_t vertex_count_;
+
+ public:
+  MeshMetaData()
+      : base_index_(0),
+        vertex_count_(0) {
   }
-  bool mutate_vertex_attrib_bits(uint16_t _vertex_attrib_bits = 0) {
-    return SetField<uint16_t>(VT_VERTEX_ATTRIB_BITS, _vertex_attrib_bits, 0);
+  MeshMetaData(uint32_t _base_index, uint32_t _vertex_count)
+      : base_index_(::flatbuffers::EndianScalar(_base_index)),
+        vertex_count_(::flatbuffers::EndianScalar(_vertex_count)) {
   }
-  const ::flatbuffers::Vector<float> *vertex_data() const {
-    return GetPointer<const ::flatbuffers::Vector<float> *>(VT_VERTEX_DATA);
+  uint32_t base_index() const {
+    return ::flatbuffers::EndianScalar(base_index_);
   }
-  ::flatbuffers::Vector<float> *mutable_vertex_data() {
-    return GetPointer<::flatbuffers::Vector<float> *>(VT_VERTEX_DATA);
+  void mutate_base_index(uint32_t _base_index) {
+    ::flatbuffers::WriteScalar(&base_index_, _base_index);
   }
-  const ::flatbuffers::Vector<uint32_t> *indices() const {
-    return GetPointer<const ::flatbuffers::Vector<uint32_t> *>(VT_INDICES);
+  uint32_t vertex_count() const {
+    return ::flatbuffers::EndianScalar(vertex_count_);
   }
-  ::flatbuffers::Vector<uint32_t> *mutable_indices() {
-    return GetPointer<::flatbuffers::Vector<uint32_t> *>(VT_INDICES);
-  }
-  bool Verify(::flatbuffers::Verifier &verifier) const {
-    return VerifyTableStart(verifier) &&
-           VerifyField<uint16_t>(verifier, VT_VERTEX_ATTRIB_BITS, 2) &&
-           VerifyOffset(verifier, VT_VERTEX_DATA) &&
-           verifier.VerifyVector(vertex_data()) &&
-           VerifyOffset(verifier, VT_INDICES) &&
-           verifier.VerifyVector(indices()) &&
-           verifier.EndTable();
+  void mutate_vertex_count(uint32_t _vertex_count) {
+    ::flatbuffers::WriteScalar(&vertex_count_, _vertex_count);
   }
 };
-
-struct MeshBuilder {
-  typedef Mesh Table;
-  ::flatbuffers::FlatBufferBuilder &fbb_;
-  ::flatbuffers::uoffset_t start_;
-  void add_vertex_attrib_bits(uint16_t vertex_attrib_bits) {
-    fbb_.AddElement<uint16_t>(Mesh::VT_VERTEX_ATTRIB_BITS, vertex_attrib_bits, 0);
-  }
-  void add_vertex_data(::flatbuffers::Offset<::flatbuffers::Vector<float>> vertex_data) {
-    fbb_.AddOffset(Mesh::VT_VERTEX_DATA, vertex_data);
-  }
-  void add_indices(::flatbuffers::Offset<::flatbuffers::Vector<uint32_t>> indices) {
-    fbb_.AddOffset(Mesh::VT_INDICES, indices);
-  }
-  explicit MeshBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
-        : fbb_(_fbb) {
-    start_ = fbb_.StartTable();
-  }
-  ::flatbuffers::Offset<Mesh> Finish() {
-    const auto end = fbb_.EndTable(start_);
-    auto o = ::flatbuffers::Offset<Mesh>(end);
-    return o;
-  }
-};
-
-inline ::flatbuffers::Offset<Mesh> CreateMesh(
-    ::flatbuffers::FlatBufferBuilder &_fbb,
-    uint16_t vertex_attrib_bits = 0,
-    ::flatbuffers::Offset<::flatbuffers::Vector<float>> vertex_data = 0,
-    ::flatbuffers::Offset<::flatbuffers::Vector<uint32_t>> indices = 0) {
-  MeshBuilder builder_(_fbb);
-  builder_.add_indices(indices);
-  builder_.add_vertex_data(vertex_data);
-  builder_.add_vertex_attrib_bits(vertex_attrib_bits);
-  return builder_.Finish();
-}
-
-inline ::flatbuffers::Offset<Mesh> CreateMeshDirect(
-    ::flatbuffers::FlatBufferBuilder &_fbb,
-    uint16_t vertex_attrib_bits = 0,
-    const std::vector<float> *vertex_data = nullptr,
-    const std::vector<uint32_t> *indices = nullptr) {
-  auto vertex_data__ = vertex_data ? _fbb.CreateVector<float>(*vertex_data) : 0;
-  auto indices__ = indices ? _fbb.CreateVector<uint32_t>(*indices) : 0;
-  return Honeycrisp::Serialized::CreateMesh(
-      _fbb,
-      vertex_attrib_bits,
-      vertex_data__,
-      indices__);
-}
+FLATBUFFERS_STRUCT_END(MeshMetaData, 8);
 
 struct Material FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef MaterialBuilder Builder;
@@ -236,15 +178,36 @@ inline ::flatbuffers::Offset<Material> CreateMaterialDirect(
 struct Model FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef ModelBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_MESHES = 4,
-    VT_MATERIAL = 6,
-    VT_LAST_WRITE_TIME = 8
+    VT_VERTEX_ATTRIB_BITS = 4,
+    VT_VERTEX_DATA = 6,
+    VT_INDICES = 8,
+    VT_MESHES = 10,
+    VT_MATERIAL = 12,
+    VT_LAST_WRITE_TIME = 14
   };
-  const ::flatbuffers::Vector<::flatbuffers::Offset<Honeycrisp::Serialized::Mesh>> *meshes() const {
-    return GetPointer<const ::flatbuffers::Vector<::flatbuffers::Offset<Honeycrisp::Serialized::Mesh>> *>(VT_MESHES);
+  uint16_t vertex_attrib_bits() const {
+    return GetField<uint16_t>(VT_VERTEX_ATTRIB_BITS, 0);
   }
-  ::flatbuffers::Vector<::flatbuffers::Offset<Honeycrisp::Serialized::Mesh>> *mutable_meshes() {
-    return GetPointer<::flatbuffers::Vector<::flatbuffers::Offset<Honeycrisp::Serialized::Mesh>> *>(VT_MESHES);
+  bool mutate_vertex_attrib_bits(uint16_t _vertex_attrib_bits = 0) {
+    return SetField<uint16_t>(VT_VERTEX_ATTRIB_BITS, _vertex_attrib_bits, 0);
+  }
+  const ::flatbuffers::Vector<float> *vertex_data() const {
+    return GetPointer<const ::flatbuffers::Vector<float> *>(VT_VERTEX_DATA);
+  }
+  ::flatbuffers::Vector<float> *mutable_vertex_data() {
+    return GetPointer<::flatbuffers::Vector<float> *>(VT_VERTEX_DATA);
+  }
+  const ::flatbuffers::Vector<uint32_t> *indices() const {
+    return GetPointer<const ::flatbuffers::Vector<uint32_t> *>(VT_INDICES);
+  }
+  ::flatbuffers::Vector<uint32_t> *mutable_indices() {
+    return GetPointer<::flatbuffers::Vector<uint32_t> *>(VT_INDICES);
+  }
+  const ::flatbuffers::Vector<const Honeycrisp::Serialized::MeshMetaData *> *meshes() const {
+    return GetPointer<const ::flatbuffers::Vector<const Honeycrisp::Serialized::MeshMetaData *> *>(VT_MESHES);
+  }
+  ::flatbuffers::Vector<const Honeycrisp::Serialized::MeshMetaData *> *mutable_meshes() {
+    return GetPointer<::flatbuffers::Vector<const Honeycrisp::Serialized::MeshMetaData *> *>(VT_MESHES);
   }
   const Honeycrisp::Serialized::Material *material() const {
     return GetPointer<const Honeycrisp::Serialized::Material *>(VT_MATERIAL);
@@ -260,9 +223,13 @@ struct Model FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
+           VerifyField<uint16_t>(verifier, VT_VERTEX_ATTRIB_BITS, 2) &&
+           VerifyOffset(verifier, VT_VERTEX_DATA) &&
+           verifier.VerifyVector(vertex_data()) &&
+           VerifyOffset(verifier, VT_INDICES) &&
+           verifier.VerifyVector(indices()) &&
            VerifyOffset(verifier, VT_MESHES) &&
            verifier.VerifyVector(meshes()) &&
-           verifier.VerifyVectorOfTables(meshes()) &&
            VerifyOffset(verifier, VT_MATERIAL) &&
            verifier.VerifyTable(material()) &&
            VerifyField<int64_t>(verifier, VT_LAST_WRITE_TIME, 8) &&
@@ -274,7 +241,16 @@ struct ModelBuilder {
   typedef Model Table;
   ::flatbuffers::FlatBufferBuilder &fbb_;
   ::flatbuffers::uoffset_t start_;
-  void add_meshes(::flatbuffers::Offset<::flatbuffers::Vector<::flatbuffers::Offset<Honeycrisp::Serialized::Mesh>>> meshes) {
+  void add_vertex_attrib_bits(uint16_t vertex_attrib_bits) {
+    fbb_.AddElement<uint16_t>(Model::VT_VERTEX_ATTRIB_BITS, vertex_attrib_bits, 0);
+  }
+  void add_vertex_data(::flatbuffers::Offset<::flatbuffers::Vector<float>> vertex_data) {
+    fbb_.AddOffset(Model::VT_VERTEX_DATA, vertex_data);
+  }
+  void add_indices(::flatbuffers::Offset<::flatbuffers::Vector<uint32_t>> indices) {
+    fbb_.AddOffset(Model::VT_INDICES, indices);
+  }
+  void add_meshes(::flatbuffers::Offset<::flatbuffers::Vector<const Honeycrisp::Serialized::MeshMetaData *>> meshes) {
     fbb_.AddOffset(Model::VT_MESHES, meshes);
   }
   void add_material(::flatbuffers::Offset<Honeycrisp::Serialized::Material> material) {
@@ -296,24 +272,38 @@ struct ModelBuilder {
 
 inline ::flatbuffers::Offset<Model> CreateModel(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    ::flatbuffers::Offset<::flatbuffers::Vector<::flatbuffers::Offset<Honeycrisp::Serialized::Mesh>>> meshes = 0,
+    uint16_t vertex_attrib_bits = 0,
+    ::flatbuffers::Offset<::flatbuffers::Vector<float>> vertex_data = 0,
+    ::flatbuffers::Offset<::flatbuffers::Vector<uint32_t>> indices = 0,
+    ::flatbuffers::Offset<::flatbuffers::Vector<const Honeycrisp::Serialized::MeshMetaData *>> meshes = 0,
     ::flatbuffers::Offset<Honeycrisp::Serialized::Material> material = 0,
     int64_t last_write_time = 0) {
   ModelBuilder builder_(_fbb);
   builder_.add_last_write_time(last_write_time);
   builder_.add_material(material);
   builder_.add_meshes(meshes);
+  builder_.add_indices(indices);
+  builder_.add_vertex_data(vertex_data);
+  builder_.add_vertex_attrib_bits(vertex_attrib_bits);
   return builder_.Finish();
 }
 
 inline ::flatbuffers::Offset<Model> CreateModelDirect(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    const std::vector<::flatbuffers::Offset<Honeycrisp::Serialized::Mesh>> *meshes = nullptr,
+    uint16_t vertex_attrib_bits = 0,
+    const std::vector<float> *vertex_data = nullptr,
+    const std::vector<uint32_t> *indices = nullptr,
+    const std::vector<Honeycrisp::Serialized::MeshMetaData> *meshes = nullptr,
     ::flatbuffers::Offset<Honeycrisp::Serialized::Material> material = 0,
     int64_t last_write_time = 0) {
-  auto meshes__ = meshes ? _fbb.CreateVector<::flatbuffers::Offset<Honeycrisp::Serialized::Mesh>>(*meshes) : 0;
+  auto vertex_data__ = vertex_data ? _fbb.CreateVector<float>(*vertex_data) : 0;
+  auto indices__ = indices ? _fbb.CreateVector<uint32_t>(*indices) : 0;
+  auto meshes__ = meshes ? _fbb.CreateVectorOfStructs<Honeycrisp::Serialized::MeshMetaData>(*meshes) : 0;
   return Honeycrisp::Serialized::CreateModel(
       _fbb,
+      vertex_attrib_bits,
+      vertex_data__,
+      indices__,
       meshes__,
       material,
       last_write_time);

@@ -9,6 +9,9 @@ HNCRSP_NAMESPACE_START
 class System
 {
 public:
+    // TODO: Make a vector-like interface to communicate with
+    // System Manager, which leaves the System free to store its
+    // data however it likes.
     std::vector<EntityUID> entityUIDs;
 
     // Since Renderer has a unique way of storing entities to

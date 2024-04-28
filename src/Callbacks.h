@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src/core/SceneManager.h"
+#include "src/managers/SceneManager.h"
 
 
 HNCRSP_NAMESPACE_START

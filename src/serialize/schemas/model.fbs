@@ -2,11 +2,10 @@ namespace Honeycrisp.Serialized;
 
 // Basic Model schema
 
-table Mesh
+struct MeshMetaData
 {
-    vertex_attrib_bits: uint16;
-    vertex_data: [float];
-    indices: [uint32];
+    base_index: uint32;
+    vertex_count: uint32;
 }
 
 table Material
@@ -20,7 +19,10 @@ table Material
 
 table Model
 {
-    meshes: [Mesh];
+    vertex_attrib_bits: uint16;
+    vertex_data: [float];
+    indices: [uint32];
+    meshes: [MeshMetaData];
     material: Material;
     last_write_time: int64;
 }

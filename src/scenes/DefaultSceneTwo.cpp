@@ -88,7 +88,7 @@ DefaultSceneTwo::DefaultSceneTwo()
         &uvs
     );
     mesh->setShader(wackyShader);
-    std::shared_ptr<Material> meshMaterial = g_ECSManager->GetComponent<MeshData>(mesh->entityUID).material;
+    std::shared_ptr<Material> meshMaterial = g_ECSManager->GetComponent<DrawData>(mesh->entityUID).material;
     meshMaterial->setAlbedoMap(g_Texture2DManager.mainTextureMap);
     meshMaterial->setSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
 
@@ -100,10 +100,10 @@ DefaultSceneTwo::DefaultSceneTwo()
     backpackMaterial->setShininess(32);
 
     // Author: Eydeet (https://skfb.ly/ouB6N)
-    appleModel = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/apple/source/apple.fbx"), phongShader, false);
-    appleModel->setTransform(Transform(glm::vec3(10.0f, 2.0f, 17.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.3f)));
-    Material* appleMaterial = appleModel->getMaterial();
-    appleMaterial->setShininess(32);
+    // appleModel = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/apple/source/apple.fbx"), phongShader, false);
+    // appleModel->setTransform(Transform(glm::vec3(10.0f, 2.0f, 17.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.3f)));
+    // Material* appleMaterial = appleModel->getMaterial();
+    // appleMaterial->setShininess(32);
 
     // appleModelNormal = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/apple/source/apple.fbx"), normalShader, false);
     // appleModelNormal->setTransform(Transform(glm::vec3(10.0f, 2.0f, 17.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.3f)));
@@ -151,7 +151,7 @@ void DefaultSceneTwo::InitializeShaders(void)
 
 void DefaultSceneTwo::SetInitialUniforms(void)
 {
-    MeshData& meshData = g_ECSManager->GetComponent<MeshData>(mesh->entityUID);
+    DrawData& meshData = g_ECSManager->GetComponent<DrawData>(mesh->entityUID);
     meshData.material->setAlbedoMap(g_Texture2DManager.mainTextureMap);
     meshData.material->setSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
 

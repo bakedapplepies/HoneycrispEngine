@@ -1,6 +1,6 @@
 #include "DefaultScene.h"
 
-#include "src/core/Texture2DManager.h"
+#include "src/managers/Texture2DManager.h"
 
 
 using namespace Honeycrisp;
@@ -9,7 +9,7 @@ DefaultScene::DefaultScene()
 {
     shader = g_ShaderManager.GetShader(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
-        FileSystem::Path("resources/shaders/BlinnPhongFragment.glsl")
+        FileSystem::Path("resources/shaders/BlinnPhongTintFragment.glsl")
     );
 
     cube = CreateStaticRenderObj<Cube>();
@@ -177,7 +177,7 @@ void DefaultScene::OnUpdate(const float& dt)
 
 void DefaultScene::SetInitialUniforms(void)
 {
-    MeshData& meshData = g_ECSManager->GetComponent<MeshData>(customMesh->entityUID);
+    DrawData& meshData = g_ECSManager->GetComponent<DrawData>(customMesh->entityUID);
     meshData.material->setAlbedoMap(g_Texture2DManager.mainTextureMap);
     meshData.material->setSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
 

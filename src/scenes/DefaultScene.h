@@ -4,7 +4,7 @@
 
 #include "src/Scene.h"
 #include "src/ecs/ECSManager.h"
-#include "src/core/ShaderManager.h"
+#include "src/managers/ShaderManager.h"
 #include "src/Cube.h"
 
 

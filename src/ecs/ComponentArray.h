@@ -2,7 +2,7 @@
 
 #include "src/pch/pch.h"
 #include "src/ecs/ECSTypes.h"
-#include "src/components/MeshData.h"
+#include "src/components/DrawData.h"
 
 
 HNCRSP_NAMESPACE_START

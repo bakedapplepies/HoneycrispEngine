@@ -2,7 +2,7 @@
 
 #include "src/pch/pch.h"
 #include "src/ecs/ECSManager.h"
-#include "src/core/ShaderManager.h"
+#include "src/managers/ShaderManager.h"
 #include "src/Renderable.h"
 #include "src/Model.h"
 #include "Cubemap.h"
@@ -29,7 +29,7 @@ protected:
             // default object position is at origin
             g_ECSManager->AddComponent<Transform>(entityUID, {});
 
-            this->virt_AddMeshDataToRenderer(entityUID);
+            this->virt_AddDrawDataToRenderer(entityUID);
         }
 
         ~SceneRenderObj()
@@ -39,19 +39,14 @@ protected:
 
         void setShader(std::shared_ptr<Shader> newShader)
         {
-            MeshData& thisMeshData = g_ECSManager->GetComponent<MeshData>(entityUID);
-            thisMeshData.material->setShader(newShader);
+            DrawData& thisDrawData = g_ECSManager->GetComponent<DrawData>(entityUID);
+            thisDrawData.material->setShader(newShader);
         }
 
         void setTransform(const Transform& newTransform)
         {
             Transform& thisTransform = g_ECSManager->GetComponent<Transform>(entityUID);
             thisTransform = newTransform;
-
-            if constexpr(std::is_same_v<T, Model>)
-            {
-                this->setAllMeshTransform(newTransform);
-            }
         }
     };
 

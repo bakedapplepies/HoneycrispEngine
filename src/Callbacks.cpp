@@ -1,6 +1,6 @@
 #include "Callbacks.h"
-#include "src/core/RenderContext.h"
-#include "src/core/SceneManager.h"
+#include "src/managers/RenderContext.h"
+#include "src/managers/SceneManager.h"
 #include "src/utils/Logging.h"
 
 

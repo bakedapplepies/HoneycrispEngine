@@ -1,8 +1,8 @@
 #include "src/pch/pch.h"
-#include "src/core/Texture2DManager.h"
+#include "src/managers/Texture2DManager.h"
 
 #include "Window.h"
-#include "src/core/SceneManager.h"
+#include "src/managers/SceneManager.h"
 #include "src/scenes/DefaultScene.h"
 #include "src/scenes/DefaultSceneTwo.h"
 #include "src/scenes/SpaceScene.h"

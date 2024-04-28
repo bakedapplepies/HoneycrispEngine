@@ -1,6 +1,6 @@
 #include "Renderer.h"
 #include "src/ecs/ECSManager.h"
-#include "src/components/MeshData.h"
+#include "src/components/DrawData.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -12,7 +12,7 @@ void Renderer::StartUp()
 void Renderer::Render() const
 {
     GLuint shaderID = 0;
-    if (auto cubemap = m_weak_currentCubemap.lock())
+    if (auto cubemap = m_weak_currentCubemap.lock())  // TODO: slow?
     {
         cubemap->Draw();
     }
@@ -24,12 +24,12 @@ void Renderer::Render() const
     const Texture2D* specularMap = nullptr;
     for (const EntityUID& uid : entityUIDs)
     {
-        MeshData& meshData = g_ECSManager->GetComponent<MeshData>(uid);
-        Material* material = meshData.material.get();
+        DrawData& drawData = g_ECSManager->GetComponent<DrawData>(uid);
+        Material* material = drawData.material.get();
         Shader* shader = material->getShader().get();
 
         Transform& transform = g_ECSManager->GetComponent<Transform>(uid);
-        glBindVertexArray(meshData.VAO_id);
+        glBindVertexArray(drawData.VAO_id);
 
         if (shaderID != shader->getID())
         {
@@ -52,9 +52,18 @@ void Renderer::Render() const
         glm::mat4 modelMatrix = GetModelMatrix(transform);
         shader->setMat3Unf("u_normalMatrix", glm::mat3(glm::transpose(glm::inverse(modelMatrix))));
         shader->setMat4Unf("u_model", modelMatrix);
-        GLCall(
-            glDrawElementsBaseVertex(GL_TRIANGLES, meshData.num_vertices, GL_UNSIGNED_INT, 0x0, 0)
-        );
+        for (unsigned int i = 0; i < drawData.meta_data.size(); i++)
+        {
+            GLCall(
+                glDrawElementsBaseVertex(
+                    GL_TRIANGLES,
+                    drawData.meta_data[i].vertex_count,
+                    GL_UNSIGNED_INT,
+                    0x0,
+                    drawData.meta_data[i].index_offset
+                )
+            );
+        }
 
         if (albedoMap) albedoMap->Unbind();
         if (roughnessMap) roughnessMap->Unbind();
@@ -89,7 +98,7 @@ void Renderer::SwitchCubemap(std::weak_ptr<Cubemap> weak_cubemap)
 
 void Renderer::AddEntityUID(EntityUID entityUID)
 {
-    GLuint shaderID = g_ECSManager->GetComponent<MeshData>(entityUID).material->getShader()->getID();
+    GLuint shaderID = g_ECSManager->GetComponent<DrawData>(entityUID).material->getShader()->getID();
     binary_insert_shader_comparator(entityUIDs, m_shaderIDs_Order, entityUID, shaderID);
 }
 

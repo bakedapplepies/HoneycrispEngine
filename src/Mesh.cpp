@@ -1,7 +1,7 @@
 #include "Mesh.h"
-#include "src/components/MeshData.h"
-#include "src/core/ShaderManager.h"
-#include "src/core/SceneManager.h"
+#include "src/components/DrawData.h"
+#include "src/managers/ShaderManager.h"
+#include "src/managers/SceneManager.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -13,7 +13,7 @@ Mesh::Mesh(
     std::vector<glm::vec3>* colors,
     std::vector<glm::vec2>* uvs
 ) {
-    m_VAO = std::make_shared<VertexArray>(
+    m_VAO = std::make_unique<VertexArray>(
         vertices,
         indices,
         normals,
@@ -30,7 +30,7 @@ Mesh::Mesh(
     const GLuint* indices_data,
     size_t indices_data_len
 ) {
-    m_VAO = std::make_shared<VertexArray>(
+    m_VAO = std::make_unique<VertexArray>(
         vertex_attrib_bits,
         vertex_data,
         vertex_data_len,
@@ -38,22 +38,6 @@ Mesh::Mesh(
         indices_data_len
     );
     m_numVertices = indices_data_len;
-}
-
-Mesh::Mesh(const Mesh& other)
-{
-    m_VAO = other.m_VAO;
-    m_numVertices = other.m_numVertices;
-    // m_relativeOrigin = other.m_relativeOrigin;
-}
-
-Mesh& Mesh::operator=(const Mesh& other)
-{
-    m_VAO = other.m_VAO;
-    m_numVertices = other.m_numVertices;
-    // // m_relativeOrigin = other.m_relativeOrigin;
-
-    return *this;
 }
 
 Mesh::Mesh(Mesh&& other) noexcept
@@ -74,26 +58,21 @@ Mesh& Mesh::operator=(Mesh&& other) noexcept
     return *this;
 }
 
-void Mesh::virt_AddMeshDataToRenderer(EntityUID entityUID, std::shared_ptr<Material> material)
+void Mesh::virt_AddDrawDataToRenderer(EntityUID entityUID, std::shared_ptr<Material> material)
 {
-    MeshData meshData;
-    meshData.VAO_id = m_VAO->getID();
-    meshData.num_vertices = m_numVertices;
+    DrawData drawData;
+    drawData.VAO_id = m_VAO->getID();
+    drawData.meta_data.emplace_back(0, m_numVertices);
     if (material)
     {
-        meshData.material = material;
+        drawData.material = material;
     }
     else
     {
-        meshData.material = std::make_shared<Material>(g_ShaderManager.basicShader);
+        drawData.material = std::make_shared<Material>(g_ShaderManager.basicShader);
     }
 
-    g_ECSManager->AddComponent<MeshData>(entityUID, meshData);
-}
-
-const VertexArray* Mesh::GetVAO() const
-{
-    return m_VAO.get();
+    g_ECSManager->AddComponent<DrawData>(entityUID, drawData);
 }
 
 HNCRSP_NAMESPACE_END

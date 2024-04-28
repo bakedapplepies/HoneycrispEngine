@@ -1,7 +1,7 @@
 #pragma once
 
 #include "src/pch/pch.h"
-#include "src/core/Material.h"
+#include "src/managers/Material.h"
 #include "src/ecs/ECSTypes.h"
 #include "src/Object.h"
 
@@ -12,7 +12,7 @@ class Renderable // : public Object
 {
 public:
     // called in scenes
-    virtual void virt_AddMeshDataToRenderer(EntityUID entityUID, std::shared_ptr<Material> material = nullptr) = 0;
+    virtual void virt_AddDrawDataToRenderer(EntityUID entityUID, std::shared_ptr<Material> material = nullptr) = 0;
     virtual ~Renderable() = default;
 };
 

@@ -17,22 +17,29 @@ ModelSerializer::~ModelSerializer()
 
 }
 
-void ModelSerializer::AddMesh(
+void ModelSerializer::AddModel(
     unsigned short vertex_attrib_bits,
     const float* vertex_data,
     size_t vertex_data_len,
     const GLuint* indices_data,
-    size_t indices_data_len
+    size_t indices_data_len,
+    const MeshMetaData* mesh_meta_data,
+    size_t mesh_meta_data_len
 ) {
-    auto serialized_vertex_data = m_builder.CreateVector(vertex_data, vertex_data_len);
-    auto serialized_indices = m_builder.CreateVector(indices_data, indices_data_len);
+    m_vertex_attrib_bits = vertex_attrib_bits;
 
-    m_meshes.push_back(Serialized::CreateMesh(
-        m_builder,
-        vertex_attrib_bits,
-        serialized_vertex_data,
-        serialized_indices
-    ));
+    std::vector<Serialized::MeshMetaData> mesh_meta_data_vec;
+    m_vertex_data = m_builder.CreateVector(vertex_data, vertex_data_len);
+    m_indices = m_builder.CreateVector(indices_data, indices_data_len);
+
+    for (unsigned int i = 0; i < mesh_meta_data_len; i++)
+    {
+        mesh_meta_data_vec.emplace_back(
+            mesh_meta_data[i].index_offset,
+            mesh_meta_data[i].vertex_count
+        );
+    }
+    m_meshes_meta_data = m_builder.CreateVectorOfStructs(mesh_meta_data_vec);
 }
 
 void ModelSerializer::AddAlbedo(const FileSystem::Path& albedo_path)
@@ -72,6 +79,22 @@ flatbuffers::Offset<Serialized::Material> ModelSerializer::FinishMaterial()
     return m_material_builder->Finish();
 }
 
+flatbuffers::Offset<Serialized::Model> ModelSerializer::FinishModel(
+    flatbuffers::Offset<Serialized::Material> material,
+    uint64_t last_write_time
+) {
+    m_model_builder = std::make_unique<Serialized::ModelBuilder>(m_builder);
+
+    m_model_builder->add_vertex_attrib_bits(m_vertex_attrib_bits);
+    m_model_builder->add_vertex_data(m_vertex_data);
+    m_model_builder->add_indices(m_indices);
+    m_model_builder->add_meshes(m_meshes_meta_data);
+    m_model_builder->add_material(material);
+    m_model_builder->add_last_write_time(last_write_time);
+
+    return m_model_builder->Finish();
+}
+
 void ModelSerializer::Serialize(const FileSystem::Path& path_to_model)
 {
     FileSystem::Path serialized_dir(fmt::format("build/{}/src/serialized/models", HNCRSP_BUILD_TYPE));
@@ -84,15 +107,14 @@ void ModelSerializer::Serialize(const FileSystem::Path& path_to_model)
     auto time_count = std::chrono::duration_cast<std::chrono::seconds>(last_write_time_since_epoch);
 
     auto serialized_material = FinishMaterial();
-    auto serialized_meshes = m_builder.CreateVector(m_meshes);
-    auto serialized_model = Serialized::CreateModel(m_builder, serialized_meshes, serialized_material, time_count.count());
+    auto serialized_model = FinishModel(serialized_material, time_count.count());
     m_builder.Finish(serialized_model);
 
     // store buffer
     void* buffer = m_builder.GetBufferPointer();
     unsigned int buffer_size = m_builder.GetSize();
     std::ofstream outFile(serialized_model_path, std::ios::out | std::ios::binary | std::ios::trunc);
-    outFile.write((char*)buffer, buffer_size);
+    outFile.write(reinterpret_cast<char*>(buffer), buffer_size);
     outFile.close();
 }
 

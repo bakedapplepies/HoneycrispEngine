@@ -1,5 +1,5 @@
 #include "Model.h"
-#include "src/core/Texture2DManager.h"
+#include "src/managers/Texture2DManager.h"
 #include "src/ecs/ECSManager.h"
 #include "src/serialize/schemas/model_generated.h"
 
@@ -7,17 +7,19 @@
 HNCRSP_NAMESPACE_START
 
 Model::Model(const FileSystem::Path& path, std::shared_ptr<Shader> shader, bool flip_uv)
-    : m_shader(shader)
 {
+    m_material = std::make_shared<Material>(shader);
+
     ModelSerializer modelSerializer;
     if (const Serialized::Model* deserialized_model = modelSerializer.GetDeserializedObject(path))
     {
-        loadDeserializedModel(deserialized_model, shader);
+        loadDeserializedModel(deserialized_model);
         return;
     }
 
-    // Model loading
+    // Model loading ----------
     float beginTime = glfwGetTime();
+
     Assimp::Importer import;
     const aiScene*  scene = import.ReadFile(path.string().data(),
         aiProcess_Triangulate |
@@ -25,16 +27,18 @@ Model::Model(const FileSystem::Path& path, std::shared_ptr<Shader> shader, bool 
         (flip_uv ? aiProcess_FlipUVs : 0) |
         aiProcess_GenNormals
     );
-
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
         HNCRSP_TERMINATE(fmt::format("ASSIMP: {}", import.GetErrorString()).c_str());
     }
     
+    // Process Model ----------
     FileSystem::Path modelDirectory = path;
     modelDirectory.remove_filename();
+    std::vector<float> vertexData;
+    std::vector<GLuint> indices;
 
-    processNode(scene->mRootNode, scene, modelDirectory, modelSerializer);
+    processNode(scene->mRootNode, scene, modelDirectory, modelSerializer, vertexData, indices);
 
     float beginTime2 = glfwGetTime();
     HNCRSP_LOG_INFO(glfwGetTime() - beginTime2);
@@ -45,6 +49,31 @@ Model::Model(const FileSystem::Path& path, std::shared_ptr<Shader> shader, bool 
             glfwGetTime() - beginTime
         )
     );
+
+    // Vertex Array construction ----------
+    unsigned short vertex_attrib_bits = 
+        VERTEX_ATTRIB_POSITION_BIT |
+        VERTEX_ATTRIB_UV_BIT |
+        VERTEX_ATTRIB_NORMAL_BIT;
+
+    m_VAO = std::make_unique<VertexArray>(
+        vertex_attrib_bits,
+        vertexData.data(),
+        vertexData.size(),
+        indices.data(),
+        indices.size()
+    );
+
+    // Serialization ----------
+    modelSerializer.AddModel(
+        vertex_attrib_bits,
+        vertexData.data(),
+        vertexData.size(),
+        indices.data(),
+        indices.size(),
+        m_meshesMetaData.data(),
+        m_meshesMetaData.size()
+    );
     modelSerializer.Serialize(path);
 }
 
@@ -52,60 +81,49 @@ void Model::processNode(
     aiNode* node,
     const aiScene* scene,
     const FileSystem::Path& modelDirectory,
-    ModelSerializer& modelSerializer
+    ModelSerializer& modelSerializer,
+    std::vector<float>& vertexData,
+    std::vector<GLuint>& indices
 ) {
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        m_meshes.push_back(processMesh(mesh, scene, modelDirectory, modelSerializer));
+        processMesh(mesh, scene, modelDirectory, modelSerializer, vertexData, indices);
     }
     for (unsigned int i = 0; i < node->mNumChildren; i++)
     {
-        processNode(node->mChildren[i], scene, modelDirectory, modelSerializer);
+        processNode(node->mChildren[i], scene, modelDirectory, modelSerializer, vertexData, indices);
     }
 }
 
-Mesh Model::processMesh(
+void Model::processMesh(
     aiMesh* mesh,
     const aiScene* scene,
     const FileSystem::Path& modelDirectory,
-    ModelSerializer& modelSerializer
+    ModelSerializer& modelSerializer,
+    std::vector<float>& vertexData,
+    std::vector<GLuint>& indices
 ) {
-    std::vector<glm::vec3> verticesPos;
-    verticesPos.reserve(mesh->mNumVertices);
-
-    std::vector<glm::vec3> normals;
-    normals.reserve(mesh->mNumVertices);
-
-    std::vector<glm::vec2> uvs;
-    uvs.reserve(mesh->mNumVertices);
-
-    std::vector<GLuint> indices;
-
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
-        verticesPos.emplace_back(
-            mesh->mVertices[i].x,
-            mesh->mVertices[i].y,
-            mesh->mVertices[i].z
-        );
-        
-        normals.emplace_back(
-            mesh->mNormals[i].x,
-            mesh->mNormals[i].y,
-            mesh->mNormals[i].z
-        );
+        vertexData.push_back(mesh->mVertices[i].x);
+        vertexData.push_back(mesh->mVertices[i].y);
+        vertexData.push_back(mesh->mVertices[i].z);
+
         if (mesh->mTextureCoords[0])
         {
-            uvs.emplace_back(
-                mesh->mTextureCoords[0][i].x,
-                mesh->mTextureCoords[0][i].y
-            );
+            vertexData.push_back(mesh->mTextureCoords[0][i].x);
+            vertexData.push_back(mesh->mTextureCoords[0][i].y);
         }
         else
         {
-            uvs.emplace_back(0.0f, 0.0f);
+            vertexData.push_back(0.0f);
+            vertexData.push_back(0.0f);
         }
+
+        vertexData.push_back(mesh->mNormals[i].x);
+        vertexData.push_back(mesh->mNormals[i].y);
+        vertexData.push_back(mesh->mNormals[i].z);
     }
 
     for (unsigned int i = 0; i < mesh->mNumFaces; i++)
@@ -117,16 +135,31 @@ Mesh Model::processMesh(
         }
     }
 
-    EntityUID newMeshID = g_ECSManager->NewEntityUID();
-    m_meshIDs.push_back(newMeshID);
-    g_ECSManager->AddComponent<Transform>(newMeshID, {});  // dummy data to change later
-    if (!m_material) m_material = std::make_shared<Material>(m_shader);
+    static uint32_t num_vertices;
 
-    if (mesh->mMaterialIndex >= 0 && m_material->getAlbedoMap() == nullptr)  // TODO: process multiple materials, only 1 material per model for now
+    if (m_meshesMetaData.size() == 0)
+    {
+        m_meshesMetaData.emplace_back(
+            0,
+            mesh->mNumFaces * 3
+        );
+    }
+    else
+    {
+        m_meshesMetaData.emplace_back(
+            m_meshesMetaData.back().index_offset + num_vertices,
+            mesh->mNumFaces * 3
+        );
+    }
+
+    num_vertices = mesh->mNumVertices;
+
+    // latter check to ensure this only runs once
+    if (mesh->mMaterialIndex >= 0 && m_material->getAlbedoMap() == nullptr)
     {
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-        aiString textureFilename;
+        aiString textureFilename;   
         std::string texturePath;
 
         if (material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilename) != -1)
@@ -146,7 +179,6 @@ Mesh Model::processMesh(
         if (material->GetTexture(aiTextureType_SPECULAR, 0, &textureFilename) != -1)
         {
             texturePath = modelDirectory.string() + textureFilename.C_Str();
-            HNCRSP_LOG_INFO(texturePath);
             modelSerializer.AddSpecular(FileSystem::Path(texturePath));
             std::shared_ptr<Texture2D> specularMap = getMaterialTexture(texturePath.c_str(), aiTextureType_SPECULAR);
             m_material->setSpecularMap(specularMap);
@@ -154,7 +186,6 @@ Mesh Model::processMesh(
         if (material->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &textureFilename) != -1)
         {
             texturePath = modelDirectory.string() + textureFilename.C_Str();
-            HNCRSP_LOG_INFO(texturePath);
             modelSerializer.AddRoughness(FileSystem::Path(texturePath));
             std::shared_ptr<Texture2D> roughnessMap = getMaterialTexture(texturePath.c_str(), aiTextureType_DIFFUSE_ROUGHNESS);
             m_material->setRoughnessMap(roughnessMap);
@@ -167,29 +198,6 @@ Mesh Model::processMesh(
             m_material->setAoMap(aoMap);
         }
     }
-
-    Mesh newMesh(
-        &verticesPos,
-        &indices,
-        &normals,
-        nullptr,
-        &uvs
-    );
-
-    unsigned char vertex_attrib_bits = 
-        VERTEX_ATTRIB_POSITION_BIT |
-        VERTEX_ATTRIB_UV_BIT |
-        VERTEX_ATTRIB_NORMAL_BIT;
-
-    modelSerializer.AddMesh(
-        vertex_attrib_bits,
-        newMesh.GetVAO()->getData(),
-        newMesh.GetVAO()->getDataLen(),
-        indices.data(),
-        indices.size()
-    );
-
-    return newMesh;
 }
 
 std::shared_ptr<Texture2D> Model::getMaterialTexture(
@@ -227,33 +235,32 @@ std::shared_ptr<Texture2D> Model::getMaterialTexture(
     return g_Texture2DManager.GetTexture2D(FileSystem::Path(texturePath), textureType);
 }
 
-void Model::loadDeserializedModel(
-    const Serialized::Model* deserialized_model,
-    std::shared_ptr<Shader> shader
-) {
-    // load all meshes in model
-    m_meshes.reserve(deserialized_model->meshes()->size());
-    m_meshIDs.reserve(deserialized_model->meshes()->size());
+void Model::loadDeserializedModel(const Serialized::Model* deserialized_model)
+{
+    m_meshesMetaData.reserve(deserialized_model->meshes()->size());
     for (unsigned int i = 0; i < deserialized_model->meshes()->size(); i++)
     {
-        auto mesh = deserialized_model->meshes()->Get(i);
-        m_meshes.emplace_back(
-            mesh->vertex_attrib_bits(),
-            mesh->vertex_data()->data(),
-            mesh->vertex_data()->size(),
-            mesh->indices()->data(),
-            mesh->indices()->size()
+        m_meshesMetaData.emplace_back(
+            deserialized_model->meshes()->Get(i)->base_index(),
+            deserialized_model->meshes()->Get(i)->vertex_count()
         );
-
-        EntityUID newMeshID = g_ECSManager->NewEntityUID();
-        m_meshIDs.push_back(newMeshID);
-        g_ECSManager->AddComponent<Transform>(newMeshID, {});  // dummy data to change later
     }
+
+    // m_meshesMetaData = std::vector<Serialized::MeshMetaData>(
+    //     deserializ
+    // );
+
+    m_VAO = std::make_unique<VertexArray>(
+        deserialized_model->vertex_attrib_bits(),
+        deserialized_model->vertex_data()->data(),
+        deserialized_model->vertex_data()->size(),
+        deserialized_model->indices()->data(),
+        deserialized_model->indices()->size()
+    );
 
     // load material
     auto material = deserialized_model->material();
-    m_shader = shader;
-    m_material = std::make_shared<Material>(shader);
+    
     std::string_view albedo = material->albedo_path()->string_view();
     std::string_view roughness = material->roughness_path()->string_view();
     std::string_view ao = material->ao_path()->string_view();
@@ -277,20 +284,21 @@ void Model::loadDeserializedModel(
     );
 }
 
-void Model::setAllMeshTransform(const Transform& transform) const
+void Model::virt_AddDrawDataToRenderer(EntityUID entityUID, std::shared_ptr<Material> material)
 {
-    for (const EntityUID& entityUID : m_meshIDs)
+    DrawData meshData;
+    meshData.VAO_id = m_VAO->getID();
+    meshData.meta_data = std::vector<MeshMetaData>(m_meshesMetaData.begin(), m_meshesMetaData.end());
+    if (material)
     {
-        g_ECSManager->GetComponent<Transform>(entityUID) = transform;
+        meshData.material = material;
     }
-}
+    else
+    {
+        meshData.material = std::make_shared<Material>(g_ShaderManager.basicShader);
+    }
 
-void Model::virt_AddMeshDataToRenderer(EntityUID entityUID, std::shared_ptr<Material> material)
-{
-    for (size_t i = 0; i < m_meshes.size(); i++)
-    {
-        m_meshes[i].virt_AddMeshDataToRenderer(m_meshIDs[i], m_material);
-    }
+    g_ECSManager->AddComponent<DrawData>(entityUID, meshData);
 }
 
 Material* Model::getMaterial() const

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "src/core/SceneManager.h"
-#include "src/core/RenderContext.h"
+#include "src/managers/SceneManager.h"
+#include "src/managers/RenderContext.h"
 #include "opengl/UniformBuffer.h"
 #include "Camera.h"
 

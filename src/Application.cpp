@@ -1,19 +1,19 @@
 #include "Application.h"
 
 // Managers
-#include "src/core/GLFWContext.h"
-#include "src/core/RenderContext.h"
-#include "src/core/ImGuiManager.h"
-#include "src/core/Texture2DManager.h"
-#include "src/core/ShaderManager.h"
-#include "src/core/SceneManager.h"
+#include "src/managers/GLFWContext.h"
+#include "src/managers/RenderContext.h"
+#include "src/managers/ImGuiManager.h"
+#include "src/managers/Texture2DManager.h"
+#include "src/managers/ShaderManager.h"
+#include "src/managers/SceneManager.h"
 #include "src/Callbacks.h"
 #include "src/Window.h"
 #include "src/ecs/ECSManager.h"
 
 // Components
 #include "src/components/Transform.h"
-#include "src/components/MeshData.h"
+#include "src/components/DrawData.h"
 
 // ECS Systems
 #include "src/systems/Renderer.h"
@@ -59,13 +59,13 @@ void Application::Run()  // this is where the main control flow happens
 void Application_RegisterComponents()
 {
     g_ECSManager->RegisterComponent<Transform>();
-    g_ECSManager->RegisterComponent<MeshData>();
+    g_ECSManager->RegisterComponent<DrawData>();
 }
 
 void Application_RegisterSystems()
 {
     ComponentBitset renderer_component_bitset;
-    renderer_component_bitset.set(GetBitIndex<MeshData>());
+    renderer_component_bitset.set(GetBitIndex<DrawData>());
     renderer_component_bitset.set(GetBitIndex<Transform>());
     g_ECSManager->RegisterSystem<Renderer>(renderer_component_bitset);
 }

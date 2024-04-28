@@ -26,7 +26,7 @@ private:
     ElementBuffer m_elementBuffer;
 
     // mesh data
-    std::vector<float> m_vertData;
+    std::vector<float> m_vertexData;
 
 public:
     VertexArray(
@@ -37,7 +37,7 @@ public:
         const std::vector<glm::vec2>* uvs
     );
     VertexArray(
-        unsigned char vertex_attrib_bits,
+        unsigned short vertex_attrib_bits,
         const float* vertex_data,
         size_t vertex_data_len,
         const GLuint* indices_data,

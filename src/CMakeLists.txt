@@ -34,18 +34,18 @@ set(SOURCE
     ${CMAKE_SOURCE_DIR}/src/opengl/UniformBuffer.cpp
 
     # managers
-    ${CMAKE_SOURCE_DIR}/src/core/GLFWContext.h
-    ${CMAKE_SOURCE_DIR}/src/core/GLFWContext.cpp
-    ${CMAKE_SOURCE_DIR}/src/core/RenderContext.h
-    ${CMAKE_SOURCE_DIR}/src/core/RenderContext.cpp
-    ${CMAKE_SOURCE_DIR}/src/core/SceneManager.h
-    ${CMAKE_SOURCE_DIR}/src/core/SceneManager.cpp
-    ${CMAKE_SOURCE_DIR}/src/core/Texture2DManager.h
-    ${CMAKE_SOURCE_DIR}/src/core/Texture2DManager.cpp
-    ${CMAKE_SOURCE_DIR}/src/core/ShaderManager.h
-    ${CMAKE_SOURCE_DIR}/src/core/ShaderManager.cpp
-    ${CMAKE_SOURCE_DIR}/src/core/ImGuiManager.h
-    ${CMAKE_SOURCE_DIR}/src/core/ImGuiManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/managers/GLFWContext.h
+    ${CMAKE_SOURCE_DIR}/src/managers/GLFWContext.cpp
+    ${CMAKE_SOURCE_DIR}/src/managers/RenderContext.h
+    ${CMAKE_SOURCE_DIR}/src/managers/RenderContext.cpp
+    ${CMAKE_SOURCE_DIR}/src/managers/SceneManager.h
+    ${CMAKE_SOURCE_DIR}/src/managers/SceneManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/managers/Texture2DManager.h
+    ${CMAKE_SOURCE_DIR}/src/managers/Texture2DManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/managers/ShaderManager.h
+    ${CMAKE_SOURCE_DIR}/src/managers/ShaderManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/managers/ImGuiManager.h
+    ${CMAKE_SOURCE_DIR}/src/managers/ImGuiManager.cpp
 
     # ecs
     ${CMAKE_SOURCE_DIR}/src/ecs/ComponentArray.h
@@ -74,8 +74,8 @@ set(SOURCE
     ${CMAKE_SOURCE_DIR}/src/serialize/ModelSerializer.cpp
 
     # Application stuff
-    ${CMAKE_SOURCE_DIR}/src/core/Material.h
-    ${CMAKE_SOURCE_DIR}/src/core/Material.cpp
+    ${CMAKE_SOURCE_DIR}/src/managers/Material.h
+    ${CMAKE_SOURCE_DIR}/src/managers/Material.cpp
     ${CMAKE_SOURCE_DIR}/src/Callbacks.h
     ${CMAKE_SOURCE_DIR}/src/Callbacks.cpp
     ${CMAKE_SOURCE_DIR}/src/Application.h
@@ -135,6 +135,7 @@ execute_process(
 
 target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
     GLM_FORCE_SWIZZLE
+    GLM_ENABLE_EXPERIMENTAL
     HNCRSP_PROJECT_DIR="${CMAKE_SOURCE_DIR}"
     HNCRSP_GIT_COMMIT_ID="${COMMIT_ID}"
     HNCRSP_BUILD_TYPE="${CMAKE_BUILD_TYPE}"

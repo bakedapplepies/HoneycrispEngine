@@ -27,22 +27,22 @@ public:
 
     void StartUp();
     void Render() const;
-    void SwitchSceneToRender();
     void SwitchCubemap(std::weak_ptr<Cubemap> weak_cubemap);
 
     void AddEntityUID(EntityUID entityUID) override;
 
 private:
     glm::mat4 GetModelMatrix(Transform& transform) const;
+    void GenerateDrawCommands();
 };
 
 struct DrawElementsIndirectCommand
 {
-    GLuint count;
-    GLuint instanceCount;
-    GLuint firstIndex;
-    GLint baseVertex;
-    GLuint baseInstance;
+    GLuint count = 1;
+    GLuint instanceCount = 1;
+    GLuint firstIndex = 0;
+    GLint baseVertex = 0;
+    GLuint baseInstance = 0;
 };
 
 HNCRSP_NAMESPACE_END

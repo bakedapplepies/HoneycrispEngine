@@ -1,5 +1,5 @@
 #include "Cubemap.h"
-#include "src/core/ShaderManager.h"
+#include "src/managers/ShaderManager.h"
 
 
 HNCRSP_NAMESPACE_START

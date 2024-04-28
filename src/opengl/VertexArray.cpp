@@ -33,32 +33,35 @@ VertexArray::VertexArray(
     }
     if (normals)
     {
-        if (normals->size() != vertices->size() && normals->size() != 0)
+        if (normals->size() != vertices->size())
         {
             HNCRSP_TERMINATE("Normals data not uniform with vertex positions.");
         }
     }
     if (colors)
     {
-        if (colors->size() != vertices->size() && colors->size() != 0)
+        if (colors->size() != vertices->size())
         {
             HNCRSP_TERMINATE("Color data not uniform with vertex positions.");
         }
     }
     if (uvs)
     {
-        if (uvs->size() != vertices->size() && uvs->size() != 0)
+        if (uvs->size() != vertices->size())
         {
             HNCRSP_TERMINATE("UV data not uniform with vertex positions.");
         }
     }
     
-    size_t vertArrayDataSize = vertices->size() * 3 + vertices->size() * 3;  // latter is color
+    size_t vertArrayDataSize = vertices->size() * 3;
+    if (colors) vertArrayDataSize += colors->size();
     if (normals) vertArrayDataSize += normals->size() * 3;
     if (uvs) vertArrayDataSize += uvs->size() * 2;
-    m_vertData.reserve(vertArrayDataSize);
+    m_vertexData.reserve(vertArrayDataSize);
     
     // TODO: Somehow fill this asynchronously
+    // perhaps via the GPU?
+
     // HNCRSP_LOG_INFO(vertices->size());
 // #define MAX_VERTICES_PER_PROCESS 3000
 //     unsigned int num_processes =
@@ -72,43 +75,34 @@ VertexArray::VertexArray(
 
     for (size_t vertIndex = 0; vertIndex < vertices->size(); vertIndex++)
     {
-        if (!vertices->empty())
-        {
-            m_vertData.push_back(verticesRef[vertIndex].x);
-            m_vertData.push_back(verticesRef[vertIndex].y);
-            m_vertData.push_back(verticesRef[vertIndex].z);
-        }
+        m_vertexData.push_back(verticesRef[vertIndex].x);
+        m_vertexData.push_back(verticesRef[vertIndex].y);
+        m_vertexData.push_back(verticesRef[vertIndex].z);
 
-        // if (!colors)  // even if color is not available there should be a default color
-        // {
-        //     m_vertData.push_back(1.0f);
-        //     m_vertData.push_back(1.0f);
-        //     m_vertData.push_back(1.0f);
-        // }
         if (colors)
         {
-            m_vertData.push_back(colorsRef[vertIndex].x);
-            m_vertData.push_back(colorsRef[vertIndex].y);
-            m_vertData.push_back(colorsRef[vertIndex].z);
+            m_vertexData.push_back(colorsRef[vertIndex].x);
+            m_vertexData.push_back(colorsRef[vertIndex].y);
+            m_vertexData.push_back(colorsRef[vertIndex].z);
         }
 
         if (uvs)
         {
-            m_vertData.push_back(uvsRef[vertIndex].x);
-            m_vertData.push_back(uvsRef[vertIndex].y);
+            m_vertexData.push_back(uvsRef[vertIndex].x);
+            m_vertexData.push_back(uvsRef[vertIndex].y);
         }
 
         if (normals)
         {
-            m_vertData.push_back(normalsRef[vertIndex].x);
-            m_vertData.push_back(normalsRef[vertIndex].y);
-            m_vertData.push_back(normalsRef[vertIndex].z);
+            m_vertexData.push_back(normalsRef[vertIndex].x);
+            m_vertexData.push_back(normalsRef[vertIndex].y);
+            m_vertexData.push_back(normalsRef[vertIndex].z);
         }
     }
 
     CreateVAO(
-        m_vertData.data(),
-        m_vertData.size() * sizeof(float),
+        m_vertexData.data(),
+        m_vertexData.size() * sizeof(float),
         indices->data(),
         indices->size() * sizeof(GLuint), 
         GL_STATIC_DRAW
@@ -116,9 +110,9 @@ VertexArray::VertexArray(
 
     size_t numAttribElements = 
         3 +
-        3 * (bool)(colors) +
-        2 * (bool)(uvs) +
-        3 * (bool)(normals);
+        3 * static_cast<bool>(colors) +
+        2 * static_cast<bool>(uvs) +
+        3 * static_cast<bool>(normals);
     unsigned int currentOffset = 0;
 
     // Postions XYZ
@@ -183,7 +177,7 @@ VertexArray::VertexArray(
 }
 
 VertexArray::VertexArray(
-    unsigned char vertex_attrib_bits,
+    unsigned short vertex_attrib_bits,
     const float* vertex_data,
     size_t vertex_data_len,
     const GLuint* indices_data,
@@ -326,7 +320,7 @@ VertexArray::VertexArray(VertexArray&& other) noexcept
 {
     m_VAO_ID = other.m_VAO_ID;
     other.m_VAO_ID = 0;
-    m_vertData = std::move(other.m_vertData);
+    m_vertexData = std::move(other.m_vertexData);
 
     m_vertexBuffer = std::move(other.m_vertexBuffer);
     m_elementBuffer = std::move(other.m_elementBuffer);
@@ -336,7 +330,7 @@ VertexArray& VertexArray::operator=(VertexArray&& other) noexcept
 {
     m_VAO_ID = other.m_VAO_ID;
     other.m_VAO_ID = 0;
-    m_vertData = std::move(other.m_vertData);
+    m_vertexData = std::move(other.m_vertexData);
 
     m_vertexBuffer = std::move(other.m_vertexBuffer);
     m_elementBuffer = std::move(other.m_elementBuffer);
@@ -378,12 +372,12 @@ GLuint VertexArray::getID()
 
 const float* VertexArray::getData() const
 {
-    return m_vertData.data();
+    return m_vertexData.data();
 }
 
 size_t VertexArray::getDataLen() const
 {
-    return m_vertData.size();
+    return m_vertexData.size();
 }
 
 HNCRSP_NAMESPACE_END

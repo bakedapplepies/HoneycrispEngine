@@ -1,7 +1,7 @@
 #include "Cube.h"
-#include "src/core/Texture2DManager.h"
-#include "src/core/ShaderManager.h"
-#include "src/core/SceneManager.h"
+#include "src/managers/Texture2DManager.h"
+#include "src/managers/ShaderManager.h"
+#include "src/managers/SceneManager.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -213,17 +213,17 @@ void Cube::InitializeAttributeData()
     );
 }
 
-void Cube::virt_AddMeshDataToRenderer(EntityUID entityUID, std::shared_ptr<Material> material)
+void Cube::virt_AddDrawDataToRenderer(EntityUID entityUID, std::shared_ptr<Material> material)
 {
-    MeshData meshData;
-    meshData.VAO_id = m_VAO->getID();
-    meshData.num_vertices = m_numVertices;
-    meshData.material = std::make_shared<Material>(g_ShaderManager.basicShader);
+    DrawData drawData;
+    drawData.VAO_id = m_VAO->getID();
+    drawData.meta_data.emplace_back(0, m_numVertices);
+    drawData.material = std::make_shared<Material>(g_ShaderManager.basicShader);
 
-    meshData.material->setAlbedoMap(g_Texture2DManager.mainTextureMap);
-    meshData.material->setSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
+    drawData.material->setAlbedoMap(g_Texture2DManager.mainTextureMap);
+    drawData.material->setSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
 
-    g_ECSManager->AddComponent<MeshData>(entityUID, meshData);
+    g_ECSManager->AddComponent<DrawData>(entityUID, drawData);
 }
 
 HNCRSP_NAMESPACE_END
