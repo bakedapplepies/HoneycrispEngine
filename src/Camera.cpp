@@ -8,7 +8,6 @@ HNCRSP_NAMESPACE_START
 Camera::Camera(const glm::vec3& initialPos)
 {
     cameraPos = initialPos;
-    cameraPos - glm::vec3(0.0f, 0.0f, 0.0f);
 }
 
 void Camera::SetPos(const glm::vec3& newPos)

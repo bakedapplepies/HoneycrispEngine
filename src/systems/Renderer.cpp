@@ -35,6 +35,7 @@ void Renderer::Render() const
         {
             shader->Use();
             shaderID = shader->getID();
+            // HNCRSP_LOG_INFO(shader->getID());
         }
 
         albedoMap = material->getAlbedoMap();

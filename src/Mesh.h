@@ -30,10 +30,8 @@ public:
     );
     Mesh(
         unsigned char vertex_attrib_bits,
-        const float* vertex_data,
-        size_t vertex_data_len,
-        const GLuint* indices_data,
-        size_t indices_data_len
+        const std::vector<float>& vertex_data,
+        const std::vector<GLuint>& indices_data
     );
     Mesh(const Mesh& other) = delete;
     Mesh& operator=(const Mesh& other) = delete;

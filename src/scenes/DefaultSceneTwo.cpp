@@ -17,7 +17,7 @@ DefaultSceneTwo::DefaultSceneTwo()
 
     cube = CreateStaticRenderObj<Cube>();
     cubeTransform = &g_ECSManager->GetComponent<Transform>(cube->entityUID);
-    cube->setShader(phongShader);
+    cube->setShader(phongWTintShader);
     cube->setTransform(Transform(glm::vec3(1.0f, 10.0f ,5.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
 
     TextureAtlas& grassAtlas = g_Texture2DManager.GetAtlas(3, 1);
@@ -87,17 +87,21 @@ DefaultSceneTwo::DefaultSceneTwo()
         &colors,
         &uvs
     );
-    mesh->setShader(wackyShader);
+    mesh->setTransform(Transform(glm::vec3(0.0f, -6.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+    mesh->setShader(phongWTintShader);
     std::shared_ptr<Material> meshMaterial = g_ECSManager->GetComponent<DrawData>(mesh->entityUID).material;
     meshMaterial->setAlbedoMap(g_Texture2DManager.mainTextureMap);
     meshMaterial->setSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
+    meshMaterial->setShininess(128.0f);
 
-    mesh->setTransform(Transform(glm::vec3(0.0f, -6.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
-
-    backpackModel = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/backpack/backpack.obj"), phongShader, true);
+    backpackModel = CreateStaticRenderObj<Model>(
+        FileSystem::Path("resources/models/backpack/backpack.obj"),
+        phongShader,
+        true  // flip uv
+    );
     backpackModel->setTransform(Transform(glm::vec3(10.0f, 2.0f, 7.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(3.0f)));
     Material* backpackMaterial = backpackModel->getMaterial();
-    backpackMaterial->setShininess(32);
+    backpackMaterial->setShininess(64.0f);
 
     // Author: Eydeet (https://skfb.ly/ouB6N)
     // appleModel = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/apple/source/apple.fbx"), phongShader, false);
@@ -124,7 +128,7 @@ DefaultSceneTwo::DefaultSceneTwo()
 void DefaultSceneTwo::OnUpdate(const float& dt)
 {
     phongShader->setVec3Unf("u_pointLight.position", pointLight->position);
-    wackyShader->setVec3Unf("u_pointLight.position", pointLight->position);
+    phongWTintShader->setVec3Unf("u_pointLight.position", pointLight->position);
     normalShader->setFloatUnf("u_normal_length", m_u_normal_length);
 
     cubeTransform->eulerAngles += glm::vec3(1.0f, 1.0f, 0.0f) * dt;
@@ -137,7 +141,7 @@ void DefaultSceneTwo::InitializeShaders(void)
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
         FileSystem::Path("resources/shaders/BlinnPhongFragment.glsl")
     );
-    wackyShader = g_ShaderManager.GetShader(
+    phongWTintShader = g_ShaderManager.GetShader(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
         FileSystem::Path("resources/shaders/BlinnPhongTintFragment.glsl")
         // FileSystem::Path("resources/shaders/WaveGeometry.glsl")  // TODO: just to calculate normals, maybe rename file to CalcNormGeometry.glsl
@@ -151,15 +155,6 @@ void DefaultSceneTwo::InitializeShaders(void)
 
 void DefaultSceneTwo::SetInitialUniforms(void)
 {
-    DrawData& meshData = g_ECSManager->GetComponent<DrawData>(mesh->entityUID);
-    meshData.material->setAlbedoMap(g_Texture2DManager.mainTextureMap);
-    meshData.material->setSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
-
-    // lighting
-    phongShader->setIntUnf("u_material.albedo", g_Texture2DManager.mainTextureMap->getTextureUnit());
-    phongShader->setIntUnf("u_material.specular", g_Texture2DManager.mainTextureSpecularMap->getTextureUnit());
-    phongShader->setFloatUnf("u_material.shininess", 128.0f);
-
     // dir light
     phongShader->setVec3Unf("u_dirLight.direction", glm::normalize(glm::vec3(0, -1, 0)));
     phongShader->setVec3Unf("u_dirLight.ambient", glm::vec3(0.1f));
@@ -185,35 +180,30 @@ void DefaultSceneTwo::SetInitialUniforms(void)
     phongShader->setFloatUnf("u_spotLight.linear", 0.07f);
     phongShader->setFloatUnf("u_spotLight.quadratic", 0.0045f);
     
-    // lighting
-    wackyShader->setIntUnf("u_material.albedo", g_Texture2DManager.mainTextureMap->getTextureUnit());
-    wackyShader->setIntUnf("u_material.specular", g_Texture2DManager.mainTextureSpecularMap->getTextureUnit());
-    wackyShader->setFloatUnf("u_material.shininess", 128.0f);
-
     // dir light
-    wackyShader->setVec3Unf("u_dirLight.direction", glm::normalize(glm::vec3(0, -1, 0)));
-    wackyShader->setVec3Unf("u_dirLight.ambient", glm::vec3(0.1f));
-    wackyShader->setVec3Unf("u_dirLight.diffuse", glm::vec3(0.7f));
-    wackyShader->setVec3Unf("u_dirLight.specular", glm::vec3(1.0f));
+    phongWTintShader->setVec3Unf("u_dirLight.direction", glm::normalize(glm::vec3(0, -1, 0)));
+    phongWTintShader->setVec3Unf("u_dirLight.ambient", glm::vec3(0.1f));
+    phongWTintShader->setVec3Unf("u_dirLight.diffuse", glm::vec3(0.7f));
+    phongWTintShader->setVec3Unf("u_dirLight.specular", glm::vec3(1.0f));
 
     // point light
-    wackyShader->setVec3Unf("u_pointLight.position", pointLight->position);
-    wackyShader->setVec3Unf("u_pointLight.ambient", pointLight->getAmbient());
-    wackyShader->setVec3Unf("u_pointLight.diffuse", pointLight->getDiffuse());
-    wackyShader->setVec3Unf("u_pointLight.specular", pointLight->getSpecular());
-    wackyShader->setFloatUnf("u_pointLight.constant", pointLight->attenuation_constant);
-    wackyShader->setFloatUnf("u_pointLight.linear", pointLight->attenuation_linear);
-    wackyShader->setFloatUnf("u_pointLight.quadratic", pointLight->attenuation_quadratic);
+    phongWTintShader->setVec3Unf("u_pointLight.position", pointLight->position);
+    phongWTintShader->setVec3Unf("u_pointLight.ambient", pointLight->getAmbient());
+    phongWTintShader->setVec3Unf("u_pointLight.diffuse", pointLight->getDiffuse());
+    phongWTintShader->setVec3Unf("u_pointLight.specular", pointLight->getSpecular());
+    phongWTintShader->setFloatUnf("u_pointLight.constant", pointLight->attenuation_constant);
+    phongWTintShader->setFloatUnf("u_pointLight.linear", pointLight->attenuation_linear);
+    phongWTintShader->setFloatUnf("u_pointLight.quadratic", pointLight->attenuation_quadratic);
 
     // spot light
-    wackyShader->setFloatUnf("u_spotLight.cutOff", glm::cos(glm::radians(15.0f)));
-    wackyShader->setFloatUnf("u_spotLight.outerCutOff", glm::cos(glm::radians(25.0f)));
-    wackyShader->setVec3Unf("u_spotLight.ambient", glm::vec3(0.1f));
-    wackyShader->setVec3Unf("u_spotLight.diffuse", glm::vec3(0.5f));
-    wackyShader->setVec3Unf("u_spotLight.specular", glm::vec3(1.0f));
-    wackyShader->setFloatUnf("u_spotLight.constant", 1.0f);
-    wackyShader->setFloatUnf("u_spotLight.linear", 0.07f);
-    wackyShader->setFloatUnf("u_spotLight.quadratic", 0.0045f);
+    phongWTintShader->setFloatUnf("u_spotLight.cutOff", glm::cos(glm::radians(15.0f)));
+    phongWTintShader->setFloatUnf("u_spotLight.outerCutOff", glm::cos(glm::radians(25.0f)));
+    phongWTintShader->setVec3Unf("u_spotLight.ambient", glm::vec3(0.1f));
+    phongWTintShader->setVec3Unf("u_spotLight.diffuse", glm::vec3(0.5f));
+    phongWTintShader->setVec3Unf("u_spotLight.specular", glm::vec3(1.0f));
+    phongWTintShader->setFloatUnf("u_spotLight.constant", 1.0f);
+    phongWTintShader->setFloatUnf("u_spotLight.linear", 0.07f);
+    phongWTintShader->setFloatUnf("u_spotLight.quadratic", 0.0045f);
 }
 
 void DefaultSceneTwo::OnImGui(void)

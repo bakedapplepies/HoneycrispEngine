@@ -52,6 +52,8 @@ VertexArray::VertexArray(
             HNCRSP_TERMINATE("UV data not uniform with vertex positions.");
         }
     }
+
+    m_indices = std::vector<GLuint>(indices->begin(), indices->end());
     
     size_t vertArrayDataSize = vertices->size() * 3;
     if (colors) vertArrayDataSize += colors->size();
@@ -122,7 +124,7 @@ VertexArray::VertexArray(
         GL_FLOAT,
         GL_FALSE,
         numAttribElements * sizeof(float),
-        (void*)(currentOffset * sizeof(float))
+        reinterpret_cast<void*>(currentOffset * sizeof(float))
     ));
     EnableVertexAttribPosition(true);
     currentOffset += 3;
@@ -136,7 +138,7 @@ VertexArray::VertexArray(
             GL_FLOAT,
             GL_FALSE,
             numAttribElements * sizeof(float),
-            (void*)(currentOffset * sizeof(float))
+            reinterpret_cast<void*>(currentOffset * sizeof(float))
         ));
         EnableVertexAttribColor(true);
         currentOffset += 3;
@@ -152,7 +154,7 @@ VertexArray::VertexArray(
             GL_FLOAT,
             GL_FALSE,
             numAttribElements * sizeof(float),
-            (void*)(currentOffset * sizeof(float))
+            reinterpret_cast<void*>(currentOffset * sizeof(float))
         ));
         EnableVertexAttribUV(true);
         currentOffset += 2;
@@ -168,7 +170,7 @@ VertexArray::VertexArray(
             GL_FLOAT, 
             GL_FALSE,
             numAttribElements * sizeof(float),
-            (void*)(currentOffset * sizeof(float))
+            reinterpret_cast<void*>(currentOffset * sizeof(float))
         ));
         EnableVertexAttribNormals(true);
         currentOffset += 3;
@@ -178,28 +180,32 @@ VertexArray::VertexArray(
 
 VertexArray::VertexArray(
     unsigned short vertex_attrib_bits,
-    const float* vertex_data,
-    size_t vertex_data_len,
-    const GLuint* indices_data,
-    size_t indices_data_len  
+    const std::vector<float>& vertex_data,
+    const std::vector<GLuint>& indices_data
 ) {
+    m_vertexData = std::vector<float>(vertex_data.begin(), vertex_data.end());
+    m_indices = std::vector<GLuint>(indices_data.begin(), indices_data.end());
+
     CreateVAO(
-        vertex_data,
-        vertex_data_len * sizeof(float),
-        indices_data,
-        indices_data_len * sizeof(GLuint),
+        m_vertexData.data(),
+        m_vertexData.size() * sizeof(float),
+        m_indices.data(),
+        m_indices.size() * sizeof(GLuint),
         GL_STATIC_DRAW
     );
+
     bool pos = (vertex_attrib_bits & VERTEX_ATTRIB_POSITION_BIT) == VERTEX_ATTRIB_POSITION_BIT;
     bool color = (vertex_attrib_bits & VERTEX_ATTRIB_COLOR_BIT) == VERTEX_ATTRIB_COLOR_BIT;
     bool uv = (vertex_attrib_bits & VERTEX_ATTRIB_UV_BIT) == VERTEX_ATTRIB_UV_BIT;
     bool normal = (vertex_attrib_bits & VERTEX_ATTRIB_NORMAL_BIT) == VERTEX_ATTRIB_NORMAL_BIT;
 
+    HNCRSP_LOG_INFO(fmt::format("{}, {}, {}, {}", pos, color, uv, normal));
+
     size_t numAttribElements = 
         3 +
-        3 * color +
-        2 * uv +
-        3 * normal;
+        3 * static_cast<size_t>(color) +
+        2 * static_cast<size_t>(uv) +
+        3 * static_cast<size_t>(normal);
     unsigned int currentOffset = 0;
 
     // Postions XYZ
@@ -209,7 +215,7 @@ VertexArray::VertexArray(
         GL_FLOAT,
         GL_FALSE,
         numAttribElements * sizeof(float),
-        (void*)(currentOffset * sizeof(float))
+        reinterpret_cast<void*>(currentOffset * sizeof(float))
     ));
     EnableVertexAttribPosition(true);
     currentOffset += 3;
@@ -223,11 +229,12 @@ VertexArray::VertexArray(
             GL_FLOAT,
             GL_FALSE,
             numAttribElements * sizeof(float),
-            (void*)(currentOffset * sizeof(float))
+            reinterpret_cast<void*>(currentOffset * sizeof(float))
         ));
         EnableVertexAttribColor(true);
         currentOffset += 3;
     }
+    else { EnableVertexAttribColor(false); }
 
     if (uv)
     {
@@ -238,7 +245,7 @@ VertexArray::VertexArray(
             GL_FLOAT,
             GL_FALSE,
             numAttribElements * sizeof(float),
-            (void*)(currentOffset * sizeof(float))
+            reinterpret_cast<void*>(currentOffset * sizeof(float))
         ));
         EnableVertexAttribUV(true);
         currentOffset += 2;
@@ -254,14 +261,12 @@ VertexArray::VertexArray(
             GL_FLOAT, 
             GL_FALSE,
             numAttribElements * sizeof(float),
-            (void*)(currentOffset * sizeof(float))
+            reinterpret_cast<void*>(currentOffset * sizeof(float))
         ));
         EnableVertexAttribNormals(true);
         currentOffset += 3;
     }
-
-    EnableVertexAttribUV(uv);
-    EnableVertexAttribNormals(normal);
+    else { EnableVertexAttribNormals(false); }
 }
 
 void VertexArray::EnableVertexAttribPosition(bool on) const

@@ -15,3 +15,6 @@
 - TODO: Ticking bomb-style error (doesn't crash program, but will crash if you use the erroneous data)
 - TODO: Automatic handling of nullptrs that doesn't use weakptrs (somehow)
 - TODO: Relative world positions to parents
+
+- TODO: After we're done with models and Renderer architecture, we'll move on to lighting stuff and integrate
+that with shaders in scene to process light automatically and easier.

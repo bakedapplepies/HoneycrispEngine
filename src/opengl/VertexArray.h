@@ -27,6 +27,7 @@ private:
 
     // mesh data
     std::vector<float> m_vertexData;
+    std::vector<GLuint> m_indices;
 
 public:
     VertexArray(
@@ -38,10 +39,8 @@ public:
     );
     VertexArray(
         unsigned short vertex_attrib_bits,
-        const float* vertex_data,
-        size_t vertex_data_len,
-        const GLuint* indices_data,
-        size_t indices_data_len
+        const std::vector<float>& vertex_data,
+        const std::vector<GLuint>& indices_data
     );
     VertexArray(const VertexArray&) = delete;
     VertexArray(VertexArray&& other) noexcept;

@@ -1,30 +1,30 @@
 #pragma once
 
 #include "src/pch/pch.h"
-#include "Mesh.h"
+#include "src/Renderable.h"
 #include "src/serialize/ModelSerializer.h"
-#include "src/managers/ShaderManager.h"
 #include "src/components/DrawData.h"
 
 
 HNCRSP_NAMESPACE_START
 
+class Scene;
+
 class Model : public Renderable
 {
 private:
     std::unique_ptr<VertexArray> m_VAO;
-    // TODO: Can Serialized::MeshMetaData not be used?
     std::vector<MeshMetaData> m_meshesMetaData;  // size is also number of meshes
     std::shared_ptr<Material> m_material;
 
 public:
     Model(const FileSystem::Path& path, std::shared_ptr<Shader> shader, bool flip_uv);
     Model(Model&& other) = default;  // TODO: Proper constructors
-
-    void virt_AddDrawDataToRenderer(EntityUID entityUID, std::shared_ptr<Material> material = nullptr) override final;
     Material* getMaterial() const;
 
 private:  // building model
+    friend Scene;
+    void virt_AddDrawDataToRenderer(EntityUID entityUID, std::shared_ptr<Material> material = nullptr) override final;
     void processNode(
         aiNode* node,
         const aiScene*,
