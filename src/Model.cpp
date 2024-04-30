@@ -146,7 +146,7 @@ void Model::processMesh(
     else
     {
         m_meshesMetaData.emplace_back(
-            m_meshesMetaData.back().index_offset + num_vertices,
+            m_meshesMetaData.back().mesh_vertex_count + num_vertices,
             mesh->mNumFaces * 3
         );
     }

@@ -10,12 +10,12 @@ HNCRSP_NAMESPACE_START
 
 struct MeshMetaData  // TODO: should this be put here
 {
-    GLuint index_offset;
-    GLuint vertex_count;
+    GLuint mesh_vertex_count;
+    GLuint indices_buffer_count;
 
     operator Serialized::MeshMetaData() const
     {
-        return Serialized::MeshMetaData(index_offset, vertex_count);
+        return Serialized::MeshMetaData(mesh_vertex_count, indices_buffer_count);
     }
 };
 

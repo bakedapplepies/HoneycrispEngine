@@ -35,8 +35,8 @@ void ModelSerializer::AddModel(
     for (unsigned int i = 0; i < mesh_meta_data_len; i++)
     {
         mesh_meta_data_vec.emplace_back(
-            mesh_meta_data[i].index_offset,
-            mesh_meta_data[i].vertex_count
+            mesh_meta_data[i].mesh_vertex_count,
+            mesh_meta_data[i].indices_buffer_count
         );
     }
     m_meshes_meta_data = m_builder.CreateVectorOfStructs(mesh_meta_data_vec);

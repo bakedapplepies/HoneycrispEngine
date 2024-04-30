@@ -59,13 +59,13 @@ void Renderer::Render() const
             GLCall(
                 glDrawElementsBaseVertex(
                     GL_TRIANGLES,
-                    drawData.meta_data[i].vertex_count,
+                    drawData.meta_data[i].indices_buffer_count,
                     GL_UNSIGNED_INT,
                     reinterpret_cast<void*>(index_buffer_offset * sizeof(float)),
-                    drawData.meta_data[i].index_offset
+                    drawData.meta_data[i].mesh_vertex_count
                 )
             );
-            index_buffer_offset += drawData.meta_data[i].vertex_count;
+            index_buffer_offset += drawData.meta_data[i].indices_buffer_count;
         }
 
         if (albedoMap) albedoMap->Unbind();
