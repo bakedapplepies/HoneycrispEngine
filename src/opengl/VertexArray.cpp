@@ -199,8 +199,6 @@ VertexArray::VertexArray(
     bool uv = (vertex_attrib_bits & VERTEX_ATTRIB_UV_BIT) == VERTEX_ATTRIB_UV_BIT;
     bool normal = (vertex_attrib_bits & VERTEX_ATTRIB_NORMAL_BIT) == VERTEX_ATTRIB_NORMAL_BIT;
 
-    HNCRSP_LOG_INFO(fmt::format("{}, {}, {}, {}", pos, color, uv, normal));
-
     size_t numAttribElements = 
         3 +
         3 * static_cast<size_t>(color) +

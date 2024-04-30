@@ -104,10 +104,10 @@ DefaultSceneTwo::DefaultSceneTwo()
     backpackMaterial->setShininess(64.0f);
 
     // Author: Eydeet (https://skfb.ly/ouB6N)
-    // appleModel = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/apple/source/apple.fbx"), phongShader, false);
-    // appleModel->setTransform(Transform(glm::vec3(10.0f, 2.0f, 17.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.3f)));
-    // Material* appleMaterial = appleModel->getMaterial();
-    // appleMaterial->setShininess(32);
+    appleModel = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/apple/source/apple.fbx"), phongShader, false);
+    appleModel->setTransform(Transform(glm::vec3(10.0f, 2.0f, 17.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.3f)));
+    Material* appleMaterial = appleModel->getMaterial();
+    appleMaterial->setShininess(32);
 
     // appleModelNormal = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/apple/source/apple.fbx"), normalShader, false);
     // appleModelNormal->setTransform(Transform(glm::vec3(10.0f, 2.0f, 17.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.3f)));

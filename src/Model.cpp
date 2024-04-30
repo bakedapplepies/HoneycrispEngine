@@ -7,6 +7,8 @@
 
 HNCRSP_NAMESPACE_START
 
+static uint32_t vertex_count = 0;
+
 Model::Model(const FileSystem::Path& path, std::shared_ptr<Shader> shader, bool flip_uv)
 {
     m_material = std::make_shared<Material>(shader);
@@ -71,12 +73,6 @@ Model::Model(const FileSystem::Path& path, std::shared_ptr<Shader> shader, bool 
         m_meshesMetaData.size()
     );
     modelSerializer.Serialize(path);
-
-    // std::ofstream outfile("obj.txt");
-    // for (uint32_t i = 0; i < vertexData.size(); i += 8)
-    // {
-    //     outfile << fmt::format("[{}, {}, {}]\n", vertexData[i], vertexData[i+1], vertexData[i+2]);
-    // }
 }
 
 void Model::processNode(
@@ -108,6 +104,7 @@ void Model::processMesh(
 ) {
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
+        vertex_count++;
         vertexData.push_back(mesh->mVertices[i].x);
         vertexData.push_back(mesh->mVertices[i].y);
         vertexData.push_back(mesh->mVertices[i].z);

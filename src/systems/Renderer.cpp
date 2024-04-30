@@ -53,6 +53,7 @@ void Renderer::Render() const
         glm::mat4 modelMatrix = GetModelMatrix(transform);
         shader->setMat3Unf("u_normalMatrix", glm::mat3(glm::transpose(glm::inverse(modelMatrix))));
         shader->setMat4Unf("u_model", modelMatrix);
+        uint64_t index_buffer_offset = 0;
         for (unsigned int i = 0; i < drawData.meta_data.size(); i++)
         {
             GLCall(
@@ -60,10 +61,11 @@ void Renderer::Render() const
                     GL_TRIANGLES,
                     drawData.meta_data[i].vertex_count,
                     GL_UNSIGNED_INT,
-                    0x0,
+                    reinterpret_cast<void*>(index_buffer_offset * sizeof(float)),
                     drawData.meta_data[i].index_offset
                 )
             );
+            index_buffer_offset += drawData.meta_data[i].vertex_count;
         }
 
         if (albedoMap) albedoMap->Unbind();
