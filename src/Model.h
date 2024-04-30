@@ -24,7 +24,7 @@ public:
 
 private:  // building model
     friend Scene;
-    void virt_AddDrawDataToRenderer(EntityUID entityUID, std::shared_ptr<Material> material = nullptr) override final;
+    void virt_AddDrawDataToRenderer(EntityUID entityUID) override final;
     void processNode(
         aiNode* node,
         const aiScene*,

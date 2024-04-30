@@ -213,7 +213,7 @@ void Cube::InitializeAttributeData()
     );
 }
 
-void Cube::virt_AddDrawDataToRenderer(EntityUID entityUID, std::shared_ptr<Material> material)
+void Cube::virt_AddDrawDataToRenderer(EntityUID entityUID)
 {
     DrawData drawData;
     drawData.VAO_id = m_VAO->getID();

@@ -32,6 +32,8 @@ set(SOURCE
     ${CMAKE_SOURCE_DIR}/src/opengl/TextureAtlas.cpp
     ${CMAKE_SOURCE_DIR}/src/opengl/UniformBuffer.h
     ${CMAKE_SOURCE_DIR}/src/opengl/UniformBuffer.cpp
+    ${CMAKE_SOURCE_DIR}/src/opengl/Framebuffer.h
+    ${CMAKE_SOURCE_DIR}/src/opengl/Framebuffer.cpp
 
     # managers
     ${CMAKE_SOURCE_DIR}/src/managers/GLFWContext.h

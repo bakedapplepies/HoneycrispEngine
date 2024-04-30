@@ -12,7 +12,7 @@ class Renderable // : public Object
 {
 public:
     // called in scenes
-    virtual void virt_AddDrawDataToRenderer(EntityUID entityUID, std::shared_ptr<Material> material = nullptr) = 0;
+    virtual void virt_AddDrawDataToRenderer(EntityUID entityUID) = 0;
     virtual ~Renderable() = default;
 };
 

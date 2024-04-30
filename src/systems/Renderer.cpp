@@ -1,12 +1,34 @@
 #include "Renderer.h"
+#include "src/managers/RenderContext.h"
+#include "src/managers/SceneManager.h"
 #include "src/ecs/ECSManager.h"
 #include "src/components/DrawData.h"
 
 
 HNCRSP_NAMESPACE_START
 
-void Renderer::StartUp()
+Renderer::Renderer()
 {
+    const RenderContext::CallbackData* callbackData = g_SceneManager.GetCallbackData();
+    m_framebuffer = std::make_unique<Framebuffer>(
+        callbackData->windowWidth,
+        callbackData->windowHeight
+    );
+    unsigned short vertex_attrib_bits = 
+        VERTEX_ATTRIB_POSITION_BIT | VERTEX_ATTRIB_UV_BIT;
+
+    // std::vector<float> vertex_data = {
+    //     -1.0f, 1.0f, 0.0f
+    // };
+    // m_screenQuad = std::make_unique<VertexArray>(
+    //     vertex_attrib_bits,
+    //     {
+    //         1.0f
+    //     },
+    //     {
+    //         1
+    //     }
+    // );
 }
 
 void Renderer::Render() const

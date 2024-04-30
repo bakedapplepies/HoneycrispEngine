@@ -1,8 +1,14 @@
 #version 460 core
-layout(location = 0) in vec3 aPos;
-layout(location = 1) in vec3 aColor;
-layout(location = 2) in vec2 aTexCoord;
-layout(location = 3) in vec3 aNormal;
+
+#define POSITION_LOCATION 0
+#define COLOR_LOCATION 1
+#define UV_LOCATION 2
+#define NORMAL_LOCATION 3
+
+layout(location = POSITION_LOCATION) in vec3 aPos;
+layout(location = COLOR_LOCATION)    in vec3 aColor;
+layout(location = UV_LOCATION)       in vec2 aTexCoord;
+layout(location = NORMAL_LOCATION)   in vec3 aNormal;
 
 // Export Vertex Attributes to next shader stage
 out VS_OUT {

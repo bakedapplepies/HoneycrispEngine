@@ -25,14 +25,21 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureTy
             format = GL_RGBA;
 
         // Generate texture | bind -> buffer -> mimmap -> config
-        GLCall(glBindTexture(GL_TEXTURE_2D, m_textureID));
-        GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB_ALPHA, m_pixelWidth, m_pixelHeight, 0, format, GL_UNSIGNED_BYTE, data));
-        GLCall(glGenerateMipmap(GL_TEXTURE_2D));
+        GLCall(
+            glBindTexture(GL_TEXTURE_2D, m_textureID));
+        GLCall(
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB_ALPHA, m_pixelWidth, m_pixelHeight, 0, format, GL_UNSIGNED_BYTE, data));
+        GLCall(
+            glGenerateMipmap(GL_TEXTURE_2D));
 
-        GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST));
-        GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
-        GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
-        GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+        GLCall(
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST));
+        GLCall(
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+        GLCall(
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
+        GLCall(
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
 
         // path = texturePath;
         stbi_image_free(data);
