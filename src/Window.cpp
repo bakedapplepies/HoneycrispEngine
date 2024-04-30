@@ -80,10 +80,12 @@ void Window::Loop()
         static float waveSpeed = 1.0f;
         ImGui::SliderFloat("Wave Speed", &waveSpeed, 0.0f, 10.0f);
 
+        ImGui::SliderFloat("Camera Speed", &camera.speed, 1.0f, 16.0f);
+
         static float renderingTime = 0.0f;
         ImGui::Text("Rendering time: %fms (%f%%)", renderingTime * 1000, renderingTime/m_deltaTime*100);
         ImGui::Text("Total time: %fms", m_deltaTime * 1000);
-
+        
         // ImGui::Image((void*)&Texture2DManager::mainTextureMap->getID(), ImVec2(100.0f, 100.0f));
         
         ImGui::End();

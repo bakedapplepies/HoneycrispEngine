@@ -139,7 +139,7 @@ void DefaultSceneTwo::InitializeShaders(void)
 {
     phongShader = g_ShaderManager.GetShader(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
-        FileSystem::Path("resources/shaders/BlinnPhongFragment.glsl")
+        FileSystem::Path("resources/shaders/PureAlbedoFragment.glsl")
     );
     phongWTintShader = g_ShaderManager.GetShader(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
