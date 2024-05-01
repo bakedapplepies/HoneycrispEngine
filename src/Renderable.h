@@ -1,7 +1,7 @@
 #pragma once
 
 #include "src/pch/pch.h"
-#include "src/managers/Material.h"
+#include "src/opengl/Material.h"
 #include "src/ecs/ECSTypes.h"
 #include "src/Object.h"
 

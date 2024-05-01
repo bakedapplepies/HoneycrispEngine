@@ -1,5 +1,4 @@
 #include "Renderer.h"
-#include "src/managers/RenderContext.h"
 #include "src/managers/SceneManager.h"
 #include "src/ecs/ECSManager.h"
 #include "src/components/DrawData.h"
@@ -9,30 +8,51 @@ HNCRSP_NAMESPACE_START
 
 Renderer::Renderer()
 {
-    const RenderContext::CallbackData* callbackData = g_SceneManager.GetCallbackData();
+    // Creating Framebuffer ----------
+    m_callbackData = g_SceneManager.GetCallbackData();
     m_framebuffer = std::make_unique<Framebuffer>(
-        callbackData->windowWidth,
-        callbackData->windowHeight
+        m_callbackData->windowWidth * (1 - m_callbackData->settingsWidthPercentage),
+        m_callbackData->windowHeight
     );
+
+    // Creating Screen Quad ----------
     unsigned short vertex_attrib_bits = 
         VERTEX_ATTRIB_POSITION_BIT | VERTEX_ATTRIB_UV_BIT;
 
-    // std::vector<float> vertex_data = {
-    //     -1.0f, 1.0f, 0.0f
-    // };
-    // m_screenQuad = std::make_unique<VertexArray>(
-    //     vertex_attrib_bits,
-    //     {
-    //         1.0f
-    //     },
-    //     {
-    //         1
-    //     }
-    // );
+    std::vector<float> vertex_data = {
+        // positions          uvs
+        -1.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+         1.0f,  1.0f,  0.0f,  1.0f,  1.0f,
+         1.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+        -1.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+    };
+    std::vector<GLuint> indices = {
+        0, 1, 3,
+        1, 2, 3
+    };
+    m_screenQuad = std::make_unique<VertexArray>(
+        vertex_attrib_bits,
+        vertex_data,
+        indices
+    );
+
+    // TODO: Should this be here or inside ShaderManager?
+    // Creating Screen Quad Shader ----------
+    m_screenQuadShader = std::make_unique<Shader>(
+        FileSystem::Path("resources/shaders/ScreenQuadVertex.glsl"),
+        FileSystem::Path("resources/shaders/ScreenQuadFragment.glsl")
+    );
+    m_screenQuadShader->setIntUnf("u_framebuffer_color_texture", 14);
 }
 
 void Renderer::Render() const
 {
+    m_framebuffer->Bind();
+    glEnable(GL_DEPTH_TEST);
+
+    // Clear buffers
+    GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
+
     GLuint shaderID = 0;
     if (auto cubemap = m_weak_currentCubemap.lock())  // TODO: slow?
     {
@@ -57,7 +77,6 @@ void Renderer::Render() const
         {
             shader->Use();
             shaderID = shader->getID();
-            // HNCRSP_LOG_INFO(shader->getID());
         }
 
         albedoMap = material->getAlbedoMap();
@@ -96,6 +115,25 @@ void Renderer::Render() const
         if (normalMap) albedoMap->Unbind();
         if (specularMap) specularMap->Unbind();
     }
+
+    // Redrawing scene from screen quad
+    m_framebuffer->Unbind();
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDisable(GL_DEPTH_TEST);
+
+    GLCall(  // resetting viewport to offset ImGui settings
+        glViewport(
+            m_callbackData->windowWidth * m_callbackData->settingsWidthPercentage,
+            0,
+            m_callbackData->windowWidth * (1.0f - m_callbackData->settingsWidthPercentage),
+            m_callbackData->windowHeight
+        ));
+
+    m_screenQuadShader->Use();
+    m_framebuffer->BindColorBuffer();
+    m_screenQuad->Bind();
+    GLCall(
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
 }
 
 // TODO: quaternions

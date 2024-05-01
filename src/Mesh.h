@@ -4,7 +4,7 @@
 #include "src/components/Transform.h"
 #include "opengl/VertexArray.h"
 #include "src/opengl/Texture2D.h"
-#include "src/managers/Material.h"
+#include "src/opengl/Material.h"
 #include "src/Renderable.h"
 
 

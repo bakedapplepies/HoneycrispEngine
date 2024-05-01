@@ -23,3 +23,5 @@ that with shaders in scene to process light automatically and easier.
 
 - TODO: OpenGL Disable-type functions don't have to be coupled to their private members, maybe
 use non-member functions?
+
+- TODO: Separate sub-src folders into different CMakeLists.txt

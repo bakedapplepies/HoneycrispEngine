@@ -11,6 +11,8 @@ private:
     GLuint m_framebufferID;
     GLuint m_textureColorBuffer;
     GLuint m_RBO;
+    int m_width;
+    int m_height;
 
 public:
     Framebuffer(
@@ -21,6 +23,8 @@ public:
 
     void Bind() const;
     void Unbind() const;
+
+    void BindColorBuffer() const;
 };
 
 HNCRSP_NAMESPACE_END

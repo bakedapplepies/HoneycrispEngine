@@ -43,11 +43,9 @@ void Window::Loop()
     camera.SetPos(camera.cameraPos + glm::vec3(0, 10, 0));
 
     // view matrix, proj matrix, time
-    UniformBuffer<glm::mat4, glm::mat4, float> uboMatrices(0);  // binding index
+    UniformBuffer<glm::mat4, glm::mat4, float> uboMatrices(0);  // UBO binding index
     // viewPos, spotlightPos, spotlightDir
     UniformBuffer<glm::vec3, glm::vec3, glm::vec3> uboOther(1);
-
-    Renderer* renderer = g_ECSManager->GetSystem<Renderer>().get();
 
     while(!glfwWindowShouldClose(m_glfwWindow))
     {
@@ -62,9 +60,6 @@ void Window::Loop()
         glm::vec3 bgColor = g_SceneManager.GetSceneBgColor();
         GLCall(glClearColor(bgColor.r, bgColor.g, bgColor.b, 1.0f));
 
-        // Clear buffers
-        GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
-
         // ImGui
         m_callbackData->settingsWidth = m_callbackData->settingsWidthPercentage * m_callbackData->windowWidth;
 
@@ -75,10 +70,17 @@ void Window::Loop()
         ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Always);
         ImGui::SetNextWindowSize(ImVec2(m_callbackData->settingsWidth, m_callbackData->windowHeight * 0.5f), ImGuiCond_Always);
         ImGui::Begin("Global settings");
-        ImGui::GetCurrentWindow()->FontWindowScale = m_windowHeightScalar;  // scale the ui based on window height
+        ImGui::GetCurrentWindow()->FontWindowScale = m_windowHeightScalar;  // scale ui based on window height, might make it decay exponentially
         
         static float waveSpeed = 1.0f;
         ImGui::SliderFloat("Wave Speed", &waveSpeed, 0.0f, 10.0f);
+
+        ImGui::SliderFloat("Camera Speed", &camera.speed, 2.0f, 20.0f);
+
+        ImGui::Text("Post-processors:");
+        int current_postprocessor_index = 1;
+        std::vector<const char*> pps = { "Normal", "Inverse" };
+        ImGui::ListBox(" ", &current_postprocessor_index, pps.data(), pps.size());
 
         static float renderingTime = 0.0f;
         ImGui::Text("Rendering time: %fms (%f%%)", renderingTime * 1000, renderingTime/m_deltaTime*100);
@@ -93,6 +95,7 @@ void Window::Loop()
         ImGui::Begin("Scene settings");
         ImGui::GetCurrentWindow()->FontWindowScale = m_windowHeightScalar;
 
+        // ImGui Windows from scenes
         g_SceneManager.UpdateImGui();
 
         ImGui::End();
