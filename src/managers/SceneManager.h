@@ -1,5 +1,6 @@
 #pragma once
 
+#include "src/managers/RenderContext.h"
 #include "src/ecs/ECSManager.h"
 #include "src/managers/ShaderManager.h"
 #include "src/Scene.h"
@@ -14,9 +15,8 @@ private:
     size_t m_activeSceneIndex = 0;
     std::unordered_map< size_t, std::unique_ptr<Scene> > m_scenesMap;
     std::unordered_map< size_t, ECSManager > m_ECSManagers;
+    RenderContext::CallbackData* m_callbackData;  // TODO: Temporary placement
 
-    // application is high-level, this is just some kind of forward declaration stuff
-    // so the compiler can figure out the function ptrs out later
     std::function<void()> m_application_ECS_register_systems;
     std::function<void()> m_application_ECS_register_components;
 
@@ -29,6 +29,7 @@ public:
     ~SceneManager() = default;
 
     void StartUp(
+        RenderContext::CallbackData* callbackData,
         const std::function<void()>& application_ECS_register_systems,
         const std::function<void()>& application_ECS_register_components
     );
@@ -39,6 +40,7 @@ public:
     void ClearAllScenes();
     void SetActiveScene(size_t index);
     size_t GetCurrentSceneIndex() const;
+    const RenderContext::CallbackData* GetCallbackData() const;
 
     void Update(const float& dt);
     void UpdateImGui();

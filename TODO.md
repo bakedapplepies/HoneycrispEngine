@@ -18,3 +18,10 @@
 
 - TODO: After we're done with models and Renderer architecture, we'll move on to lighting stuff and integrate
 that with shaders in scene to process light automatically and easier.
+
+- TODO: Assertions of manager state during related methods execution
+
+- TODO: OpenGL Disable-type functions don't have to be coupled to their private members, maybe
+use non-member functions?
+
+- TODO: Separate sub-src folders into different CMakeLists.txt

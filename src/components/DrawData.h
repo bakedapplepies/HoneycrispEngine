@@ -2,7 +2,7 @@
 
 #include "src/pch/pch.h"
 #include "src/opengl/VertexArray.h"
-#include "src/managers/Material.h"
+#include "src/opengl/Material.h"
 #include "src/serialize/schemas/model_generated.h"
 
 

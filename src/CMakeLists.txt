@@ -32,6 +32,10 @@ set(SOURCE
     ${CMAKE_SOURCE_DIR}/src/opengl/TextureAtlas.cpp
     ${CMAKE_SOURCE_DIR}/src/opengl/UniformBuffer.h
     ${CMAKE_SOURCE_DIR}/src/opengl/UniformBuffer.cpp
+    ${CMAKE_SOURCE_DIR}/src/opengl/Framebuffer.h
+    ${CMAKE_SOURCE_DIR}/src/opengl/Framebuffer.cpp
+    ${CMAKE_SOURCE_DIR}/src/opengl/Material.h
+    ${CMAKE_SOURCE_DIR}/src/opengl/Material.cpp
 
     # managers
     ${CMAKE_SOURCE_DIR}/src/managers/GLFWContext.h
@@ -74,8 +78,6 @@ set(SOURCE
     ${CMAKE_SOURCE_DIR}/src/serialize/ModelSerializer.cpp
 
     # Application stuff
-    ${CMAKE_SOURCE_DIR}/src/managers/Material.h
-    ${CMAKE_SOURCE_DIR}/src/managers/Material.cpp
     ${CMAKE_SOURCE_DIR}/src/Callbacks.h
     ${CMAKE_SOURCE_DIR}/src/Callbacks.cpp
     ${CMAKE_SOURCE_DIR}/src/Application.h

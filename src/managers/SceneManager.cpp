@@ -6,9 +6,11 @@ HNCRSP_NAMESPACE_START
 SceneManager g_SceneManager;
 
 void SceneManager::StartUp(
+    RenderContext::CallbackData* callbackData,
     const std::function<void()>& application_ECS_register_systems,
     const std::function<void()>& application_ECS_register_components
 ) {
+    m_callbackData = callbackData;
     m_application_ECS_register_systems = application_ECS_register_systems;
     m_application_ECS_register_components = application_ECS_register_components;
 }
@@ -64,6 +66,11 @@ void SceneManager::SetSceneBgColor(const glm::vec3& bgColor)
 glm::vec3 SceneManager::GetSceneBgColor()
 {
     return m_scenesMap[m_activeSceneIndex]->bgColor;
+}
+
+const RenderContext::CallbackData* SceneManager::GetCallbackData() const
+{
+    return m_callbackData;
 }
 
 HNCRSP_NAMESPACE_END

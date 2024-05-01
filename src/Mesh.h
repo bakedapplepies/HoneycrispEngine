@@ -4,7 +4,7 @@
 #include "src/components/Transform.h"
 #include "opengl/VertexArray.h"
 #include "src/opengl/Texture2D.h"
-#include "src/managers/Material.h"
+#include "src/opengl/Material.h"
 #include "src/Renderable.h"
 
 
@@ -45,18 +45,7 @@ public:
     void EnableVertexAttribNormals(bool on) const;
     // const VertexArray* GetVAO() const;
 
-    void virt_AddDrawDataToRenderer(EntityUID entityUID, std::shared_ptr<Material> material = nullptr) override final;
-
-// public:
-//     inline glm::vec3 getRelativeOrigin() const
-//     {
-//         return m_relativeOrigin;
-//     }
-
-//     inline void setRelativeOrigin(const glm::vec3& relOrigin)
-//     {
-//         m_relativeOrigin = relOrigin;
-//     }
+    void virt_AddDrawDataToRenderer(EntityUID entityUID) override final;
 };
 
 HNCRSP_NAMESPACE_END

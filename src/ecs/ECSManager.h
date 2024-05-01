@@ -84,7 +84,9 @@ public:
 
         std::shared_ptr<System> system = m_systemManager->RegisterSystem<TSystem>(component_bitset);
 
-        if constexpr(std::is_same_v<TSystem, Renderer>) m_renderer = std::static_pointer_cast<Renderer>(system).get();
+        // TODO: Need some rework here, this is ugly
+        if constexpr(std::is_same_v<TSystem, Renderer>) m_renderer =
+            std::static_pointer_cast<Renderer>(system).get();
     }
 
     template <typename TSystem>

@@ -30,73 +30,98 @@ Shader::Shader(
     const char* gsSource = geometryShaderSource.c_str();
 
     /* Vertex Shader */
-    GLCall(GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER));
-    GLCall(glShaderSource(vertexShader, 1, &vsSource, NULL));
-    GLCall(glCompileShader(vertexShader));
+    GLCall(
+        GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER));
+    GLCall(
+        glShaderSource(vertexShader, 1, &vsSource, NULL));
+    GLCall(
+        glCompileShader(vertexShader));
 
     int success;
     char infoLog[1024];
 
-    GLCall(glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success));
+    GLCall(
+        glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success));
     if (!success)
     {
-        GLCall(glGetShaderInfoLog(vertexShader, 1024, NULL, infoLog));
+        GLCall(
+            glGetShaderInfoLog(vertexShader, 1024, NULL, infoLog));
         std::filesystem::path errorPath = std::filesystem::relative(vertexFile.string(), HNCRSP_PROJECT_DIR);
         HNCRSP_LOG_ERROR(fmt::format("Vertex Shader compilation failed ~{}:\n\t", errorPath.string()), infoLog);
         // HNCRSP_LOG_ERROR(fmt::format("Vertex Shader compilation failed at {}:\n\t", ), infoLog);
 
-        GLCall(glDeleteShader(vertexShader));
+        GLCall(
+            glDeleteShader(vertexShader));
         HNCRSP_TERMINATE("Vertex Shader compilation error.");
     }
 
     /* Fragment Shader */
-    GLCall(GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER));
-    GLCall(glShaderSource(fragmentShader, 1, &fsSource, NULL));
-    GLCall(glCompileShader(fragmentShader));
+    GLCall(
+        GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER));
+    GLCall(
+        glShaderSource(fragmentShader, 1, &fsSource, NULL));
+    GLCall(
+        glCompileShader(fragmentShader));
 
-    GLCall(glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success));
+    GLCall(
+        glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success));
     if (!success)
     {
-        GLCall(glGetShaderInfoLog(fragmentShader, 1024, NULL, infoLog));
+        GLCall(
+            glGetShaderInfoLog(fragmentShader, 1024, NULL, infoLog));
         std::filesystem::path errorPath = std::filesystem::relative(fragmentFile.string(), HNCRSP_PROJECT_DIR);
         HNCRSP_LOG_ERROR(fmt::format("Fragment Shader compilation failed ~{}:\n\t", errorPath.string()), infoLog);
 
-        GLCall(glDeleteShader(fragmentShader));
+        GLCall(
+            glDeleteShader(fragmentShader));
         HNCRSP_TERMINATE("Fragment Shader compilation error.");
     }
 
-    GLCall(GLuint geometryShader = glCreateShader(GL_GEOMETRY_SHADER));
+    GLCall(
+        GLuint geometryShader = glCreateShader(GL_GEOMETRY_SHADER));
     if (geometryShaderSource.length() > 0)
     {
-        GLCall(glShaderSource(geometryShader, 1, &gsSource, NULL));
-        GLCall(glCompileShader(geometryShader));
+        GLCall(
+            glShaderSource(geometryShader, 1, &gsSource, NULL));
+        GLCall(
+            glCompileShader(geometryShader));
 
-        GLCall(glGetShaderiv(geometryShader, GL_COMPILE_STATUS, &success));
+        GLCall(
+            glGetShaderiv(geometryShader, GL_COMPILE_STATUS, &success));
         if (!success)
         {
-            GLCall(glGetShaderInfoLog(geometryShader, 1024, NULL, infoLog));
+            GLCall(
+                glGetShaderInfoLog(geometryShader, 1024, NULL, infoLog));
             std::filesystem::path errorPath = std::filesystem::relative(geometryFile.string(), HNCRSP_PROJECT_DIR);
             HNCRSP_LOG_ERROR(fmt::format("Geometry Shader compilation failed ~{}:\n\t", errorPath.string()), infoLog);
 
-            GLCall(glDeleteShader(fragmentShader));
+            GLCall(
+                glDeleteShader(fragmentShader));
             HNCRSP_TERMINATE("Geometry Shader compilation error.");
         }
     }
 
     /* Creating Shader Program */
-    GLCall(m_shaderID = glCreateProgram();)
-    GLCall(glAttachShader(m_shaderID, vertexShader));
-    GLCall(glAttachShader(m_shaderID, fragmentShader));
+    GLCall(
+        m_shaderID = glCreateProgram();)
+    GLCall(
+        glAttachShader(m_shaderID, vertexShader));
+    GLCall(
+        glAttachShader(m_shaderID, fragmentShader));
     if (geometryShaderSource.length() > 0) { GLCall(glAttachShader(m_shaderID, geometryShader)); }
 
-    GLCall(glLinkProgram(m_shaderID));
-    GLCall(glGetProgramiv(m_shaderID, GL_LINK_STATUS, &success));
+    GLCall(
+        glLinkProgram(m_shaderID));
+    GLCall(
+        glGetProgramiv(m_shaderID, GL_LINK_STATUS, &success));
     if (!success)
     {
-        GLCall(glGetProgramInfoLog(m_shaderID, 1024, NULL, infoLog));
+        GLCall(
+            glGetProgramInfoLog(m_shaderID, 1024, NULL, infoLog));
         HNCRSP_LOG_ERROR("Shader Program Linking failed:\n\t", infoLog);
 
-        glDeleteProgram(m_shaderID);
+        GLCall(
+            glDeleteProgram(m_shaderID));
         m_shaderID = 0;
 
         HNCRSP_LOG_ERROR(fmt::format("Shader in program:\n\t{}\n\t{}\n\t{}", vertexFile.string(), fragmentFile.string(), geometryFile.string()));
@@ -104,14 +129,18 @@ Shader::Shader(
         HNCRSP_TERMINATE("Shader linking error.");
     }
     
-    GLCall(glValidateProgram(m_shaderID));
-    GLCall(glGetProgramiv(m_shaderID, GL_VALIDATE_STATUS, &success));
+    GLCall(
+        glValidateProgram(m_shaderID));
+    GLCall(
+        glGetProgramiv(m_shaderID, GL_VALIDATE_STATUS, &success));
     if (!success)
     {
-        GLCall(glGetProgramInfoLog(m_shaderID, 1024, NULL, infoLog));
+        GLCall(
+            glGetProgramInfoLog(m_shaderID, 1024, NULL, infoLog));
         HNCRSP_LOG_ERROR("Shader Program Validation failed:\n\t", infoLog);
 
-        glDeleteProgram(m_shaderID);
+        GLCall(
+            glDeleteProgram(m_shaderID));
         m_shaderID = 0;
 
         HNCRSP_LOG_ERROR(fmt::format("Shader in program:\n\t{}\n\t{}\n\t{}", vertexFile.string(), fragmentFile.string(), geometryFile.string()));
@@ -119,9 +148,12 @@ Shader::Shader(
         HNCRSP_TERMINATE("Shader validation error.");
     }
 
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-    glDeleteShader(geometryShader);
+    GLCall(
+        glDeleteShader(vertexShader));
+    GLCall(
+        glDeleteShader(fragmentShader));
+    GLCall(
+        glDeleteShader(geometryShader));
 }
 
 Shader::Shader(Shader&& other) noexcept

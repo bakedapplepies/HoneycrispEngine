@@ -4,8 +4,8 @@ namespace Honeycrisp.Serialized;
 
 struct MeshMetaData
 {
-    base_index: uint32;
-    vertex_count: uint32;
+    mesh_vertex_count: uint32;
+    indices_buffer_count: uint32;
 }
 
 table Material

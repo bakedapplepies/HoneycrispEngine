@@ -5,6 +5,8 @@
 #include "src/ecs/System.h"
 #include "src/components/Transform.h"
 #include "src/Cubemap.h"
+#include "src/opengl/Framebuffer.h"
+#include "src/managers/RenderContext.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -14,18 +16,23 @@ struct DrawElementsIndirectCommand;
 class Renderer : public System
 {
 private:
+    const RenderContext::CallbackData* m_callbackData;
     std::weak_ptr<Cubemap> m_weak_currentCubemap;
     std::vector<GLuint> m_shaderIDs_Order;
+    std::unique_ptr<Framebuffer> m_framebuffer;
+    std::unique_ptr<VertexArray> m_screenQuad;
+    std::unique_ptr<Shader> m_screenQuadShader;
+    // Unimportant note: This only manages the state over on the GPU, so
+    // so this doesn't affect performance very much
 
 public:
-    Renderer() = default;
+    Renderer();
     Renderer(const Renderer&) = delete;
     Renderer& operator=(const Renderer&) = delete;
     Renderer(Renderer&&) noexcept = delete;
     Renderer& operator=(Renderer&&) noexcept = delete;
     ~Renderer() = default;
 
-    void StartUp();
     void Render() const;
     void SwitchCubemap(std::weak_ptr<Cubemap> weak_cubemap);
 

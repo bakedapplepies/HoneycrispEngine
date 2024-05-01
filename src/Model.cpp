@@ -250,8 +250,8 @@ void Model::loadDeserializedModel(const Serialized::Model* deserialized_model)
     for (unsigned int i = 0; i < deserialized_model->meshes()->size(); i++)
     {
         m_meshesMetaData.emplace_back(
-            deserialized_model->meshes()->Get(i)->base_index(),
-            deserialized_model->meshes()->Get(i)->vertex_count()
+            deserialized_model->meshes()->Get(i)->mesh_vertex_count(),
+            deserialized_model->meshes()->Get(i)->indices_buffer_count()
         );
     }
 
@@ -296,21 +296,11 @@ void Model::loadDeserializedModel(const Serialized::Model* deserialized_model)
     );
 }
 
-void Model::virt_AddDrawDataToRenderer(EntityUID entityUID, std::shared_ptr<Material> material)
+void Model::virt_AddDrawDataToRenderer(EntityUID entityUID)
 {
     DrawData meshData;
     meshData.VAO_id = m_VAO->getID();
     meshData.meta_data = std::vector<MeshMetaData>(m_meshesMetaData.begin(), m_meshesMetaData.end());
-    // if (material)  // TODO: what to do about these comments
-    // {
-    //     meshData.material = material;
-    //     HNCRSP_LOG_INFO(meshData.material->getShader()->getID());
-    // }
-    // else
-    // {
-    //     meshData.material = std::make_shared<Material>(g_ShaderManager.basicShader);
-    //     HNCRSP_LOG_INFO(meshData.material->getShader()->getID());
-    // }
     meshData.material = m_material;
 
     g_ECSManager->AddComponent<DrawData>(entityUID, meshData);

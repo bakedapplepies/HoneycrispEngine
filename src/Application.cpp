@@ -36,8 +36,7 @@ void Application::Run()  // this is where the main control flow happens
     g_ImGuiManager.StartUp();
     g_ShaderManager.StartUp();
     g_Texture2DManager.StartUp();
-    g_SceneManager.StartUp(Application_RegisterSystems, Application_RegisterComponents);
-
+    g_SceneManager.StartUp(callbackData, Application_RegisterSystems, Application_RegisterComponents);
 
     // resources in Window class are mostly managed by other managers
     // regular members don't have to be processed post-application
