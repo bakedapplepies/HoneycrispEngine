@@ -35,14 +35,6 @@ Renderer::Renderer()
         vertex_data,
         indices
     );
-
-    // TODO: Should this be here or inside ShaderManager?
-    // Creating Screen Quad Shader ----------
-    m_screenQuadShader = std::make_unique<Shader>(
-        FileSystem::Path("resources/shaders/ScreenQuadVertex.glsl"),
-        FileSystem::Path("resources/shaders/ScreenQuadFragment.glsl")
-    );
-    m_screenQuadShader->setIntUnf("u_framebuffer_color_texture", 14);
 }
 
 void Renderer::Render() const
@@ -129,7 +121,7 @@ void Renderer::Render() const
             m_callbackData->windowHeight
         ));
 
-    m_screenQuadShader->Use();
+    g_ShaderManager.GetPostProcessingShader()->Use();
     m_framebuffer->BindColorBuffer();
     m_screenQuad->Bind();
     GLCall(

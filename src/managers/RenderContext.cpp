@@ -51,27 +51,26 @@ namespace RenderContext
 
         /* Depth, Stencil, Blending, Gamma correction */
         // depth test
-        GLCall(
-            glEnable(GL_DEPTH_TEST));
+        glEnable(GL_DEPTH_TEST);
+
         // cull faces
-        GLCall(
-            glEnable(GL_CULL_FACE));
-        GLCall(
-            glFrontFace(GL_CW));
-        GLCall(
-            glCullFace(GL_BACK));
+        glEnable(GL_CULL_FACE);
+        glFrontFace(GL_CW);
+        glCullFace(GL_BACK);
+
         // stencil test
-        GLCall(
-            glEnable(GL_STENCIL_TEST));
+        glEnable(GL_STENCIL_TEST);
+
         // blending
-        // GLCall(
-        //    glEnable(GL_BLEND));
+        glEnable(GL_BLEND);
+        // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  TODO
+        glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+
         // gamma correction
-        GLCall(
-            glEnable(GL_FRAMEBUFFER_SRGB));
+        glEnable(GL_FRAMEBUFFER_SRGB);
 
         int viewportWidth = (1.0f - callbackData.settingsWidthPercentage) * callbackData.windowWidth;
-        GLCall(glViewport(callbackData.windowWidth - viewportWidth, 0, viewportWidth, callbackData.windowHeight));
+        glViewport(callbackData.windowWidth - viewportWidth, 0, viewportWidth, callbackData.windowHeight);
 
         return &callbackData;
     }

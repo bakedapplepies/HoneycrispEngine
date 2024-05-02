@@ -21,7 +21,6 @@ private:
     std::vector<GLuint> m_shaderIDs_Order;
     std::unique_ptr<Framebuffer> m_framebuffer;
     std::unique_ptr<VertexArray> m_screenQuad;
-    std::unique_ptr<Shader> m_screenQuadShader;
     // Unimportant note: This only manages the state over on the GPU, so
     // so this doesn't affect performance very much
 

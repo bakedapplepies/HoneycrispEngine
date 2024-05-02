@@ -46,6 +46,7 @@ void Window::Loop()
     UniformBuffer<glm::mat4, glm::mat4, float> uboMatrices(0);  // UBO binding index
     // viewPos, spotlightPos, spotlightDir
     UniformBuffer<glm::vec3, glm::vec3, glm::vec3> uboOther(1);
+    g_ShaderManager.SetPostProcessingShader(FileSystem::Path("resources/shaders/postprocessing/Template.glsl"));
 
     while(!glfwWindowShouldClose(m_glfwWindow))
     {
@@ -67,6 +68,7 @@ void Window::Loop()
         ImGui_ImplOpenGL3_NewFrame(); 
         ImGui::NewFrame();
 
+        // Global settings ----------
         ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Always);
         ImGui::SetNextWindowSize(ImVec2(m_callbackData->settingsWidth, m_callbackData->windowHeight * 0.5f), ImGuiCond_Always);
         ImGui::Begin("Global settings");
@@ -77,11 +79,47 @@ void Window::Loop()
 
         ImGui::SliderFloat("Camera Speed", &camera.speed, 2.0f, 20.0f);
 
-        ImGui::Text("Post-processors:");
-        int current_postprocessor_index = 1;
-        std::vector<const char*> pps = { "Normal", "Inverse" };
-        ImGui::ListBox(" ", &current_postprocessor_index, pps.data(), pps.size());
+        ImGui::SeparatorText("Post-processors:");
+        ImGui::Text(
+            "When adding shaders, only enter the file names that\n"
+            "sit inside \"resources/shaders/postprocessing/\"."
+        );
+        ImGui::NewLine();
+        ImGui::Text("Add post-processing shader file name:");
+        static char pps_name[128];
+        ImGui::InputText(" ", pps_name, 128);
 
+        static uint32_t current_postprocessor_index = 1;
+        static std::vector<std::string> pps = { "None", "Blur" };
+
+        if (ImGui::Button("Add Post-processing shader"))
+        {
+            pps.push_back(pps_name);
+        }
+
+        static bool already_selected = false;
+        ImGui::NewLine();
+        ImGui::Text("Added Post-processing shaders:");
+        ImGui::BeginListBox(" ");
+        for (uint32_t i = 0; i < pps.size(); i++)
+        {
+            const bool is_selected = (i == current_postprocessor_index);
+            if (ImGui::Selectable(pps[i].c_str(), is_selected))
+            {
+                g_ShaderManager.SetPostProcessingShader(
+                    FileSystem::Path(fmt::format("resources/shaders/postprocessing/{}.glsl", pps[i]))
+                );
+                current_postprocessor_index = i;
+            }
+            if (is_selected)
+            {
+                ImGui::SetItemDefaultFocus();
+            }
+        }
+        ImGui::EndListBox();
+
+        ImGui::NewLine();
+        ImGui::SeparatorText("Statistics");
         static float renderingTime = 0.0f;
         ImGui::Text("Rendering time: %fms (%f%%)", renderingTime * 1000, renderingTime/m_deltaTime*100);
         ImGui::Text("Total time: %fms", m_deltaTime * 1000);
@@ -90,6 +128,7 @@ void Window::Loop()
         
         ImGui::End();
 
+        // Per-scene settings ----------
         ImGui::SetNextWindowPos(ImVec2(0.0f, m_callbackData->windowHeight * 0.5f), ImGuiCond_Always);
         ImGui::SetNextWindowSize(ImVec2(m_callbackData->settingsWidth, m_callbackData->windowHeight * 0.5f), ImGuiCond_Always);
         ImGui::Begin("Scene settings");
@@ -103,6 +142,7 @@ void Window::Loop()
         // Update camera
         camera.SetDirection(glm::normalize(m_callbackData->cameraDirection));
 
+        // FOV maybe added later, not important
         projectionMatrix = glm::perspective(
             glm::radians(45.0f),
             (float)(m_callbackData->windowWidth - 500.0f)/(float)m_callbackData->windowHeight,
@@ -110,7 +150,7 @@ void Window::Loop()
             100.0f
         );
 
-        // Global uniforms
+        // Global uniforms ----------
         float u_time = begin * waveSpeed;
         uboMatrices.Bind();
         uboMatrices.Update(
@@ -126,11 +166,13 @@ void Window::Loop()
             glm::value_ptr(camera.direction)
         );
 
+        // Update and Render scenes ----------
         g_SceneManager.Update(m_deltaTime);  // update scene before rendering
         renderingTime = glfwGetTime();
         g_ECSManager->Update();
         renderingTime = glfwGetTime() - renderingTime;
 
+        // Render ImGui ----------
         ImGui::Render();  // always render after scene so it doesn't get drawn over
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
                 

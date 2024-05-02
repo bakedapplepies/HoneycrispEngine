@@ -44,4 +44,19 @@ std::shared_ptr<Shader> ShaderManager::GetShader(
     // return std::make_shared<Shader>(vertexFile, fragmentFile, geometryFile);
 }
 
+void ShaderManager::SetPostProcessingShader(
+    const FileSystem::Path& fragmentFile  
+) {
+    m_postprocessing_shader = GetShader(
+        FileSystem::Path("resources/shaders/postprocessing/ScreenQuadVertex.glsl"),
+        fragmentFile
+    );
+    m_postprocessing_shader->setIntUnf("u_framebuffer_color_texture", 14);
+}
+
+std::shared_ptr<Shader> ShaderManager::GetPostProcessingShader() const
+{
+    return m_postprocessing_shader;
+}
+
 HNCRSP_NAMESPACE_END
