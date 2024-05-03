@@ -1,13 +1,14 @@
 #pragma once
 
+#include <cstring>
+
 #define HNCRSP_NAMESPACE_START namespace Honeycrisp {
 #define HNCRSP_NAMESPACE_END }
 #define HNCRSP_STRINGIFY(x) #x
 #define HNCRSP_CONST_AUTO_REF const auto&
 
-// HNCRSP_NAMESPACE_START
+HNCRSP_NAMESPACE_START
 
-// template <typename T>
-// using const_ptr = T const* const;
+std::string exec(const char* cmd);
 
-// HNCRSP_NAMESPACE_END
+HNCRSP_NAMESPACE_END

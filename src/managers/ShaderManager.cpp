@@ -22,6 +22,7 @@ void ShaderManager::ShutDown()
     m_cachedShaders.clear();
     basicShader.reset();
     cubemapShader.reset();
+    m_postprocessing_shader.reset();
 }
 
 std::shared_ptr<Shader> ShaderManager::GetShader(

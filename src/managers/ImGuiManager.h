@@ -18,6 +18,9 @@ public:
 public:
     void StartUp();
     void ShutDown();
+
+    void Update();
+    void Render();
 };
 
 extern ImGuiManager g_ImGuiManager;

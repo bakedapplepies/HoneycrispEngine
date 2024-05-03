@@ -1,5 +1,6 @@
 #pragma once
 
+#include "src/pch/pch.h"
 #include "src/managers/SceneManager.h"
 #include "src/managers/RenderContext.h"
 #include "opengl/UniformBuffer.h"
@@ -26,6 +27,8 @@ private:
     float m_totalTime = 0.0f;
     unsigned int m_frames = 0;
 
+    std::vector<std::string> m_pps;
+
 public:
     Window(RenderContext::CallbackData* callbackData);
     ~Window();
@@ -35,6 +38,7 @@ public:
 private:
     void calcFPS();
     void processInput();
+    void updatePPS();
 };
 
 HNCRSP_NAMESPACE_END

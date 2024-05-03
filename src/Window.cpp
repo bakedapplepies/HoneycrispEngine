@@ -1,8 +1,7 @@
-#include "src/pch/pch.h"
-#include "src/managers/Texture2DManager.h"
-
 #include "Window.h"
-#include "src/managers/SceneManager.h"
+#include "src/managers/Texture2DManager.h"
+#include "src/managers/ImGuiManager.h"
+
 #include "src/scenes/DefaultScene.h"
 #include "src/scenes/DefaultSceneTwo.h"
 #include "src/scenes/SpaceScene.h"
@@ -25,6 +24,8 @@ Window::Window(RenderContext::CallbackData* callbackData)
         100.0f
     );
 
+    updatePPS();
+
     HNCRSP_LOG_INFO("Window Initialization done.");
 }
 
@@ -46,7 +47,7 @@ void Window::Loop()
     UniformBuffer<glm::mat4, glm::mat4, float> uboMatrices(0);  // UBO binding index
     // viewPos, spotlightPos, spotlightDir
     UniformBuffer<glm::vec3, glm::vec3, glm::vec3> uboOther(1);
-    g_ShaderManager.SetPostProcessingShader(FileSystem::Path("resources/shaders/postprocessing/Template.glsl"));
+    g_ShaderManager.SetPostProcessingShader(FileSystem::Path("resources/shaders/postprocessing/None.glsl"));
 
     while(!glfwWindowShouldClose(m_glfwWindow))
     {
@@ -81,48 +82,51 @@ void Window::Loop()
 
         ImGui::SeparatorText("Post-processors:");
         ImGui::Text(
-            "When adding shaders, only enter the file names that\n"
-            "sit inside \"resources/shaders/postprocessing/\"."
+            "Files that are added in \"resources/shaders/postprocessing/\" during\n"
+            "runtime can be updated using the button below."
         );
         ImGui::NewLine();
-        ImGui::Text("Add post-processing shader file name:");
-        static char pps_name[128];
-        ImGui::InputText(" ", pps_name, 128);
 
-        static uint32_t current_postprocessor_index = 1;
-        static std::vector<std::string> pps = { "None", "Blur" };
+        static uint32_t current_postprocessor_index = 0xFFFFFFFF;
 
-        if (ImGui::Button("Add Post-processing shader"))
+        if (ImGui::Button("Update postprocessing shader list"))
         {
-            pps.push_back(pps_name);
+            updatePPS();
         }
 
-        static bool already_selected = false;
         ImGui::NewLine();
         ImGui::Text("Added Post-processing shaders:");
-        ImGui::BeginListBox(" ");
-        for (uint32_t i = 0; i < pps.size(); i++)
+        if (ImGui::BeginListBox(" "))
         {
-            const bool is_selected = (i == current_postprocessor_index);
-            if (ImGui::Selectable(pps[i].c_str(), is_selected))
+            for (uint32_t i = 0; i < m_pps.size(); i++)
             {
-                g_ShaderManager.SetPostProcessingShader(
-                    FileSystem::Path(fmt::format("resources/shaders/postprocessing/{}.glsl", pps[i]))
-                );
-                current_postprocessor_index = i;
+                const bool is_selected = (i == current_postprocessor_index);
+                if (ImGui::Selectable(m_pps[i].c_str(), is_selected))
+                {
+                    g_ShaderManager.SetPostProcessingShader(
+                        FileSystem::Path(fmt::format("resources/shaders/postprocessing/{}.glsl", m_pps[i]))
+                    );
+                    current_postprocessor_index = i;
+                }
+                if (is_selected)
+                {
+                    ImGui::SetItemDefaultFocus();
+                }
             }
-            if (is_selected)
-            {
-                ImGui::SetItemDefaultFocus();
-            }
+            ImGui::EndListBox();
         }
-        ImGui::EndListBox();
 
         ImGui::NewLine();
         ImGui::SeparatorText("Statistics");
         static float renderingTime = 0.0f;
         ImGui::Text("Rendering time: %fms (%f%%)", renderingTime * 1000, renderingTime/m_deltaTime*100);
         ImGui::Text("Total time: %fms", m_deltaTime * 1000);
+
+        // static bool anti_aliasing;
+        // if (ImGui::Checkbox("Anti-aliasing", &anti_aliasing))
+        // {
+        //     HNCRSP_LOG_INFO(anti_aliasing);
+        // }
         
         // ImGui::Image((void*)&Texture2DManager::mainTextureMap->getID(), ImVec2(100.0f, 100.0f));
         
@@ -172,9 +176,8 @@ void Window::Loop()
         g_ECSManager->Update();
         renderingTime = glfwGetTime() - renderingTime;
 
-        // Render ImGui ----------
-        ImGui::Render();  // always render after scene so it doesn't get drawn over
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        // Render ImGui ---------- always render after scene so it doesn't get drawn over
+        g_ImGuiManager.Render();
                 
         glfwSwapBuffers(m_glfwWindow);
         glfwPollEvents();
@@ -230,6 +233,23 @@ void Window::calcFPS()
         glfwSetWindowTitle(m_glfwWindow, title.c_str());
         m_frames = 0;
         m_totalTime = 0.0f;
+    }
+}
+
+void Window::updatePPS()
+{
+    static std::unordered_map<std::string, bool> umap;
+
+    FileSystem::Path path("resources/shaders/postprocessing");
+    for (const auto& entry : std::filesystem::directory_iterator(path.string()))
+    {
+        std::string str = entry.path().stem().string();
+        if (str == "ScreenQuadVertex") continue;
+        if (!umap[str])
+        {
+            m_pps.push_back(str);
+            umap[str] = true;
+        }
     }
 }
 

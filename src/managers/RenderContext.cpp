@@ -32,6 +32,7 @@ namespace RenderContext
         }
         glfwMakeContextCurrent(glfwWindow);
         glfwSwapInterval(0);  // vsync
+        glfwWindowHint(GLFW_SAMPLES, 4);
 
         /* Callbacks */
         glfwSetErrorCallback(error_callback);
@@ -65,6 +66,9 @@ namespace RenderContext
         glEnable(GL_BLEND);
         // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  TODO
         glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+
+        // multisample anti-aliasing
+        glEnable(GL_MULTISAMPLE);
 
         // gamma correction
         glEnable(GL_FRAMEBUFFER_SRGB);

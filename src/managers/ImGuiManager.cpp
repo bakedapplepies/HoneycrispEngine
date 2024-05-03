@@ -5,6 +5,17 @@ HNCRSP_NAMESPACE_START
 
 ImGuiManager g_ImGuiManager;
 
+void ImGuiManager::Update()
+{
+
+}
+
+void ImGuiManager::Render()
+{
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
 void ImGuiManager::StartUp()
 {
     IMGUI_CHECKVERSION();

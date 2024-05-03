@@ -19,10 +19,9 @@ private:
     const RenderContext::CallbackData* m_callbackData;
     std::weak_ptr<Cubemap> m_weak_currentCubemap;
     std::vector<GLuint> m_shaderIDs_Order;
-    std::unique_ptr<Framebuffer> m_framebuffer;
     std::unique_ptr<VertexArray> m_screenQuad;
-    // Unimportant note: This only manages the state over on the GPU, so
-    // so this doesn't affect performance very much
+    std::unique_ptr<Framebuffer> m_framebuffer;
+
 
 public:
     Renderer();

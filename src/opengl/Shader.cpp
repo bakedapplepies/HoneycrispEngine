@@ -172,10 +172,7 @@ Shader& Shader::operator=(Shader&& other) noexcept
 
 Shader::~Shader()
 {
-    if (m_shaderID != 0)
-    {
-        GLCall(glDeleteProgram(m_shaderID));
-    }
+    GLCall(glDeleteProgram(m_shaderID));
 }
 
 void Shader::Use() const

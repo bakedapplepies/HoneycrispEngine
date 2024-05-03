@@ -184,5 +184,5 @@ endif()
 
 # execute_process(
 #     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/scripts
-#     COMMAND python clangd_change_compile_commands.py ${CMAKE_BUILD_TYPE}
+#     COMMAND python add_postprocessing_shaders.py ${CMAKE_BINARY_DIR}
 # )
