@@ -1,13 +1,13 @@
 #pragma once
 
 #include "src/pch/pch.h"
-#include "src/PointLight.h"
+#include "src/graphics/PointLight.h"
 
 #include "src/Scene.h"
-#include "src/Cube.h"
+#include "src/graphics/Cube.h"
 #include "src/managers/Texture2DManager.h"
-#include "src/Model.h"
-#include "src/Cubemap.h"
+#include "src/graphics/Model.h"
+#include "src/graphics/Cubemap.h"
 
 
 class DefaultSceneTwo : public Honeycrisp::Scene
@@ -17,11 +17,11 @@ private:
     std::shared_ptr<Honeycrisp::Shader> phongShader;
     std::shared_ptr<Honeycrisp::Shader> phongWTintShader;
     std::shared_ptr<Honeycrisp::Shader> normalShader;
-    std::unique_ptr< SceneRenderObj<Honeycrisp::Cube> > cube;
-    std::unique_ptr< SceneRenderObj<Honeycrisp::Mesh> > mesh;
-    std::unique_ptr< SceneRenderObj<Honeycrisp::Model> > backpackModel;
-    std::unique_ptr< SceneRenderObj<Honeycrisp::Model> > appleModel;
-    std::unique_ptr< SceneRenderObj<Honeycrisp::Model> > appleModelNormal;
+    std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Cube> > cube;
+    std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Mesh> > mesh;
+    std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Model> > backpackModel;
+    std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Model> > appleModel;
+    std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Model> > appleModelNormal;
     std::unique_ptr<Honeycrisp::PointLight> pointLight;
 
     float m_u_normal_length = 0.7f;

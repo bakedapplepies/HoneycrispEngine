@@ -2,9 +2,9 @@
 
 #include "src/pch/pch.h"
 #include "src/components/Transform.h"
-#include "opengl/VertexArray.h"
-#include "src/opengl/Texture2D.h"
-#include "src/opengl/Material.h"
+#include "src/graphics/core/VertexArray.h"
+#include "src/graphics/core/Texture2D.h"
+#include "src/graphics/Material.h"
 #include "src/Renderable.h"
 
 

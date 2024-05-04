@@ -3,7 +3,7 @@
 #include "src/pch/pch.h"
 #include "src/ecs/ECSManager.h"
 #include "src/Renderable.h"
-#include "src/opengl/VertexArray.h"
+#include "src/graphics/core/VertexArray.h"
 
 
 HNCRSP_NAMESPACE_START

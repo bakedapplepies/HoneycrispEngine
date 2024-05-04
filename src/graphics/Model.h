@@ -21,10 +21,9 @@ public:
     Model(const FileSystem::Path& path, std::shared_ptr<Shader> shader, bool flip_uv);
     Model(Model&& other) = default;  // TODO: Proper constructors
     Material* getMaterial() const;
+    void virt_AddDrawDataToRenderer(EntityUID entityUID) override final;
 
 private:  // building model
-    friend Scene;
-    void virt_AddDrawDataToRenderer(EntityUID entityUID) override final;
     void processNode(
         aiNode* node,
         const aiScene*,

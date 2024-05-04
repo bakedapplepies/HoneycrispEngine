@@ -4,9 +4,6 @@
 [submodule "vendor/assimp"]
 	path = vendor/assimp
 	url = https://github.com/assimp/assimp.git
-[submodule "vendor/openfbx"]
-	path = vendor/openfbx
-	url = https://github.com/nem0/OpenFBX.git
 [submodule "vendor/glfw"]
 	path = vendor/glfw
 	url = https://github.com/glfw/glfw.git

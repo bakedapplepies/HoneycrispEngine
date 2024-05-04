@@ -1,5 +1,4 @@
 #include "Texture2D.h"
-#include "src/opengl/Texture2D.h"
 
 
 HNCRSP_NAMESPACE_START

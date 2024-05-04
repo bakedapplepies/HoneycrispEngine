@@ -5,15 +5,15 @@
 #include "src/Scene.h"
 #include "src/ecs/ECSManager.h"
 #include "src/managers/ShaderManager.h"
-#include "src/Cube.h"
+#include "src/graphics/Cube.h"
 
 
 class DefaultScene : public Honeycrisp::Scene
 {
 private:
     std::shared_ptr<Honeycrisp::Shader> shader;
-    std::unique_ptr< SceneRenderObj<Honeycrisp::Cube> > cube;
-    std::unique_ptr< SceneRenderObj<Honeycrisp::Mesh> > customMesh;
+    std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Cube> > cube;
+    std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Mesh> > customMesh;
 
 public:
     DefaultScene();

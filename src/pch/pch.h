@@ -1,10 +1,10 @@
 #pragma once
 
-// OPENGL SETUP
+// OPENGL SETUP ----------
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-// 3RD-PARTY LIBRARIES
+// 3RD-PARTY LIBRARIES ----------
 #include <stb/stb_image.h>
 
 #include <glm/glm.hpp>
@@ -31,7 +31,7 @@
 
 #include <nlohmann/json.hpp>
 
-// STANDARD LIBRARIES
+// STANDARD LIBRARIES ----------
 #include <iostream>
 #include <string>   
 #include <fstream>
@@ -56,7 +56,7 @@
 #include <future>
 #include <ctime>
 
-// COMMON HEADERS
+// COMMON HEADERS ----------
 #include "src/utils/Debug.h"
 #include "src/utils/Assert.h"
 #include "src/utils/Terminate.h"

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "src/pch/pch.h"
-#include "src/opengl/VertexArray.h"
-#include "src/opengl/Material.h"
+#include "src/graphics/core/VertexArray.h"
+#include "src/graphics/Material.h"
 #include "src/serialize/schemas/model_generated.h"
 
 

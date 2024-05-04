@@ -4,6 +4,11 @@ project(${CMAKE_PROJECT_NAME}.Vendors CXX C)
 # set( GLFW_BUILD_DOCS OFF CACHE BOOL  "GLFW lib only" )
 # set( GLFW_INSTALL OFF CACHE BOOL  "GLFW lib only" )
 
+add_compile_definitions(
+    GLM_FORCE_SWIZZLE
+    GLM_ENABLE_EXPERIMENTAL
+)
+
 add_library(GLAD STATIC
     ${CMAKE_SOURCE_DIR}/vendor/glad/glad.c
 )
@@ -28,12 +33,6 @@ target_include_directories(STB_IMAGE PRIVATE ${CMAKE_SOURCE_DIR}/vendor)
 add_subdirectory(glfw)
 add_subdirectory(glm)
 add_subdirectory(fmt)
-add_library(OPENFBX STATIC
-    ${CMAKE_SOURCE_DIR}/vendor/openfbx/src/libdeflate.c
-    ${CMAKE_SOURCE_DIR}/vendor/openfbx/src/libdeflate.h
-    ${CMAKE_SOURCE_DIR}/vendor/openfbx/src/ofbx.cpp
-    ${CMAKE_SOURCE_DIR}/vendor/openfbx/src/ofbx.cpp
-)
 
 if (NOT EXISTS "${CMAKE_SOURCE_DIR}/vendor/assimp/include/assimp/config.h")
     message("-- Building assimp")

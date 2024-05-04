@@ -1,7 +1,7 @@
 #pragma once
 
 #include "src/pch/pch.h"
-#include "src/opengl/Shader.h"
+#include "src/graphics/core/Shader.h"
 
 
 HNCRSP_NAMESPACE_START

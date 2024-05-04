@@ -3,8 +3,8 @@
 #include "src/pch/pch.h"
 #include "src/managers/SceneManager.h"
 #include "src/managers/RenderContext.h"
-#include "opengl/UniformBuffer.h"
-#include "Camera.h"
+#include "src/graphics/core/UniformBuffer.h"
+#include "src/graphics/Camera.h"
 
 
 HNCRSP_NAMESPACE_START

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cstring>
+#include <iostream>
 
 #define HNCRSP_NAMESPACE_START namespace Honeycrisp {
 #define HNCRSP_NAMESPACE_END }

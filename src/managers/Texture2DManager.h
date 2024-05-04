@@ -1,8 +1,8 @@
 #pragma once
 
 #include "src/pch/pch.h"
-#include "src/opengl/Texture2D.h"
-#include "src/opengl/TextureAtlas.h"
+#include "src/graphics/core/Texture2D.h"
+#include "src/graphics/TextureAtlas.h"
 
 
 HNCRSP_NAMESPACE_START

@@ -10,5 +10,3 @@ imgui.ini
 **/imgui.ini
 **/*.lib
 *.a
-assimp
-build_lua

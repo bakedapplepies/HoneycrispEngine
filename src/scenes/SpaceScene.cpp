@@ -35,7 +35,7 @@ void SpaceScene::OnImGui()
 }
 
 // this may not be needed as a quadtree may be implemented? idk
-std::unique_ptr< Scene::SceneRenderObj<Honeycrisp::Mesh> > SpaceScene::GenerateCubeSphere(
+std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Mesh> > SpaceScene::GenerateCubeSphere(
     unsigned int resolution,
     float radius
 ) {

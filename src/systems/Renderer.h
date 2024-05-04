@@ -1,11 +1,11 @@
 #pragma once
 
 #include "src/pch/pch.h"
-#include "src/opengl/Shader.h"
 #include "src/ecs/System.h"
 #include "src/components/Transform.h"
-#include "src/Cubemap.h"
-#include "src/opengl/Framebuffer.h"
+#include "src/graphics/core/Shader.h"
+#include "src/graphics/Cubemap.h"
+#include "src/graphics/core/Framebuffer.h"
 #include "src/managers/RenderContext.h"
 
 
@@ -21,7 +21,6 @@ private:
     std::vector<GLuint> m_shaderIDs_Order;
     std::unique_ptr<VertexArray> m_screenQuad;
     std::unique_ptr<Framebuffer> m_framebuffer;
-
 
 public:
     Renderer();

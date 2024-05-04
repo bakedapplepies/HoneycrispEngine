@@ -4,52 +4,15 @@
 #include "src/ecs/ECSManager.h"
 #include "src/managers/ShaderManager.h"
 #include "src/Renderable.h"
-#include "src/Model.h"
-#include "Cubemap.h"
+#include "src/graphics/Model.h"
+#include "src/graphics/Cubemap.h"
+#include "src/SceneRenderObj.h"
 
 
 HNCRSP_NAMESPACE_START
 
 class Scene
 {
-protected:
-    template <class T>
-    class SceneRenderObj : public T
-    {
-    public:
-        size_t entityUID;
-        friend Scene;
-
-    public:
-        template <typename... Args>
-        SceneRenderObj(Args&&... args) : T(std::forward<Args>(args)...)
-        {
-            entityUID = g_ECSManager->NewEntityUID();
-
-            // default object position is at origin
-            g_ECSManager->AddComponent<Transform>(entityUID, {});
-
-            this->virt_AddDrawDataToRenderer(entityUID);
-        }
-
-        ~SceneRenderObj()
-        {
-            g_ECSManager->DestroyEntity(entityUID);
-        }
-
-        void setShader(std::shared_ptr<Shader> newShader)
-        {
-            DrawData& thisDrawData = g_ECSManager->GetComponent<DrawData>(entityUID);
-            thisDrawData.material->setShader(newShader);
-        }
-
-        void setTransform(const Transform& newTransform)
-        {
-            Transform& thisTransform = g_ECSManager->GetComponent<Transform>(entityUID);
-            thisTransform = newTransform;
-        }
-    };
-
 private:
     std::shared_ptr<Cubemap> m_cubemap;
 

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "src/pch/pch.h"
-#include "Object.h"
-#include "components/Transform.h"
+#include "src/Object.h"
+#include "src/components/Transform.h"
 
 
 HNCRSP_NAMESPACE_START
