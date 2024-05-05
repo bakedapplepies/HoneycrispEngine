@@ -4,11 +4,6 @@ project(${CMAKE_PROJECT_NAME}.Vendors CXX C)
 # set( GLFW_BUILD_DOCS OFF CACHE BOOL  "GLFW lib only" )
 # set( GLFW_INSTALL OFF CACHE BOOL  "GLFW lib only" )
 
-add_compile_definitions(
-    GLM_FORCE_SWIZZLE
-    GLM_ENABLE_EXPERIMENTAL
-)
-
 add_library(GLAD STATIC
     ${CMAKE_SOURCE_DIR}/vendor/glad/glad.c
 )
@@ -34,15 +29,19 @@ add_subdirectory(glfw)
 add_subdirectory(glm)
 add_subdirectory(fmt)
 
+set(ASSIMP_NO_EXPORT OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_SAMPLES OFF CACHE BOOL "" FORCE)
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_ASSIMP_VIEW OFF CACHE BOOL "" FORCE)
+set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
+
 if (NOT EXISTS "${CMAKE_SOURCE_DIR}/vendor/assimp/include/assimp/config.h")
     message("-- Building assimp")
     execute_process(
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/vendor/assimp
-        COMMAND cmake . -G "Ninja"# -DASSIMP_BUILD_NO_EXPORT:BOOL=TRUE
+        COMMAND cmake . -G "Ninja"
     )
-    # execute_process(
-    #     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/vendor/assimp/build
-    #     COMMAND ninja
-    # )
 endif()
 add_subdirectory(assimp)

@@ -12,11 +12,6 @@ ModelSerializer::ModelSerializer()
     m_specular = m_builder.CreateString("");
 }
 
-ModelSerializer::~ModelSerializer()
-{
-
-}
-
 void ModelSerializer::AddModel(
     unsigned short vertex_attrib_bits,
     const float* vertex_data,
@@ -97,22 +92,26 @@ flatbuffers::Offset<Serialized::Model> ModelSerializer::FinishModel(
 
 void ModelSerializer::Serialize(const FileSystem::Path& path_to_model)
 {
+    // Get hash from path
     FileSystem::Path serialized_dir(fmt::format("build/{}/src/serialized/models", HNCRSP_BUILD_TYPE));
     std::filesystem::create_directories(serialized_dir.string());
     int64_t path_hash = std::hash<std::string>{}(path_to_model.string());
     std::string serialized_model_path = fmt::format("{}/{}.hncmdl", serialized_dir.string(), path_hash);
 
+    // Get last write time
     auto last_write_time_since_epoch =
         std::filesystem::last_write_time(path_to_model.string()).time_since_epoch();
     auto time_count = std::chrono::duration_cast<std::chrono::seconds>(last_write_time_since_epoch);
 
+    // Finish material & model
     auto serialized_material = FinishMaterial();
     auto serialized_model = FinishModel(serialized_material, time_count.count());
     m_builder.Finish(serialized_model);
 
     // store buffer
     void* buffer = m_builder.GetBufferPointer();
-    unsigned int buffer_size = m_builder.GetSize();
+    uint32_t buffer_size = m_builder.GetSize();
+
     std::ofstream outFile(serialized_model_path, std::ios::out | std::ios::binary | std::ios::trunc);
     outFile.write(reinterpret_cast<char*>(buffer), buffer_size);
     outFile.close();
@@ -148,14 +147,14 @@ const Serialized::Model* ModelSerializer::GetDeserializedObject(const FileSystem
     inFile.read(m_serialized_data.get(), length);
     inFile.close();
 
-    const Serialized::Model* serialized_model = Serialized::GetModel(m_serialized_data.get());
+    const Serialized::Model* deserialized_model = Serialized::GetModel(m_serialized_data.get());
 
-    if (serialized_model->last_write_time() != time_count.count())
+    if (deserialized_model->last_write_time() != time_count.count())
     {
         return nullptr;
     }
     
-    return serialized_model;
+    return deserialized_model;
 }
 
 HNCRSP_NAMESPACE_END

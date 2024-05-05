@@ -26,7 +26,7 @@ namespace RenderContext
         int settingsWidth;
         float settingsWidthPercentage = 0.2f;
 
-        glm::vec3 cameraDirection = glm::vec3(0, 0, -1.0f);  // initial camera direction or it would look at origin by default        
+        glm::vec3 cameraDirection = glm::vec3(-1.0f, 0.0f, 0.0f);  // initial camera direction or it would look at origin by default        
     };
 
     [[nodiscard]] CallbackData* StartUp_GetWindow();

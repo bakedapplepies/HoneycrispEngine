@@ -1,4 +1,5 @@
 #include "Texture2D.h"
+#include "src/serialize/ImageSerializer.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -9,19 +10,28 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureTy
     m_textureType = textureType;
 
     int nrChannels;
-    int desiredChannels = 0;
-    unsigned char* data = stbi_load(
-        texturePath.string().data(), &m_pixelWidth, &m_pixelHeight, &nrChannels, desiredChannels);
+    int desiredChannels = 4;
+
+    ImageSerializer imageSerializer(desiredChannels);
+    Serialized::Image* deserialized_image = imageSerializer.GetDeserializedObject(texturePath);
+    uint8_t* data;
+
+    if (!deserialized_image)
+    {
+        data = stbi_load(
+            texturePath.string().data(), &m_pixelWidth, &m_pixelHeight, &nrChannels, desiredChannels);
+        imageSerializer.AddImage(data, m_pixelWidth, m_pixelHeight, texturePath);
+    }
+    else
+    {
+        data = deserialized_image->mutable_image_data()->data();
+        m_pixelWidth = deserialized_image->width();
+        m_pixelHeight = deserialized_image->height();
+    }
     
     if (data)
     {
-        GLenum format = 0;
-        if (nrChannels == 1)
-            format = GL_RED;
-        else if (nrChannels == 3)
-            format = GL_RGB;
-        else if (nrChannels == 4)
-            format = GL_RGBA;
+        GLenum format = GL_RGBA;
 
         // Generate texture | bind -> buffer -> mipmap -> config
         GLCall(
@@ -44,8 +54,7 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureTy
         GLCall(
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
 
-        // path = texturePath;
-        stbi_image_free(data);
+        if (!deserialized_image) stbi_image_free(data);
     }
     else
     {

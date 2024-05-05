@@ -25,13 +25,13 @@ private:
     flatbuffers::Offset<flatbuffers::String> m_ao;
     flatbuffers::Offset<flatbuffers::String> m_normal;
     flatbuffers::Offset<flatbuffers::String> m_specular;
-
+    
     // need this to survive the duration of loading deserialized model into VAO
     std::unique_ptr<char[]> m_serialized_data;
 
 public:
     ModelSerializer();
-    ~ModelSerializer();
+    ~ModelSerializer() = default;
 
     void AddModel(
         unsigned short vertex_attrib_bits,
@@ -47,8 +47,8 @@ public:
     void AddAo(const FileSystem::Path& ao_path);
     void AddNormal(const FileSystem::Path& normal_path);
     void AddSpecular(const FileSystem::Path& specular_path);
-    void Serialize(const FileSystem::Path& path_to_serialized_obj);
-    const Serialized::Model* GetDeserializedObject(const FileSystem::Path& path_to_serialized_obj);
+    void Serialize(const FileSystem::Path& path_to_model);
+    const Serialized::Model* GetDeserializedObject(const FileSystem::Path& path_to_model);
 
 private:
     flatbuffers::Offset<Serialized::Material> FinishMaterial();

@@ -87,7 +87,7 @@ DefaultSceneTwo::DefaultSceneTwo()
         &colors,
         &uvs
     );
-    mesh->setTransform(Transform(glm::vec3(0.0f, -6.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+    mesh->setTransform(Transform(glm::vec3(-8.0f, -6.0f, -20.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
     mesh->setShader(phongWTintShader);
     std::shared_ptr<Material> meshMaterial = g_ECSManager->GetComponent<DrawData>(mesh->entityUID).material;
     meshMaterial->setAlbedoMap(g_Texture2DManager.mainTextureMap);
@@ -99,7 +99,7 @@ DefaultSceneTwo::DefaultSceneTwo()
         phongShader,
         true  // flip uv
     );
-    backpackModel->setTransform(Transform(glm::vec3(10.0f, 2.0f, 7.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(3.0f)));
+    backpackModel->setTransform(Transform(glm::vec3(2.0f, 2.0f, -18.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(3.0f)));
     Material* backpackMaterial = backpackModel->getMaterial();
     backpackMaterial->setShininess(64.0f);
 
@@ -112,6 +112,15 @@ DefaultSceneTwo::DefaultSceneTwo()
     // appleModelNormal = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/apple/source/apple.fbx"), normalShader, false);
     // appleModelNormal->setTransform(Transform(glm::vec3(10.0f, 2.0f, 17.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.3f)));
     // appleModelNormal->getMaterial()->setShininess(32);
+
+    sponza = CreateStaticRenderObj<Honeycrisp::Model>(
+        FileSystem::Path("resources/models/sponza/sponza.obj"),
+        phongShader,
+        true
+    );
+    Transform& sponzaTransform = g_ECSManager->GetComponent<Transform>(sponza->entityUID);
+    sponzaTransform.position = glm::vec3(0.0f, 2.0f, -2.0f);
+    sponzaTransform.scale = glm::vec3(0.008f);
 
     CreateCubemap(
         FileSystem::Path("resources/textures/cubemaps/skybox/right.jpg"),
