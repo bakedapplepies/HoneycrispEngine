@@ -89,6 +89,7 @@ void Renderer::Render() const
         uint64_t index_buffer_offset = 0;
         for (unsigned int i = 0; i < drawData.meta_data.size(); i++)
         {
+            // TODO: Send uniform for index into texture array
             GLCall(
                 glDrawElementsBaseVertex(
                     GL_TRIANGLES,

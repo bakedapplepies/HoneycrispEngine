@@ -37,11 +37,9 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureTy
         GLCall(
             glBindTexture(GL_TEXTURE_2D, m_textureID));
         GLCall(
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB_ALPHA, m_pixelWidth, m_pixelHeight, 0, format, GL_UNSIGNED_BYTE, data));
-        // GLCall(
-        //     glTexStorage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8, m_pixelWidth, m_pixelHeight));
-        // GLCall(
-        //     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_pixelWidth, m_pixelHeight, format, GL_UNSIGNED_BYTE, data));
+            glTexStorage2D(GL_TEXTURE_2D, 1, GL_SRGB8_ALPHA8, m_pixelWidth, m_pixelHeight));
+        GLCall(
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_pixelWidth, m_pixelHeight, format, GL_UNSIGNED_BYTE, data));
         GLCall(
             glGenerateMipmap(GL_TEXTURE_2D));
 

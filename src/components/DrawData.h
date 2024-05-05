@@ -8,22 +8,25 @@
 
 HNCRSP_NAMESPACE_START
 
-struct MeshMetaData  // TODO: should this be put here
-{
-    GLuint mesh_vertex_count;
-    GLuint indices_buffer_count;
-
-    operator Serialized::MeshMetaData() const
-    {
-        return Serialized::MeshMetaData(mesh_vertex_count, indices_buffer_count);
-    }
-};
+struct MeshMetaData;
 
 struct DrawData
 {
     GLuint VAO_id;
     std::shared_ptr<Material> material = nullptr;
     std::vector<MeshMetaData> meta_data;
+};
+
+struct MeshMetaData
+{
+    GLuint mesh_vertex_count;
+    GLuint indices_buffer_count;
+    // std::shared_ptr<Material> material;
+
+    operator Serialized::MeshMetaData() const
+    {
+        return Serialized::MeshMetaData(mesh_vertex_count, indices_buffer_count);
+    }
 };
 
 HNCRSP_NAMESPACE_END
