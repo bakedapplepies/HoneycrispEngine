@@ -1,0 +1,10 @@
+namespace Honeycrisp.Serialized;
+
+table Image
+{
+    image_data: [uint8];
+    width: int32;
+    height: int32;
+}
+
+root_type Image;
