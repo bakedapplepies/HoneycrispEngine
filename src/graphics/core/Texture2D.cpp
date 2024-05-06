@@ -36,7 +36,7 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureTy
         // Generate texture | bind -> buffer -> mipmap -> config
         GLCall(
             glBindTexture(GL_TEXTURE_2D, m_textureID));
-        GLCall(
+        GLCall(  // internalformat has to be sized
             glTexStorage2D(GL_TEXTURE_2D, 4, GL_SRGB8_ALPHA8, m_pixelWidth, m_pixelHeight));
         GLCall(
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_pixelWidth, m_pixelHeight, format, GL_UNSIGNED_BYTE, data));
@@ -61,6 +61,8 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureTy
         stbi_image_free(data);
         HNCRSP_TERMINATE("Texture failed to load.");
     }
+
+    HNCRSP_LOG_INFO(texturePath.string(), "  ", m_textureID);
 }
 
 const GLuint& Texture2D::getID() const

@@ -33,7 +33,6 @@ public:
         GLCall(glBindBufferRange(GL_UNIFORM_BUFFER, bindingIndex, m_uboID, 0, totalByteSize));
     }
 
-public:
     template <typename... Args>
     void Update(const Args* const... args) const
     {
@@ -42,6 +41,13 @@ public:
         size_t offset = 0;
         size_t index = 0;
         Update(index, offset, args...);
+    }
+
+    ~UniformBuffer()
+    {
+        HNCRSP_CHECK_RENDER_CONTEXT();
+
+        GLCall(glDeleteBuffers(1, &m_uboID));
     }
 
 private:

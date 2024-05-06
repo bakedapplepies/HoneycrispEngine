@@ -56,6 +56,8 @@ Framebuffer::Framebuffer(
 
 Framebuffer::~Framebuffer()
 {
+    HNCRSP_CHECK_RENDER_CONTEXT();
+
     GLCall(
         glDeleteFramebuffers(1, &m_framebufferID));
     GLCall(

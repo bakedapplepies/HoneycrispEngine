@@ -343,6 +343,8 @@ VertexArray& VertexArray::operator=(VertexArray&& other) noexcept
 
 VertexArray::~VertexArray()
 {
+    HNCRSP_CHECK_RENDER_CONTEXT();
+
     GLCall(glDeleteVertexArrays(1, &m_VAO_ID));
 }
 

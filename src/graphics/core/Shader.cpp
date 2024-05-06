@@ -172,6 +172,8 @@ Shader& Shader::operator=(Shader&& other) noexcept
 
 Shader::~Shader()
 {
+    HNCRSP_CHECK_RENDER_CONTEXT();
+
     GLCall(glDeleteProgram(m_shaderID));
 }
 

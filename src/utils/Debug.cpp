@@ -11,9 +11,10 @@ void GLClearError()
 
 void CheckRenderContext(const char* function, const char* file, unsigned int line)
 {
-    if (glfwGetCurrentContext() == nullptr)
+    if (!glfwGetCurrentContext())
     {
-        assert(fmt::format("Render context not available at: {} | {}:{}", function, file, line).c_str());
+        std::cout << fmt::format("Render context not available at: {} | {}:{}\n", function, file, line);
+        assert(false);
     }
 }
 

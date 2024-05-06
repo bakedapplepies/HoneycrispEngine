@@ -50,7 +50,6 @@ void Application::Run()  // this is where the main control flow happens
     g_ShaderManager.ShutDown();
     g_ImGuiManager.ShutDown();
     GLFWContext::ShutDown();
-    HNCRSP_LOG_INFO(glfwGetCurrentContext());
 
     // std::cerr.rdbuf(cerrBuf);  // reset cerr
     // stderr_redirect.close();

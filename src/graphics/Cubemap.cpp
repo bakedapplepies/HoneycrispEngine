@@ -36,13 +36,16 @@ Cubemap::Cubemap(const std::array<FileSystem::Path, 6>& faces)
 
         if (data)
         {
-            if (i == 0) GLCall(glTexStorage2D(
-                GL_TEXTURE_CUBE_MAP,
-                1,
-                GL_SRGB,
-                width,
-                height
-            ));
+            if (i == 0)
+            {
+                GLCall(glTexStorage2D(
+                    GL_TEXTURE_CUBE_MAP,
+                    1,
+                    GL_SRGB8,  // have to be sized
+                    width,
+                    height
+                ));
+            }
             GLCall(glTexSubImage2D(
                 GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
                 0,
