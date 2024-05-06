@@ -22,8 +22,8 @@ private:
     void SetMesh();
 
 public:
-    Cubemap(const std::vector<std::string>& faces);
-    ~Cubemap() = default;
+    Cubemap(const std::array<FileSystem::Path, 6>& faces);
+    ~Cubemap();
     void Draw() const;
 };
 

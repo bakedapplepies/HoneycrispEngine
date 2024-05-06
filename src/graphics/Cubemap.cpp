@@ -1,38 +1,53 @@
 #include "Cubemap.h"
 #include "src/managers/ShaderManager.h"
+#include "src/serialize/ImageSerializer.h"
 
 
 HNCRSP_NAMESPACE_START
 
-Cubemap::Cubemap(const std::vector<std::string>& faces)
+Cubemap::Cubemap(const std::array<FileSystem::Path, 6>& faces)
 {
     GLCall(glGenTextures(1, &m_cubemapTextureID));
     GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemapTextureID));
 
-    int width, height, nrChannels, desiredChannels = 0;
+    int width, height, nrChannels, desiredChannels = 3;
     for (unsigned int i = 0; i < faces.size(); i++)
     {
-        stbi_set_flip_vertically_on_load(false);
-        unsigned char* data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, desiredChannels);
-        stbi_set_flip_vertically_on_load(true);
+        ImageSerializer imageSerializer(desiredChannels);
+        Serialized::Image* deserialized_image = imageSerializer.GetDeserializedObject(faces[i]);
+        uint8_t* data;
 
-        GLenum format;
-        if (nrChannels == 1)
-            format = GL_RED;
-        else if (nrChannels == 3)
-            format = GL_RGB;
-        else if (nrChannels == 4)
-            format = GL_RGBA;
+        if (!deserialized_image)
+        {
+            stbi_set_flip_vertically_on_load(false);
+            data = stbi_load(faces[i].string().c_str(), &width, &height, &nrChannels, desiredChannels);
+            stbi_set_flip_vertically_on_load(true);
+
+            imageSerializer.AddImage(data, width, height, faces[i]);
+        }
+        else
+        {
+            data = deserialized_image->mutable_image_data()->data();
+            width = deserialized_image->width();
+            height = deserialized_image->height();
+        }
+
+        GLenum format = GL_RGB;
 
         if (data)
         {
-            GLCall(glTexImage2D(
-                GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-                0,
+            if (i == 0) GLCall(glTexStorage2D(
+                GL_TEXTURE_CUBE_MAP,
+                1,
                 GL_SRGB,
                 width,
-                height,
+                height
+            ));
+            GLCall(glTexSubImage2D(
+                GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
                 0,
+                0, 0,
+                width, height,
                 format,
                 GL_UNSIGNED_BYTE,
                 data
@@ -44,18 +59,25 @@ Cubemap::Cubemap(const std::vector<std::string>& faces)
             GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
             GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE));
 
-            stbi_image_free(data);
+            if (!deserialized_image) stbi_image_free(data);
         }
         else
         {
             HNCRSP_LOG_ERROR(fmt::format("Texture failed to load: {}.", stbi_failure_reason()));
-            HNCRSP_LOG_INFO(fmt::format("Texture path: {}", faces[i]));
+            HNCRSP_LOG_INFO(fmt::format("Texture path: {}", faces[i].string()));
             stbi_image_free(data);
             HNCRSP_TERMINATE("Cubemap textures failed to load.");
         }
     }
 
     SetMesh();
+}
+
+Cubemap::~Cubemap()
+{
+    HNCRSP_CHECK_RENDER_CONTEXT();
+
+    GLCall(glDeleteTextures(1, &m_cubemapTextureID));
 }
 
 void Cubemap::SetMesh()

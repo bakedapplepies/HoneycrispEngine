@@ -25,6 +25,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void error_callback(int error, const char* msg)
 {
+    if (error == GLFW_NOT_INITIALIZED) return;  // for checking if opengl is there to properly delete resources
     std::string errorMsg = fmt::format("({}): {}", error, msg);
     HNCRSP_LOG_ERROR(errorMsg);
 }

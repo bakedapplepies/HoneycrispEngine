@@ -26,7 +26,6 @@ public:
     Shader(Shader&& other) noexcept;
     Shader& operator=(Shader&& other) noexcept;
     ~Shader();
-
     
     GLuint getID() const;
     void Use() const;

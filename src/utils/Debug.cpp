@@ -9,6 +9,14 @@ void GLClearError()
     while (glGetError() != GL_NO_ERROR);
 }
 
+void CheckRenderContext(const char* function, const char* file, unsigned int line)
+{
+    if (glfwGetCurrentContext() == nullptr)
+    {
+        assert(fmt::format("Render context not available at: {} | {}:{}", function, file, line).c_str());
+    }
+}
+
 bool GLLogCall(const char* function, const char* file, unsigned int line)
 {
     while (GLenum error = glGetError()) {

@@ -16,13 +16,8 @@ void Scene::CreateCubemap(
     const FileSystem::Path& front,
     const FileSystem::Path& back
 ) {
-    std::vector<std::string> cubemapFaces = {
-        right.string(),
-        left.string(),
-        top.string(),
-        bottom.string(),
-        front.string(),
-        back.string()
+    std::array<FileSystem::Path, 6> cubemapFaces = {
+        right, left, top, bottom, front, back  
     };
 
     m_cubemap = std::make_shared<Cubemap>(cubemapFaces);

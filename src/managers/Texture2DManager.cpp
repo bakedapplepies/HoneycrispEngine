@@ -56,7 +56,7 @@ void Texture2DManager::ShutDown()
     mainTextureSpecularMap.reset();
     for (auto iter : m_cachedTexture2Ds)
     {
-        iter.second->Delete();
+        iter.second.reset();
     }
 }
 

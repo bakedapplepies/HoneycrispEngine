@@ -37,7 +37,7 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureTy
         GLCall(
             glBindTexture(GL_TEXTURE_2D, m_textureID));
         GLCall(
-            glTexStorage2D(GL_TEXTURE_2D, 1, GL_SRGB8_ALPHA8, m_pixelWidth, m_pixelHeight));
+            glTexStorage2D(GL_TEXTURE_2D, 4, GL_SRGB8_ALPHA8, m_pixelWidth, m_pixelHeight));
         GLCall(
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_pixelWidth, m_pixelHeight, format, GL_UNSIGNED_BYTE, data));
         GLCall(
@@ -61,44 +61,6 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureTy
         stbi_image_free(data);
         HNCRSP_TERMINATE("Texture failed to load.");
     }
-}
-
-Texture2D::Texture2D(const Texture2D& other)
-{
-    m_pixelWidth = other.m_pixelWidth;
-    m_pixelHeight = other.m_pixelHeight;
-    m_textureType = other.m_textureType;
-    m_textureID = other.m_textureID;
-}
-
-Texture2D& Texture2D::operator=(const Texture2D& other)
-{
-    m_pixelWidth = other.m_pixelWidth;
-    m_pixelHeight = other.m_pixelHeight;
-    m_textureType = other.m_textureType;
-    m_textureID = other.m_textureID;
-
-    return *this;
-}
-
-Texture2D::Texture2D(Texture2D&& other) noexcept
-{
-    m_pixelWidth = other.m_pixelWidth;
-    m_pixelHeight = other.m_pixelHeight;
-    m_textureType = other.m_textureType;
-    m_textureID = other.m_textureID;
-    other.m_textureID = 0;
-}
-
-Texture2D& Texture2D::operator=(Texture2D&& other) noexcept
-{
-    m_pixelWidth = other.m_pixelWidth;
-    m_pixelHeight = other.m_pixelHeight;
-    m_textureType = other.m_textureType;
-    m_textureID = other.m_textureID;
-    other.m_textureID = 0;
-
-    return *this;
 }
 
 const GLuint& Texture2D::getID() const
@@ -128,10 +90,12 @@ void Texture2D::Unbind() const
     GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
-void Texture2D::Delete()
+Texture2D::~Texture2D()
 {
+    HNCRSP_CHECK_RENDER_CONTEXT();
+
+    HNCRSP_LOG_INFO(glfwGetCurrentContext(), "   ", m_textureID);
     GLCall(glDeleteTextures(1, &m_textureID));
-    m_textureID = 0;
 }
 
 int Texture2D::getWidth() const

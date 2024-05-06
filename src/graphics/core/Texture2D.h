@@ -15,6 +15,7 @@ enum ETextureType  // also acts as Texture Units
     SPECULAR
 };
 
+class Texture2DManager;
 class Texture2D
 {
 private:
@@ -30,11 +31,11 @@ public:
         const FileSystem::Path& texturePath,
         ETextureType textureType
     );    
-    ~Texture2D() = default;
-    Texture2D(const Texture2D&);
-    Texture2D& operator=(const Texture2D&);
-    Texture2D(Texture2D&& other) noexcept;
-    Texture2D& operator=(Texture2D&& other) noexcept;
+    ~Texture2D();
+    Texture2D(const Texture2D&) = delete;
+    Texture2D& operator=(const Texture2D&) = delete;
+    Texture2D(Texture2D&& other) noexcept = delete;
+    Texture2D& operator=(Texture2D&& other) noexcept = delete;
 
 public:
     const GLuint& getID() const;
@@ -45,7 +46,6 @@ public:
 
     void Bind() const;
     void Unbind() const;
-    void Delete();
 };
 
 HNCRSP_NAMESPACE_END
