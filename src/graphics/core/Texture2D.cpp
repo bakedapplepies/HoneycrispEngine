@@ -94,10 +94,19 @@ void Texture2D::Unbind() const
 
 Texture2D::~Texture2D()
 {
+    // HNCRSP_CHECK_RENDER_CONTEXT();
+
+    // HNCRSP_LOG_INFO(glfwGetCurrentContext(), "   ", m_textureID);
+    // GLCall(glDeleteTextures(1, &m_textureID));
+}
+
+void Texture2D::Delete()
+{
     HNCRSP_CHECK_RENDER_CONTEXT();
 
     HNCRSP_LOG_INFO(glfwGetCurrentContext(), "   ", m_textureID);
     GLCall(glDeleteTextures(1, &m_textureID));
+    m_textureID = 0;
 }
 
 int Texture2D::getWidth() const

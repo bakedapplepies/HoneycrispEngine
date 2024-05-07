@@ -40,26 +40,36 @@ Material& Material::operator=(const Material& other) noexcept
 Material::Material(Material&& other)
 {
     m_shader = std::move(other.m_shader);
-    m_albedo = std::move(other.m_albedo);
-    m_roughness = std::move(other.m_roughness);
-    m_ao = std::move(other.m_ao);
-    m_normal = std::move(other.m_normal);
-    m_specular = std::move(other.m_specular);
-    m_shininess = std::move(other.m_shininess);
+    m_albedo = other.m_albedo;
+    m_roughness = other.m_roughness;
+    m_ao = other.m_ao;
+    m_normal = other.m_normal;
+    m_specular = other.m_specular;
+    m_shininess = other.m_shininess;
 
+    m_albedo = nullptr;
+    m_roughness = nullptr;
+    m_ao = nullptr;
+    m_normal = nullptr;
+    m_specular = nullptr;
     other.m_shininess = 0.0f;
 }
 
 Material& Material::operator=(Material&& other) noexcept
 {
     m_shader = std::move(other.m_shader);
-    m_albedo = std::move(other.m_albedo);
-    m_roughness = std::move(other.m_roughness);
-    m_ao = std::move(other.m_ao);
-    m_normal = std::move(other.m_normal);
-    m_specular = std::move(other.m_specular);
-    m_shininess = std::move(other.m_shininess);
+    m_albedo = other.m_albedo;
+    m_roughness = other.m_roughness;
+    m_ao = other.m_ao;
+    m_normal = other.m_normal;
+    m_specular = other.m_specular;
+    m_shininess = other.m_shininess;
 
+    m_albedo = nullptr;
+    m_roughness = nullptr;
+    m_ao = nullptr;
+    m_normal = nullptr;
+    m_specular = nullptr;
     other.m_shininess = 0.0f;
 
     return *this;
