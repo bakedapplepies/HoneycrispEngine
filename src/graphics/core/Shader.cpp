@@ -3,19 +3,6 @@
 
 HNCRSP_NAMESPACE_START
 
-std::string Shader::parseShader(std::string_view path)
-{
-    std::string line;
-    std::stringstream ss;
-    std::ifstream infile(path.data());
-    while (std::getline(infile, line))
-    {
-        ss << line << '\n';
-    }
-
-    return ss.str();
-}
-
 Shader::Shader(
     const FileSystem::Path& vertexFile,
     const FileSystem::Path& fragmentFile,
@@ -38,14 +25,14 @@ Shader::Shader(
         glCompileShader(vertexShader));
 
     int success;
-    char infoLog[1024];
+    char infoLog[512];  // or 1024
 
     GLCall(
         glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success));
     if (!success)
     {
         GLCall(
-            glGetShaderInfoLog(vertexShader, 1024, NULL, infoLog));
+            glGetShaderInfoLog(vertexShader, 512, NULL, infoLog));
         std::filesystem::path errorPath = std::filesystem::relative(vertexFile.string(), HNCRSP_PROJECT_DIR);
         HNCRSP_LOG_ERROR(fmt::format("Vertex Shader compilation failed ~{}:\n\t", errorPath.string()), infoLog);
         // HNCRSP_LOG_ERROR(fmt::format("Vertex Shader compilation failed at {}:\n\t", ), infoLog);
@@ -68,7 +55,7 @@ Shader::Shader(
     if (!success)
     {
         GLCall(
-            glGetShaderInfoLog(fragmentShader, 1024, NULL, infoLog));
+            glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog));
         std::filesystem::path errorPath = std::filesystem::relative(fragmentFile.string(), HNCRSP_PROJECT_DIR);
         HNCRSP_LOG_ERROR(fmt::format("Fragment Shader compilation failed ~{}:\n\t", errorPath.string()), infoLog);
 
@@ -91,7 +78,7 @@ Shader::Shader(
         if (!success)
         {
             GLCall(
-                glGetShaderInfoLog(geometryShader, 1024, NULL, infoLog));
+                glGetShaderInfoLog(geometryShader, 512, NULL, infoLog));
             std::filesystem::path errorPath = std::filesystem::relative(geometryFile.string(), HNCRSP_PROJECT_DIR);
             HNCRSP_LOG_ERROR(fmt::format("Geometry Shader compilation failed ~{}:\n\t", errorPath.string()), infoLog);
 
@@ -117,7 +104,7 @@ Shader::Shader(
     if (!success)
     {
         GLCall(
-            glGetProgramInfoLog(m_shaderID, 1024, NULL, infoLog));
+            glGetProgramInfoLog(m_shaderID, 512, NULL, infoLog));
         HNCRSP_LOG_ERROR("Shader Program Linking failed:\n\t", infoLog);
 
         GLCall(
@@ -136,7 +123,7 @@ Shader::Shader(
     if (!success)
     {
         GLCall(
-            glGetProgramInfoLog(m_shaderID, 1024, NULL, infoLog));
+            glGetProgramInfoLog(m_shaderID, 512, NULL, infoLog));
         HNCRSP_LOG_ERROR("Shader Program Validation failed:\n\t", infoLog);
 
         GLCall(
@@ -154,6 +141,19 @@ Shader::Shader(
         glDeleteShader(fragmentShader));
     GLCall(
         glDeleteShader(geometryShader));
+}
+
+std::string Shader::parseShader(std::string_view path)
+{
+    std::string line;
+    std::stringstream ss;
+    std::ifstream infile(path.data());
+    while (std::getline(infile, line))
+    {
+        ss << line << '\n';
+    }
+
+    return ss.str();
 }
 
 Shader::Shader(Shader&& other) noexcept
