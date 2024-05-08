@@ -58,16 +58,6 @@ size_t SceneManager::GetCurrentSceneIndex() const
     return m_activeSceneIndex;
 }
 
-void SceneManager::SetSceneBgColor(const glm::vec3& bgColor)
-{
-    m_scenesMap[m_activeSceneIndex]->bgColor = bgColor;
-}
-
-glm::vec3 SceneManager::GetSceneBgColor()
-{
-    return m_scenesMap[m_activeSceneIndex]->bgColor;
-}
-
 const RenderContext::CallbackData* SceneManager::GetCallbackData() const
 {
     return m_callbackData;

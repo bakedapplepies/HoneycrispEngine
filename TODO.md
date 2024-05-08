@@ -29,3 +29,9 @@ use non-member functions?
 - TODO: Make it so that each CMakeLists.txt sublevel is easier to edit altogether
 
 - TODO: Sort draw objects by distance to camera for blending
+
+- TODO: Asset Manager to manage resource lifetime (like Images) and stuff like that
+
+- TODO: Maybe make Object class non-copyable and non-movable
+
+- TODO: Rename interfaces with the prefix I-

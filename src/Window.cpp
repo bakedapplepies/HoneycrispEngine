@@ -59,8 +59,7 @@ void Window::Loop()
         processInput();
 
         // Set window background color
-        glm::vec3 bgColor = g_SceneManager.GetSceneBgColor();
-        GLCall(glClearColor(bgColor.r, bgColor.g, bgColor.b, 1.0f));
+        GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
 
         // ImGui
         m_callbackData->settingsWidth = m_callbackData->settingsWidthPercentage * m_callbackData->windowWidth;

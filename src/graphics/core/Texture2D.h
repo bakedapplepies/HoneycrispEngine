@@ -19,9 +19,6 @@ class Texture2DManager;
 class Texture2D
 {
 private:
-    int m_pixelWidth;
-    int m_pixelHeight;
-    
     GLuint m_textureID;
     ETextureType m_textureType;
     
@@ -41,8 +38,6 @@ public:
     const GLuint& getID() const;
     GLuint getTextureUnit() const;
     ETextureType getTextureType() const;
-    int getWidth() const;
-    int getHeight() const;
 
     void Bind() const;
     void Unbind() const;

@@ -3,15 +3,16 @@
 #include "src/pch/pch.h"
 #include "src/Object.h"
 #include "src/components/Transform.h"
+#include "src/Light.h"
 
 
 HNCRSP_NAMESPACE_START
 
-class PointLight : public Object
+class PointLight : public Light
 {
 public:
+    // glm::vec3 colorEmit;  In Light interface
     glm::vec3 position;
-    glm::vec3 colorEmit;
 
     float ambient;
     float diffuse;

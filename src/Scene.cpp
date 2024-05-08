@@ -3,7 +3,6 @@
 
 HNCRSP_NAMESPACE_START
 
-
 // Since all attributes are private and the class only
 // exposes update methods,
 // cubemaps can be created at anytime as the current g_ECSManager

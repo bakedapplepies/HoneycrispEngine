@@ -12,6 +12,8 @@ set(SOURCE
     ${CMAKE_SOURCE_DIR}/src/graphics/core/Shader.cpp
     ${CMAKE_SOURCE_DIR}/src/graphics/core/Texture2D.h
     ${CMAKE_SOURCE_DIR}/src/graphics/core/Texture2D.cpp
+    ${CMAKE_SOURCE_DIR}/src/graphics/core/Texture2DArray.h
+    ${CMAKE_SOURCE_DIR}/src/graphics/core/Texture2DArray.cpp
     ${CMAKE_SOURCE_DIR}/src/graphics/core/UniformBuffer.h
     ${CMAKE_SOURCE_DIR}/src/graphics/core/UniformBuffer.cpp
     ${CMAKE_SOURCE_DIR}/src/graphics/core/Framebuffer.h

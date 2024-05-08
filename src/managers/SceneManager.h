@@ -35,8 +35,6 @@ public:
     );
     void ShutDown();
 
-    void SetSceneBgColor(const glm::vec3& bgColor);
-    glm::vec3 GetSceneBgColor();
     void ClearAllScenes();
     void SetActiveScene(size_t index);
     size_t GetCurrentSceneIndex() const;
@@ -50,13 +48,14 @@ public:
     {
         static_assert(std::is_base_of<Scene, TScene>(), "SceneManager::CreateScene didn't receive a scene object.");
 
+        // Each scene has a unique ECS system
         m_ECSManagers[m_nextSceneIndex] = ECSManager();
         g_ECSManager = &m_ECSManagers[m_nextSceneIndex];
         g_ECSManager->StartUp();
-        m_application_ECS_register_components();
-        m_application_ECS_register_systems();
+        m_application_ECS_register_components();  // re-register ECS Components
+        m_application_ECS_register_systems();  // re-register ECS Systems
 
-        size_t tempSceneIndex = m_activeSceneIndex;  // just for easier debugging between scenes
+        size_t tempSceneIndex = m_activeSceneIndex;  // also for easier debugging between scenes
         m_activeSceneIndex = m_nextSceneIndex;
 
         m_scenesMap[m_nextSceneIndex] = std::make_unique<TScene>();

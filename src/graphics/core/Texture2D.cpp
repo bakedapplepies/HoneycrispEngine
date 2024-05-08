@@ -9,7 +9,7 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureTy
     GLCall(glGenTextures(1, &m_textureID));
     m_textureType = textureType;
 
-    int nrChannels;
+    int width, height, nrChannels;
     int desiredChannels = 4;
 
     ImageSerializer imageSerializer(desiredChannels);
@@ -19,14 +19,14 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureTy
     if (!deserialized_image)
     {
         data = stbi_load(
-            texturePath.string().data(), &m_pixelWidth, &m_pixelHeight, &nrChannels, desiredChannels);
-        imageSerializer.AddImage(data, m_pixelWidth, m_pixelHeight, texturePath);
+            texturePath.string().data(), &width, &height, &nrChannels, desiredChannels);
+        imageSerializer.AddImage(data, width, height, texturePath);
     }
     else
     {
         data = deserialized_image->mutable_image_data()->data();
-        m_pixelWidth = deserialized_image->width();
-        m_pixelHeight = deserialized_image->height();
+        width = deserialized_image->width();
+        height = deserialized_image->height();
     }
     
     if (data)
@@ -37,12 +37,12 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureTy
         GLCall(
             glBindTexture(GL_TEXTURE_2D, m_textureID));
         GLCall(  // internalformat has to be sized
-            glTexStorage2D(GL_TEXTURE_2D, 4, GL_SRGB8_ALPHA8, m_pixelWidth, m_pixelHeight));
+            glTexStorage2D(GL_TEXTURE_2D, 4, GL_SRGB8_ALPHA8, width, height));
         GLCall(
-            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_pixelWidth, m_pixelHeight, format, GL_UNSIGNED_BYTE, data));
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, format, GL_UNSIGNED_BYTE, data));
+
         GLCall(
             glGenerateMipmap(GL_TEXTURE_2D));
-
         GLCall(
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST));
         GLCall(
@@ -61,8 +61,6 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureTy
         stbi_image_free(data);
         HNCRSP_TERMINATE("Texture failed to load.");
     }
-
-    HNCRSP_LOG_INFO(texturePath.string(), "  ", m_textureID);
 }
 
 const GLuint& Texture2D::getID() const
@@ -94,6 +92,7 @@ void Texture2D::Unbind() const
 
 Texture2D::~Texture2D()
 {
+    // TODO: Preferably use this somehow
     // HNCRSP_CHECK_RENDER_CONTEXT();
 
     // HNCRSP_LOG_INFO(glfwGetCurrentContext(), "   ", m_textureID);
@@ -104,19 +103,8 @@ void Texture2D::Delete()
 {
     HNCRSP_CHECK_RENDER_CONTEXT();
 
-    HNCRSP_LOG_INFO(glfwGetCurrentContext(), "   ", m_textureID);
     GLCall(glDeleteTextures(1, &m_textureID));
     m_textureID = 0;
-}
-
-int Texture2D::getWidth() const
-{
-    return m_pixelWidth;
-}
-
-int Texture2D::getHeight() const
-{
-    return m_pixelHeight;
 }
 
 HNCRSP_NAMESPACE_END
