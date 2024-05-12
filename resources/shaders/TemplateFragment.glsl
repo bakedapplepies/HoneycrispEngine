@@ -11,6 +11,8 @@ in VS_OUT {
     vec3 FragPos;
 } fs_in;
 
+// layout (location = 0) uniform sampler2D
+
 void main()
 {
     

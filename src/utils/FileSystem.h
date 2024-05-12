@@ -19,6 +19,8 @@ namespace FileSystem
         [[nodiscard]] std::string relative_string() const;
         [[nodiscard]] std::string extension() const;
         void remove_filename();
+
+        bool operator==(const FileSystem::Path& other);
     };
 }
 

@@ -59,8 +59,7 @@ void Renderer::Render() const
     for (const EntityUID& uid : entityUIDs)
     {
         DrawData& drawData = g_ECSManager->GetComponent<DrawData>(uid);
-        Material* material = drawData.material.get();
-        Shader* shader = material->getShader().get();
+        Shader* shader = drawData.materials[0]->getShader().get();
 
         Transform& transform = g_ECSManager->GetComponent<Transform>(uid);
         glBindVertexArray(drawData.VAO_id);
@@ -71,24 +70,25 @@ void Renderer::Render() const
             shaderID = shader->getID();
         }
 
-        albedoMap = material->getAlbedoMap();
-        roughnessMap = material->getRoughnessMap();
-        aoMap = material->getAoMap();
-        normalMap = material->getNormalMap();
-        specularMap = material->getSpecularMap();
-
-        if (albedoMap) albedoMap->Bind();
-        if (roughnessMap) roughnessMap->Bind();
-        if (aoMap) aoMap->Bind();
-        if (normalMap) albedoMap->Bind();
-        if (specularMap) specularMap->Bind();
-
         glm::mat4 modelMatrix = GetModelMatrix(transform);
         shader->setMat3Unf("u_normalMatrix", glm::mat3(glm::transpose(glm::inverse(modelMatrix))));
         shader->setMat4Unf("u_model", modelMatrix);
         uint64_t index_buffer_offset = 0;
         for (unsigned int i = 0; i < drawData.meta_data.size(); i++)
         {
+            Material* material = drawData.materials[drawData.meta_data[i].material_index].get();
+            albedoMap = material->getAlbedoMap();
+            roughnessMap = material->getRoughnessMap();
+            aoMap = material->getAoMap();
+            normalMap = material->getNormalMap();
+            specularMap = material->getSpecularMap();
+
+            if (albedoMap) albedoMap->Bind();
+            if (roughnessMap) roughnessMap->Bind();
+            if (aoMap) aoMap->Bind();
+            if (normalMap) albedoMap->Bind();
+            if (specularMap) specularMap->Bind();
+
             // TODO: Send uniform for index into texture array
             GLCall(
                 glDrawElementsBaseVertex(
@@ -100,13 +100,13 @@ void Renderer::Render() const
                 )
             );
             index_buffer_offset += drawData.meta_data[i].indices_buffer_count;
-        }
 
-        if (albedoMap) albedoMap->Unbind();
-        if (roughnessMap) roughnessMap->Unbind();
-        if (aoMap) aoMap->Unbind();
-        if (normalMap) albedoMap->Unbind();
-        if (specularMap) specularMap->Unbind();
+            if (albedoMap) albedoMap->Unbind();
+            if (roughnessMap) roughnessMap->Unbind();
+            if (aoMap) aoMap->Unbind();
+            if (normalMap) albedoMap->Unbind();
+            if (specularMap) specularMap->Unbind();
+        }
     }
 
     // Redrawing scene from screen quad
@@ -154,7 +154,8 @@ void Renderer::SwitchCubemap(std::weak_ptr<Cubemap> weak_cubemap)
 
 void Renderer::AddEntityUID(EntityUID entityUID)
 {
-    GLuint shaderID = g_ECSManager->GetComponent<DrawData>(entityUID).material->getShader()->getID();
+    GLuint shaderID = 
+        g_ECSManager->GetComponent<DrawData>(entityUID).materials[0]->getShader()->getID();
     binary_insert_shader_comparator(entityUIDs, m_shaderIDs_Order, entityUID, shaderID);
 }
 

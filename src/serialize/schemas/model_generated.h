@@ -28,15 +28,18 @@ FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) MeshMetaData FLATBUFFERS_FINAL_CLASS {
  private:
   uint32_t mesh_vertex_count_;
   uint32_t indices_buffer_count_;
+  uint32_t material_index_;
 
  public:
   MeshMetaData()
       : mesh_vertex_count_(0),
-        indices_buffer_count_(0) {
+        indices_buffer_count_(0),
+        material_index_(0) {
   }
-  MeshMetaData(uint32_t _mesh_vertex_count, uint32_t _indices_buffer_count)
+  MeshMetaData(uint32_t _mesh_vertex_count, uint32_t _indices_buffer_count, uint32_t _material_index)
       : mesh_vertex_count_(::flatbuffers::EndianScalar(_mesh_vertex_count)),
-        indices_buffer_count_(::flatbuffers::EndianScalar(_indices_buffer_count)) {
+        indices_buffer_count_(::flatbuffers::EndianScalar(_indices_buffer_count)),
+        material_index_(::flatbuffers::EndianScalar(_material_index)) {
   }
   uint32_t mesh_vertex_count() const {
     return ::flatbuffers::EndianScalar(mesh_vertex_count_);
@@ -50,8 +53,14 @@ FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) MeshMetaData FLATBUFFERS_FINAL_CLASS {
   void mutate_indices_buffer_count(uint32_t _indices_buffer_count) {
     ::flatbuffers::WriteScalar(&indices_buffer_count_, _indices_buffer_count);
   }
+  uint32_t material_index() const {
+    return ::flatbuffers::EndianScalar(material_index_);
+  }
+  void mutate_material_index(uint32_t _material_index) {
+    ::flatbuffers::WriteScalar(&material_index_, _material_index);
+  }
 };
-FLATBUFFERS_STRUCT_END(MeshMetaData, 8);
+FLATBUFFERS_STRUCT_END(MeshMetaData, 12);
 
 struct Material FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef MaterialBuilder Builder;
@@ -182,7 +191,7 @@ struct Model FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
     VT_VERTEX_DATA = 6,
     VT_INDICES = 8,
     VT_MESHES = 10,
-    VT_MATERIAL = 12,
+    VT_MATERIALS = 12,
     VT_LAST_WRITE_TIME = 14
   };
   uint16_t vertex_attrib_bits() const {
@@ -209,11 +218,11 @@ struct Model FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   ::flatbuffers::Vector<const Honeycrisp::Serialized::MeshMetaData *> *mutable_meshes() {
     return GetPointer<::flatbuffers::Vector<const Honeycrisp::Serialized::MeshMetaData *> *>(VT_MESHES);
   }
-  const Honeycrisp::Serialized::Material *material() const {
-    return GetPointer<const Honeycrisp::Serialized::Material *>(VT_MATERIAL);
+  const ::flatbuffers::Vector<::flatbuffers::Offset<Honeycrisp::Serialized::Material>> *materials() const {
+    return GetPointer<const ::flatbuffers::Vector<::flatbuffers::Offset<Honeycrisp::Serialized::Material>> *>(VT_MATERIALS);
   }
-  Honeycrisp::Serialized::Material *mutable_material() {
-    return GetPointer<Honeycrisp::Serialized::Material *>(VT_MATERIAL);
+  ::flatbuffers::Vector<::flatbuffers::Offset<Honeycrisp::Serialized::Material>> *mutable_materials() {
+    return GetPointer<::flatbuffers::Vector<::flatbuffers::Offset<Honeycrisp::Serialized::Material>> *>(VT_MATERIALS);
   }
   int64_t last_write_time() const {
     return GetField<int64_t>(VT_LAST_WRITE_TIME, 0);
@@ -230,8 +239,9 @@ struct Model FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
            verifier.VerifyVector(indices()) &&
            VerifyOffset(verifier, VT_MESHES) &&
            verifier.VerifyVector(meshes()) &&
-           VerifyOffset(verifier, VT_MATERIAL) &&
-           verifier.VerifyTable(material()) &&
+           VerifyOffset(verifier, VT_MATERIALS) &&
+           verifier.VerifyVector(materials()) &&
+           verifier.VerifyVectorOfTables(materials()) &&
            VerifyField<int64_t>(verifier, VT_LAST_WRITE_TIME, 8) &&
            verifier.EndTable();
   }
@@ -253,8 +263,8 @@ struct ModelBuilder {
   void add_meshes(::flatbuffers::Offset<::flatbuffers::Vector<const Honeycrisp::Serialized::MeshMetaData *>> meshes) {
     fbb_.AddOffset(Model::VT_MESHES, meshes);
   }
-  void add_material(::flatbuffers::Offset<Honeycrisp::Serialized::Material> material) {
-    fbb_.AddOffset(Model::VT_MATERIAL, material);
+  void add_materials(::flatbuffers::Offset<::flatbuffers::Vector<::flatbuffers::Offset<Honeycrisp::Serialized::Material>>> materials) {
+    fbb_.AddOffset(Model::VT_MATERIALS, materials);
   }
   void add_last_write_time(int64_t last_write_time) {
     fbb_.AddElement<int64_t>(Model::VT_LAST_WRITE_TIME, last_write_time, 0);
@@ -276,11 +286,11 @@ inline ::flatbuffers::Offset<Model> CreateModel(
     ::flatbuffers::Offset<::flatbuffers::Vector<float>> vertex_data = 0,
     ::flatbuffers::Offset<::flatbuffers::Vector<uint32_t>> indices = 0,
     ::flatbuffers::Offset<::flatbuffers::Vector<const Honeycrisp::Serialized::MeshMetaData *>> meshes = 0,
-    ::flatbuffers::Offset<Honeycrisp::Serialized::Material> material = 0,
+    ::flatbuffers::Offset<::flatbuffers::Vector<::flatbuffers::Offset<Honeycrisp::Serialized::Material>>> materials = 0,
     int64_t last_write_time = 0) {
   ModelBuilder builder_(_fbb);
   builder_.add_last_write_time(last_write_time);
-  builder_.add_material(material);
+  builder_.add_materials(materials);
   builder_.add_meshes(meshes);
   builder_.add_indices(indices);
   builder_.add_vertex_data(vertex_data);
@@ -294,18 +304,19 @@ inline ::flatbuffers::Offset<Model> CreateModelDirect(
     const std::vector<float> *vertex_data = nullptr,
     const std::vector<uint32_t> *indices = nullptr,
     const std::vector<Honeycrisp::Serialized::MeshMetaData> *meshes = nullptr,
-    ::flatbuffers::Offset<Honeycrisp::Serialized::Material> material = 0,
+    const std::vector<::flatbuffers::Offset<Honeycrisp::Serialized::Material>> *materials = nullptr,
     int64_t last_write_time = 0) {
   auto vertex_data__ = vertex_data ? _fbb.CreateVector<float>(*vertex_data) : 0;
   auto indices__ = indices ? _fbb.CreateVector<uint32_t>(*indices) : 0;
   auto meshes__ = meshes ? _fbb.CreateVectorOfStructs<Honeycrisp::Serialized::MeshMetaData>(*meshes) : 0;
+  auto materials__ = materials ? _fbb.CreateVector<::flatbuffers::Offset<Honeycrisp::Serialized::Material>>(*materials) : 0;
   return Honeycrisp::Serialized::CreateModel(
       _fbb,
       vertex_attrib_bits,
       vertex_data__,
       indices__,
       meshes__,
-      material,
+      materials__,
       last_write_time);
 }
 

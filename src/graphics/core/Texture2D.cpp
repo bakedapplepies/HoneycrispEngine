@@ -20,6 +20,14 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureTy
     {
         data = stbi_load(
             texturePath.string().data(), &width, &height, &nrChannels, desiredChannels);
+
+        if (!data)
+        {
+            HNCRSP_LOG_ERROR(texturePath.string());
+            HNCRSP_LOG_ERROR(fmt::format("Texture failed to load: {}", stbi_failure_reason()));
+            stbi_image_free(data);
+            HNCRSP_TERMINATE("Texture failed to load.");
+        }
         imageSerializer.AddImage(data, width, height, texturePath);
     }
     else

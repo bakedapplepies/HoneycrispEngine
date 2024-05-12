@@ -15,12 +15,12 @@ class Model : public Renderable
 private:
     std::unique_ptr<VertexArray> m_VAO;
     std::vector<MeshMetaData> m_meshesMetaData;  // size is also number of meshes
-    std::shared_ptr<Material> m_material;
+    std::vector< std::shared_ptr<Material> > m_materials;
+    std::shared_ptr<Shader> m_shader;
 
 public:
     Model(const FileSystem::Path& path, std::shared_ptr<Shader> shader, bool flip_uv);
     Model(Model&& other) = default;  // TODO: Proper constructors
-    Material* getMaterial() const;
     void virt_AddDrawDataToRenderer(EntityUID entityUID) override final;
 
 private:  // building model

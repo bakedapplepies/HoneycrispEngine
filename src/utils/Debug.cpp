@@ -34,8 +34,8 @@ bool GLLogCall(const char* function, const char* file, unsigned int line)
             case GL_CONTEXT_LOST:                  errorType = "CONTEXT LOST"; break;
             default:                               errorType = "OPENGL ERROR ENUM UNRECOGNIZED"; break;
         }
-        std::cout << fmt::format("[OPENGL ERROR: {} | {}]\n    At: {} Ln: {}, File: {}\n",
-            error, errorType, function, line, file
+        std::cout << fmt::format("[OPENGL ERROR: {} | {}]\n    At: {}\n    File: {}:{}\n",
+            error, errorType, function, file, line
         );
         return false;
     }

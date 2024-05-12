@@ -5,11 +5,6 @@ HNCRSP_NAMESPACE_START
 
 ModelSerializer::ModelSerializer()
 {
-    m_albedo = m_builder.CreateString("");  // dummy data
-    m_roughness = m_builder.CreateString("");
-    m_ao = m_builder.CreateString("");
-    m_normal = m_builder.CreateString("");
-    m_specular = m_builder.CreateString("");
 }
 
 void ModelSerializer::AddModel(
@@ -31,60 +26,53 @@ void ModelSerializer::AddModel(
     {
         mesh_meta_data_vec.emplace_back(
             mesh_meta_data[i].mesh_vertex_count,
-            mesh_meta_data[i].indices_buffer_count
+            mesh_meta_data[i].indices_buffer_count,
+            mesh_meta_data[i].material_index
         );
     }
     m_meshes_meta_data = m_builder.CreateVectorOfStructs(mesh_meta_data_vec);
 }
 
-void ModelSerializer::AddAlbedo(const FileSystem::Path& albedo_path)
-{
-    m_albedo = m_builder.CreateString(albedo_path.string().c_str());
-}
+void ModelSerializer::AddMaterial(
+    const FileSystem::Path& albedo_path,
+    const FileSystem::Path& roughness_path,
+    const FileSystem::Path& ao_path,
+    const FileSystem::Path& normal_path,
+    const FileSystem::Path& specular_path
+) {
+    flatbuffers::Offset<flatbuffers::String> albedo = (albedo_path != FileSystem::Path("")) ? 
+        m_builder.CreateString(albedo_path.string()) : m_builder.CreateString("");
+    flatbuffers::Offset<flatbuffers::String> roughness = (roughness_path != FileSystem::Path("")) ? 
+        m_builder.CreateString(roughness_path.string()) : m_builder.CreateString("");
+    flatbuffers::Offset<flatbuffers::String> ao = (ao_path != FileSystem::Path("")) ? 
+        m_builder.CreateString(ao_path.string()) : m_builder.CreateString("");
+    flatbuffers::Offset<flatbuffers::String> normal = (normal_path != FileSystem::Path("")) ? 
+        m_builder.CreateString(normal_path.string()) : m_builder.CreateString("");
+    flatbuffers::Offset<flatbuffers::String> specular = (specular_path != FileSystem::Path("")) ? 
+        m_builder.CreateString(specular_path.string()) : m_builder.CreateString("");
 
-void ModelSerializer::AddRoughness(const FileSystem::Path& roughness_path)
-{
-    m_roughness = m_builder.CreateString(roughness_path.string().c_str());
-}
-
-void ModelSerializer::AddAo(const FileSystem::Path& ao_path)
-{
-    m_ao = m_builder.CreateString(ao_path.string().c_str());
-}
-
-void ModelSerializer::AddNormal(const FileSystem::Path& normal_path)
-{
-    m_normal = m_builder.CreateString(normal_path.string().c_str());
-}
-
-void ModelSerializer::AddSpecular(const FileSystem::Path& specular_path)
-{
-    m_specular = m_builder.CreateString(specular_path.string().c_str());
-}
-
-flatbuffers::Offset<Serialized::Material> ModelSerializer::FinishMaterial()
-{
-    m_material_builder = std::make_unique<Serialized::MaterialBuilder>(m_builder);
-    
-    m_material_builder->add_albedo_path(m_albedo);
-    m_material_builder->add_roughness_path(m_roughness);
-    m_material_builder->add_ao_path(m_ao);
-    m_material_builder->add_normal_path(m_normal);
-    m_material_builder->add_specular_path(m_specular);
-    return m_material_builder->Finish();
+    m_materials.push_back(Serialized::CreateMaterial(
+        m_builder,
+        albedo,
+        roughness,
+        ao,
+        normal,
+        specular
+    ));
 }
 
 flatbuffers::Offset<Serialized::Model> ModelSerializer::FinishModel(
-    flatbuffers::Offset<Serialized::Material> material,
     uint64_t last_write_time
 ) {
+    auto materials = m_builder.CreateVector<Serialized::Material>(m_materials.data(), m_materials.size());
+
     m_model_builder = std::make_unique<Serialized::ModelBuilder>(m_builder);
 
     m_model_builder->add_vertex_attrib_bits(m_vertex_attrib_bits);
     m_model_builder->add_vertex_data(m_vertex_data);
     m_model_builder->add_indices(m_indices);
     m_model_builder->add_meshes(m_meshes_meta_data);
-    m_model_builder->add_material(material);
+    m_model_builder->add_materials(materials);
     m_model_builder->add_last_write_time(last_write_time);
 
     return m_model_builder->Finish();
@@ -104,8 +92,7 @@ void ModelSerializer::Serialize(const FileSystem::Path& path_to_model)
     auto time_count = std::chrono::duration_cast<std::chrono::seconds>(last_write_time_since_epoch);
 
     // Finish material & model
-    auto serialized_material = FinishMaterial();
-    auto serialized_model = FinishModel(serialized_material, time_count.count());
+    auto serialized_model = FinishModel(time_count.count());
     m_builder.Finish(serialized_model);
 
     // store buffer

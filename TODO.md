@@ -35,3 +35,5 @@ use non-member functions?
 - TODO: Maybe make Object class non-copyable and non-movable
 
 - TODO: Rename interfaces with the prefix I-
+
+- TODO: Grayscale textures are stored in texture arrays as GL_RGBA format; may be wasteful????

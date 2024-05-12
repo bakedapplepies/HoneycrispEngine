@@ -35,6 +35,8 @@ public:
     glm::vec3 getAmbient() const;
     glm::vec3 getDiffuse() const;
     glm::vec3 getSpecular() const;
+
+    void AddShaders(const std::vector<Shader>& shaders) {}
 };
 
 HNCRSP_NAMESPACE_END

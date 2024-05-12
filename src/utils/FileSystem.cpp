@@ -31,4 +31,9 @@ void FileSystem::Path::remove_filename()
     m_path.remove_filename();
 }
 
+bool FileSystem::Path::operator==(const FileSystem::Path& other)
+{
+    return this->string() == other.string();
+}
+
 HNCRSP_NAMESPACE_END

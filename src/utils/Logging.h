@@ -7,6 +7,7 @@
 
 std::ostream& operator<<(std::ostream& stream, const glm::vec2& vec2);
 std::ostream& operator<<(std::ostream& stream, const glm::vec3& vec3);
+std::ostream& operator<<(std::ostream& stream, const Honeycrisp::FileSystem::Path& path);
 
 HNCRSP_NAMESPACE_START
 

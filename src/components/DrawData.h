@@ -13,7 +13,7 @@ struct MeshMetaData;
 struct DrawData
 {
     GLuint VAO_id;
-    std::shared_ptr<Material> material = nullptr;
+    std::vector< std::shared_ptr<Material> > materials;
     std::vector<MeshMetaData> meta_data;
 };
 
@@ -21,11 +21,11 @@ struct MeshMetaData
 {
     GLuint mesh_vertex_count;
     GLuint indices_buffer_count;
-    // std::shared_ptr<Material> material;
+    uint32_t material_index;
 
     operator Serialized::MeshMetaData() const
     {
-        return Serialized::MeshMetaData(mesh_vertex_count, indices_buffer_count);
+        return Serialized::MeshMetaData(mesh_vertex_count, indices_buffer_count, material_index);
     }
 };
 

@@ -13,6 +13,12 @@ std::ostream& operator<<(std::ostream& stream, const glm::vec3& vec3)
     return stream;
 }
 
+std::ostream& operator<<(std::ostream& stream, const Honeycrisp::FileSystem::Path& path)
+{
+    std::cout << path.string() << '\n';
+    return stream;
+}
+
 HNCRSP_NAMESPACE_START
 
 

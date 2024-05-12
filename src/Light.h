@@ -17,10 +17,10 @@ public:
 public:
     Light() = default;
     Light(glm::vec3 colorEmit) : colorEmit(colorEmit) {}
-    ~Light() = default;
+    virtual ~Light() = default;
 
 protected:
-    void AddShaders();
+    virtual void AddShaders(const std::vector<Shader>& shaders) = 0;
 };
 
 HNCRSP_NAMESPACE_END

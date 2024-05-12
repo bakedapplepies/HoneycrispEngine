@@ -218,10 +218,10 @@ void Cube::virt_AddDrawDataToRenderer(EntityUID entityUID)
     DrawData drawData;
     drawData.VAO_id = m_VAO->getID();
     drawData.meta_data.emplace_back(0, m_numVertices);
-    drawData.material = std::make_shared<Material>(g_ShaderManager.basicShader);
+    drawData.materials.push_back(std::make_shared<Material>(g_ShaderManager.basicShader));
 
-    drawData.material->setAlbedoMap(g_Texture2DManager.mainTextureMap);
-    drawData.material->setSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
+    drawData.materials.back()->setAlbedoMap(g_Texture2DManager.mainTextureMap);
+    drawData.materials.back()->setSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
 
     g_ECSManager->AddComponent<DrawData>(entityUID, drawData);
 }

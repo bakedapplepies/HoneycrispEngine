@@ -33,7 +33,7 @@ public:
     void setShader(std::shared_ptr<Shader> newShader)
     {
         DrawData& thisDrawData = g_ECSManager->GetComponent<DrawData>(entityUID);
-        thisDrawData.material->setShader(newShader);
+        thisDrawData.materials[0]->setShader(newShader);
     }
 
     void setTransform(const Transform& newTransform)
