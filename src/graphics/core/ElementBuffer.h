@@ -18,7 +18,7 @@ public:
     ElementBuffer& operator=(ElementBuffer&&) noexcept;
     ~ElementBuffer();
     
-    void CreateEBO(const GLuint* data, size_t dataSize, GLenum mode);
+    void CreateEBO(const GLuint* data, size_t dataSize);
     void Bind() const;
     void Unbind() const;
 };

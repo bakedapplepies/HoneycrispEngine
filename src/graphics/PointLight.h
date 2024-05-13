@@ -19,8 +19,8 @@ public:
     float specular;
 
     float attenuation_constant = 1.0f;
-    float attenuation_linear = 0.001f;
-    float attenuation_quadratic = 0.0002f;
+    float attenuation_linear = 0.01f;
+    float attenuation_quadratic = 0.002f;
 
 public:
     PointLight(const glm::vec3& position, const glm::vec3& color,

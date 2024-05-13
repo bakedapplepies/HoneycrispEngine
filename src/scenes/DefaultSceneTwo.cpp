@@ -113,13 +113,21 @@ DefaultSceneTwo::DefaultSceneTwo()
     // appleModelNormal->getMaterial()->setShininess(32);
 
     sponza = CreateStaticRenderObj<Honeycrisp::Model>(
-        FileSystem::Path("resources/models/sponza/sponza.obj"),
+        FileSystem::Path("resources/models/sponza2/Sponza.gltf"),
         phongShader,
+        false
+    );
+    sponzaNormal = CreateStaticRenderObj<Honeycrisp::Model>(
+        FileSystem::Path("resources/models/sponza2/Sponza.gltf"),
+        normalShader,
         false
     );
     Transform& sponzaTransform = g_ECSManager->GetComponent<Transform>(sponza->entityUID);
     sponzaTransform.position = glm::vec3(0.0f, 2.0f, -2.0f);
     sponzaTransform.scale = glm::vec3(0.008f);
+    Transform& sponzaNormalTransform = g_ECSManager->GetComponent<Transform>(sponzaNormal->entityUID);
+    sponzaNormalTransform.position = glm::vec3(0.0f, 2.0f, -2.0f);
+    sponzaNormalTransform.scale = glm::vec3(0.008f);
 
     CreateCubemap(
         FileSystem::Path("resources/textures/cubemaps/skybox/right.jpg"),
@@ -147,7 +155,7 @@ void DefaultSceneTwo::InitializeShaders(void)
 {
     phongShader = g_ShaderManager.GetShader(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
-        FileSystem::Path("resources/shaders/PureAlbedoFragment.glsl")
+        FileSystem::Path("resources/shaders/BlinnPhongFragment.glsl")
     );
     phongWTintShader = g_ShaderManager.GetShader(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),

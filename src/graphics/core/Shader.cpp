@@ -141,6 +141,8 @@ Shader::Shader(
         glDeleteShader(fragmentShader));
     GLCall(
         glDeleteShader(geometryShader));
+
+    HNCRSP_LOG_INFO(fmt::format("{}\n{}\n{}\n\t{}", vertexFile.string(), fragmentFile.string(), geometryFile.string(), m_shaderID));
 }
 
 std::string Shader::parseShader(std::string_view path)
@@ -196,7 +198,7 @@ GLint Shader::getUniformLocation(const std::string& name) const
         return m_uniformLocationCache[name];
     }
     GLint location = glGetUniformLocation(m_shaderID, name.c_str());
-    if (location == -1) HNCRSP_LOG_INFO(name);
+    if (location == -1) HNCRSP_LOG_INFO(name, "\t", m_shaderID);
     m_uniformLocationCache[name] = location;
     return location;
 }

@@ -75,7 +75,7 @@ Model::Model(const FileSystem::Path& path, std::shared_ptr<Shader> shader, bool 
     );
     modelSerializer.Serialize(path);
 
-    s_isMaterialLoaded.clear();
+    s_isMaterialLoaded.clear();  // for next model
 }
 
 void Model::processNode(
@@ -156,6 +156,7 @@ void Model::processMesh(
             mesh->mMaterialIndex - 1
         );
     }
+    HNCRSP_LOG_INFO(mesh->mMaterialIndex);
 
     num_vertices = mesh->mNumVertices;
 

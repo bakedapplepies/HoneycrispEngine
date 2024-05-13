@@ -356,8 +356,8 @@ void VertexArray::CreateVAO(const float* vboData, size_t vboSize, const GLuint* 
     }
     GLCall(glGenVertexArrays(1, &m_VAO_ID));
     Bind();
-    m_vertexBuffer.CreateVBO(vboData, vboSize, mode);
-    m_elementBuffer.CreateEBO(eboData, eboSize, mode);
+    m_vertexBuffer.CreateVBO(vboData, vboSize);
+    m_elementBuffer.CreateEBO(eboData, eboSize);
 }
 
 void VertexArray::Bind() const

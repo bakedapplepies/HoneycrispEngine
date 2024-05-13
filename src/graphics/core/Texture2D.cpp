@@ -45,7 +45,7 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureTy
         GLCall(
             glBindTexture(GL_TEXTURE_2D, m_textureID));
         GLCall(  // internalformat has to be sized
-            glTexStorage2D(GL_TEXTURE_2D, 4, GL_SRGB8_ALPHA8, width, height));
+            glTexStorage2D(GL_TEXTURE_2D, static_cast<int>(std::log2f(std::max(width, height))) + 1, GL_SRGB8_ALPHA8, width, height));
         GLCall(
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, format, GL_UNSIGNED_BYTE, data));
 
