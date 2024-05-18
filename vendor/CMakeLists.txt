@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.26.0)
 project(${CMAKE_PROJECT_NAME}.Vendors CXX C)
 
-# set( GLFW_BUILD_DOCS OFF CACHE BOOL  "GLFW lib only" )
-# set( GLFW_INSTALL OFF CACHE BOOL  "GLFW lib only" )
+set( GLFW_BUILD_DOCS OFF CACHE BOOL  "GLFW lib only" )
+set( GLFW_INSTALL OFF CACHE BOOL  "GLFW lib only" )
 
 add_library(GLAD STATIC
     ${CMAKE_SOURCE_DIR}/vendor/glad/glad.c

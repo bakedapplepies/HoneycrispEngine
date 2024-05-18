@@ -10,10 +10,10 @@
 
 HNCRSP_NAMESPACE_START
 
-struct TimeBySystems
-{
-    float renderer;
-};
+// struct TimeBySystems
+// {
+//     float renderer;
+// };
 
 class ECSManager
 {

@@ -7,7 +7,7 @@ using namespace Honeycrisp;
 
 DefaultScene::DefaultScene()
 {
-    shader = g_ShaderManager.GetShader(
+    shader = CreateShader(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
         FileSystem::Path("resources/shaders/BlinnPhongTintFragment.glsl")
     );
@@ -182,8 +182,6 @@ void DefaultScene::SetInitialUniforms(void)
     meshData.materials[0]->setSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
 
     // lighting
-    shader->setIntUnf("u_material.albedo", g_Texture2DManager.mainTextureMap->getTextureUnit());
-    shader->setIntUnf("u_material.specular", g_Texture2DManager.mainTextureSpecularMap->getTextureUnit());
     shader->setFloatUnf("u_material.shininess", 32.0f);
 
     // dir light

@@ -136,12 +136,12 @@ void main()
     vec3 result = vec3(0.0);
     vec3 fragToView = u_viewPos - fs_in.FragPos;
     vec3 dirToView = normalize(fragToView);
-    vec3 albedoFrag = vec3(texture(u_material.albedo, fs_in.TexCoord));
-    vec3 specularFrag = vec3(texture(u_material.specular, fs_in.TexCoord));
+    vec4 albedoFrag = texture(u_material.albedo, fs_in.TexCoord);
+    vec4 specularFrag = texture(u_material.specular, fs_in.TexCoord);
 
     // result += CalcDirLight(u_dirLight, fs_in.Normal, dirToView, albedoFrag, specularFrag);
-    result += CalcPointLight(u_pointLight, fs_in.Normal, dirToView, albedoFrag, specularFrag);
+    result += CalcPointLight(u_pointLight, fs_in.Normal, dirToView, vec3(albedoFrag), vec3(specularFrag));
     // result += CalcSpotLight(u_spotLight, fs_in.Normal, dirToView, albedoFrag, specularFrag);
 
-    FragColor = vec4(result, 1.0);
+    FragColor = vec4(result, albedoFrag.w);
 }

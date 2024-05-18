@@ -50,7 +50,8 @@ public:
     const Texture2D* getSpecularMap();
     float getShininess() const;
 
-    // void bindMaterial(Shader* shader);
+private:
+    void UpdateTextureUniforms() const;
 };
 
 HNCRSP_NAMESPACE_END

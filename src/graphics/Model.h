@@ -40,6 +40,11 @@ private:  // building model
         std::vector<float>& vertexData,
         std::vector<GLuint>& indices
     );
+    void getMaterials(
+        const aiScene* scene,
+        const FileSystem::Path& modelDirectory,
+        ModelSerializer& modelSerializer
+    );
     std::shared_ptr<Texture2D> getMaterialTexture(
         std::string_view texturePath,
         aiTextureType assimp_texture_type

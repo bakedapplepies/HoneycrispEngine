@@ -24,7 +24,7 @@ private:
     std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Model> > appleModelNormal;
     std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Model> > sponza;
     std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Model> > sponzaNormal;
-    std::unique_ptr<Honeycrisp::PointLight> pointLight;
+    std::shared_ptr<Honeycrisp::PointLight> pointLight;
 
     float m_u_normal_length = 0.7f;
     

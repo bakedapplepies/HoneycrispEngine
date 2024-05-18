@@ -3,7 +3,7 @@
 #include "src/pch/pch.h"
 #include "src/Object.h"
 #include "src/components/Transform.h"
-#include "src/Light.h"
+#include "src/graphics/Light.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -19,8 +19,8 @@ public:
     float specular;
 
     float attenuation_constant = 1.0f;
-    float attenuation_linear = 0.01f;
-    float attenuation_quadratic = 0.002f;
+    float attenuation_linear = 0.7f;
+    float attenuation_quadratic = 1.8f;
 
 public:
     PointLight(const glm::vec3& position, const glm::vec3& color,
@@ -32,11 +32,11 @@ public:
     PointLight& operator=(PointLight&& other) noexcept;
     ~PointLight() = default;
 
+    void ConfigureShader(const Shader* shader) override;
+
     glm::vec3 getAmbient() const;
     glm::vec3 getDiffuse() const;
     glm::vec3 getSpecular() const;
-
-    void AddShaders(const std::vector<Shader>& shaders) {}
 };
 
 HNCRSP_NAMESPACE_END

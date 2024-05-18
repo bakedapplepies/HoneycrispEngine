@@ -6,7 +6,7 @@ using namespace Honeycrisp;
 
 DefaultSceneTwo::DefaultSceneTwo()
 {
-    pointLight = std::make_unique<PointLight>(
+    pointLight = CreateLight<PointLight>(
         glm::vec3(0.0f, 0.0f, 0.0f),  // pos
         glm::vec3(1.0f, 1.0f, 1.0f),  // color
         0.1f, 0.5f, 1.0f              // ambient - diffuse - specular
@@ -103,8 +103,12 @@ DefaultSceneTwo::DefaultSceneTwo()
     // backpackMaterial->setShininess(64.0f);
 
     // Author: Eydeet (https://skfb.ly/ouB6N)
-    // appleModel = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/apple/source/apple.fbx"), phongShader, false);
-    // appleModel->setTransform(Transform(glm::vec3(10.0f, 2.0f, 17.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.3f)));
+    appleModel = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/apple/source/apple.fbx"), phongShader, false);
+    appleModel->setTransform(Transform(
+        glm::vec3(10.0f, 2.0f, 17.0f),
+        glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::vec3(0.3f)
+    ));
     // Material* appleMaterial = appleModel->getMaterial();
     // appleMaterial->setShininess(32);
 
@@ -117,17 +121,17 @@ DefaultSceneTwo::DefaultSceneTwo()
         phongShader,
         false
     );
-    sponzaNormal = CreateStaticRenderObj<Honeycrisp::Model>(
-        FileSystem::Path("resources/models/sponza2/Sponza.gltf"),
-        normalShader,
-        false
-    );
+    // sponzaNormal = CreateStaticRenderObj<Honeycrisp::Model>(
+    //     FileSystem::Path("resources/models/sponza/sponza.obj"),
+    //     normalShader,
+    //     false
+    // );
     Transform& sponzaTransform = g_ECSManager->GetComponent<Transform>(sponza->entityUID);
     sponzaTransform.position = glm::vec3(0.0f, 2.0f, -2.0f);
     sponzaTransform.scale = glm::vec3(0.008f);
-    Transform& sponzaNormalTransform = g_ECSManager->GetComponent<Transform>(sponzaNormal->entityUID);
-    sponzaNormalTransform.position = glm::vec3(0.0f, 2.0f, -2.0f);
-    sponzaNormalTransform.scale = glm::vec3(0.008f);
+    // Transform& sponzaNormalTransform = g_ECSManager->GetComponent<Transform>(sponzaNormal->entityUID);
+    // sponzaNormalTransform.position = glm::vec3(0.0f, 2.0f, -2.0f);
+    // sponzaNormalTransform.scale = glm::vec3(0.008f);
 
     CreateCubemap(
         FileSystem::Path("resources/textures/cubemaps/skybox/right.jpg"),
@@ -153,16 +157,16 @@ void DefaultSceneTwo::OnUpdate(const float& dt)
 
 void DefaultSceneTwo::InitializeShaders(void)
 {
-    phongShader = g_ShaderManager.GetShader(
+    phongShader = CreateShader(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
         FileSystem::Path("resources/shaders/BlinnPhongFragment.glsl")
     );
-    phongWTintShader = g_ShaderManager.GetShader(
+    phongWTintShader = CreateShader(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
         FileSystem::Path("resources/shaders/BlinnPhongTintFragment.glsl")
         // FileSystem::Path("resources/shaders/WaveGeometry.glsl")  // TODO: just to calculate normals, maybe rename file to CalcNormGeometry.glsl
     );
-    normalShader = g_ShaderManager.GetShader(
+    normalShader = CreateShader(
         FileSystem::Path("resources/shaders/NormalVertex.glsl"),
         FileSystem::Path("resources/shaders/YellowFragment.glsl"),
         FileSystem::Path("resources/shaders/NormalGeometry.glsl")

@@ -119,7 +119,7 @@ VertexArray::VertexArray(
 
     // Postions XYZ
     GLCall(glVertexAttribPointer(
-        HNCRSP_VERTEX_ATTRIB_POSITION_INDEX,
+        VERTEX_ATTRIB_POSITION_INDEX,
         3,
         GL_FLOAT,
         GL_FALSE,
@@ -133,7 +133,7 @@ VertexArray::VertexArray(
     if (colors)
     {
         GLCall(glVertexAttribPointer(
-            HNCRSP_VERTEX_ATTRIB_COLOR_INDEX,
+            VERTEX_ATTRIB_COLOR_INDEX,
             3,
             GL_FLOAT,
             GL_FALSE,
@@ -149,7 +149,7 @@ VertexArray::VertexArray(
     {
         // Texture Coordinates XY
         GLCall(glVertexAttribPointer(
-            HNCRSP_VERTEX_ATTRIB_UV_INDEX,
+            VERTEX_ATTRIB_UV_INDEX,
             2,
             GL_FLOAT,
             GL_FALSE,
@@ -165,7 +165,7 @@ VertexArray::VertexArray(
     {
         // Normals XYZ (Normalized vectors)
         GLCall(glVertexAttribPointer(
-            HNCRSP_VERTEX_ATTRIB_NORMAL_INDEX,
+            VERTEX_ATTRIB_NORMAL_INDEX,
             3,
             GL_FLOAT, 
             GL_FALSE,
@@ -208,7 +208,7 @@ VertexArray::VertexArray(
 
     // Postions XYZ
     GLCall(glVertexAttribPointer(
-        HNCRSP_VERTEX_ATTRIB_POSITION_INDEX,
+        VERTEX_ATTRIB_POSITION_INDEX,
         3,
         GL_FLOAT,
         GL_FALSE,
@@ -222,7 +222,7 @@ VertexArray::VertexArray(
     if (color)
     {
         GLCall(glVertexAttribPointer(
-            HNCRSP_VERTEX_ATTRIB_COLOR_INDEX,
+            VERTEX_ATTRIB_COLOR_INDEX,
             3,
             GL_FLOAT,
             GL_FALSE,
@@ -238,7 +238,7 @@ VertexArray::VertexArray(
     {
         // Texture Coordinates XY
         GLCall(glVertexAttribPointer(
-            HNCRSP_VERTEX_ATTRIB_UV_INDEX,
+            VERTEX_ATTRIB_UV_INDEX,
             2,
             GL_FLOAT,
             GL_FALSE,
@@ -254,7 +254,7 @@ VertexArray::VertexArray(
     {
         // Normals XYZ (Normalized vectors)
         GLCall(glVertexAttribPointer(
-            HNCRSP_VERTEX_ATTRIB_NORMAL_INDEX,
+            VERTEX_ATTRIB_NORMAL_INDEX,
             3,
             GL_FLOAT, 
             GL_FALSE,
@@ -272,11 +272,11 @@ void VertexArray::EnableVertexAttribPosition(bool on) const
     Bind();
     if (on)
     {
-        GLCall(glEnableVertexAttribArray(HNCRSP_VERTEX_ATTRIB_POSITION_INDEX));
+        GLCall(glEnableVertexAttribArray(VERTEX_ATTRIB_POSITION_INDEX));
     }
     else
     {
-        GLCall(glDisableVertexAttribArray(HNCRSP_VERTEX_ATTRIB_POSITION_INDEX));
+        GLCall(glDisableVertexAttribArray(VERTEX_ATTRIB_POSITION_INDEX));
     }
 }
 
@@ -285,11 +285,11 @@ void VertexArray::EnableVertexAttribColor(bool on) const
     Bind();
     if (on)
     {
-        GLCall(glEnableVertexAttribArray(HNCRSP_VERTEX_ATTRIB_COLOR_INDEX));
+        GLCall(glEnableVertexAttribArray(VERTEX_ATTRIB_COLOR_INDEX));
     }
     else
     {
-        GLCall(glDisableVertexAttribArray(HNCRSP_VERTEX_ATTRIB_COLOR_INDEX));
+        GLCall(glDisableVertexAttribArray(VERTEX_ATTRIB_COLOR_INDEX));
     }
 }
 
@@ -298,11 +298,11 @@ void VertexArray::EnableVertexAttribUV(bool on) const
     Bind();
     if (on)
     {
-        GLCall(glEnableVertexAttribArray(HNCRSP_VERTEX_ATTRIB_UV_INDEX));
+        GLCall(glEnableVertexAttribArray(VERTEX_ATTRIB_UV_INDEX));
     }
     else
     {
-        GLCall(glDisableVertexAttribArray(HNCRSP_VERTEX_ATTRIB_UV_INDEX));
+        GLCall(glDisableVertexAttribArray(VERTEX_ATTRIB_UV_INDEX));
     }
 }
 
@@ -311,11 +311,11 @@ void VertexArray::EnableVertexAttribNormals(bool on) const
     Bind();
     if (on)
     {
-        GLCall(glEnableVertexAttribArray(HNCRSP_VERTEX_ATTRIB_NORMAL_INDEX));
+        GLCall(glEnableVertexAttribArray(VERTEX_ATTRIB_NORMAL_INDEX));
     }
     else
     {
-        GLCall(glDisableVertexAttribArray(HNCRSP_VERTEX_ATTRIB_NORMAL_INDEX));
+        GLCall(glDisableVertexAttribArray(VERTEX_ATTRIB_NORMAL_INDEX));
     }
 }
 

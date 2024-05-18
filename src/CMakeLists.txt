@@ -3,6 +3,8 @@ project(${CMAKE_PROJECT_NAME} CXX C)
 
 set(SOURCE
     # Application
+    ${CMAKE_SOURCE_DIR}/src/constants.h
+    ${CMAKE_SOURCE_DIR}/src/constants.cpp
     ${CMAKE_SOURCE_DIR}/src/Object.h
     ${CMAKE_SOURCE_DIR}/src/Callbacks.h
     ${CMAKE_SOURCE_DIR}/src/Callbacks.cpp
@@ -15,6 +17,26 @@ set(SOURCE
     ${CMAKE_SOURCE_DIR}/src/Window.h
     ${CMAKE_SOURCE_DIR}/src/Window.cpp
     ${CMAKE_SOURCE_DIR}/src/main.cpp
+)
+set(INCLUDE_DIRECTORIES
+    ${CMAKE_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/vendor
+    ${CMAKE_SOURCE_DIR}/vendor/glfw/include
+    ${CMAKE_SOURCE_DIR}/vendor/glm
+    ${CMAKE_SOURCE_DIR}/vendor/assimp/include
+    ${CMAKE_SOURCE_DIR}/vendor/assimp/include/assimp
+    ${CMAKE_SOURCE_DIR}/vendor/fmt/include
+)
+set(LINK_DIRECTORIES
+    ${CMAKE_SOURCE_DIR}/lib
+    ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/vendor/glfw/src
+    ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/vendor/fmt
+    ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/vendor/assimp/lib
+    ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/vendor/assimp/contrib/zlib
+)
+set(PCH
+    ${CMAKE_SOURCE_DIR}/src/pch/pch.h
+    ${CMAKE_SOURCE_DIR}/src/pch/pch.cpp
 )
 
 add_executable(${CMAKE_PROJECT_NAME}
@@ -43,21 +65,6 @@ add_compile_definitions(
     HNCRSP_GIT_COMMIT_ID="${COMMIT_ID}"
     HNCRSP_BUILD_TYPE="${CMAKE_BUILD_TYPE}"
 )
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
-    ${CMAKE_SOURCE_DIR}
-    ${CMAKE_SOURCE_DIR}/vendor
-    ${CMAKE_SOURCE_DIR}/vendor/glfw/include
-    ${CMAKE_SOURCE_DIR}/vendor/glm
-    ${CMAKE_SOURCE_DIR}/vendor/assimp/include
-    ${CMAKE_SOURCE_DIR}/vendor/assimp/include/assimp
-    ${CMAKE_SOURCE_DIR}/vendor/fmt/include
-)
-target_precompile_headers(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src/pch/pch.cpp ${CMAKE_SOURCE_DIR}/src/pch/pch.h)
-target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/lib)
-target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/vendor/glfw/src)
-target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/vendor/fmt)
-target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/vendor/assimp/lib)
-target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/vendor/assimp/contrib/zlib)
 
 add_subdirectory(managers)
 add_subdirectory(graphics)
@@ -69,9 +76,45 @@ add_subdirectory(systems)
 add_subdirectory(serialize)
 add_subdirectory(scenes)
 
+# PCH ----------
+target_precompile_headers(${CMAKE_PROJECT_NAME}               PRIVATE ${PCH})
+target_precompile_headers(${CMAKE_PROJECT_NAME}.Managers      PRIVATE ${PCH})
+target_precompile_headers(${CMAKE_PROJECT_NAME}.Graphics      PRIVATE ${PCH})
+target_precompile_headers(${CMAKE_PROJECT_NAME}.Graphics.Core PRIVATE ${PCH})
+target_precompile_headers(${CMAKE_PROJECT_NAME}.Utils         PRIVATE ${PCH})
+target_precompile_headers(${CMAKE_PROJECT_NAME}.ECS           PRIVATE ${PCH})
+target_precompile_headers(${CMAKE_PROJECT_NAME}.Components    PRIVATE ${PCH})
+target_precompile_headers(${CMAKE_PROJECT_NAME}.ECSSystems    PRIVATE ${PCH})
+target_precompile_headers(${CMAKE_PROJECT_NAME}.Serializer    PRIVATE ${PCH})
+target_precompile_headers(${CMAKE_PROJECT_NAME}.Scenes        PRIVATE ${PCH})
+# ----------
+# Include directories ----------
+target_include_directories(${CMAKE_PROJECT_NAME}               PRIVATE ${INCLUDE_DIRECTORIES})
+target_include_directories(${CMAKE_PROJECT_NAME}.Managers      PRIVATE ${INCLUDE_DIRECTORIES})
+target_include_directories(${CMAKE_PROJECT_NAME}.Graphics      PRIVATE ${INCLUDE_DIRECTORIES})
+target_include_directories(${CMAKE_PROJECT_NAME}.Graphics.Core PRIVATE ${INCLUDE_DIRECTORIES})
+target_include_directories(${CMAKE_PROJECT_NAME}.Utils         PRIVATE ${INCLUDE_DIRECTORIES})
+target_include_directories(${CMAKE_PROJECT_NAME}.ECS           PRIVATE ${INCLUDE_DIRECTORIES})
+target_include_directories(${CMAKE_PROJECT_NAME}.Components    PRIVATE ${INCLUDE_DIRECTORIES})
+target_include_directories(${CMAKE_PROJECT_NAME}.ECSSystems    PRIVATE ${INCLUDE_DIRECTORIES})
+target_include_directories(${CMAKE_PROJECT_NAME}.Serializer    PRIVATE ${INCLUDE_DIRECTORIES})
+target_include_directories(${CMAKE_PROJECT_NAME}.Scenes        PRIVATE ${INCLUDE_DIRECTORIES})
+# ----------
+# Link directories ----------
+target_link_directories(${CMAKE_PROJECT_NAME}               PRIVATE ${LINK_DIRECTORIES})
+target_link_directories(${CMAKE_PROJECT_NAME}.Managers      PRIVATE ${LINK_DIRECTORIES})
+target_link_directories(${CMAKE_PROJECT_NAME}.Graphics      PRIVATE ${LINK_DIRECTORIES})
+target_link_directories(${CMAKE_PROJECT_NAME}.Graphics.Core PRIVATE ${LINK_DIRECTORIES})
+target_link_directories(${CMAKE_PROJECT_NAME}.Utils         PRIVATE ${LINK_DIRECTORIES})
+target_link_directories(${CMAKE_PROJECT_NAME}.ECS           PRIVATE ${LINK_DIRECTORIES})
+target_link_directories(${CMAKE_PROJECT_NAME}.Components    PRIVATE ${LINK_DIRECTORIES})
+target_link_directories(${CMAKE_PROJECT_NAME}.ECSSystems    PRIVATE ${LINK_DIRECTORIES})
+target_link_directories(${CMAKE_PROJECT_NAME}.Serializer    PRIVATE ${LINK_DIRECTORIES})
+target_link_directories(${CMAKE_PROJECT_NAME}.Scenes        PRIVATE ${LINK_DIRECTORIES})
+# ----------
+
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     GLAD
-    glfw3
     IMGUI
     STB_IMAGE
     opengl32
@@ -91,17 +134,20 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_PROJECT_NAME}.Scenes
 )
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE glfw3d)
     target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE fmtd)
     target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE assimpd)
     target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE zlibstaticd)
     
 elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE glfw3)
     target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE fmt)
     target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE assimp)
     target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE zlibstatic)
 
 endif()
 
+# Some post processing
 # execute_process(
 #     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/scripts
 #     COMMAND python add_postprocessing_shaders.py ${CMAKE_BINARY_DIR}

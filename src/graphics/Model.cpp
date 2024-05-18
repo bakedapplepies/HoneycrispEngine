@@ -7,7 +7,7 @@
 
 HNCRSP_NAMESPACE_START
 
-static std::unordered_map<int, bool> s_isMaterialLoaded;
+static bool s_isFirstMatNull = false;
 
 Model::Model(const FileSystem::Path& path, std::shared_ptr<Shader> shader, bool flip_uv)
 {
@@ -24,10 +24,10 @@ Model::Model(const FileSystem::Path& path, std::shared_ptr<Shader> shader, bool 
 
     Assimp::Importer import;
     const aiScene*  scene = import.ReadFile(path.string().data(),
-        aiProcess_Triangulate |
-        aiProcess_FlipWindingOrder |
-        (flip_uv ? aiProcess_FlipUVs : 0) |
-        aiProcess_GenNormals
+        aiProcess_Triangulate
+        | aiProcess_FlipWindingOrder
+        | (flip_uv ? aiProcess_FlipUVs : 0)
+        // | aiProcess_GenNormals
     );
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
@@ -40,7 +40,10 @@ Model::Model(const FileSystem::Path& path, std::shared_ptr<Shader> shader, bool 
     std::vector<float> vertexData;
     std::vector<GLuint> indices;
 
-    m_materials.reserve(scene->mNumMaterials - 1);
+    getMaterials(scene, modelDirectory, modelSerializer);
+
+    HNCRSP_LOG_INFO(scene->mNumMaterials);
+    
     processNode(scene->mRootNode, scene, modelDirectory, modelSerializer, vertexData, indices);
 
     HNCRSP_LOG_INFO(  // display relative path from project directory
@@ -52,10 +55,10 @@ Model::Model(const FileSystem::Path& path, std::shared_ptr<Shader> shader, bool 
     );
 
     // Vertex Array construction ----------
-    unsigned short vertex_attrib_bits = 
-        VERTEX_ATTRIB_POSITION_BIT |
-        VERTEX_ATTRIB_UV_BIT |
-        VERTEX_ATTRIB_NORMAL_BIT;
+    unsigned short vertex_attrib_bits =
+        VERTEX_ATTRIB_POSITION_BIT
+        | VERTEX_ATTRIB_UV_BIT
+        | VERTEX_ATTRIB_NORMAL_BIT;
 
     m_VAO = std::make_unique<VertexArray>(
         vertex_attrib_bits,
@@ -75,7 +78,7 @@ Model::Model(const FileSystem::Path& path, std::shared_ptr<Shader> shader, bool 
     );
     modelSerializer.Serialize(path);
 
-    s_isMaterialLoaded.clear();  // for next model
+    s_isFirstMatNull = false;  // for next model
 }
 
 void Model::processNode(
@@ -143,9 +146,9 @@ void Model::processMesh(
     if (m_meshesMetaData.size() == 0)
     {
         m_meshesMetaData.emplace_back(
-            0,                        // index offset
-            mesh->mNumFaces * 3,      // vertex count
-            mesh->mMaterialIndex - 1  // material index
+            0,                                                               // index offset
+            mesh->mNumFaces * 3,                                             // vertex count
+            mesh->mMaterialIndex - static_cast<uint32_t>(s_isFirstMatNull)   // material index
         );
     }
     else
@@ -153,21 +156,33 @@ void Model::processMesh(
         m_meshesMetaData.emplace_back(
             m_meshesMetaData.back().mesh_vertex_count + num_vertices,
             mesh->mNumFaces * 3,
-            mesh->mMaterialIndex - 1
+            mesh->mMaterialIndex - static_cast<uint32_t>(s_isFirstMatNull)
         );
     }
-    HNCRSP_LOG_INFO(mesh->mMaterialIndex);
-
     num_vertices = mesh->mNumVertices;
+}
 
-    // TODO: mesh->mMaterialIndex >= 0 ?
-    if (!s_isMaterialLoaded[mesh->mMaterialIndex])
+void Model::getMaterials(
+    const aiScene* scene,
+    const FileSystem::Path& modelDirectory,
+    ModelSerializer& modelSerializer
+) {
+    for (uint32_t i = 0; i < scene->mNumMaterials; i++)
     {
-        s_isMaterialLoaded[mesh->mMaterialIndex] = true;
+        aiMaterial* material = scene->mMaterials[i];
+
+        if (i == 0)
+        {
+            uint32_t tex_count = material->GetTextureCount(aiTextureType_DIFFUSE);
+            if (tex_count == 0)
+            {
+                s_isFirstMatNull = true;
+                continue;
+            }
+        }
+        
         m_materials.push_back(std::make_shared<Material>(m_shader));
         std::shared_ptr<Material>& currentMat = m_materials.back();
-
-        aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
         aiString textureFilename;
         std::string texturePath;
@@ -183,45 +198,35 @@ void Model::processMesh(
             texturePath = modelDirectory.string() + textureFilename.C_Str();
             albedo = FileSystem::Path(texturePath);
 
-            std::shared_ptr<Texture2D> diffuseMap =
-                getMaterialTexture(texturePath.c_str(), aiTextureType_DIFFUSE);
-            currentMat->setAlbedoMap(diffuseMap);
+            currentMat->setAlbedoMap(albedo);
         }
         if (material->GetTexture(aiTextureType_NORMALS, 0, &textureFilename) != aiReturn_FAILURE)
         {
             texturePath = modelDirectory.string() + textureFilename.C_Str();
             normal = FileSystem::Path(texturePath);
 
-            std::shared_ptr<Texture2D> normalMap =
-                getMaterialTexture(texturePath.c_str(), aiTextureType_NORMALS);
-            currentMat->setNormalMap(normalMap);
+            currentMat->setNormalMap(normal);
         }
         if (material->GetTexture(aiTextureType_SPECULAR, 0, &textureFilename) != aiReturn_FAILURE)
         {
             texturePath = modelDirectory.string() + textureFilename.C_Str();
             specular = FileSystem::Path(texturePath);
 
-            std::shared_ptr<Texture2D> specularMap =
-                getMaterialTexture(texturePath.c_str(), aiTextureType_SPECULAR);
-            currentMat->setSpecularMap(specularMap);
+            currentMat->setSpecularMap(specular);
         }
         if (material->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &textureFilename) != aiReturn_FAILURE)
         {
             texturePath = modelDirectory.string() + textureFilename.C_Str();
             roughness = FileSystem::Path(texturePath);
 
-            std::shared_ptr<Texture2D> roughnessMap =
-                getMaterialTexture(texturePath.c_str(), aiTextureType_DIFFUSE_ROUGHNESS);
-            currentMat->setRoughnessMap(roughnessMap);
+            currentMat->setRoughnessMap(roughness);
         }
         if (material->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &textureFilename) != aiReturn_FAILURE)
         {
             texturePath = modelDirectory.string() + textureFilename.C_Str();
             ao = FileSystem::Path(texturePath);
 
-            std::shared_ptr<Texture2D> aoMap =
-                getMaterialTexture(texturePath.c_str(), aiTextureType_AMBIENT_OCCLUSION);
-            currentMat->setAoMap(aoMap);
+            currentMat->setAoMap(ao);
         }
 
         modelSerializer.AddMaterial(

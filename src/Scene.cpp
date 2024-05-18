@@ -23,4 +23,20 @@ void Scene::CreateCubemap(
     g_ECSManager->Renderer_SetCubemap(m_cubemap);
 }
 
+std::shared_ptr<Shader> Scene::CreateShader(
+    const FileSystem::Path& vertex,
+    const FileSystem::Path& fragment,
+    const FileSystem::Path& geometry
+) {
+    m_shadersInScene.push_back(g_ShaderManager.GetShader(vertex, fragment, geometry));
+
+    // notify all lights in scene to configure this shader
+    for (auto& light : m_lightsInscene)
+    {
+        light->ConfigureShader(m_shadersInScene.back().get());
+    }
+
+    return m_shadersInScene.back();
+}
+
 HNCRSP_NAMESPACE_END

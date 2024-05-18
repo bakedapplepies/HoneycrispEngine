@@ -215,13 +215,18 @@ void Cube::InitializeAttributeData()
 
 void Cube::virt_AddDrawDataToRenderer(EntityUID entityUID)
 {
+    // std::shared_ptr<Shader> cubeShader = g_ShaderManager.GetShader(
+    //     FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
+    //     FileSystem::Path("resources/shaders/BlinnPhongTintFragment.glsl")
+    // );
+
     DrawData drawData;
     drawData.VAO_id = m_VAO->getID();
     drawData.meta_data.emplace_back(0, m_numVertices);
     drawData.materials.push_back(std::make_shared<Material>(g_ShaderManager.basicShader));
 
-    drawData.materials.back()->setAlbedoMap(g_Texture2DManager.mainTextureMap);
-    drawData.materials.back()->setSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
+    drawData.materials[0]->setAlbedoMap(g_Texture2DManager.mainTextureMap);
+    drawData.materials[0]->setSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
 
     g_ECSManager->AddComponent<DrawData>(entityUID, drawData);
 }
