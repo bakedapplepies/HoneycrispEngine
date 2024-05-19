@@ -117,6 +117,10 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     GLAD
     IMGUI
     STB_IMAGE
+    glfw
+    fmt
+    assimp
+    zlibstatic
     opengl32
     gdi32
     user32
@@ -133,17 +137,17 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_PROJECT_NAME}.Serializer
     ${CMAKE_PROJECT_NAME}.Scenes
 )
-if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE glfw3d)
-    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE fmtd)
-    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE assimpd)
-    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE zlibstaticd)
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug") # ???
+    # target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE glfw3d)
+    # target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE fmtd)
+    # target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE assimpd)
+    # target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE zlibstaticd)
     
 elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
-    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE glfw3)
-    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE fmt)
-    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE assimp)
-    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE zlibstatic)
+    # target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE glfw3)
+    # target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE fmt)
+    # target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE assimp)
+    # target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE zlibstatic)
 
 endif()
 

@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 3.26.0)
 project(${CMAKE_PROJECT_NAME}.Vendors CXX C)
 
-set( GLFW_BUILD_DOCS OFF CACHE BOOL  "GLFW lib only" )
-set( GLFW_INSTALL OFF CACHE BOOL  "GLFW lib only" )
-
 add_library(GLAD STATIC
     ${CMAKE_SOURCE_DIR}/vendor/glad/glad.c
 )
@@ -24,6 +21,11 @@ add_library(STB_IMAGE STATIC
     ${CMAKE_SOURCE_DIR}/vendor/stb/stb_image.cpp
 )
 target_include_directories(STB_IMAGE PRIVATE ${CMAKE_SOURCE_DIR}/vendor)
+
+set( GLFW_BUILD_DOCS OFF CACHE BOOL  "GLFW lib only" FORCE )
+set( GLFW_BUILD_TESTS OFF CACHE BOOL  "GLFW lib only" FORCE )
+set( GLFW_BUILD_EXAMPLES OFF CACHE BOOL  "GLFW lib only" FORCE )
+set( GLFW_INSTALL OFF CACHE BOOL  "GLFW lib only" FORCE )
 
 add_subdirectory(glfw)
 add_subdirectory(glm)
