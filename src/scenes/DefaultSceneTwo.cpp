@@ -188,7 +188,9 @@ void DefaultSceneTwo::SetInitialUniforms(void)
 void DefaultSceneTwo::OnImGui(void)
 {
     ImGui::Text("Point light");
-    ImGui::SliderFloat3("position", glm::value_ptr(pointLight->position), -50.0f, 50.0f);
+    ImGui::SliderFloat("position.x", &pointLight->position.x, -50.0f, 50.0f);
+    ImGui::SliderFloat("position.y", &pointLight->position.y, -50.0f, 50.0f);
+    ImGui::SliderFloat("position.z", &pointLight->position.z, -50.0f, 50.0f);
 
     ImGui::SliderFloat("u_normal_length", &m_u_normal_length, 0.001f, 1.0f);
 }
