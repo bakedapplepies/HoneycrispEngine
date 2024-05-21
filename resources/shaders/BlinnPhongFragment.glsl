@@ -69,6 +69,7 @@ uniform PointLight u_pointLight;
 uniform SpotLight u_spotLight;
 uniform Material u_material;
 
+// TODO: Should there be specular reflection?
 vec3 CalcDirLight(DirLight dirLight, vec3 normal, vec3 dirToView, vec3 albedoFrag, vec3 specularFrag)
 {
     vec3 ambient = dirLight.ambient * albedoFrag;

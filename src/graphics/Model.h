@@ -21,7 +21,7 @@ private:
 public:
     Model(const FileSystem::Path& path, std::shared_ptr<Shader> shader, bool flip_uv);
     Model(Model&& other) = default;  // TODO: Proper constructors
-    void virt_AddDrawDataToRenderer(EntityUID entityUID) override final;
+    void virt_AddDrawDataToRenderer(EntityUID entityUID) const override final;
 
 private:  // building model
     void processNode(

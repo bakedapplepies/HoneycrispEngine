@@ -63,6 +63,9 @@ void Application_RegisterComponents()
 
 void Application_RegisterSystems()
 {
+    // Renderer Component Bitset consists of the following components:
+    //  - DrawData
+    //  - Transform
     ComponentBitset renderer_component_bitset;
     renderer_component_bitset.set(GetBitIndex<DrawData>());
     renderer_component_bitset.set(GetBitIndex<Transform>());

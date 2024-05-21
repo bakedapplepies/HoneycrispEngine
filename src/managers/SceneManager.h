@@ -4,6 +4,7 @@
 #include "src/ecs/ECSManager.h"
 #include "src/managers/ShaderManager.h"
 #include "src/Scene.h"
+#include "src/graphics/Camera.h"
 
 
 HNCRSP_NAMESPACE_START

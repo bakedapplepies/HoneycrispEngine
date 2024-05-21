@@ -7,7 +7,7 @@ PointLight::PointLight(const glm::vec3& position, const glm::vec3& color, float 
     : Light(color), position(position), ambient(ambient), diffuse(diffuse), specular(specular)
 {}
 
-void PointLight::ConfigureShader(const Shader* shader)
+void PointLight::ConfigureShader(const Shader* shader) const
 {
     shader->setVec3Unf("u_pointLight.position", position);
     shader->setVec3Unf("u_pointLight.ambient", getAmbient());

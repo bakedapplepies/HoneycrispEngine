@@ -2,6 +2,7 @@
 
 #include "src/pch/pch.h"
 #include "src/graphics/PointLight.h"
+#include "src/graphics/SpotLight.h"
 
 #include "src/Scene.h"
 #include "src/graphics/Cube.h"
@@ -25,6 +26,7 @@ private:
     std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Model> > sponza;
     std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Model> > sponzaNormal;
     std::shared_ptr<Honeycrisp::PointLight> pointLight;
+    std::shared_ptr<Honeycrisp::SpotLight> spotLight;
 
     float m_u_normal_length = 0.7f;
     

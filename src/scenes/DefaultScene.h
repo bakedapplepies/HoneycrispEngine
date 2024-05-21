@@ -14,6 +14,7 @@ private:
     std::shared_ptr<Honeycrisp::Shader> shader;
     std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Cube> > cube;
     std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Mesh> > customMesh;
+    std::shared_ptr<Honeycrisp::PointLight> pointLight;
 
 public:
     DefaultScene();

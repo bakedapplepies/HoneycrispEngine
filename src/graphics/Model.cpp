@@ -334,7 +334,7 @@ void Model::loadDeserializedModel(const Serialized::Model* deserialized_model)
     }
 }
 
-void Model::virt_AddDrawDataToRenderer(EntityUID entityUID)
+void Model::virt_AddDrawDataToRenderer(EntityUID entityUID) const
 {
     DrawData meshData;
     meshData.VAO_id = m_VAO->getID();

@@ -14,7 +14,7 @@ class Mesh : public Renderable
 {
 private:
     // still has to be here to manange gpu memory
-    std::unique_ptr<VertexArray> m_VAO;
+    VertexArray m_VAO;
     uint32_t m_numVertices;
 
     // scene data
@@ -45,7 +45,7 @@ public:
     void EnableVertexAttribNormals(bool on) const;
     // const VertexArray* GetVAO() const;
 
-    void virt_AddDrawDataToRenderer(EntityUID entityUID) override final;
+    void virt_AddDrawDataToRenderer(EntityUID entityUID) const override final;
 };
 
 HNCRSP_NAMESPACE_END

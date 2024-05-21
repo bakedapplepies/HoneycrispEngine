@@ -12,7 +12,7 @@ class Renderable // : public Object
 {
 public:
     // called in scenes
-    virtual void virt_AddDrawDataToRenderer(EntityUID entityUID) = 0;
+    virtual void virt_AddDrawDataToRenderer(EntityUID entityUID) const = 0;
     virtual ~Renderable() = default;
 };
 

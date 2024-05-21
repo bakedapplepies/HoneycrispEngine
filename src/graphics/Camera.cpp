@@ -7,17 +7,17 @@ HNCRSP_NAMESPACE_START
 
 Camera::Camera(const glm::vec3& initialPos)
 {
-    cameraPos = initialPos;
+    position = initialPos;
 }
 
 void Camera::SetPos(const glm::vec3& newPos)
 {
-    cameraPos = newPos;
+    position = newPos;
 }
 
 void Camera::ChangePos(const glm::vec3& posOffset)
 {
-    cameraPos += posOffset;
+    position += posOffset;
 }
 
 void Camera::SetDirection(const glm::vec3& newDirection)
@@ -28,8 +28,8 @@ void Camera::SetDirection(const glm::vec3& newDirection)
 glm::mat4 Camera::GetViewMatrix() const
 {
     return glm::lookAt(
-        cameraPos,
-        cameraPos + direction,
+        position,
+        position + direction,
         cameraUp
     );
 }

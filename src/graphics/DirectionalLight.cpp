@@ -5,8 +5,16 @@ HNCRSP_NAMESPACE_START
 
 DirectionalLight::DirectionalLight(const glm::vec3& direction, const glm::vec3& color,
     float ambient, float diffuse, float specular)
-    : direction(direction), colorEmit(color), ambient(ambient), diffuse(diffuse), specular(specular)
+    : direction(direction), ambient(ambient), diffuse(diffuse), specular(specular)
 {
+}
+
+void DirectionalLight::ConfigureShader(const Shader* shader) const
+{
+    shader->setVec3Unf("u_dirLight.direction", direction);
+    shader->setVec3Unf("u_dirLight.ambient", getAmbient());
+    shader->setVec3Unf("u_dirLight.diffuse", getDiffuse());
+    shader->setVec3Unf("u_dirLight.specular", getSpecular());
 }
 
 DirectionalLight::DirectionalLight(const DirectionalLight& other)
@@ -59,11 +67,6 @@ DirectionalLight& DirectionalLight::operator=(DirectionalLight&& other) noexcept
     other.specular = 0.0f;
 
     return *this;
-}
-
-glm::vec3& DirectionalLight::GetColor()
-{
-    return colorEmit;
 }
 
 HNCRSP_NAMESPACE_END

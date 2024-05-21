@@ -41,7 +41,9 @@ void Window::Loop()
     float begin = glfwGetTime();
     g_Texture2DManager.mainTextureMap->Bind();
     g_Texture2DManager.mainTextureSpecularMap->Bind();
-    camera.SetPos(camera.cameraPos + glm::vec3(0, 10, 0));
+
+    Camera& camera = m_callbackData->camera;
+    camera.SetPos(camera.position + glm::vec3(0, 10, 0));
 
     // view matrix, proj matrix, time
     UniformBuffer<glm::mat4, glm::mat4, float> uboMatrices(0);  // UBO binding index
@@ -143,7 +145,7 @@ void Window::Loop()
         ImGui::End();
 
         // Update camera
-        camera.SetDirection(glm::normalize(m_callbackData->cameraDirection));
+        camera.SetDirection(glm::normalize(camera.direction));
 
         // FOV maybe added later, not important
         projectionMatrix = glm::perspective(
@@ -164,8 +166,8 @@ void Window::Loop()
         
         uboOther.Bind();
         uboOther.Update(
-            glm::value_ptr(camera.cameraPos),
-            glm::value_ptr(camera.cameraPos),
+            glm::value_ptr(camera.position),
+            glm::value_ptr(camera.position),
             glm::value_ptr(camera.direction)
         );
 
@@ -185,6 +187,7 @@ void Window::Loop()
 
 void Window::processInput()
 {
+    Camera& camera = m_callbackData->camera;
     if (glfwGetKey(m_glfwWindow, GLFW_KEY_W) == GLFW_PRESS)
     {
         camera.ChangePos(glm::normalize(glm::vec3(camera.direction.x, 0.0f, camera.direction.z)) * camera.speed * m_deltaTime);

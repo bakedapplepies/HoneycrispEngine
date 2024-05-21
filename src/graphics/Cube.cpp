@@ -213,13 +213,8 @@ void Cube::InitializeAttributeData()
     );
 }
 
-void Cube::virt_AddDrawDataToRenderer(EntityUID entityUID)
+void Cube::virt_AddDrawDataToRenderer(EntityUID entityUID) const
 {
-    // std::shared_ptr<Shader> cubeShader = g_ShaderManager.GetShader(
-    //     FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
-    //     FileSystem::Path("resources/shaders/BlinnPhongTintFragment.glsl")
-    // );
-
     DrawData drawData;
     drawData.VAO_id = m_VAO->getID();
     drawData.meta_data.emplace_back(0, m_numVertices);

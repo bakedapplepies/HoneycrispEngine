@@ -6,6 +6,7 @@
 
 HNCRSP_NAMESPACE_START
 
+class Scene;
 class Light
 {
 private:
@@ -19,7 +20,10 @@ public:
     Light(glm::vec3 colorEmit) : colorEmit(colorEmit) {}
     virtual ~Light() = default;
     // void AddShaders(const std::vector< std::shared_ptr<Shader> >& shaders);
-    virtual void ConfigureShader(const Shader* shaders) = 0;
+
+protected:
+    friend Scene;
+    virtual void ConfigureShader(const Shader* shaders) const = 0;
 };
 
 HNCRSP_NAMESPACE_END

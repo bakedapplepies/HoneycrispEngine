@@ -12,14 +12,13 @@ Mesh::Mesh(
     std::vector<glm::vec3>* normals,
     std::vector<glm::vec3>* colors,
     std::vector<glm::vec2>* uvs
+) : m_VAO(
+    vertices,
+    indices,
+    normals,
+    colors,
+    uvs
 ) {
-    m_VAO = std::make_unique<VertexArray>(
-        vertices,
-        indices,
-        normals,
-        colors,
-        uvs
-    );
     m_numVertices = indices->size();
 }
 
@@ -27,12 +26,8 @@ Mesh::Mesh(
     unsigned char vertex_attrib_bits,
     const std::vector<float>& vertex_data,
     const std::vector<GLuint>& indices_data
-) {
-    m_VAO = std::make_unique<VertexArray>(
-        vertex_attrib_bits,
-        vertex_data,
-        indices_data
-    );
+) : m_VAO(vertex_attrib_bits, vertex_data, indices_data)
+{
     m_numVertices = indices_data.size();
 }
 
@@ -54,10 +49,10 @@ Mesh& Mesh::operator=(Mesh&& other) noexcept
     return *this;
 }
 
-void Mesh::virt_AddDrawDataToRenderer(EntityUID entityUID)
+void Mesh::virt_AddDrawDataToRenderer(EntityUID entityUID) const
 {
     DrawData drawData;
-    drawData.VAO_id = m_VAO->getID();
+    drawData.VAO_id = m_VAO.getID();
     drawData.meta_data.emplace_back(0, m_numVertices);
     drawData.materials.push_back(std::make_shared<Material>(g_ShaderManager.basicShader));
 

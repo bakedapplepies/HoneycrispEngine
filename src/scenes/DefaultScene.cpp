@@ -11,6 +11,11 @@ DefaultScene::DefaultScene()
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
         FileSystem::Path("resources/shaders/BlinnPhongTintFragment.glsl")
     );
+    pointLight = CreateLight<PointLight>(
+        glm::vec3(10.0f, 2.0f, 10.0f),  // pos
+        glm::vec3(1.0f, 1.0f, 1.0f),  // color
+        0.1f, 0.5f, 1.0f              // ambient - diffuse - specular
+    );
 
     cube = CreateStaticRenderObj<Cube>();
     cube->setShader(shader);
@@ -180,34 +185,6 @@ void DefaultScene::SetInitialUniforms(void)
     DrawData& meshData = g_ECSManager->GetComponent<DrawData>(customMesh->entityUID);
     meshData.materials[0]->setAlbedoMap(g_Texture2DManager.mainTextureMap);
     meshData.materials[0]->setSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
-
-    // lighting
-    shader->setFloatUnf("u_material.shininess", 32.0f);
-
-    // dir light
-    shader->setVec3Unf("u_dirLight.direction", glm::normalize(glm::vec3(0, -1, 0)));
-    shader->setVec3Unf("u_dirLight.ambient", glm::vec3(1, 1, 1) * 0.1f);
-    shader->setVec3Unf("u_dirLight.diffuse", glm::vec3(1, 1, 1) * 0.7f);
-    shader->setVec3Unf("u_dirLight.specular", glm::vec3(1, 1, 1));
-
-    // point light
-    shader->setVec3Unf("u_pointLight.position", glm::vec3(10, 2, 10));
-    shader->setVec3Unf("u_pointLight.ambient", 0.1f * glm::vec3(1.0));
-    shader->setVec3Unf("u_pointLight.diffuse", 0.5f * glm::vec3(1.0));
-    shader->setVec3Unf("u_pointLight.specular", 1.0f * glm::vec3(1.0));
-    shader->setFloatUnf("u_pointLight.constant", 1.0f);
-    shader->setFloatUnf("u_pointLight.linear", 0.001f);
-    shader->setFloatUnf("u_pointLight.quadratic", 0.0002f);
-
-    // spot light
-    shader->setFloatUnf("u_spotLight.cutOff", glm::cos(glm::radians(15.0f)));
-    shader->setFloatUnf("u_spotLight.outerCutOff", glm::cos(glm::radians(25.0f)));
-    shader->setVec3Unf("u_spotLight.ambient", 0.1f * glm::vec3(1.0));
-    shader->setVec3Unf("u_spotLight.diffuse", 0.5f * glm::vec3(1.0));
-    shader->setVec3Unf("u_spotLight.specular", 1.0f * glm::vec3(1.0));
-    shader->setFloatUnf("u_spotLight.constant", 1.0f);
-    shader->setFloatUnf("u_spotLight.linear", 0.07f);
-    shader->setFloatUnf("u_spotLight.quadratic", 0.0045f);
 }
 
 void DefaultScene::OnImGui(void)

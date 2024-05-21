@@ -1,15 +1,23 @@
 #include "DefaultSceneTwo.h"
 #include "src/scenes/DefaultSceneTwo.h"
+#include "src/managers/SceneManager.h"
 
 
 using namespace Honeycrisp;
 
 DefaultSceneTwo::DefaultSceneTwo()
 {
+    const Camera& camera = g_SceneManager.GetCallbackData()->camera;
     pointLight = CreateLight<PointLight>(
         glm::vec3(0.0f, 0.0f, 0.0f),  // pos
         glm::vec3(1.0f, 1.0f, 1.0f),  // color
         0.1f, 0.5f, 1.0f              // ambient - diffuse - specular
+    );
+    spotLight = CreateLight<SpotLight>(
+        camera.position,
+        camera.direction,
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        0.1f, 0.5f, 1.0f
     );
 
     InitializeShaders();
@@ -33,7 +41,7 @@ DefaultSceneTwo::DefaultSceneTwo()
     {
         for (unsigned int j = 0; j < vertW; j++)
         {
-            vertices.emplace_back(glm::vec3((float)i, 0.0f, (float)j));
+            vertices.emplace_back((float)i, 0.0f, (float)j);
         }
     }
 
@@ -41,14 +49,14 @@ DefaultSceneTwo::DefaultSceneTwo()
     colors.reserve(totalVerts);
     for (unsigned int i = 0; i < totalVerts; i++)
     {
-        colors.emplace_back(glm::vec3(0.369f, 0.616f, 0.204f));
+        colors.emplace_back(0.369f, 0.616f, 0.204f);
     }
 
     std::vector<glm::vec3> normals;
     normals.reserve(totalVerts);
     for (unsigned int i = 0; i < totalVerts; i++)
     {
-        normals.emplace_back(glm::vec3(0.0f, 1.0f, 0.0f));
+        normals.emplace_back(0.0f, 1.0f, 0.0f);
     }
 
     std::vector<glm::vec2> uvs;
@@ -116,7 +124,7 @@ DefaultSceneTwo::DefaultSceneTwo()
     // appleModelNormal->setTransform(Transform(glm::vec3(10.0f, 2.0f, 17.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.3f)));
     // appleModelNormal->getMaterial()->setShininess(32);
 
-    sponza = CreateStaticRenderObj<Honeycrisp::Model>(
+    sponza = CreateStaticRenderObj<Model>(
         FileSystem::Path("resources/models/sponza2/Sponza.gltf"),
         phongShader,
         false
@@ -175,61 +183,12 @@ void DefaultSceneTwo::InitializeShaders(void)
 
 void DefaultSceneTwo::SetInitialUniforms(void)
 {
-    // dir light
-    phongShader->setVec3Unf("u_dirLight.direction", glm::normalize(glm::vec3(0, -1, 0)));
-    phongShader->setVec3Unf("u_dirLight.ambient", glm::vec3(0.1f));
-    phongShader->setVec3Unf("u_dirLight.diffuse", glm::vec3(0.7f));
-    phongShader->setVec3Unf("u_dirLight.specular", glm::vec3(1.0f));
-
-    // point light
-    phongShader->setVec3Unf("u_pointLight.position", pointLight->position);
-    phongShader->setVec3Unf("u_pointLight.ambient", pointLight->getAmbient());
-    phongShader->setVec3Unf("u_pointLight.diffuse", pointLight->getDiffuse());
-    phongShader->setVec3Unf("u_pointLight.specular", pointLight->getSpecular());
-    phongShader->setFloatUnf("u_pointLight.constant", pointLight->attenuation_constant);
-    phongShader->setFloatUnf("u_pointLight.linear", pointLight->attenuation_linear);
-    phongShader->setFloatUnf("u_pointLight.quadratic", pointLight->attenuation_quadratic);
-
-    // spot light
-    phongShader->setFloatUnf("u_spotLight.cutOff", glm::cos(glm::radians(15.0f)));
-    phongShader->setFloatUnf("u_spotLight.outerCutOff", glm::cos(glm::radians(25.0f)));
-    phongShader->setVec3Unf("u_spotLight.ambient", glm::vec3(0.1f));
-    phongShader->setVec3Unf("u_spotLight.diffuse", glm::vec3(0.5f));
-    phongShader->setVec3Unf("u_spotLight.specular", glm::vec3(1.0f));
-    phongShader->setFloatUnf("u_spotLight.constant", 1.0f);
-    phongShader->setFloatUnf("u_spotLight.linear", 0.07f);
-    phongShader->setFloatUnf("u_spotLight.quadratic", 0.0045f);
-    
-    // dir light
-    phongWTintShader->setVec3Unf("u_dirLight.direction", glm::normalize(glm::vec3(0, -1, 0)));
-    phongWTintShader->setVec3Unf("u_dirLight.ambient", glm::vec3(0.1f));
-    phongWTintShader->setVec3Unf("u_dirLight.diffuse", glm::vec3(0.7f));
-    phongWTintShader->setVec3Unf("u_dirLight.specular", glm::vec3(1.0f));
-
-    // point light
-    phongWTintShader->setVec3Unf("u_pointLight.position", pointLight->position);
-    phongWTintShader->setVec3Unf("u_pointLight.ambient", pointLight->getAmbient());
-    phongWTintShader->setVec3Unf("u_pointLight.diffuse", pointLight->getDiffuse());
-    phongWTintShader->setVec3Unf("u_pointLight.specular", pointLight->getSpecular());
-    phongWTintShader->setFloatUnf("u_pointLight.constant", pointLight->attenuation_constant);
-    phongWTintShader->setFloatUnf("u_pointLight.linear", pointLight->attenuation_linear);
-    phongWTintShader->setFloatUnf("u_pointLight.quadratic", pointLight->attenuation_quadratic);
-
-    // spot light
-    phongWTintShader->setFloatUnf("u_spotLight.cutOff", glm::cos(glm::radians(15.0f)));
-    phongWTintShader->setFloatUnf("u_spotLight.outerCutOff", glm::cos(glm::radians(25.0f)));
-    phongWTintShader->setVec3Unf("u_spotLight.ambient", glm::vec3(0.1f));
-    phongWTintShader->setVec3Unf("u_spotLight.diffuse", glm::vec3(0.5f));
-    phongWTintShader->setVec3Unf("u_spotLight.specular", glm::vec3(1.0f));
-    phongWTintShader->setFloatUnf("u_spotLight.constant", 1.0f);
-    phongWTintShader->setFloatUnf("u_spotLight.linear", 0.07f);
-    phongWTintShader->setFloatUnf("u_spotLight.quadratic", 0.0045f);
 }
 
 void DefaultSceneTwo::OnImGui(void)
 {
     ImGui::Text("Point light");
-    ImGui::SliderFloat3("position", glm::value_ptr(pointLight->position), -100.0f, 100.0f);
+    ImGui::SliderFloat3("position", glm::value_ptr(pointLight->position), -50.0f, 50.0f);
 
     ImGui::SliderFloat("u_normal_length", &m_u_normal_length, 0.001f, 1.0f);
 }

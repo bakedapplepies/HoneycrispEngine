@@ -114,7 +114,7 @@ void mouse_callback(GLFWwindow* window, double xpos_double, double ypos_double)
 
         float& yaw = callbackData->yaw;
         float& pitch = callbackData->pitch;
-        glm::vec3& direction = callbackData->cameraDirection;
+        glm::vec3& direction = callbackData->camera.direction;
 
         if (callbackData->firstMouse)
         {

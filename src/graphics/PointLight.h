@@ -32,7 +32,7 @@ public:
     PointLight& operator=(PointLight&& other) noexcept;
     ~PointLight() = default;
 
-    void ConfigureShader(const Shader* shader) override;
+    void ConfigureShader(const Shader* shader) const override final;
 
     glm::vec3 getAmbient() const;
     glm::vec3 getDiffuse() const;

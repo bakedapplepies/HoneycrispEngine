@@ -323,20 +323,22 @@ VertexArray::VertexArray(VertexArray&& other) noexcept
 {
     m_VAO_ID = other.m_VAO_ID;
     other.m_VAO_ID = 0;
-    m_vertexData = std::move(other.m_vertexData);
-
     m_vertexBuffer = std::move(other.m_vertexBuffer);
     m_elementBuffer = std::move(other.m_elementBuffer);
+
+    m_vertexData = std::move(other.m_vertexData);
+    m_indices = std::move(other.m_indices);
 }
 
 VertexArray& VertexArray::operator=(VertexArray&& other) noexcept
 {
     m_VAO_ID = other.m_VAO_ID;
     other.m_VAO_ID = 0;
-    m_vertexData = std::move(other.m_vertexData);
-
     m_vertexBuffer = std::move(other.m_vertexBuffer);
     m_elementBuffer = std::move(other.m_elementBuffer);
+
+    m_vertexData = std::move(other.m_vertexData);
+    m_indices = std::move(other.m_indices);
 
     return *this;
 }
@@ -370,7 +372,7 @@ void VertexArray::Unbind() const
     GLCall(glBindVertexArray(0));
 }
 
-GLuint VertexArray::getID()
+GLuint VertexArray::getID() const
 {
     return m_VAO_ID;
 }

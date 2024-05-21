@@ -8,7 +8,7 @@ HNCRSP_NAMESPACE_START
 class Camera
 {
 public:
-    glm::vec3 cameraPos;
+    glm::vec3 position;
     glm::vec3 direction;
     glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f,  0.0f);
 

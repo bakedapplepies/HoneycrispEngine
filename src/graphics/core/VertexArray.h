@@ -18,8 +18,11 @@ private:
     // mesh data
     std::vector<float> m_vertexData;
     std::vector<GLuint> m_indices;
+    
+    void CreateVAO(const float* vboData, size_t vboSize, const GLuint* eboData, size_t eboSize, GLenum mode);
 
 public:
+    VertexArray() = default;
     VertexArray(
         const std::vector<glm::vec3>* vertices,
         const std::vector<GLuint>* indices,
@@ -38,20 +41,16 @@ public:
     VertexArray& operator=(VertexArray&& other) noexcept;
     ~VertexArray();
 
-    void CreateVAO(const float* vboData, size_t vboSize, const GLuint* eboData, size_t eboSize, GLenum mode);
     void Bind() const;
     void Unbind() const;
-
-    void SubData();  // TODO
+    GLuint getID() const;
+    const float* getData() const;
+    size_t getDataLen() const;
 
     void EnableVertexAttribPosition(bool on) const;
     void EnableVertexAttribColor(bool on) const;
     void EnableVertexAttribUV(bool on) const;
     void EnableVertexAttribNormals(bool on) const;
-
-    GLuint getID();
-    const float* getData() const;
-    size_t getDataLen() const;
 };
 
 HNCRSP_NAMESPACE_END

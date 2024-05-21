@@ -4,7 +4,6 @@
 #include "src/managers/SceneManager.h"
 #include "src/managers/RenderContext.h"
 #include "src/graphics/core/UniformBuffer.h"
-#include "src/graphics/Camera.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -14,8 +13,6 @@ class Window
 private:
     GLFWwindow* m_glfwWindow = nullptr;
     RenderContext::CallbackData* m_callbackData = nullptr;
-
-    Camera camera = Camera(glm::vec3(0.0f, 5.0f, 0.0f));  // set initial direction in CallbackData
 
     glm::mat4 projectionMatrix;
 
