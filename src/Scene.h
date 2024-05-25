@@ -13,16 +13,16 @@
 
 HNCRSP_NAMESPACE_START
 
-static uint32_t currentDirectionalLights = 0;
-static uint32_t currentPointLights = 0;
-static uint32_t currentSpotLights = 0;
-
 class Scene
 {
 private:
     std::shared_ptr<Cubemap> m_cubemap;
-    std::vector< std::shared_ptr<Shader> > m_shadersInScene;
+    std::vector<const Shader*> m_shadersInScene;
     std::vector< std::shared_ptr<Light> > m_lightsInscene;
+
+    uint32_t m_currentDirectionalLights = 0;
+    uint32_t m_currentPointLights = 0;
+    uint32_t m_currentSpotLights = 0;
 
 protected:
     template <typename TRenderable, typename... Args>
@@ -41,36 +41,35 @@ protected:
 
         if constexpr(std::is_same<TLight, DirectionalLight>())
         {
-            if (currentDirectionalLights >= MAX_DIRECTIONAL_LIGHTS)
+            if (m_currentDirectionalLights >= MAX_DIRECTIONAL_LIGHTS)
             {
                 HNCRSP_TERMINATE("Max Directional lights already reached.");
             }
-            currentDirectionalLights++;
+            m_currentDirectionalLights++;
         }
         else if constexpr(std::is_same<TLight, PointLight>())
         {
-            if (currentPointLights >= MAX_POINT_LIGHTS)
+            if (m_currentPointLights >= MAX_POINT_LIGHTS)
             {
                 HNCRSP_TERMINATE("Max Point lights already reached.");
             }
-            currentPointLights++;
+            m_currentPointLights++;
         }
         else if constexpr(std::is_same<TLight, SpotLight>())
         {
-            if (currentSpotLights >= MAX_SPOT_LIGHTS)
+            if (m_currentSpotLights >= MAX_SPOT_LIGHTS)
             {
                 HNCRSP_TERMINATE("Max Spot lights already reached.");
             }
-            currentSpotLights++;
+            m_currentSpotLights++;
         }
 
         std::shared_ptr<Light> newLight = std::make_shared<TLight>(std::forward<Args>(args)...);
         m_lightsInscene.push_back(newLight);
-        // newLight->AddShaders(m_shadersInScene);
         
         for (auto& shader : m_shadersInScene)
         {
-            newLight->ConfigureShader(shader.get());
+            newLight->ConfigureShader(shader);
         }
 
         return std::reinterpret_pointer_cast<TLight>(newLight);
@@ -84,13 +83,11 @@ protected:
         const FileSystem::Path& front,
         const FileSystem::Path& back
     );
-    std::shared_ptr<Shader> CreateShader(
+    const Shader* CreateShader(
         const FileSystem::Path& vertex,
         const FileSystem::Path& fragment,
         const FileSystem::Path& geometry = FileSystem::Path("")
     );
-    virtual void InitializeShaders(void) {}
-    virtual void SetInitialUniforms(void) {}
 
 public:
     Scene() = default;

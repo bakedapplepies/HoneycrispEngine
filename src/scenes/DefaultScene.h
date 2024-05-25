@@ -11,10 +11,13 @@
 class DefaultScene : public Honeycrisp::Scene
 {
 private:
-    std::shared_ptr<Honeycrisp::Shader> shader;
+    const Honeycrisp::Shader* shader;
+    const Honeycrisp::Shader* adjustableColorShader;
     std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Cube> > cube;
     std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Mesh> > customMesh;
     std::shared_ptr<Honeycrisp::PointLight> pointLight;
+
+    float m_color;
 
 public:
     DefaultScene();
@@ -22,6 +25,6 @@ public:
     void OnUpdate(const float& dt) override;
 
 private:
-    void SetInitialUniforms(void) override;
+    void SetInitialUniforms(void);
     void OnImGui(void) override;
 };

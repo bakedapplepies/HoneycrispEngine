@@ -7,9 +7,7 @@
 HNCRSP_NAMESPACE_START
 
 namespace RenderContext
-{
-    // ===== Data types =====
-    
+{    
     struct CallbackData
     {
         bool capFPS = true;

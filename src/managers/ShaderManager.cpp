@@ -1,4 +1,5 @@
 #include "ShaderManager.h"
+#include "src/managers/SceneManager.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -7,11 +8,11 @@ ShaderManager g_ShaderManager;
 
 void ShaderManager::StartUp()
 {
-    basicShader = std::make_shared<Shader>(
+    basicShader = GetShader(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
         FileSystem::Path("resources/shaders/DefaultFragment.glsl")
     );
-    cubemapShader = std::make_shared<Shader>(
+    cubemapShader = GetShader(
         FileSystem::Path("resources/shaders/CubemapVertex.glsl"),
         FileSystem::Path("resources/shaders/CubemapFragment.glsl")
     );
@@ -20,12 +21,9 @@ void ShaderManager::StartUp()
 void ShaderManager::ShutDown()
 {
     m_cachedShaders.clear();
-    basicShader.reset();
-    cubemapShader.reset();
-    m_postprocessing_shader.reset();
 }
 
-std::shared_ptr<Shader> ShaderManager::GetShader(
+const Shader* ShaderManager::GetShader(
     const FileSystem::Path& vertexFile,
     const FileSystem::Path& fragmentFile,
     const FileSystem::Path& geometryFile
@@ -37,10 +35,10 @@ std::shared_ptr<Shader> ShaderManager::GetShader(
 
     if (m_cachedShaders[hash_string] == nullptr)
     {
-        m_cachedShaders[hash_string] = std::make_shared<Shader>(vertexFile, fragmentFile, geometryFile);
+        m_cachedShaders[hash_string] = std::make_unique<Shader>(vertexFile, fragmentFile, geometryFile);
     }
 
-    return m_cachedShaders[hash_string];
+    return m_cachedShaders[hash_string].get();
 
     // return std::make_shared<Shader>(vertexFile, fragmentFile, geometryFile);
 }
@@ -48,6 +46,7 @@ std::shared_ptr<Shader> ShaderManager::GetShader(
 void ShaderManager::SetPostProcessingShader(
     const FileSystem::Path& fragmentFile  
 ) {
+    const RenderContext::CallbackData* callbackData = g_SceneManager.GetCallbackData();
     m_postprocessing_shader = GetShader(
         FileSystem::Path("resources/shaders/postprocessing/ScreenQuadVertex.glsl"),
         fragmentFile
@@ -55,7 +54,7 @@ void ShaderManager::SetPostProcessingShader(
     m_postprocessing_shader->setIntUnf("u_framebuffer_color_texture", 14);
 }
 
-std::shared_ptr<Shader> ShaderManager::GetPostProcessingShader() const
+const Shader* ShaderManager::GetPostProcessingShader() const
 {
     return m_postprocessing_shader;
 }

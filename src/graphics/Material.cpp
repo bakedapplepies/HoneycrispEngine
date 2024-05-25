@@ -4,7 +4,7 @@
 
 HNCRSP_NAMESPACE_START
 
-Material::Material(std::shared_ptr<Shader> shader)
+Material::Material(const Shader* shader)
 {
     setShader(shader);
 }
@@ -77,52 +77,52 @@ Material& Material::operator=(Material&& other) noexcept
 
 void Material::setAlbedoMap(const FileSystem::Path& path)
 {
-    m_albedo = g_Texture2DManager.GetTexture2D(path, ETextureType::ALBEDO).get();
+    m_albedo = g_Texture2DManager.GetTexture2D(path, ETextureType::ALBEDO);
 }
 
-void Material::setAlbedoMap(std::shared_ptr<Texture2D> textureObj)
+void Material::setAlbedoMap(const Texture2D* textureObj)
 {
-    m_albedo = textureObj.get();
+    m_albedo = textureObj;
 }
 
 void Material::setRoughnessMap(const FileSystem::Path& path)
 {
-    m_roughness = g_Texture2DManager.GetTexture2D(path, ETextureType::ROUGHNESS).get();
+    m_roughness = g_Texture2DManager.GetTexture2D(path, ETextureType::ROUGHNESS);
 }
 
-void Material::setRoughnessMap(std::shared_ptr<Texture2D> textureObj)
+void Material::setRoughnessMap(const Texture2D* textureObj)
 {
-    m_roughness = textureObj.get();
+    m_roughness = textureObj;
 }
 
 void Material::setAoMap(const FileSystem::Path& path)
 {
-    m_ao = g_Texture2DManager.GetTexture2D(path, ETextureType::AO).get();
+    m_ao = g_Texture2DManager.GetTexture2D(path, ETextureType::AO);
 }
 
-void Material::setAoMap(std::shared_ptr<Texture2D> textureObj)
+void Material::setAoMap(const Texture2D* textureObj)
 {
-    m_ao = textureObj.get();
+    m_ao = textureObj;
 }
 
 void Material::setNormalMap(const FileSystem::Path& path)
 {
-    m_normal = g_Texture2DManager.GetTexture2D(path, ETextureType::NORMAL).get();
+    m_normal = g_Texture2DManager.GetTexture2D(path, ETextureType::NORMAL);
 }
 
-void Material::setNormalMap(std::shared_ptr<Texture2D> textureObj)
+void Material::setNormalMap(const Texture2D* textureObj)
 {
-    m_normal = textureObj.get();
+    m_normal = textureObj;
 }
 
 void Material::setSpecularMap(const FileSystem::Path& path)
 {
-    m_specular = g_Texture2DManager.GetTexture2D(path, ETextureType::SPECULAR).get();
+    m_specular = g_Texture2DManager.GetTexture2D(path, ETextureType::SPECULAR);
 }
 
-void Material::setSpecularMap(std::shared_ptr<Texture2D> textureObj)
+void Material::setSpecularMap(const Texture2D* textureObj)
 {
-    m_specular = textureObj.get();
+    m_specular = textureObj;
 }
 
 void Material::setShininess(float shininess)
@@ -130,12 +130,12 @@ void Material::setShininess(float shininess)
     m_shininess = shininess;
 }
 
-std::shared_ptr<Shader> Material::getShader() const
+const Shader* Material::getShader() const
 {
     return m_shader;
 }
 
-void Material::setShader(std::shared_ptr<Shader> newShader)
+void Material::setShader(const Shader* newShader)
 {
     m_shader = newShader;
     UpdateTextureUniforms();

@@ -15,9 +15,9 @@ class DefaultSceneTwo : public Honeycrisp::Scene
 {
 private:
     // scene objects
-    std::shared_ptr<Honeycrisp::Shader> phongShader;
-    std::shared_ptr<Honeycrisp::Shader> phongWTintShader;
-    std::shared_ptr<Honeycrisp::Shader> normalShader;
+    const Honeycrisp::Shader* phongShader;
+    const Honeycrisp::Shader* phongWTintShader;
+    const Honeycrisp::Shader* normalShader;
     std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Cube> > cube;
     std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Mesh> > mesh;
     std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Model> > backpackModel;
@@ -40,6 +40,6 @@ public:
     void OnImGui(void) override;
 
 private:
-    void InitializeShaders(void) override;
-    void SetInitialUniforms(void) override;
+    void InitializeShaders(void);
+    void SetInitialUniforms(void);
 };

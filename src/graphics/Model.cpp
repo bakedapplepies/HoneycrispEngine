@@ -9,7 +9,7 @@ HNCRSP_NAMESPACE_START
 
 static bool s_isFirstMatNull = false;
 
-Model::Model(const FileSystem::Path& path, std::shared_ptr<Shader> shader, bool flip_uv)
+Model::Model(const FileSystem::Path& path, const Shader* shader, bool flip_uv)
 {
     m_shader = shader;
     ModelSerializer modelSerializer;
@@ -239,7 +239,7 @@ void Model::getMaterials(
     }
 }
 
-std::shared_ptr<Texture2D> Model::getMaterialTexture(
+const Texture2D* Model::getMaterialTexture(
     std::string_view texturePath,
     aiTextureType assimp_texture_type
 ) {

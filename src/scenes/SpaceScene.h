@@ -25,6 +25,5 @@ public:
     );
 
 private:
-    void SetInitialUniforms(void) override {};
     void OnImGui(void) override;
 };

@@ -17,10 +17,35 @@ extern const uint16_t VERTEX_ATTRIB_UV_BIT;
 extern const uint16_t VERTEX_ATTRIB_NORMAL_BIT;
 // ----------
 
+// Shader-related constants ----------
+extern const uint8_t VERTEX_SHADER;
+extern const uint8_t FRAGMENT_SHADER;
+extern const uint8_t GEOMETRY_SHADER;
+extern const uint8_t TESSELATION_SHADER;
+extern const uint8_t COMPUTE_SHADER;
+// ----------
+
+// Texture types ----------
+// Also acts as Texture Units (so it has to be non 'enum class')
+enum ETextureType
+{
+    NONE = -1,
+    ALBEDO,
+    ROUGHNESS,
+    AO,
+    NORMAL,
+    SPECULAR
+};
+extern const uint16_t COLOR_BUFFER_TEXTURE_UNIT_INDEX;
+extern const uint16_t CUBEMAP_TEXTURE_UNIT_INDEX;
+// ----------
+
 // Scene lights ----------
+
 extern const uint32_t MAX_DIRECTIONAL_LIGHTS;
 extern const uint32_t MAX_POINT_LIGHTS;
 extern const uint32_t MAX_SPOT_LIGHTS;
+
 // ----------
 
 HNCRSP_NAMESPACE_END

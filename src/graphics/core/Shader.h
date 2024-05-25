@@ -5,6 +5,7 @@
 
 HNCRSP_NAMESPACE_START
 
+// TODO: maybe add shader types from constants.h
 class Shader
 {
 private:
@@ -13,6 +14,7 @@ private:
 
 private:
     std::string parseShader(std::string_view path);
+    GLint getUniformLocation(const std::string& name) const;
 
 public:
     Shader() = default;
@@ -30,11 +32,11 @@ public:
     GLuint getID() const;
     void Use() const;
 
-    GLint getUniformLocation(const std::string& name) const;
     void setIntUnf(const std::string& name, int value) const;
     void setFloatUnf(const std::string& name, float value) const;
     void setMat4Unf(const std::string& name, const glm::mat4& matrix) const;
     void setMat3Unf(const std::string& name, const glm::mat3& matrix) const;
+    void setVec2Unf(const std::string& name, const glm::vec2& vector) const;
     void setVec3Unf(const std::string& name, const glm::vec3& vector) const;
 };
 

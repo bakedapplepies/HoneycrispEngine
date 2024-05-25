@@ -4,11 +4,9 @@
 
 HNCRSP_NAMESPACE_START
 
-Framebuffer::Framebuffer(
-    int width,
-    int height
-) : m_width(width), m_height(height) {
-
+Framebuffer::Framebuffer(int width, int height)
+    : m_width(width), m_height(height)
+{
     // Create Framebuffer ----------
     GLCall(
         glGenFramebuffers(1, &m_framebufferID));
@@ -16,9 +14,9 @@ Framebuffer::Framebuffer(
 
     // Create Color buffer ----------
     GLCall(
-        glGenTextures(1, &m_textureColorBuffer));
+        glGenTextures(1, &m_textureColorBuffer_ID));
     GLCall(
-        glBindTexture(GL_TEXTURE_2D, m_textureColorBuffer));
+        glBindTexture(GL_TEXTURE_2D, m_textureColorBuffer_ID));
     GLCall(
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr));
     GLCall(
@@ -31,21 +29,21 @@ Framebuffer::Framebuffer(
             GL_FRAMEBUFFER,
             GL_COLOR_ATTACHMENT0,
             GL_TEXTURE_2D,
-            m_textureColorBuffer,
+            m_textureColorBuffer_ID,
             0
         ));
 
     // Creating Depth - Stencil buffer
     GLCall(
-        glGenRenderbuffers(1, &m_RBO));
+        glGenRenderbuffers(1, &m_RBO_ID));
     GLCall(
-        glBindRenderbuffer(GL_RENDERBUFFER, m_RBO));
+        glBindRenderbuffer(GL_RENDERBUFFER, m_RBO_ID));
     GLCall(
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height));
     GLCall(
         glBindRenderbuffer(GL_RENDERBUFFER, 0));
     GLCall(
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_RBO));
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_RBO_ID));
 
     // Check validity ----------
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -61,9 +59,9 @@ Framebuffer::~Framebuffer()
     GLCall(
         glDeleteFramebuffers(1, &m_framebufferID));
     GLCall(
-        glDeleteTextures(1, &m_textureColorBuffer));
+        glDeleteTextures(1, &m_textureColorBuffer_ID));
     GLCall(
-        glDeleteRenderbuffers(1, &m_RBO));
+        glDeleteRenderbuffers(1, &m_RBO_ID));
 }
 
 static bool viewport = false;
@@ -85,7 +83,7 @@ void Framebuffer::Unbind() const
 void Framebuffer::BindColorBuffer() const
 {
     GLCall(glActiveTexture(GL_TEXTURE0 + 14));
-    GLCall(glBindTexture(GL_TEXTURE_2D, m_textureColorBuffer));
+    GLCall(glBindTexture(GL_TEXTURE_2D, m_textureColorBuffer_ID));
 }
 
 HNCRSP_NAMESPACE_END

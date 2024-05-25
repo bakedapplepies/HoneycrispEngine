@@ -13,7 +13,7 @@ namespace RenderContext
 
     [[nodiscard]] CallbackData* StartUp_GetWindow()
     {
-        /* Create and assign OpenGL window context */
+        // Create and assign OpenGL window context ----------
         const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         callbackData.windowWidth = mode->width * 0.75f;
         callbackData.windowHeight = mode->height * 0.75f;
@@ -34,7 +34,7 @@ namespace RenderContext
         glfwSwapInterval(0);  // vsync
         glfwWindowHint(GLFW_SAMPLES, 4);
 
-        /* Callbacks */
+        // Callbacks ----------
         glfwSetErrorCallback(error_callback);
         glfwSetCursorPosCallback(glfwWindow, mouse_callback);
         glfwSetFramebufferSizeCallback(glfwWindow, framebuffer_size_callback);
@@ -49,6 +49,13 @@ namespace RenderContext
             HNCRSP_TERMINATE("GLAD Initialization failed.");
         }
         HNCRSP_LOG_INFO("OpenGL (Core) ", glGetString(GL_VERSION));
+        
+        // Set Icon ----------
+        FileSystem::Path icon("resources/textures/apple.png");
+        GLFWimage image[1];
+        image[0].pixels = stbi_load(icon.string().c_str(), &image[0].width, &image[0].height, nullptr, 4);
+        glfwSetWindowIcon(glfwWindow, 1, image);
+        stbi_image_free(image->pixels);
 
         /* Depth, Stencil, Blending, Gamma correction */
         // depth test
@@ -71,7 +78,7 @@ namespace RenderContext
         glEnable(GL_MULTISAMPLE);
 
         // gamma correction
-        glEnable(GL_FRAMEBUFFER_SRGB);
+        // glEnable(GL_FRAMEBUFFER_SRGB);
 
         int viewportWidth = (1.0f - callbackData.settingsWidthPercentage) * callbackData.windowWidth;
         glViewport(callbackData.windowWidth - viewportWidth, 0, viewportWidth, callbackData.windowHeight);

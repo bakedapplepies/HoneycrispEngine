@@ -16,10 +16,10 @@ private:
     std::unique_ptr<VertexArray> m_VAO;
     std::vector<MeshMetaData> m_meshesMetaData;  // size is also number of meshes
     std::vector< std::shared_ptr<Material> > m_materials;
-    std::shared_ptr<Shader> m_shader;
+    const Shader* m_shader;
 
 public:
-    Model(const FileSystem::Path& path, std::shared_ptr<Shader> shader, bool flip_uv);
+    Model(const FileSystem::Path& path, const Shader* shader, bool flip_uv);
     Model(Model&& other) = default;  // TODO: Proper constructors
     void virt_AddDrawDataToRenderer(EntityUID entityUID) const override final;
 
@@ -45,7 +45,7 @@ private:  // building model
         const FileSystem::Path& modelDirectory,
         ModelSerializer& modelSerializer
     );
-    std::shared_ptr<Texture2D> getMaterialTexture(
+    const Texture2D* getMaterialTexture(
         std::string_view texturePath,
         aiTextureType assimp_texture_type
     );

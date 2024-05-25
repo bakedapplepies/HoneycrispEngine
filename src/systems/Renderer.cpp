@@ -8,13 +8,6 @@ HNCRSP_NAMESPACE_START
 
 Renderer::Renderer()
 {
-    // Creating Framebuffer ----------
-    m_callbackData = g_SceneManager.GetCallbackData();
-    m_framebuffer = std::make_unique<Framebuffer>(
-        m_callbackData->windowWidth * (1 - m_callbackData->settingsWidthPercentage),
-        m_callbackData->windowHeight
-    );
-
     // Creating Screen Quad ----------
     unsigned short vertex_attrib_bits = 
         VERTEX_ATTRIB_POSITION_BIT | VERTEX_ATTRIB_UV_BIT;
@@ -35,15 +28,29 @@ Renderer::Renderer()
         vertex_data,
         indices
     );
+
+    m_callbackData = g_SceneManager.GetCallbackData();
+    m_postprocessing_queue = std::make_unique<PostProcessingQueue>(
+        m_callbackData->windowWidth * (1.0f - m_callbackData->settingsWidthPercentage),
+        m_callbackData->windowHeight,
+        m_screenQuad.get()
+    );
+
+    g_ShaderManager.SetPostProcessingShader(
+        FileSystem::Path("resources/shaders/postprocessing/Inverse.glsl")
+    );
+    m_postprocessing_queue->AddPostprocessingPass(g_ShaderManager.GetPostProcessingShader());
+    g_ShaderManager.SetPostProcessingShader(
+        FileSystem::Path("resources/shaders/postprocessing/Blur.glsl")
+    );
+    m_postprocessing_queue->AddPostprocessingPass(g_ShaderManager.GetPostProcessingShader());
 }
 
 void Renderer::Render() const
 {
-    m_framebuffer->Bind();
-    glEnable(GL_DEPTH_TEST);
+    m_postprocessing_queue->BindInitialFramebuffer();
 
-    // Clear buffers
-    GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
+    glEnable(GL_DEPTH_TEST);
 
     GLuint shaderID = 0;
     if (auto cubemap = m_weak_currentCubemap.lock())  // TODO: slow?
@@ -59,7 +66,7 @@ void Renderer::Render() const
     for (const EntityUID& uid : entityUIDs)
     {
         DrawData& drawData = g_ECSManager->GetComponent<DrawData>(uid);
-        Shader* shader = drawData.materials[0]->getShader().get();
+        const Shader* shader = drawData.materials[0]->getShader();
 
         Transform& transform = g_ECSManager->GetComponent<Transform>(uid);
         glBindVertexArray(drawData.VAO_id);
@@ -109,24 +116,9 @@ void Renderer::Render() const
         }
     }
 
-    // Redrawing scene from screen quad
-    m_framebuffer->Unbind();
-    glClear(GL_COLOR_BUFFER_BIT);
     glDisable(GL_DEPTH_TEST);
 
-    GLCall(  // resetting viewport to offset ImGui settings
-        glViewport(
-            m_callbackData->windowWidth * m_callbackData->settingsWidthPercentage,
-            0,
-            m_callbackData->windowWidth * (1.0f - m_callbackData->settingsWidthPercentage),
-            m_callbackData->windowHeight
-        ));
-
-    g_ShaderManager.GetPostProcessingShader()->Use();
-    m_framebuffer->BindColorBuffer();
-    m_screenQuad->Bind();
-    GLCall(
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
+    m_postprocessing_queue->DrawSequence(m_callbackData);
 }
 
 // TODO: quaternions

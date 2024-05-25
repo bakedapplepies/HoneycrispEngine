@@ -5,16 +5,6 @@
 
 HNCRSP_NAMESPACE_START
 
-enum ETextureType  // also acts as Texture Units
-{
-    NONE = -1,
-    ALBEDO,
-    ROUGHNESS,
-    AO,
-    NORMAL,
-    SPECULAR
-};
-
 class Texture2DManager;
 class Texture2D
 {

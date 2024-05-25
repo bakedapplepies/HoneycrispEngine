@@ -9,16 +9,13 @@ class Framebuffer
 {
 private:
     GLuint m_framebufferID;
-    GLuint m_textureColorBuffer;
-    GLuint m_RBO;
+    GLuint m_textureColorBuffer_ID;
+    GLuint m_RBO_ID;
     int m_width;
     int m_height;
 
 public:
-    Framebuffer(
-        int width,
-        int height
-    );
+    Framebuffer(int width, int height);
     ~Framebuffer();
 
     void Bind() const;

@@ -11,13 +11,13 @@ HNCRSP_NAMESPACE_START
 class Texture2DManager
 {
 private:
-    std::unordered_map< std::string, std::shared_ptr<Texture2D> > m_cachedTexture2Ds;
+    std::unordered_map< std::string, std::unique_ptr<Texture2D> > m_cachedTexture2Ds;
     std::unordered_map< std::string, TextureAtlas > m_cachedTextureAtlases;
     int m_maxTextureUnitsPerStage;
     
 public:
-    std::shared_ptr<Texture2D> mainTextureMap;  // TODO: just use texture as regular path, no need for this
-    std::shared_ptr<Texture2D> mainTextureSpecularMap;
+    const Texture2D* mainTextureMap;  // TODO: just use texture as regular path, no need for this
+    const Texture2D* mainTextureSpecularMap;
 
 public:
     Texture2DManager() = default;
@@ -30,7 +30,7 @@ public:
     void StartUp();
     void ShutDown();
 
-    std::shared_ptr<Texture2D> GetTexture2D(
+    const Texture2D* GetTexture2D(
         const FileSystem::Path& path,
         ETextureType texture_type
     );

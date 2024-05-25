@@ -4,10 +4,11 @@ out vec4 FragColor;
 precision mediump float;
 
 in VS_OUT {
-    vec2 TexCoord;
+    vec2 UV;
 } fs_in;
 
 uniform sampler2D u_framebuffer_color_texture;
+uniform vec2 u_resolution;
 // uniform float
 const float offset = 1.0 / 300.0;
 
@@ -34,7 +35,7 @@ void main()
     vec3 sampleTex[9];
     for (int i = 0; i < 9; i++)
     {
-        sampleTex[i] = vec3(texture(u_framebuffer_color_texture, fs_in.TexCoord + offsets[i]));
+        sampleTex[i] = vec3(texture(u_framebuffer_color_texture, fs_in.UV + offsets[i]));
     }
 
     vec3 color = vec3(0.0);

@@ -30,7 +30,7 @@ public:
         g_ECSManager->DestroyEntity(entityUID);
     }
 
-    void setShader(std::shared_ptr<Shader> newShader)
+    void setShader(const Shader* newShader)
     {
         DrawData& thisDrawData = g_ECSManager->GetComponent<DrawData>(entityUID);
         thisDrawData.materials[0]->setShader(newShader);

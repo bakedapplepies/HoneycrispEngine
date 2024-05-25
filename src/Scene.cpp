@@ -23,7 +23,7 @@ void Scene::CreateCubemap(
     g_ECSManager->Renderer_SetCubemap(m_cubemap);
 }
 
-std::shared_ptr<Shader> Scene::CreateShader(
+const Shader* Scene::CreateShader(
     const FileSystem::Path& vertex,
     const FileSystem::Path& fragment,
     const FileSystem::Path& geometry
@@ -33,7 +33,7 @@ std::shared_ptr<Shader> Scene::CreateShader(
     // notify all lights in scene to configure this shader
     for (auto& light : m_lightsInscene)
     {
-        light->ConfigureShader(m_shadersInScene.back().get());
+        light->ConfigureShader(m_shadersInScene.back());
     }
 
     return m_shadersInScene.back();

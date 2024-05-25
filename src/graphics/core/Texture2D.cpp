@@ -101,7 +101,7 @@ void Texture2D::Unbind() const
 Texture2D::~Texture2D()
 {
     // TODO: Preferably use this somehow
-    // HNCRSP_CHECK_RENDER_CONTEXT();
+    HNCRSP_CHECK_RENDER_CONTEXT();
 
     // HNCRSP_LOG_INFO(glfwGetCurrentContext(), "   ", m_textureID);
     // GLCall(glDeleteTextures(1, &m_textureID));

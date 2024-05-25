@@ -10,18 +10,18 @@ HNCRSP_NAMESPACE_START
 class Material
 {
 private:
-    std::shared_ptr<Shader> m_shader = nullptr;
+    const Shader* m_shader = nullptr;
 
-    Texture2D* m_albedo = nullptr;
-    Texture2D* m_roughness = nullptr;
-    Texture2D* m_ao = nullptr;
-    Texture2D* m_normal = nullptr;
-    Texture2D* m_specular = nullptr;
+    const Texture2D* m_albedo = nullptr;
+    const Texture2D* m_roughness = nullptr;
+    const Texture2D* m_ao = nullptr;
+    const Texture2D* m_normal = nullptr;
+    const Texture2D* m_specular = nullptr;
 
     float m_shininess = 128.0f;
 
 public:
-    Material(std::shared_ptr<Shader> shader);
+    Material(const Shader* shader);
     Material(const Material& other);
     Material& operator=(const Material& other) noexcept;
     Material(Material&& other);
@@ -29,20 +29,20 @@ public:
     ~Material();
 
     void setAlbedoMap(const FileSystem::Path& path);
-    void setAlbedoMap(std::shared_ptr<Texture2D> textureObj);
+    void setAlbedoMap(const Texture2D* textureObj);
     void setRoughnessMap(const FileSystem::Path& path);
-    void setRoughnessMap(std::shared_ptr<Texture2D> textureObj);
+    void setRoughnessMap(const Texture2D* textureObj);
     void setAoMap(const FileSystem::Path& path);
-    void setAoMap(std::shared_ptr<Texture2D> textureObj);
+    void setAoMap(const Texture2D* textureObj);
     void setNormalMap(const FileSystem::Path& path);
-    void setNormalMap(std::shared_ptr<Texture2D> textureObj);
+    void setNormalMap(const Texture2D* textureObj);
     void setSpecularMap(const FileSystem::Path& path);
-    void setSpecularMap(std::shared_ptr<Texture2D> textureObj);
+    void setSpecularMap(const Texture2D* textureObj);
 
     void setShininess(float shininess);
 
-    std::shared_ptr<Shader>  getShader() const;
-    void setShader(std::shared_ptr<Shader> newShader);
+    const Shader* getShader() const;
+    void setShader(const Shader* newShader);
     const Texture2D* getAlbedoMap();
     const Texture2D* getRoughnessMap();
     const Texture2D* getAoMap();

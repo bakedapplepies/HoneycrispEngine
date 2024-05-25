@@ -11,6 +11,10 @@ DefaultScene::DefaultScene()
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
         FileSystem::Path("resources/shaders/BlinnPhongTintFragment.glsl")
     );
+    adjustableColorShader = CreateShader(
+        FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
+        FileSystem::Path("resources/shaders/AdjustableColorFragment.glsl")
+    );
     pointLight = CreateLight<PointLight>(
         glm::vec3(10.0f, 2.0f, 10.0f),  // pos
         glm::vec3(1.0f, 1.0f, 1.0f),  // color
@@ -172,12 +176,14 @@ DefaultScene::DefaultScene()
         glm::vec3(0.0f),
         glm::vec3(1.0f)
     ));
+    customMesh->setShader(adjustableColorShader);
 
     SetInitialUniforms();
 }
 
 void DefaultScene::OnUpdate(const float& dt)
 {
+    adjustableColorShader->setVec3Unf("u_color", glm::vec3(m_color));
 }
 
 void DefaultScene::SetInitialUniforms(void)
@@ -190,4 +196,6 @@ void DefaultScene::SetInitialUniforms(void)
 void DefaultScene::OnImGui(void)
 {
     ImGui::Text("Some text in DefaultScene.cpp");
+
+    ImGui::SliderFloat("Color", &m_color, 0.0f, 1.0f);
 }

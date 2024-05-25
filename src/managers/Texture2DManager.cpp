@@ -6,15 +6,15 @@ HNCRSP_NAMESPACE_START
 
 Texture2DManager g_Texture2DManager;
 
-std::shared_ptr<Texture2D> Texture2DManager::GetTexture2D(
+const Texture2D* Texture2DManager::GetTexture2D(
     const FileSystem::Path& path,
     ETextureType texture_type
 ) {
     if (m_cachedTexture2Ds.find(path.string()) == m_cachedTexture2Ds.end())
     {
-        m_cachedTexture2Ds[path.string()] = std::make_shared<Texture2D>(path, texture_type);
+        m_cachedTexture2Ds[path.string()] = std::make_unique<Texture2D>(path, texture_type);
     }
-    return m_cachedTexture2Ds[path.string()];
+    return m_cachedTexture2Ds[path.string()].get();
 }
 
 TextureAtlas& Texture2DManager::GetAtlas(uint32_t width, uint32_t height)
@@ -40,11 +40,11 @@ void Texture2DManager::StartUp()
 
     GLCall(glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_maxTextureUnitsPerStage));
 
-    mainTextureMap = std::make_shared<Texture2D>(
+    mainTextureMap = GetTexture2D(
         FileSystem::Path("resources/textures/grass_textures.png"),
         ETextureType::ALBEDO
     );
-    mainTextureSpecularMap = std::make_shared<Texture2D>(
+    mainTextureSpecularMap = GetTexture2D(
         FileSystem::Path("resources/textures/grass_textures_specular_map.png"),
         ETextureType::SPECULAR
     );
@@ -52,9 +52,7 @@ void Texture2DManager::StartUp()
 
 void Texture2DManager::ShutDown()
 {
-    mainTextureMap.reset();
-    mainTextureSpecularMap.reset();
-    for (auto iter : m_cachedTexture2Ds)
+    for (auto& iter : m_cachedTexture2Ds)
     {
         iter.second->Delete();
         iter.second.reset();
