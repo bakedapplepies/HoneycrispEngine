@@ -18,7 +18,7 @@ class Scene
 private:
     std::shared_ptr<Cubemap> m_cubemap;
     std::vector<const Shader*> m_shadersInScene;
-    std::vector< std::shared_ptr<Light> > m_lightsInscene;
+    std::vector< std::unique_ptr<Light> > m_lightsInscene;
 
     uint32_t m_currentDirectionalLights = 0;
     uint32_t m_currentPointLights = 0;
@@ -34,7 +34,7 @@ protected:
     }
 
     template <typename TLight, typename... Args>
-    std::shared_ptr<TLight> CreateLight(Args&&... args)
+    TLight* CreateLight(Args&&... args)
     {
         static_assert(!std::is_same<Light, TLight>(), "TLight cannot be base Light class.");
         static_assert(std::is_base_of<Light, TLight>(), "TLight is not base of Light.");
@@ -64,15 +64,16 @@ protected:
             m_currentSpotLights++;
         }
 
-        std::shared_ptr<Light> newLight = std::make_shared<TLight>(std::forward<Args>(args)...);
-        m_lightsInscene.push_back(newLight);
+        std::unique_ptr<Light> newLight = std::make_unique<TLight>(std::forward<Args>(args)...);
+        Light* newLightRawPtr = newLight.get();
+        m_lightsInscene.push_back(std::move(newLight));
         
         for (auto& shader : m_shadersInScene)
         {
-            newLight->ConfigureShader(shader);
+            newLightRawPtr->ConfigureShader(shader);
         }
 
-        return std::reinterpret_pointer_cast<TLight>(newLight);
+        return static_cast<TLight*>(newLightRawPtr);
     }
 
     void CreateCubemap(
@@ -99,6 +100,9 @@ public:
 
     virtual void OnUpdate(const float& dt) = 0;
     virtual void OnImGui(void) {}
+
+private:
+    
 };
 
 HNCRSP_NAMESPACE_END

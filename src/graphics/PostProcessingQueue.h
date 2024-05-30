@@ -27,10 +27,14 @@ public:
     PostProcessingQueue& operator=(PostProcessingQueue&&) = delete;
     ~PostProcessingQueue() = default;
 
+    // Ping-pong-ing between framebuffers is expensive so try to
+    // make kind of an uber shader.
     void AddPostprocessingPass(const Shader* postprocessing_shader);
 
-    // To get scene data
+    // To get scene data.
     void BindInitialFramebuffer();
+
+    // Ping pong between framebuffers to apply postprocessing effects.
     void DrawSequence(const RenderContext::CallbackData* callbackData);
 };
 

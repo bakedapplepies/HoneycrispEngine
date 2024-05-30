@@ -63,4 +63,9 @@ const RenderContext::CallbackData* SceneManager::GetCallbackData() const
     return m_callbackData;
 }
 
+RenderContext::CallbackData* SceneManager::GetMutableCallbackData() const
+{
+    return m_callbackData;
+}
+
 HNCRSP_NAMESPACE_END

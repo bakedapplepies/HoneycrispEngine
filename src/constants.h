@@ -18,16 +18,16 @@ extern const uint16_t VERTEX_ATTRIB_NORMAL_BIT;
 // ----------
 
 // Shader-related constants ----------
-extern const uint8_t VERTEX_SHADER;
-extern const uint8_t FRAGMENT_SHADER;
-extern const uint8_t GEOMETRY_SHADER;
-extern const uint8_t TESSELATION_SHADER;
-extern const uint8_t COMPUTE_SHADER;
+extern const uint8_t VERTEX_SHADER_BIT;
+extern const uint8_t FRAGMENT_SHADER_BIT;
+extern const uint8_t GEOMETRY_SHADER_BIT;
+extern const uint8_t TESSELATION_SHADER_BIT;
+extern const uint8_t COMPUTE_SHADER_BIT;
 // ----------
 
 // Texture types ----------
 // Also acts as Texture Units (so it has to be non 'enum class')
-enum ETextureType
+enum ETextureType : int8_t
 {
     NONE = -1,
     ALBEDO,
@@ -36,6 +36,7 @@ enum ETextureType
     NORMAL,
     SPECULAR
 };
+extern const uint16_t DEPTH_BUFFER_TEXTURE_UNIT_INDEX;
 extern const uint16_t COLOR_BUFFER_TEXTURE_UNIT_INDEX;
 extern const uint16_t CUBEMAP_TEXTURE_UNIT_INDEX;
 // ----------

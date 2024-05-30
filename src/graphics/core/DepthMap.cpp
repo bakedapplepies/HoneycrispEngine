@@ -1,10 +1,9 @@
-#include "Framebuffer.h"
-#include "src/managers/SceneManager.h"
+#include "DepthMap.h"
 
 
 HNCRSP_NAMESPACE_START
 
-Framebuffer::Framebuffer(int width, int height)
+DepthMap::DepthMap(int width, int height)
     : m_width(width), m_height(height)
 {
     // Create Framebuffer ----------
@@ -14,37 +13,33 @@ Framebuffer::Framebuffer(int width, int height)
 
     // Create Color buffer ----------
     GLCall(
-        glGenTextures(1, &m_colorBufferTexture_ID));
+        glGenTextures(1, &m_depthTexture_ID));
     GLCall(
-        glBindTexture(GL_TEXTURE_2D, m_colorBufferTexture_ID));
+        glBindTexture(GL_TEXTURE_2D, m_depthTexture_ID));
     GLCall(
-        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB8, width, height));
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr));
     GLCall(
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
     GLCall(
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+    GLCall(
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
+    GLCall(
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
 
-    // Attach color buffer
+    // Attach depth buffer
     GLCall(
         glFramebufferTexture2D(
             GL_FRAMEBUFFER,
-            GL_COLOR_ATTACHMENT0,
+            GL_DEPTH_ATTACHMENT,
             GL_TEXTURE_2D,
-            m_colorBufferTexture_ID,
+            m_depthTexture_ID,
             0
         ));
-
-    // Creating Depth - Stencil buffer
     GLCall(
-        glGenRenderbuffers(1, &m_RBO_ID));
+        glDrawBuffer(GL_NONE));
     GLCall(
-        glBindRenderbuffer(GL_RENDERBUFFER, m_RBO_ID));
-    GLCall(
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height));
-    GLCall(
-        glBindRenderbuffer(GL_RENDERBUFFER, 0));
-    GLCall(
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_RBO_ID));
+        glReadBuffer(GL_NONE));
 
     // Check validity ----------
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -53,20 +48,18 @@ Framebuffer::Framebuffer(int width, int height)
     }
 }
 
-Framebuffer::~Framebuffer()
+DepthMap::~DepthMap()
 {
     HNCRSP_CHECK_RENDER_CONTEXT();
 
     GLCall(
         glDeleteFramebuffers(1, &m_framebufferID));
     GLCall(
-        glDeleteTextures(1, &m_colorBufferTexture_ID));
-    GLCall(
-        glDeleteRenderbuffers(1, &m_RBO_ID));
+        glDeleteTextures(1, &m_depthTexture_ID));
 }
 
 static bool viewport = false;
-void Framebuffer::Bind() const
+void DepthMap::Bind() const
 {
     GLCall(glBindFramebuffer(GL_FRAMEBUFFER, m_framebufferID));
 
@@ -76,15 +69,15 @@ void Framebuffer::Bind() const
         ));
 }
 
-void Framebuffer::Unbind() const
+void DepthMap::Unbind() const
 {
     GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 }
 
-void Framebuffer::BindColorBuffer() const
+void DepthMap::BindDepthBuffer() const
 {
-    GLCall(glActiveTexture(GL_TEXTURE0 + COLOR_BUFFER_TEXTURE_UNIT_INDEX));
-    GLCall(glBindTexture(GL_TEXTURE_2D, m_colorBufferTexture_ID));
+    GLCall(glActiveTexture(GL_TEXTURE0 + DEPTH_BUFFER_TEXTURE_UNIT_INDEX));
+    GLCall(glBindTexture(GL_TEXTURE_2D, m_depthTexture_ID));
 }
 
 HNCRSP_NAMESPACE_END

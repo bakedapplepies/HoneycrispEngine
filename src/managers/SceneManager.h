@@ -40,6 +40,8 @@ public:
     void SetActiveScene(size_t index);
     size_t GetCurrentSceneIndex() const;
     const RenderContext::CallbackData* GetCallbackData() const;
+    RenderContext::CallbackData* GetMutableCallbackData() const;
+    // GetCurrentLight
 
     void Update(const float& dt);
     void UpdateImGui();

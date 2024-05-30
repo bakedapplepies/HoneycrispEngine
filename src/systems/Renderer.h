@@ -8,6 +8,8 @@
 #include "src/graphics/core/Shader.h"
 #include "src/graphics/Cubemap.h"
 #include "src/graphics/core/Framebuffer.h"
+#include "src/graphics/core/DepthMap.h"
+#include "src/graphics/DepthPassCamera.h"
 #include "src/graphics/PostProcessingQueue.h"
 
 
@@ -23,6 +25,8 @@ private:
     std::vector<GLuint> m_shaderIDs_Order;
     std::unique_ptr<VertexArray> m_screenQuad;
     std::unique_ptr<PostProcessingQueue> m_postprocessing_queue;
+    std::unique_ptr<DepthMap> m_depthMap;
+    DepthPassCamera m_depthPassCamera;
 
 public:
     Renderer();
@@ -38,6 +42,9 @@ public:
     void AddEntityUID(EntityUID entityUID) override;
 
 private:
+    void RenderDepthPass() const;
+    void RenderScenePass() const;
+
     glm::mat4 GetModelMatrix(Transform& transform) const;
     void GenerateDrawCommands();
 };

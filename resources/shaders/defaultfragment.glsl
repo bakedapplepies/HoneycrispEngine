@@ -8,6 +8,7 @@ in VS_OUT {
     vec2 TexCoord;
     vec3 Normal;
     vec3 FragPos;
+    vec4 FragPosDepthSpace;
 } fs_in;
 
 layout(std140, binding = 1) uniform GlobUniforms

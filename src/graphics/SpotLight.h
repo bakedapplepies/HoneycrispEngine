@@ -21,17 +21,13 @@ public:
     float attenuation_linear = 0.007f;
     float attenuation_quadratic = 0.0045f;
 
-    float cutOff = 0.07f;
-    float outerCutOff = 0.045f;
+    float cutOff = glm::cos(glm::radians(15.0f));
+    float outerCutOff = glm::cos(glm::radians(25.0f));
 
 public:
     SpotLight(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& color,
         float ambient, float diffuse, float specular);
 
-    SpotLight(const SpotLight& other);
-    SpotLight(SpotLight&& other) noexcept;
-    SpotLight& operator=(const SpotLight& other);
-    SpotLight& operator=(SpotLight&& other) noexcept;
     ~SpotLight() = default;
 
     void ConfigureShader(const Shader* shader) const override final;

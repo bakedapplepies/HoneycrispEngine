@@ -10,6 +10,8 @@ set(SOURCE
     ${CMAKE_SOURCE_DIR}/src/graphics/TextureAtlas.cpp
     ${CMAKE_SOURCE_DIR}/src/graphics/Camera.h
     ${CMAKE_SOURCE_DIR}/src/graphics/Camera.cpp
+    ${CMAKE_SOURCE_DIR}/src/graphics/DepthPassCamera.h
+    ${CMAKE_SOURCE_DIR}/src/graphics/DepthPassCamera.cpp
     ${CMAKE_SOURCE_DIR}/src/graphics/Cube.h
     ${CMAKE_SOURCE_DIR}/src/graphics/Cube.cpp
     ${CMAKE_SOURCE_DIR}/src/graphics/DirectionalLight.h

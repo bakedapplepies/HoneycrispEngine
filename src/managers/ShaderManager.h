@@ -16,6 +16,7 @@ public:
     // TODO: make these private:
     const Shader* basicShader = nullptr;
     const Shader* cubemapShader = nullptr;
+    const Shader* depthPassShader = nullptr;
 
 public:
     ShaderManager() = default;

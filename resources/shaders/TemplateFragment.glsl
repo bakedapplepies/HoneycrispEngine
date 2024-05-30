@@ -9,6 +9,7 @@ in VS_OUT {
     vec2 TexCoord;
     vec3 Normal;
     vec3 FragPos;
+    vec4 FragPosDepthSpace;
 } fs_in;
 
 // layout (location = 0) uniform sampler2D

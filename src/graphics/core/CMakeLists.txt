@@ -18,6 +18,8 @@ set(SOURCE
     ${CMAKE_SOURCE_DIR}/src/graphics/core/UniformBuffer.cpp
     ${CMAKE_SOURCE_DIR}/src/graphics/core/Framebuffer.h
     ${CMAKE_SOURCE_DIR}/src/graphics/core/Framebuffer.cpp
+    ${CMAKE_SOURCE_DIR}/src/graphics/core/DepthMap.h
+    ${CMAKE_SOURCE_DIR}/src/graphics/core/DepthMap.cpp
 )
 
 add_library(${CMAKE_PROJECT_NAME}.Graphics.Core ${SOURCE})

@@ -34,4 +34,14 @@ glm::mat4 Camera::GetViewMatrix() const
     );
 }
 
+glm::mat4 Camera::GetProjectionMatrix(uint32_t width, uint32_t height) const
+{
+    return glm::perspective(
+        glm::radians(45.0f),
+        static_cast<float>(width)/static_cast<float>(height),
+        nearClippingPlane,
+        farClippingPlane
+    );
+}
+
 HNCRSP_NAMESPACE_END

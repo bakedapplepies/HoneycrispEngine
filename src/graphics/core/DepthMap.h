@@ -1,26 +1,28 @@
 #pragma once
 
 #include "src/pch/pch.h"
+#include "src/graphics/core/Shader.h"
 
 
 HNCRSP_NAMESPACE_START
 
-class Framebuffer
+class DepthMap
 {
 private:
     GLuint m_framebufferID;
-    GLuint m_colorBufferTexture_ID;  // TODO: Maybe add another color buffer
-    GLuint m_RBO_ID;
+    GLuint m_depthTexture_ID;
     int m_width;
     int m_height;
 
+    const Shader* m_shader;
+
 public:
-    Framebuffer(int width, int height);
-    ~Framebuffer();
+    DepthMap(int width, int height);
+    ~DepthMap();
 
     void Bind() const;
     void Unbind() const;
-    void BindColorBuffer() const;
+    void BindDepthBuffer() const;
 };
 
 HNCRSP_NAMESPACE_END

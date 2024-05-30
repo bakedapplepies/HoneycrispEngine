@@ -15,7 +15,7 @@ private:
     const Honeycrisp::Shader* adjustableColorShader;
     std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Cube> > cube;
     std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Mesh> > customMesh;
-    std::shared_ptr<Honeycrisp::PointLight> pointLight;
+    Honeycrisp::PointLight* pointLight;
 
     float m_color;
 

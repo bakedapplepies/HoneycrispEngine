@@ -36,17 +36,78 @@ Renderer::Renderer()
         m_screenQuad.get()
     );
 
+    // g_ShaderManager.SetPostProcessingShader(
+    //     FileSystem::Path("resources/shaders/postprocessing/Inverse.glsl")
+    // );
+    // m_postprocessing_queue->AddPostprocessingPass(g_ShaderManager.GetPostProcessingShader());
+    // g_ShaderManager.SetPostProcessingShader(
+    //     FileSystem::Path("resources/shaders/postprocessing/Blur.glsl")
+    // );
+    // m_postprocessing_queue->AddPostprocessingPass(g_ShaderManager.GetPostProcessingShader());
+    // g_ShaderManager.SetPostProcessingShader(
+    //     FileSystem::Path("resources/shaders/postprocessing/Inverse.glsl")
+    // );
+    // m_postprocessing_queue->AddPostprocessingPass(g_ShaderManager.GetPostProcessingShader());
     g_ShaderManager.SetPostProcessingShader(
-        FileSystem::Path("resources/shaders/postprocessing/Inverse.glsl")
+        FileSystem::Path("resources/shaders/postprocessing/GammaCorrection.glsl")
     );
     m_postprocessing_queue->AddPostprocessingPass(g_ShaderManager.GetPostProcessingShader());
-    g_ShaderManager.SetPostProcessingShader(
-        FileSystem::Path("resources/shaders/postprocessing/Blur.glsl")
+
+    // Setting up depth map ----------
+    m_depthMap = std::make_unique<DepthMap>(
+        m_callbackData->windowWidth * (1.0f - m_callbackData->settingsWidthPercentage),
+        m_callbackData->windowHeight
     );
-    m_postprocessing_queue->AddPostprocessingPass(g_ShaderManager.GetPostProcessingShader());
 }
 
 void Renderer::Render() const
+{
+    // RenderDepthPass();
+    RenderScenePass();
+}
+
+void Renderer::RenderDepthPass() const
+{   
+    glEnable(GL_DEPTH_TEST);
+    m_depthMap->Bind();
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    const Shader* depthPassShader = g_ShaderManager.depthPassShader;
+    depthPassShader->Use();
+
+    // Configure shader
+    glm::mat4 view_projection_matrix =
+        m_depthPassCamera.GetProjectionMatrix() * m_depthPassCamera.GetViewMatrix(m_callbackData->dirLightPos, glm::vec3(0.0f));
+    depthPassShader->setMat4Unf("u_depthSpaceMatrix", view_projection_matrix);
+
+    for (const EntityUID& uid : entityUIDs)
+    {
+        // Get Data
+        DrawData& drawData = g_ECSManager->GetComponent<DrawData>(uid);
+        Transform& transform = g_ECSManager->GetComponent<Transform>(uid);
+
+        // Draw
+        glBindVertexArray(drawData.VAO_id);
+        uint64_t index_buffer_offset = 0;
+        for (unsigned int i = 0; i < drawData.meta_data.size(); i++)
+        {
+            glm::mat4 model_matrix = GetModelMatrix(transform);
+            depthPassShader->setMat4Unf("u_model", model_matrix);
+            GLCall(
+                glDrawElementsBaseVertex(
+                    GL_TRIANGLES,
+                    drawData.meta_data[i].indices_buffer_count,
+                    GL_UNSIGNED_INT,
+                    reinterpret_cast<void*>(index_buffer_offset * sizeof(float)),
+                    drawData.meta_data[i].mesh_vertex_count
+                )
+            );
+            index_buffer_offset += drawData.meta_data[i].indices_buffer_count;
+        }
+    }
+}
+
+void Renderer::RenderScenePass() const
 {
     m_postprocessing_queue->BindInitialFramebuffer();
 
@@ -77,9 +138,9 @@ void Renderer::Render() const
             shaderID = shader->getID();
         }
 
-        glm::mat4 modelMatrix = GetModelMatrix(transform);
-        shader->setMat3Unf("u_normalMatrix", glm::mat3(glm::transpose(glm::inverse(modelMatrix))));
-        shader->setMat4Unf("u_model", modelMatrix);
+        glm::mat4 model_matrix = GetModelMatrix(transform);
+        shader->setMat3Unf("u_normalMatrix", glm::mat3(glm::transpose(glm::inverse(model_matrix))));
+        shader->setMat4Unf("u_model", model_matrix);
         uint64_t index_buffer_offset = 0;
         for (unsigned int i = 0; i < drawData.meta_data.size(); i++)
         {
@@ -144,6 +205,7 @@ void Renderer::SwitchCubemap(std::weak_ptr<Cubemap> weak_cubemap)
     m_weak_currentCubemap = weak_cubemap;
 }
 
+// for ECS
 void Renderer::AddEntityUID(EntityUID entityUID)
 {
     GLuint shaderID = 

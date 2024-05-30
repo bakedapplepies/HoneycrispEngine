@@ -17,7 +17,7 @@ DefaultSceneTwo::DefaultSceneTwo()
         camera.position,
         camera.direction,
         glm::vec3(1.0f, 1.0f, 1.0f),
-        0.1f, 0.5f, 1.0f
+        0.1f, 0.5f, 1.0f  
     );
 
     InitializeShaders();
@@ -157,7 +157,7 @@ void DefaultSceneTwo::OnUpdate(const float& dt)
 {
     phongShader->setVec3Unf("u_pointLight.position", pointLight->position);
     phongWTintShader->setVec3Unf("u_pointLight.position", pointLight->position);
-    normalShader->setFloatUnf("u_normal_length", m_u_normal_length);
+    // normalShader->setFloatUnf("u_normal_length", m_u_normal_length);
 
     cubeTransform->eulerAngles += glm::vec3(1.0f, 1.0f, 0.0f) * dt;
     // cubeTransform->position = glm::vec3(0.0f, sinf(glfwGetTime()) * 7.0f, 0.0f);
@@ -174,11 +174,11 @@ void DefaultSceneTwo::InitializeShaders(void)
         FileSystem::Path("resources/shaders/BlinnPhongTintFragment.glsl")
         // FileSystem::Path("resources/shaders/WaveGeometry.glsl")  // TODO: just to calculate normals, maybe rename file to CalcNormGeometry.glsl
     );
-    normalShader = CreateShader(
-        FileSystem::Path("resources/shaders/NormalVertex.glsl"),
-        FileSystem::Path("resources/shaders/YellowFragment.glsl"),
-        FileSystem::Path("resources/shaders/NormalGeometry.glsl")
-    );
+    // normalShader = CreateShader(
+    //     FileSystem::Path("resources/shaders/NormalVertex.glsl"),
+    //     FileSystem::Path("resources/shaders/YellowFragment.glsl"),
+    //     FileSystem::Path("resources/shaders/NormalGeometry.glsl")
+    // );
 }
 
 void DefaultSceneTwo::SetInitialUniforms(void)
@@ -187,10 +187,15 @@ void DefaultSceneTwo::SetInitialUniforms(void)
 
 void DefaultSceneTwo::OnImGui(void)
 {
+    static RenderContext::CallbackData* callback_data = g_SceneManager.GetMutableCallbackData();
+
     ImGui::Text("Point light");
-    ImGui::SliderFloat("position.x", &pointLight->position.x, -50.0f, 50.0f);
-    ImGui::SliderFloat("position.y", &pointLight->position.y, -50.0f, 50.0f);
-    ImGui::SliderFloat("position.z", &pointLight->position.z, -50.0f, 50.0f);
+    if (  ImGui::SliderFloat("position.x", &pointLight->position.x, -50.0f, 50.0f)
+        | ImGui::SliderFloat("position.y", &pointLight->position.y, -50.0f, 50.0f)
+        | ImGui::SliderFloat("position.z", &pointLight->position.z, -50.0f, 50.0f)
+    ) {
+        callback_data->dirLightPos = pointLight->position;
+    }
 
     ImGui::SliderFloat("u_normal_length", &m_u_normal_length, 0.001f, 1.0f);
 }

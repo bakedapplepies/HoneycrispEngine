@@ -15,10 +15,13 @@ out VS_OUT {
     vec2 TexCoord;
     vec3 Normal;
     vec3 FragPos;
+    vec4 FragPosDepthSpace;
 } vs_out;
 
 uniform mat4 u_model;
 uniform mat3 u_normalMatrix;
+uniform mat4 u_depthSpaceMatrix;
+
 layout (std140, binding = 0) uniform Matrices
 { 
     mat4 u_view;
@@ -31,8 +34,11 @@ void main()
     vs_out.VertColor = aColor;
     vs_out.TexCoord = aTexCoord;
     vs_out.Normal = u_normalMatrix * aNormal;
+
     vec4 worldPos = u_model * vec4(aPos, 1.0);
     vs_out.FragPos = vec3(worldPos);
+
+    vs_out.FragPosDepthSpace = u_depthSpaceMatrix * worldPos;
 
     gl_Position = u_projection * u_view * worldPos;
 }

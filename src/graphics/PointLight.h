@@ -26,10 +26,6 @@ public:
     PointLight(const glm::vec3& position, const glm::vec3& color,
         float ambient, float diffuse, float specular);
         
-    PointLight(const PointLight& other);
-    PointLight(PointLight&& other) noexcept;
-    PointLight& operator=(const PointLight& other);
-    PointLight& operator=(PointLight&& other) noexcept;
     ~PointLight() = default;
 
     void ConfigureShader(const Shader* shader) const override final;

@@ -147,20 +147,12 @@ void Window::Loop()
         // Update camera
         camera.SetDirection(glm::normalize(camera.direction));
 
-        // FOV maybe added later, not important
-        projectionMatrix = glm::perspective(
-            glm::radians(45.0f),
-            (float)(m_callbackData->windowWidth - 500.0f)/(float)m_callbackData->windowHeight,
-            0.1f,
-            100.0f
-        );
-
         // Global uniforms ----------
         float u_time = begin * waveSpeed;
         uboMatrices.Bind();
         uboMatrices.Update(
             glm::value_ptr(camera.GetViewMatrix()),
-            glm::value_ptr(projectionMatrix),
+            glm::value_ptr(camera.GetProjectionMatrix(m_callbackData->windowWidth - 500.0f, m_callbackData->windowHeight)),
             &u_time
         );
         
@@ -221,8 +213,10 @@ void Window::processInput()
     }
 }
 
-static unsigned int lowFPS  = 0xFFFFFFFF;
-static unsigned int highFPS = 0;
+static uint32_t lowFPS  = 0xFFFFFFFF;
+static uint32_t highFPS = 0;
+static uint32_t countedFPSes = 0;
+static uint32_t totalFPS = 0;  // uint32_t is more than enough
 void Window::calcFPS()
 {
     m_totalTime += m_deltaTime;
@@ -231,6 +225,9 @@ void Window::calcFPS()
     {
         if (m_frames > highFPS) highFPS = m_frames;
         if (m_frames < lowFPS) lowFPS = m_frames;
+        countedFPSes++;
+        totalFPS += m_frames;
+
         std::string title = "Honeycrisp - FPS: " + fmt::to_string(m_frames);
         glfwSetWindowTitle(m_glfwWindow, title.c_str());
         m_frames = 0;
@@ -266,7 +263,13 @@ Window::~Window()
     auto time = std::chrono::system_clock::to_time_t(time_point);
     char* date = strtok(std::ctime(&time), "\n");
 
-    report_file << fmt::format("[{}, {}] Low - High FPS: {} - {}\n", HNCRSP_GIT_COMMIT_ID, date, lowFPS, highFPS);
+    report_file << fmt::format("[{}, {}] Low - High - Mean FPS: {} - {} - {}\n",
+        HNCRSP_GIT_COMMIT_ID,
+        date,
+        lowFPS,
+        highFPS,
+        static_cast<float>(totalFPS) / static_cast<float>(countedFPSes)
+    );
     report_file.close();
 }
 

@@ -1,3 +1,5 @@
+# TODO List
+
 - TODO: batch/instance rendering; prioritize instancing
 - TODO: ShaderConfig object to pass into draw calls?
 - TODO: LOD (tesselation shader, mesh shader; latter is quite hard)
@@ -16,7 +18,7 @@
 - TODO: Automatic handling of nullptrs that doesn't use weakptrs (somehow)
 - TODO: Relative world positions to parents
 
-- TODO: Since GPU resources are automatically handled/deleted, replace most shared_ptrs with raw ones, and the shared ones with unique
+- TODO: Minimize the number of glViewport calls
 
 - TODO: After we're done with models and Renderer architecture, we'll move on to lighting stuff and integrate
 that with shaders in scene to process light automatically and easier.

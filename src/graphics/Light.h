@@ -13,9 +13,13 @@ public:
     glm::vec3 colorEmit;
 
 public:
-    Light() = default;
     Light(glm::vec3 colorEmit) : colorEmit(colorEmit) {}
     virtual ~Light() = default;
+
+    Light(const Light& other) = delete;
+    Light(Light&& other) noexcept = delete;
+    Light& operator=(const Light& other) = delete;
+    Light& operator=(Light&& other) noexcept = delete;
 
 protected:
     friend Scene;

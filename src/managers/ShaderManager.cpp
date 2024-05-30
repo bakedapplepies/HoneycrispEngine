@@ -16,6 +16,10 @@ void ShaderManager::StartUp()
         FileSystem::Path("resources/shaders/CubemapVertex.glsl"),
         FileSystem::Path("resources/shaders/CubemapFragment.glsl")
     );
+    depthPassShader = GetShader(
+        FileSystem::Path("resources/shaders/depth_pass/DepthPassVertex.glsl"),
+        FileSystem::Path("resources/shaders/depth_pass/DepthPassFragment.glsl")
+    );
 }
 
 void ShaderManager::ShutDown()
