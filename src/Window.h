@@ -12,7 +12,7 @@ class Window
 {
 private:
     GLFWwindow* m_glfwWindow = nullptr;
-    RenderContext::CallbackData* m_callbackData = nullptr;
+    CallbackData* m_callbackData = nullptr;
 
     glm::mat4 projectionMatrix;
 
@@ -27,7 +27,7 @@ private:
     std::vector<std::string> m_pps;
 
 public:
-    Window(RenderContext::CallbackData* callbackData);
+    Window(CallbackData* callbackData);
     ~Window();
     void Loop();
 

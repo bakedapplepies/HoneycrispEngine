@@ -45,7 +45,7 @@ public:
     void EnableVertexAttribNormals(bool on) const;
     // const VertexArray* GetVAO() const;
 
-    void virt_AddDrawDataToRenderer(EntityUID entityUID) const override final;
+    void virt_AddDrawDataToRenderer(ECS::EntityUID entityUID) const override final;
 };
 
 HNCRSP_NAMESPACE_END

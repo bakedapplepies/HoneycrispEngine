@@ -6,31 +6,35 @@
 
 HNCRSP_NAMESPACE_START
 
-namespace RenderContext
+struct CallbackData
+{
+    bool capFPS = true;
+
+    bool showMouse = false;
+    bool firstMouse = true;
+    float lastX;
+    float lastY;
+    float yaw = -90.0f;
+    float pitch = 0.0f;
+    float fov = 45.0f;
+
+    int windowWidth;
+    int windowHeight;
+    int settingsWidth;
+    float settingsWidthPercentage = 0.2f;
+
+    // glm::vec3 cameraDirection = glm::vec3(-1.0f, 0.0f, 0.0f);  // initial camera direction or it would look at origin by default        
+    Camera camera = Camera(glm::vec3(-1.0f, 0.0f, 0.0f));
+    glm::vec3 dirLightPos;
+};
+
+class RenderContext
 {    
-    struct CallbackData
-    {
-        bool capFPS = true;
+private:
+    CallbackData m_callbackData;
 
-        bool showMouse = false;
-        bool firstMouse = true;
-        float lastX;
-        float lastY;
-        float yaw = -90.0f;
-        float pitch = 0.0f;
-        float fov = 45.0f;
-
-        int windowWidth;
-        int windowHeight;
-        int settingsWidth;
-        float settingsWidthPercentage = 0.2f;
-
-        // glm::vec3 cameraDirection = glm::vec3(-1.0f, 0.0f, 0.0f);  // initial camera direction or it would look at origin by default        
-        Camera camera = Camera(glm::vec3(-1.0f, 0.0f, 0.0f));
-        glm::vec3 dirLightPos;
-    };
-
+public:
     [[nodiscard]] CallbackData* StartUp_GetWindow();
-}
+};
 
 HNCRSP_NAMESPACE_END

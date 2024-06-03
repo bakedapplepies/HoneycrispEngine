@@ -10,7 +10,7 @@ PostProcessingQueue::PostProcessingQueue(int width, int height, const VertexArra
     m_screenQuadVAO = screenQuadVAO;
 }
 
-void PostProcessingQueue::DrawSequence(const RenderContext::CallbackData* callbackData)
+void PostProcessingQueue::DrawSequence(const CallbackData* callbackData)
 {
     m_screenQuadVAO->Bind();
     for (const Shader* shader : m_postprocessing_shaders)

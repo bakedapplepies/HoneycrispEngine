@@ -213,7 +213,7 @@ void Cube::InitializeAttributeData()
     );
 }
 
-void Cube::virt_AddDrawDataToRenderer(EntityUID entityUID) const
+void Cube::virt_AddDrawDataToRenderer(ECS::EntityUID entityUID) const
 {
     DrawData drawData;
     drawData.VAO_id = m_VAO->getID();

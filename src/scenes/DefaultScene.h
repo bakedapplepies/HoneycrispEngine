@@ -6,6 +6,7 @@
 #include "src/ecs/ECSManager.h"
 #include "src/managers/ShaderManager.h"
 #include "src/graphics/Cube.h"
+#include "src/graphics/Mesh.h"
 
 
 class DefaultScene : public Honeycrisp::Scene

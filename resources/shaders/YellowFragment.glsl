@@ -1,7 +1,7 @@
 #version 460
 out vec4 FragColor;
 
-precision mediump float;
+
 
 void main()
 {

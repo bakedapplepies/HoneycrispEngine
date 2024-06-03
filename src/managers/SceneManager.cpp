@@ -6,7 +6,7 @@ HNCRSP_NAMESPACE_START
 SceneManager g_SceneManager;
 
 void SceneManager::StartUp(
-    RenderContext::CallbackData* callbackData,
+    CallbackData* callbackData,
     const std::function<void()>& application_ECS_register_systems,
     const std::function<void()>& application_ECS_register_components
 ) {
@@ -21,7 +21,7 @@ void SceneManager::ShutDown()
     
     for (auto& i : m_ECSManagers)
     {
-        ECSManager& ecsManager = i.second;
+        ECS::ECSManager& ecsManager = i.second;
         ecsManager.ShutDown();
     }
 }
@@ -51,6 +51,8 @@ void SceneManager::SetActiveScene(size_t index)
     }
     m_activeSceneIndex = index;
     g_ECSManager = &m_ECSManagers[m_activeSceneIndex];
+
+    m_scenesMap[m_activeSceneIndex]->ReconfigureAllShaders();
 }
 
 size_t SceneManager::GetCurrentSceneIndex() const
@@ -58,12 +60,12 @@ size_t SceneManager::GetCurrentSceneIndex() const
     return m_activeSceneIndex;
 }
 
-const RenderContext::CallbackData* SceneManager::GetCallbackData() const
+const CallbackData* SceneManager::GetCallbackData() const
 {
     return m_callbackData;
 }
 
-RenderContext::CallbackData* SceneManager::GetMutableCallbackData() const
+CallbackData* SceneManager::GetMutableCallbackData() const
 {
     return m_callbackData;
 }

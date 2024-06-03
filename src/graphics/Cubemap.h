@@ -1,7 +1,7 @@
 #pragma once
 
 #include "src/pch/pch.h"
-#include "Mesh.h"
+#include "src/graphics/core/VertexArray.h"
 
 
 HNCRSP_NAMESPACE_START

@@ -1,7 +1,7 @@
 #version 460 core
 out vec4 FragColor;
 
-precision mediump float;
+
 
 in vec3 TexCoords;
 uniform samplerCube u_cubemap;

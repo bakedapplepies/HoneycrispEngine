@@ -6,9 +6,10 @@
 
 #include "src/Scene.h"
 #include "src/graphics/Cube.h"
-#include "src/managers/Texture2DManager.h"
+#include "src/graphics/Mesh.h"
 #include "src/graphics/Model.h"
 #include "src/graphics/Cubemap.h"
+#include "src/managers/Texture2DManager.h"
 
 
 class DefaultSceneTwo : public Honeycrisp::Scene

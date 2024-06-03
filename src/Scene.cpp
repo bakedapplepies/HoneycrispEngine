@@ -39,4 +39,15 @@ const Shader* Scene::CreateShader(
     return m_shadersInScene.back();
 }
 
+void Scene::ReconfigureAllShaders() const
+{
+    for (auto& light : m_lightsInscene)
+    {
+        for (auto& shader : m_shadersInScene)
+        {
+            light->ConfigureShader(shader);
+        }
+    }
+}
+
 HNCRSP_NAMESPACE_END

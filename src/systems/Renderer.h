@@ -17,10 +17,10 @@ HNCRSP_NAMESPACE_START
 
 struct DrawElementsIndirectCommand;
 
-class Renderer : public System
+class Renderer : public ECS::System
 {
 private:
-    const RenderContext::CallbackData* m_callbackData;
+    const CallbackData* m_callbackData;
     std::weak_ptr<Cubemap> m_weak_currentCubemap;
     std::vector<GLuint> m_shaderIDs_Order;
     std::unique_ptr<VertexArray> m_screenQuad;
@@ -39,7 +39,7 @@ public:
     void Render() const;
     void SwitchCubemap(std::weak_ptr<Cubemap> weak_cubemap);
 
-    void AddEntityUID(EntityUID entityUID) override;
+    void AddEntityUID(ECS::EntityUID entityUID) override;
 
 private:
     void RenderDepthPass() const;

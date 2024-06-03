@@ -10,100 +10,99 @@
 
 HNCRSP_NAMESPACE_START
 
-// struct TimeBySystems
-// {
-//     float renderer;
-// };
-
-class ECSManager
+namespace ECS
 {
-private:
-    std::unique_ptr<EntityManager> m_entityManager;
-    std::unique_ptr<ComponentManager> m_componentManager;
-    std::unique_ptr<SystemManager> m_systemManager;
-
-    Renderer* m_renderer;
-
-public:
-    ECSManager() = default;
-    ECSManager(const ECSManager&) = delete;
-    ECSManager& operator=(const ECSManager&) = delete;
-    ECSManager(ECSManager&& other) noexcept;
-    ECSManager& operator=(ECSManager&& other) noexcept;
-    ~ECSManager() = default;
-
-    void StartUp();
-    void ShutDown();
-    void Update() const;
-    void Renderer_SetCubemap(std::weak_ptr<Cubemap> weak_cubemap);
-
-    EntityUID NewEntityUID() const;
-    void DestroyEntity(EntityUID uid) const;
-
-    // also registers the component and their bit index
-    template <typename TComponent>
-    void AddComponent(EntityUID uid, const TComponent& data)
+    class ECSManager
     {
-        size_t bit_index = GetBitIndex<TComponent>();
-        
-        // set new bitset for entity
-        ComponentBitset new_component_bitset = m_entityManager->GetComponentBitset(uid);
-        new_component_bitset.set(bit_index, 1);
-        m_entityManager->SetComponentBitset(uid, new_component_bitset);
+    private:
+        std::unique_ptr<EntityManager> m_entityManager;
+        std::unique_ptr<ComponentManager> m_componentManager;
+        std::unique_ptr<SystemManager> m_systemManager;
 
-        // if entity bitset has all the component bit of a system
-        // system will act upon entity's data
-        m_componentManager->AddEntityData(uid, data);
-        m_systemManager->EntityComponentBitsetChanged(uid, new_component_bitset);
-    }
+        Renderer* m_renderer;
+        TimeBySystems m_timeBySystems;
 
-    template <typename TComponent>
-    void RemoveComponent(EntityUID uid)
-    {
-        size_t bit_index = GetBitIndex<TComponent>();
+    public:
+        ECSManager() = default;
+        ECSManager(const ECSManager&) = delete;
+        ECSManager& operator=(const ECSManager&) = delete;
+        ECSManager(ECSManager&& other) noexcept;
+        ECSManager& operator=(ECSManager&& other) noexcept;
+        ~ECSManager() = default;
 
-        // set new bitset for entity
-        ComponentBitset new_component_bitset = m_entityManager->GetComponentBitset(uid);
-        new_component_bitset.set(bit_index, 0);
-        m_entityManager->SetComponentBitset(uid, new_component_bitset);
+        void StartUp();
+        void ShutDown();
+        void Update() const;
+        void Renderer_SetCubemap(std::weak_ptr<Cubemap> weak_cubemap);
 
-        m_componentManager->RemoveEntityData<TComponent>(uid);
-        m_systemManager->EntityComponentBitsetChanged(uid, new_component_bitset);   
-    }
+        EntityUID NewEntityUID() const;
+        void DestroyEntity(EntityUID uid) const;
 
-    template <typename TComponent>
-    [[nodiscard]] TComponent& GetComponent(EntityUID uid)
-    {
-        return m_componentManager->GetData<TComponent>(uid);
-    }
+        // also registers the component and their bit index
+        template <typename TComponent>
+        void AddComponent(EntityUID uid, const TComponent& data)
+        {
+            size_t bit_index = GetBitIndex<TComponent>();
+            
+            // set new bitset for entity
+            ComponentBitset new_component_bitset = m_entityManager->GetComponentBitset(uid);
+            new_component_bitset.set(bit_index, 1);
+            m_entityManager->SetComponentBitset(uid, new_component_bitset);
 
-    template <typename TSystem>
-    void RegisterSystem(const ComponentBitset& component_bitset)
-    {
-        static_assert(std::is_base_of_v<System, TSystem>, "TSystem is not a base of 'System'.");
+            // if entity bitset has all the component bit of a system
+            // system will act upon entity's data
+            m_componentManager->AddEntityData(uid, data);
+            m_systemManager->EntityComponentBitsetChanged(uid, new_component_bitset);
+        }
 
-        std::shared_ptr<System> system = m_systemManager->RegisterSystem<TSystem>(component_bitset);
+        template <typename TComponent>
+        void RemoveComponent(EntityUID uid)
+        {
+            size_t bit_index = GetBitIndex<TComponent>();
 
-        // TODO: Need some rework here, this is ugly
-        if constexpr(std::is_same_v<TSystem, Renderer>) m_renderer =
-            std::static_pointer_cast<Renderer>(system).get();
-    }
+            // set new bitset for entity
+            ComponentBitset new_component_bitset = m_entityManager->GetComponentBitset(uid);
+            new_component_bitset.set(bit_index, 0);
+            m_entityManager->SetComponentBitset(uid, new_component_bitset);
 
-    template <typename TSystem>
-    [[nodiscard]] std::shared_ptr<TSystem> GetSystem()
-    {
-        static_assert(std::is_base_of_v<System, TSystem>, "TSystem is not a base of 'System'.");
+            m_componentManager->RemoveEntityData<TComponent>(uid);
+            m_systemManager->EntityComponentBitsetChanged(uid, new_component_bitset);   
+        }
 
-        return m_systemManager->GetSystem<TSystem>();
-    }
+        template <typename TComponent>
+        [[nodiscard]] TComponent& GetComponent(EntityUID uid)
+        {
+            return m_componentManager->GetData<TComponent>(uid);
+        }
 
-    template <typename TComponent>
-    void RegisterComponent() const
-    {
-        m_componentManager->RegisterComponent<TComponent>();
-    }
-};
+        template <typename TSystem>
+        void RegisterSystem(const ComponentBitset& component_bitset)
+        {
+            static_assert(std::is_base_of_v<System, TSystem>, "TSystem is not a base of 'System'.");
 
-extern ECSManager* g_ECSManager;
+            std::shared_ptr<System> system = m_systemManager->RegisterSystem<TSystem>(component_bitset);
+
+            // TODO: Need some rework here, this is ugly
+            if constexpr(std::is_same_v<TSystem, Renderer>) m_renderer =
+                std::static_pointer_cast<Renderer>(system).get();
+        }
+
+        template <typename TSystem>
+        [[nodiscard]] std::shared_ptr<TSystem> GetSystem()
+        {
+            static_assert(std::is_base_of_v<System, TSystem>, "TSystem is not a base of 'System'.");
+
+            return m_systemManager->GetSystem<TSystem>();
+        }
+
+        template <typename TComponent>
+        void RegisterComponent() const
+        {
+            m_componentManager->RegisterComponent<TComponent>();
+        }
+    };
+} // namespace ECS
+
+extern ECS::ECSManager* g_ECSManager;
 
 HNCRSP_NAMESPACE_END

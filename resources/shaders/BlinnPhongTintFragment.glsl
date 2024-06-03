@@ -1,7 +1,6 @@
 #version 460 core 
 out vec4 FragColor;
 
-precision mediump float;
 
 in VS_OUT {
     vec3 VertColor;
@@ -65,6 +64,9 @@ struct SpotLight
     vec3 specular;
 };
 
+uniform int u_numDirLight = 0;
+uniform int u_numPointLight = 1;
+uniform int u_numSpotLight = 0;
 uniform DirLight u_dirLight;
 uniform PointLight u_pointLight;
 uniform SpotLight u_spotLight;
@@ -142,9 +144,14 @@ void main()
     vec4 albedoFrag = texture(u_material.albedo, fs_in.TexCoord);
     vec4 specularFrag = texture(u_material.specular, fs_in.TexCoord);
 
-    // result += CalcDirLight(u_dirLight, fs_in.Normal, dirToView, albedoFrag, specularFrag);
-    // result += CalcPointLight(u_pointLight, fs_in.Normal, dirToView, vec3(albedoFrag), vec3(specularFrag));
-    result += CalcSpotLight(u_spotLight, fs_in.Normal, dirToView, vec3(albedoFrag), vec3(specularFrag));
+    for (int i = 0; i < u_numDirLight; i++)
+        result += CalcDirLight(u_dirLight, fs_in.Normal, dirToView, vec3(albedoFrag), vec3(specularFrag));
+
+    for (int i = 0; i < u_numPointLight; i++)
+        result += CalcPointLight(u_pointLight, fs_in.Normal, dirToView, vec3(albedoFrag), vec3(specularFrag));
+        
+    for (int i = 0; i < u_numSpotLight; i++)
+        result += CalcSpotLight(u_spotLight, fs_in.Normal, dirToView, vec3(albedoFrag), vec3(specularFrag));
 
     FragColor = vec4(fs_in.VertColor, 1.0) * vec4(result, albedoFrag.w);
 }

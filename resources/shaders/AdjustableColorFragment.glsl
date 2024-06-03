@@ -1,7 +1,6 @@
 #version 460 core 
 out vec4 FragColor;  // Color output
 
-precision mediump float;
 
 // Export Vertex Attributes from previous shader stage
 in VS_OUT {

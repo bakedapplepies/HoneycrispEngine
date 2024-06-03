@@ -31,7 +31,6 @@ public:
         GLCall(glBindBuffer(GL_UNIFORM_BUFFER, m_uboID));
         GLCall(glBufferData(GL_UNIFORM_BUFFER, totalByteSize, nullptr, GL_STATIC_DRAW));
         GLCall(glBindBufferRange(GL_UNIFORM_BUFFER, bindingIndex, m_uboID, 0, totalByteSize));
-        HNCRSP_LOG_INFO(totalByteSize);
     }
 
     template <typename... Args>
@@ -86,26 +85,22 @@ private:
         if constexpr(i < sizeof...(Ts))
         {
             using T = typename std::tuple_element<i, std::tuple<Ts...>>::type;
+
+            m_offsets[i] = totalByteSize;
             constexpr size_t remainder = sizeof(T) % 16;
             if constexpr(remainder != 0)
-            {
-                m_sizes[i] = sizeof(T) + 16 - remainder;
-                m_offsets[i] = totalByteSize;
-                totalByteSize += m_sizes[i];
-            }
+                totalByteSize += sizeof(T) + 16 - remainder;
             else
-            {
-                m_sizes[i] = sizeof(T);
-                m_offsets[i] = totalByteSize;
-                totalByteSize += m_sizes[i];
-            }
+                totalByteSize += sizeof(T);
+
+            m_sizes[i] = sizeof(T);
 
             AddTypeSizes<i + 1>();
         }
     }
 };
 
-template<typename... Ts>
+template <typename... Ts>
 std::unordered_map<GLuint, bool> UniformBuffer<Ts...>::takenBindingIndices;
 
 HNCRSP_NAMESPACE_END

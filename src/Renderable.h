@@ -1,18 +1,16 @@
 #pragma once
 
 #include "src/pch/pch.h"
-#include "src/graphics/Material.h"
 #include "src/ecs/ECSTypes.h"
-#include "src/Object.h"
 
 
 HNCRSP_NAMESPACE_START
 
-class Renderable // : public Object
+class Renderable
 {
 public:
     // called in scenes
-    virtual void virt_AddDrawDataToRenderer(EntityUID entityUID) const = 0;
+    virtual void virt_AddDrawDataToRenderer(ECS::EntityUID entityUID) const = 0;
     virtual ~Renderable() = default;
 };
 

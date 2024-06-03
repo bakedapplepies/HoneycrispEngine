@@ -1,7 +1,7 @@
 #version 460 core 
 out vec4 FragColor;
 
-precision mediump float;
+
 
 in VS_OUT {
     vec3 VertColor;

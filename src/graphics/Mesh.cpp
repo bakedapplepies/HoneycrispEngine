@@ -49,7 +49,7 @@ Mesh& Mesh::operator=(Mesh&& other) noexcept
     return *this;
 }
 
-void Mesh::virt_AddDrawDataToRenderer(EntityUID entityUID) const
+void Mesh::virt_AddDrawDataToRenderer(ECS::EntityUID entityUID) const
 {
     DrawData drawData;
     drawData.VAO_id = m_VAO.getID();

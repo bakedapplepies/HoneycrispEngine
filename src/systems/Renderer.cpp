@@ -49,7 +49,7 @@ Renderer::Renderer()
     // );
     // m_postprocessing_queue->AddPostprocessingPass(g_ShaderManager.GetPostProcessingShader());
     g_ShaderManager.SetPostProcessingShader(
-        FileSystem::Path("resources/shaders/postprocessing/GammaCorrection.glsl")
+        FileSystem::Path("resources/shaders/postprocessing/ColorCorrection.glsl")
     );
     m_postprocessing_queue->AddPostprocessingPass(g_ShaderManager.GetPostProcessingShader());
 
@@ -80,7 +80,7 @@ void Renderer::RenderDepthPass() const
         m_depthPassCamera.GetProjectionMatrix() * m_depthPassCamera.GetViewMatrix(m_callbackData->dirLightPos, glm::vec3(0.0f));
     depthPassShader->setMat4Unf("u_depthSpaceMatrix", view_projection_matrix);
 
-    for (const EntityUID& uid : entityUIDs)
+    for (const ECS::EntityUID& uid : entityUIDs)
     {
         // Get Data
         DrawData& drawData = g_ECSManager->GetComponent<DrawData>(uid);
@@ -124,7 +124,7 @@ void Renderer::RenderScenePass() const
     const Texture2D* aoMap = nullptr;
     const Texture2D* normalMap = nullptr;
     const Texture2D* specularMap = nullptr;
-    for (const EntityUID& uid : entityUIDs)
+    for (const ECS::EntityUID& uid : entityUIDs)
     {
         DrawData& drawData = g_ECSManager->GetComponent<DrawData>(uid);
         const Shader* shader = drawData.materials[0]->getShader();
@@ -206,7 +206,7 @@ void Renderer::SwitchCubemap(std::weak_ptr<Cubemap> weak_cubemap)
 }
 
 // for ECS
-void Renderer::AddEntityUID(EntityUID entityUID)
+void Renderer::AddEntityUID(ECS::EntityUID entityUID)
 {
     GLuint shaderID = 
         g_ECSManager->GetComponent<DrawData>(entityUID).materials[0]->getShader()->getID();

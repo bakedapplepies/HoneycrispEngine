@@ -1,7 +1,7 @@
 #version 460 core 
 out vec4 FragColor;  // Color output
 
-precision mediump float;
+
 
 float near = 0.1;
 float far = 100.0;

@@ -21,7 +21,7 @@ public:
     Cube& operator=(Cube&& other) noexcept;
     ~Cube() = default;
     
-    void virt_AddDrawDataToRenderer(EntityUID entityUID) const override final;
+    void virt_AddDrawDataToRenderer(ECS::EntityUID entityUID) const override final;
 
 private:
     void InitializeAttributeData();

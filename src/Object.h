@@ -5,7 +5,7 @@
 
 HNCRSP_NAMESPACE_START
 
-class Object
+class Object  // TODO: Useless as of now. Maybe turn into some kind of SceneObj?
 {
 public:
     virtual ~Object() = default;

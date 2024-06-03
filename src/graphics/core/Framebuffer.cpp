@@ -18,7 +18,7 @@ Framebuffer::Framebuffer(int width, int height)
     GLCall(
         glBindTexture(GL_TEXTURE_2D, m_colorBufferTexture_ID));
     GLCall(
-        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB8, width, height));
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA16F, width, height));
     GLCall(
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
     GLCall(

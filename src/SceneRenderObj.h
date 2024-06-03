@@ -2,6 +2,7 @@
 
 #include "src/pch/pch.h"
 #include "src/ecs/ECSManager.h"
+#include "src/Renderable.h"
 
 
 HNCRSP_NAMESPACE_START

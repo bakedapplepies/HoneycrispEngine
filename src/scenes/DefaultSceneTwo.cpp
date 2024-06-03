@@ -11,13 +11,13 @@ DefaultSceneTwo::DefaultSceneTwo()
     pointLight = CreateLight<PointLight>(
         glm::vec3(0.0f, 0.0f, 0.0f),  // pos
         glm::vec3(1.0f, 1.0f, 1.0f),  // color
-        0.1f, 0.5f, 1.0f              // ambient - diffuse - specular
+        0.3f, 0.5f, 1.0f              // ambient - diffuse - specular
     );
     spotLight = CreateLight<SpotLight>(
         camera.position,
         camera.direction,
         glm::vec3(1.0f, 1.0f, 1.0f),
-        0.1f, 0.5f, 1.0f  
+        0.3f, 0.5f, 1.0f
     );
 
     InitializeShaders();
@@ -65,7 +65,7 @@ DefaultSceneTwo::DefaultSceneTwo()
     {
         for (unsigned int j = 0; j < vertH; j++)
         {
-            uvs.emplace_back(grassUV.bl + 
+            uvs.emplace_back(grassUV.bl +
             uvDistHorizontal * ((float)i/(float)(vertW-1)) +
             uvDistVertical * ((float)j/(float)(vertH-1)));
         }
@@ -187,7 +187,7 @@ void DefaultSceneTwo::SetInitialUniforms(void)
 
 void DefaultSceneTwo::OnImGui(void)
 {
-    static RenderContext::CallbackData* callback_data = g_SceneManager.GetMutableCallbackData();
+    static CallbackData* callback_data = g_SceneManager.GetMutableCallbackData();
 
     ImGui::Text("Point light");
     if (  ImGui::SliderFloat("position.x", &pointLight->position.x, -50.0f, 50.0f)

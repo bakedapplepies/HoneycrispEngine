@@ -15,8 +15,8 @@ private:
     size_t m_nextSceneIndex = 0;
     size_t m_activeSceneIndex = 0;
     std::unordered_map< size_t, std::unique_ptr<Scene> > m_scenesMap;
-    std::unordered_map< size_t, ECSManager > m_ECSManagers;
-    RenderContext::CallbackData* m_callbackData;  // TODO: Temporary placement
+    std::unordered_map< size_t, ECS::ECSManager > m_ECSManagers;
+    CallbackData* m_callbackData;  // TODO: Temporary placement
 
     std::function<void()> m_application_ECS_register_systems;
     std::function<void()> m_application_ECS_register_components;
@@ -30,7 +30,7 @@ public:
     ~SceneManager() = default;
 
     void StartUp(
-        RenderContext::CallbackData* callbackData,
+        CallbackData* callbackData,
         const std::function<void()>& application_ECS_register_systems,
         const std::function<void()>& application_ECS_register_components
     );
@@ -39,8 +39,8 @@ public:
     void ClearAllScenes();
     void SetActiveScene(size_t index);
     size_t GetCurrentSceneIndex() const;
-    const RenderContext::CallbackData* GetCallbackData() const;
-    RenderContext::CallbackData* GetMutableCallbackData() const;
+    const CallbackData* GetCallbackData() const;
+    CallbackData* GetMutableCallbackData() const;
     // GetCurrentLight
 
     void Update(const float& dt);
@@ -52,7 +52,7 @@ public:
         static_assert(std::is_base_of<Scene, TScene>(), "SceneManager::CreateScene didn't receive a scene object.");
 
         // Each scene has a unique ECS system
-        m_ECSManagers[m_nextSceneIndex] = ECSManager();
+        m_ECSManagers[m_nextSceneIndex] = ECS::ECSManager();
         g_ECSManager = &m_ECSManagers[m_nextSceneIndex];
         g_ECSManager->StartUp();
         m_application_ECS_register_components();  // re-register ECS Components

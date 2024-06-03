@@ -2,7 +2,6 @@
 out vec4 FragColor;
 
 
-
 in VS_OUT {
     vec2 UV;
 } fs_in;
@@ -20,9 +19,13 @@ uniform sampler2D u_framebuffer_color_texture;
 void main()
 {
     vec3 color;
-
     color = vec3(texture(u_framebuffer_color_texture, fs_in.UV));
 
+    // Reinhard Tone mapping
+    color = color / (color + vec3(1.0));
+
+    // Gamma Correction
     color = pow(color, vec3(1.0/2.2));
+
     FragColor = vec4(color, 1.0);
 }

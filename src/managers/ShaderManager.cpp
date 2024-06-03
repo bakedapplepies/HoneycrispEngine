@@ -50,7 +50,7 @@ const Shader* ShaderManager::GetShader(
 void ShaderManager::SetPostProcessingShader(
     const FileSystem::Path& fragmentFile  
 ) {
-    const RenderContext::CallbackData* callbackData = g_SceneManager.GetCallbackData();
+    const CallbackData* callbackData = g_SceneManager.GetCallbackData();
     m_postprocessing_shader = GetShader(
         FileSystem::Path("resources/shaders/postprocessing/ScreenQuadVertex.glsl"),
         fragmentFile

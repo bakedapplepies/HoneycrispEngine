@@ -2,6 +2,7 @@
 
 #include "src/pch/pch.h"
 #include "src/Scene.h"
+#include "src/graphics/Mesh.h"
 
 
 // tools.wwwtyro.net/space-3d/index.html

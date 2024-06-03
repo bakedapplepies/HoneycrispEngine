@@ -13,6 +13,7 @@
 
 HNCRSP_NAMESPACE_START
 
+class SceneManager;
 class Scene
 {
 private:
@@ -93,6 +94,7 @@ protected:
 public:
     Scene() = default;
     virtual ~Scene() = default;
+
     Scene(const Scene&) = delete;
     Scene& operator=(const Scene&) = delete;
     Scene(Scene&& other) noexcept = delete;
@@ -102,7 +104,8 @@ public:
     virtual void OnImGui(void) {}
 
 private:
-    
+    friend SceneManager;
+    void ReconfigureAllShaders() const;
 };
 
 HNCRSP_NAMESPACE_END

@@ -29,8 +29,12 @@ void Application::Run()  // this is where the main control flow happens
     // std::streambuf* cerrBuf = std::cerr.rdbuf();  // save cerr buffer
     // std::cerr.rdbuf(stderr_redirect.rdbuf());  // redirect to file buffer
 
-    GLFWContext::StartUp();
-    RenderContext::CallbackData* callbackData = RenderContext::StartUp_GetWindow();
+    GLFWContext glfwContext;
+    glfwContext.StartUp();
+
+    RenderContext renderContext;
+    CallbackData* callbackData = renderContext.StartUp_GetWindow();  // TODO: This is pretty akward design
+
     GetExtensions();
 
     g_ImGuiManager.StartUp();
@@ -49,7 +53,7 @@ void Application::Run()  // this is where the main control flow happens
     g_Texture2DManager.ShutDown();
     g_ShaderManager.ShutDown();
     g_ImGuiManager.ShutDown();
-    GLFWContext::ShutDown();
+    glfwContext.ShutDown();
 
     // std::cerr.rdbuf(cerrBuf);  // reset cerr
     // stderr_redirect.close();
@@ -66,9 +70,9 @@ void Application_RegisterSystems()
     // Renderer Component Bitset consists of the following components:
     //  - DrawData
     //  - Transform
-    ComponentBitset renderer_component_bitset;
-    renderer_component_bitset.set(GetBitIndex<DrawData>());
-    renderer_component_bitset.set(GetBitIndex<Transform>());
+    ECS::ComponentBitset renderer_component_bitset;
+    renderer_component_bitset.set(ECS::GetBitIndex<DrawData>());
+    renderer_component_bitset.set(ECS::GetBitIndex<Transform>());
     g_ECSManager->RegisterSystem<Renderer>(renderer_component_bitset);
 }
 

@@ -9,7 +9,7 @@
 
 HNCRSP_NAMESPACE_START
 
-Window::Window(RenderContext::CallbackData* callbackData)
+Window::Window(CallbackData* callbackData)
 {
     m_glfwWindow = glfwGetCurrentContext();
     m_callbackData = callbackData;

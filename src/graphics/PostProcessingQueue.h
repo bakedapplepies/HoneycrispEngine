@@ -35,7 +35,7 @@ public:
     void BindInitialFramebuffer();
 
     // Ping pong between framebuffers to apply postprocessing effects.
-    void DrawSequence(const RenderContext::CallbackData* callbackData);
+    void DrawSequence(const CallbackData* callbackData);
 };
 
 HNCRSP_NAMESPACE_END

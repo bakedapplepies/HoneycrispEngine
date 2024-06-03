@@ -5,43 +5,46 @@
 
 HNCRSP_NAMESPACE_START
 
-void SystemManager::EntityComponentBitsetChanged(EntityUID uid, const ComponentBitset& entity_component_bitset)
+namespace ECS
 {
-    for (const auto& i : m_systemComponentBitsets)  // update all systems to add appropriate EntityUID
+    void SystemManager::EntityComponentBitsetChanged(EntityUID uid, const ComponentBitset& entity_component_bitset)
     {
-        const auto& system_name = i.first;  // str
-        const ComponentBitset& system_bitset = i.second;
-        System* const system = m_systems[system_name].get();
-
-        std::vector<EntityUID>& systemEUIDs = system->entityUIDs;
-        const auto& EUID_iter = std::find(systemEUIDs.begin(), systemEUIDs.end(), uid);
-        if ((entity_component_bitset & system_bitset) == system_bitset)
+        for (const auto& i : m_systemComponentBitsets)  // update all systems to add appropriate EntityUID
         {
-            if (EUID_iter == systemEUIDs.end())
+            const auto& system_name = i.first;  // str
+            const ComponentBitset& system_bitset = i.second;
+            System* const system = m_systems[system_name].get();
+
+            std::vector<EntityUID>& systemEUIDs = system->entityUIDs;
+            const auto& EUID_iter = std::find(systemEUIDs.begin(), systemEUIDs.end(), uid);
+            if ((entity_component_bitset & system_bitset) == system_bitset)
             {
-                system->AddEntityUID(uid);  // unique implementation by each system
+                if (EUID_iter == systemEUIDs.end())
+                {
+                    system->AddEntityUID(uid);  // unique implementation by each system
+                }
+            }
+            else if (EUID_iter != systemEUIDs.end())
+            {
+                system->entityUIDs.erase(EUID_iter);
             }
         }
-        else if (EUID_iter != systemEUIDs.end())
-        {
-            system->entityUIDs.erase(EUID_iter);
-        }
     }
-}
 
-void SystemManager::EntityDestroyed(EntityUID uid)
-{
-    for (const auto& i : m_systems)
+    void SystemManager::EntityDestroyed(EntityUID uid)
     {
-        System* system = i.second.get();
-
-        std::vector<EntityUID>& systemEUIDs = system->entityUIDs;
-        const auto& EUID_iter = std::find(systemEUIDs.begin(), systemEUIDs.end(), uid);
-        if (EUID_iter != systemEUIDs.end())
+        for (const auto& i : m_systems)
         {
-            system->entityUIDs.erase(EUID_iter);
+            System* system = i.second.get();
+
+            std::vector<EntityUID>& systemEUIDs = system->entityUIDs;
+            const auto& EUID_iter = std::find(systemEUIDs.begin(), systemEUIDs.end(), uid);
+            if (EUID_iter != systemEUIDs.end())
+            {
+                system->entityUIDs.erase(EUID_iter);
+            }
         }
     }
-}
+}  // namespace ECS
 
 HNCRSP_NAMESPACE_END

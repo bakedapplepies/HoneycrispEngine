@@ -5,10 +5,11 @@
 
 HNCRSP_NAMESPACE_START
 
-namespace GLFWContext
+class GLFWContext
 {
+public:
     void StartUp();
     void ShutDown();
-}
+};
 
 HNCRSP_NAMESPACE_END
