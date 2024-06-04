@@ -119,9 +119,14 @@ void Window::Loop()
 
         ImGui::NewLine();
         ImGui::SeparatorText("Statistics");
-        static float renderingTime = 0.0f;
-        ImGui::Text("Rendering time: %fms (%f%%)", renderingTime * 1000, renderingTime/m_deltaTime*100);
-        ImGui::Text("Total time: %fms", m_deltaTime * 1000);
+        float depthPass = g_ECSManager->GetTimeBySystems()->renderer.depthPass;
+        float scenePass = g_ECSManager->GetTimeBySystems()->renderer.scenePass;
+        float postprocessing = g_ECSManager->GetTimeBySystems()->renderer.postprocessing;
+        float totalRenderTime = depthPass + scenePass + postprocessing;
+        ImGui::Text("Depth Pass: %fms (%f%%)", depthPass * 1000, depthPass/m_deltaTime*100);
+        ImGui::Text("Scene Pass: %fms (%f%%)", scenePass * 1000, scenePass/m_deltaTime*100);
+        ImGui::Text("Postprocessing: %fms (%f%%)", postprocessing * 1000, postprocessing/m_deltaTime*100);
+        ImGui::Text("Total Render time: %fms (%f%%)", totalRenderTime * 1000, totalRenderTime/m_deltaTime);
 
         // static bool anti_aliasing;
         // if (ImGui::Checkbox("Anti-aliasing", &anti_aliasing))
@@ -165,9 +170,7 @@ void Window::Loop()
 
         // Update and Render scenes ----------
         g_SceneManager.Update(m_deltaTime);  // update scene before rendering
-        renderingTime = glfwGetTime();
         g_ECSManager->Update();
-        renderingTime = glfwGetTime() - renderingTime;
 
         // Render ImGui ---------- always render after scene so it doesn't get drawn over
         g_ImGuiManager.Render();

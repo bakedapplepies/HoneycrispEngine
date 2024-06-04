@@ -12,6 +12,11 @@ HNCRSP_NAMESPACE_START
 
 namespace ECS
 {
+    struct TimeBySystems
+    {  // Note: float is capable of storing up to ~3.4E+38
+        RendererTime renderer;
+    };
+
     class ECSManager
     {
     private:
@@ -19,8 +24,9 @@ namespace ECS
         std::unique_ptr<ComponentManager> m_componentManager;
         std::unique_ptr<SystemManager> m_systemManager;
 
+        // Systems are set by the template functions below
         Renderer* m_renderer;
-        TimeBySystems m_timeBySystems;
+        mutable TimeBySystems m_timeBySystems;  // TODO: Use this to update GUI
 
     public:
         ECSManager() = default;
@@ -34,6 +40,7 @@ namespace ECS
         void ShutDown();
         void Update() const;
         void Renderer_SetCubemap(std::weak_ptr<Cubemap> weak_cubemap);
+        const TimeBySystems* GetTimeBySystems() const;
 
         EntityUID NewEntityUID() const;
         void DestroyEntity(EntityUID uid) const;
@@ -80,11 +87,10 @@ namespace ECS
         {
             static_assert(std::is_base_of_v<System, TSystem>, "TSystem is not a base of 'System'.");
 
-            std::shared_ptr<System> system = m_systemManager->RegisterSystem<TSystem>(component_bitset);
+            TSystem* system = m_systemManager->RegisterSystem<TSystem>(component_bitset);
 
             // TODO: Need some rework here, this is ugly
-            if constexpr(std::is_same_v<TSystem, Renderer>) m_renderer =
-                std::static_pointer_cast<Renderer>(system).get();
+            if constexpr(std::is_same_v<TSystem, Renderer>) m_renderer = system;
         }
 
         template <typename TSystem>

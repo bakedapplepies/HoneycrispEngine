@@ -10,16 +10,11 @@ HNCRSP_NAMESPACE_START
 
 namespace ECS
 {
-    struct TimeBySystems
-    {  // Note: float is capable of storing up to ~3.4E+38
-        float renderer;
-    };
-
     class SystemManager
     {
     private:
         std::unordered_map<const char*, ComponentBitset> m_systemComponentBitsets;
-        std::unordered_map< const char*, std::shared_ptr<System> > m_systems;
+        std::unordered_map< const char*, std::unique_ptr<System> > m_systems;
 
     public:
         SystemManager() = default;
@@ -32,7 +27,7 @@ namespace ECS
         void StartUp() {}
 
         template <typename TSystem>
-        [[nodiscard]] std::shared_ptr<TSystem> RegisterSystem(const ComponentBitset& component_bitset)
+        [[nodiscard]] TSystem* RegisterSystem(const ComponentBitset& component_bitset)
         {
             static_assert(std::is_base_of_v<System, TSystem>, "TSystem is not a base of 'System'.");
 
@@ -42,9 +37,10 @@ namespace ECS
 
             m_systemComponentBitsets[system_name] = component_bitset;
 
-            std::shared_ptr<TSystem> new_system = std::make_shared<TSystem>();
-            m_systems[system_name] = new_system;
-            return new_system;
+            std::unique_ptr<TSystem> newSystem = std::make_unique<TSystem>();
+            TSystem* systemRawPtr = newSystem.get();
+            m_systems[system_name] = std::move(newSystem);
+            return systemRawPtr;
         }
 
         template <typename TSystem>

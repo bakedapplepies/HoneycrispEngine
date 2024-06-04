@@ -30,7 +30,7 @@ Renderer::Renderer()
     );
 
     m_callbackData = g_SceneManager.GetCallbackData();
-    m_postprocessing_queue = std::make_unique<PostProcessingQueue>(
+    m_postprocessingQueue = std::make_unique<PostProcessingQueue>(
         m_callbackData->windowWidth * (1.0f - m_callbackData->settingsWidthPercentage),
         m_callbackData->windowHeight,
         m_screenQuad.get()
@@ -51,7 +51,7 @@ Renderer::Renderer()
     g_ShaderManager.SetPostProcessingShader(
         FileSystem::Path("resources/shaders/postprocessing/ColorCorrection.glsl")
     );
-    m_postprocessing_queue->AddPostprocessingPass(g_ShaderManager.GetPostProcessingShader());
+    m_postprocessingQueue->AddPostprocessingPass(g_ShaderManager.GetPostProcessingShader());
 
     // Setting up depth map ----------
     m_depthMap = std::make_unique<DepthMap>(
@@ -60,10 +60,21 @@ Renderer::Renderer()
     );
 }
 
-void Renderer::Render() const
+void Renderer::Render(RendererTime* rendererTime) const
 {
+    rendererTime->depthPass = glfwGetTime();
     // RenderDepthPass();
+    rendererTime->depthPass = glfwGetTime() - rendererTime->depthPass;
+
+    rendererTime->scenePass = glfwGetTime();
+    m_postprocessingQueue->BindInitialFramebuffer();
     RenderScenePass();
+    rendererTime->scenePass = glfwGetTime() - rendererTime->scenePass;
+
+    rendererTime->postprocessing = glfwGetTime();
+    glDisable(GL_DEPTH_TEST);
+    m_postprocessingQueue->DrawSequence(m_callbackData);
+    rendererTime->postprocessing = glfwGetTime() - rendererTime->postprocessing;
 }
 
 void Renderer::RenderDepthPass() const
@@ -109,8 +120,6 @@ void Renderer::RenderDepthPass() const
 
 void Renderer::RenderScenePass() const
 {
-    m_postprocessing_queue->BindInitialFramebuffer();
-
     glEnable(GL_DEPTH_TEST);
 
     GLuint shaderID = 0;
@@ -176,10 +185,6 @@ void Renderer::RenderScenePass() const
             if (specularMap) specularMap->Unbind();
         }
     }
-
-    glDisable(GL_DEPTH_TEST);
-
-    m_postprocessing_queue->DrawSequence(m_callbackData);
 }
 
 // TODO: quaternions

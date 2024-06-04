@@ -19,7 +19,7 @@ namespace ECS
 
     void ECSManager::Update() const
     {
-        m_renderer->Render();
+        m_renderer->Render(&m_timeBySystems.renderer);
     }
 
     void ECSManager::ShutDown()
@@ -32,6 +32,11 @@ namespace ECS
     void ECSManager::Renderer_SetCubemap(std::weak_ptr<Cubemap> weak_cubemap)
     {
         m_renderer->SwitchCubemap(weak_cubemap);
+    }
+
+    const TimeBySystems* ECSManager::GetTimeBySystems() const
+    {
+        return &m_timeBySystems;
     }
 
     [[nodiscard]] EntityUID ECSManager::NewEntityUID() const
