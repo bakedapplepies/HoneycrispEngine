@@ -120,6 +120,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     glfw
     fmt
     assimp
+    Tracy::TracyClient
     zlibstatic
     opengl32
     gdi32

@@ -43,11 +43,10 @@ void Application::Run()  // this is where the main control flow happens
     g_SceneManager.StartUp(callbackData, Application_RegisterSystems, Application_RegisterComponents);
 
     // resources in Window class are mostly managed by other managers
-    // regular members don't have to be processed post-application
+    // post-deletion of resources is mostly trivial
     Window window(callbackData);
     window.Loop();
 
-    // ECS Managers are also deleted, which is before the Texture2DManager, so raw Texture pointers are safe to use
     g_SceneManager.ClearAllScenes();
     g_SceneManager.ShutDown();
     g_Texture2DManager.ShutDown();

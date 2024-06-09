@@ -5,27 +5,27 @@ HNCRSP_NAMESPACE_START
 
 PostProcessingQueue::PostProcessingQueue(int width, int height, const VertexArray* screenQuadVAO)
 {
-    m_framebuffer_one = std::make_unique<Framebuffer>(width, height);
-    m_framebuffer_two = std::make_unique<Framebuffer>(width, height);
+    m_framebufferOne = std::make_unique<Framebuffer>(width, height);
+    m_framebufferTwo = std::make_unique<Framebuffer>(width, height);
     m_screenQuadVAO = screenQuadVAO;
 }
 
 void PostProcessingQueue::DrawSequence(const CallbackData* callbackData)
 {
     m_screenQuadVAO->Bind();
-    for (const Shader* shader : m_postprocessing_shaders)
+    for (const Shader* shader : m_postprocessingShaders)
     {
         shader->Use();
 
         if (!m_drawToFramebufferOne)
         {
-            m_framebuffer_two->Bind();
-            m_framebuffer_one->BindColorBuffer();
+            m_framebufferTwo->Bind();
+            m_framebufferOne->BindColorBuffer();
         }
         else
         {
-            m_framebuffer_one->Bind();
-            m_framebuffer_two->BindColorBuffer();
+            m_framebufferOne->Bind();
+            m_framebufferTwo->BindColorBuffer();
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         GLCall(
@@ -35,9 +35,9 @@ void PostProcessingQueue::DrawSequence(const CallbackData* callbackData)
     }
 
     if (m_drawToFramebufferOne)
-        m_framebuffer_one->Unbind();
+        m_framebufferOne->Unbind();
     else
-        m_framebuffer_two->Unbind();
+        m_framebufferTwo->Unbind();
 
     glClear(GL_COLOR_BUFFER_BIT);
     GLCall(  // resetting viewport to offset ImGui settings
@@ -54,9 +54,9 @@ void PostProcessingQueue::DrawSequence(const CallbackData* callbackData)
 void PostProcessingQueue::BindInitialFramebuffer()
 {
     if (m_drawToFramebufferOne)
-        m_framebuffer_one->Bind();
+        m_framebufferOne->Bind();
     else
-        m_framebuffer_two->Bind();
+        m_framebufferTwo->Bind();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     m_drawToFramebufferOne = !m_drawToFramebufferOne;
@@ -64,7 +64,7 @@ void PostProcessingQueue::BindInitialFramebuffer()
 
 void PostProcessingQueue::AddPostprocessingPass(const Shader* postprocessing_shader)
 {
-    m_postprocessing_shaders.push_back(postprocessing_shader);
+    m_postprocessingShaders.push_back(postprocessing_shader);
 }
 
 HNCRSP_NAMESPACE_END
