@@ -17,6 +17,7 @@ set(SOURCE
     ${CMAKE_SOURCE_DIR}/src/Window.h
     ${CMAKE_SOURCE_DIR}/src/Window.cpp
     ${CMAKE_SOURCE_DIR}/src/main.cpp
+    ${CMAKE_SOURCE_DIR}/vendor/tracy/public/TracyClient.cpp
 )
 set(INCLUDE_DIRECTORIES
     ${CMAKE_SOURCE_DIR}
@@ -26,6 +27,7 @@ set(INCLUDE_DIRECTORIES
     ${CMAKE_SOURCE_DIR}/vendor/assimp/include
     ${CMAKE_SOURCE_DIR}/vendor/assimp/include/assimp
     ${CMAKE_SOURCE_DIR}/vendor/fmt/include
+    ${CMAKE_SOURCE_DIR}/vendor/tracy/public/tracy
 )
 set(LINK_DIRECTORIES
     ${CMAKE_SOURCE_DIR}/lib
@@ -120,7 +122,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     glfw
     fmt
     assimp
-    Tracy::TracyClient
+    # Tracy::TracyClient
     zlibstatic
     opengl32
     gdi32

@@ -53,6 +53,9 @@ void Window::Loop()
 
     while(!glfwWindowShouldClose(m_glfwWindow))
     {
+        // FrameMarkStart("main");
+        FrameMark;
+
         m_deltaTime = glfwGetTime() - begin;
         begin = glfwGetTime();
 
@@ -177,6 +180,8 @@ void Window::Loop()
                 
         glfwSwapBuffers(m_glfwWindow);
         glfwPollEvents();
+
+        // FrameMarkEnd("main");
     }
 }
 
