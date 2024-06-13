@@ -28,9 +28,16 @@ set( GLFW_BUILD_EXAMPLES OFF CACHE BOOL  "GLFW lib only" FORCE )
 set( GLFW_INSTALL OFF CACHE BOOL  "GLFW lib only" FORCE )
 add_subdirectory(glfw)
 
-option( TRACY_ENABLE "" ON )
+# add_library(TRACY STATIC
+#     ${CMAKE_SOURCE_DIR}/vendor/tracy/public/TracyClient.cpp
+# )
+# target_compile_definitions(TRACY PUBLIC
+#     TRACY_ENABLE
+#     # TRACY_ON_DEMAND
+# )
+# option( TRACY_ENABLE "" ON )
 # option( TRACY_ON_DEMAND "" ON )
-add_subdirectory(tracy)
+# add_subdirectory(tracy)
 
 add_subdirectory(glm)
 add_subdirectory(fmt)

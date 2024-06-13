@@ -227,6 +227,8 @@ static uint32_t countedFPSes = 0;
 static uint32_t totalFPS = 0;  // uint32_t is more than enough
 void Window::calcFPS()
 {
+    ZoneScoped;
+
     m_totalTime += m_deltaTime;
     m_frames++;
     if (m_totalTime >= 1.0f)
