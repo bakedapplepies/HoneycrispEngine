@@ -1,4 +1,5 @@
 #include "ECSManager.h"
+#include "src/utils/TracyProfile.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -19,7 +20,9 @@ namespace ECS
 
     void ECSManager::Update() const
     {
+        // ZoneScoped;
         m_renderer->Render(&m_timeBySystems.renderer);
+        // FrameMark;
     }
 
     void ECSManager::ShutDown()

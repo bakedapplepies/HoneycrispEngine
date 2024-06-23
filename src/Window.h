@@ -33,9 +33,9 @@ public:
 
 
 private:
-    void calcFPS();
-    void processInput();
-    void updatePPS();
+    void CalcFPS();
+    void ProcessInput();
+    void UpdatePPS();
 };
 
 HNCRSP_NAMESPACE_END

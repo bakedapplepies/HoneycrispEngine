@@ -2,6 +2,8 @@
 #include "src/managers/SceneManager.h"
 #include "src/ecs/ECSManager.h"
 #include "src/components/DrawData.h"
+// #include "src/utils/TracyProfile.h"
+#include <Tracy.hpp>
 
 
 HNCRSP_NAMESPACE_START
@@ -58,10 +60,15 @@ Renderer::Renderer()
         m_callbackData->windowWidth * (1.0f - m_callbackData->settingsWidthPercentage),
         m_callbackData->windowHeight
     );
+    #ifdef HNCRSP_TRACY_PROFILE
+        std::cout << "hi" << '\n';
+    #endif
 }
 
 void Renderer::Render(RendererTime* rendererTime) const
 {
+    // ZoneScopedN("Render");
+
     rendererTime->depthPass = glfwGetTime();
     // RenderDepthPass();
     rendererTime->depthPass = glfwGetTime() - rendererTime->depthPass;
@@ -75,6 +82,8 @@ void Renderer::Render(RendererTime* rendererTime) const
     glDisable(GL_DEPTH_TEST);
     m_postprocessingQueue->DrawSequence(m_callbackData);
     rendererTime->postprocessing = glfwGetTime() - rendererTime->postprocessing;
+
+    // FrameMark;
 }
 
 void Renderer::RenderDepthPass() const

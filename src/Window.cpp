@@ -1,4 +1,5 @@
 #include "Window.h"
+#include "src/utils/TracyProfile.h"
 #include "src/managers/Texture2DManager.h"
 #include "src/managers/ImGuiManager.h"
 
@@ -24,7 +25,7 @@ Window::Window(CallbackData* callbackData)
         100.0f
     );
 
-    updatePPS();
+    UpdatePPS();
 
     HNCRSP_LOG_INFO("Window Initialization done.");
 }
@@ -53,15 +54,13 @@ void Window::Loop()
 
     while(!glfwWindowShouldClose(m_glfwWindow))
     {
-        // FrameMarkStart("main");
-        FrameMark;
-
+        ZoneScoped;
         m_deltaTime = glfwGetTime() - begin;
         begin = glfwGetTime();
 
-        calcFPS();
+        CalcFPS();
 
-        processInput();
+        ProcessInput();
 
         // Set window background color
         GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
@@ -95,7 +94,7 @@ void Window::Loop()
 
         if (ImGui::Button("Update postprocessing shader list"))
         {
-            updatePPS();
+            UpdatePPS();
         }
 
         ImGui::NewLine();
@@ -181,12 +180,14 @@ void Window::Loop()
         glfwSwapBuffers(m_glfwWindow);
         glfwPollEvents();
 
-        // FrameMarkEnd("main");
+        FrameMark;
     }
 }
 
-void Window::processInput()
+void Window::ProcessInput()
 {
+    ZoneScoped;
+
     Camera& camera = m_callbackData->camera;
     if (glfwGetKey(m_glfwWindow, GLFW_KEY_W) == GLFW_PRESS)
     {
@@ -225,9 +226,9 @@ static uint32_t lowFPS  = 0xFFFFFFFF;
 static uint32_t highFPS = 0;
 static uint32_t countedFPSes = 0;
 static uint32_t totalFPS = 0;  // uint32_t is more than enough
-void Window::calcFPS()
+void Window::CalcFPS()
 {
-    ZoneScoped;
+    HNCRSP_PROFILE;
 
     m_totalTime += m_deltaTime;
     m_frames++;
@@ -245,8 +246,10 @@ void Window::calcFPS()
     }
 }
 
-void Window::updatePPS()
+void Window::UpdatePPS()
 {
+    HNCRSP_PROFILE;
+
     static std::unordered_map<std::string, bool> umap;
 
     FileSystem::Path path("resources/shaders/postprocessing");

@@ -63,7 +63,7 @@ execute_process(
 add_compile_definitions(
     GLM_FORCE_SWIZZLE
     GLM_ENABLE_EXPERIMENTAL
-    TRACY_ENABLE
+    HNCRSP_TRACY_PROFILE
     HNCRSP_PROJECT_DIR="${CMAKE_SOURCE_DIR}"
     HNCRSP_GIT_COMMIT_ID="${COMMIT_ID}"
     HNCRSP_BUILD_TYPE="${CMAKE_BUILD_TYPE}"
@@ -90,7 +90,6 @@ target_precompile_headers(${CMAKE_PROJECT_NAME}.Components    PRIVATE ${PCH})
 target_precompile_headers(${CMAKE_PROJECT_NAME}.ECSSystems    PRIVATE ${PCH})
 target_precompile_headers(${CMAKE_PROJECT_NAME}.Serializer    PRIVATE ${PCH})
 target_precompile_headers(${CMAKE_PROJECT_NAME}.Scenes        PRIVATE ${PCH})
-# target_precompile_headers(TRACY        PRIVATE ${PCH})
 # ----------
 # Include directories ----------
 target_include_directories(${CMAKE_PROJECT_NAME}               PRIVATE ${INCLUDE_DIRECTORIES})
@@ -118,17 +117,16 @@ target_link_directories(${CMAKE_PROJECT_NAME}.Scenes        PRIVATE ${LINK_DIREC
 # ----------
 
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
-    # Tracy::TracyClient
+    Tracy::TracyClient
     GLAD
     IMGUI
     STB_IMAGE
-    # TRACY
     glfw
     fmt
     assimp
-    # ws2_32
-    # Dbghelp
     zlibstatic
+    ws2_32  # for tracy
+    Dbghelp  # for tracy
     opengl32
     gdi32
     user32
