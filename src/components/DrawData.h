@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src/pch/pch.h"
+#include "src/pch/hncrsp_pch.h"
 #include "src/graphics/core/VertexArray.h"
 #include "src/graphics/Material.h"
 #include "src/serialize/schemas/model_generated.h"
@@ -13,7 +13,7 @@ struct MeshMetaData;
 struct DrawData
 {
     GLuint VAO_id;
-    std::vector< std::shared_ptr<Material> > materials;
+    std::vector< std::shared_ptr<Material> > materials;  // TODO: Maybe remove shaders out of materials
     std::vector<MeshMetaData> meta_data;
 };
 

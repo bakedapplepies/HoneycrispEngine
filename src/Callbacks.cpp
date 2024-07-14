@@ -8,19 +8,18 @@ HNCRSP_NAMESPACE_START
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-    static CallbackData* callbackData = static_cast<CallbackData*>(glfwGetWindowUserPointer(window));
+    // static CallbackData* callbackData = static_cast<CallbackData*>(glfwGetWindowUserPointer(window));
     
-    callbackData->windowWidth = width;
-    callbackData->windowHeight = height;  // to reconstruct perspective matrix
-    callbackData->settingsWidthPercentage = (float)callbackData->settingsWidth / width;
+    // callbackData->windowWidth = width;
+    // callbackData->windowHeight = height;  // to reconstruct perspective matrix
     
-    GLCall(
-        glViewport(
-            callbackData->windowWidth * callbackData->settingsWidthPercentage,
-            0,
-            callbackData->windowWidth * (1.0f - callbackData->settingsWidthPercentage),
-            callbackData->windowHeight
-        ));
+    // GLCall(
+    //     glViewport(
+    //         0,
+    //         0,
+    //         callbackData->windowWidth * (1.0f - callbackData->settingsWidthPercentage),
+    //         callbackData->windowHeight
+    //     ));
 }
 
 void error_callback(int error, const char* msg)

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src/pch/pch.h"
+#include "src/pch/hncrsp_pch.h"
 #include "src/ecs/System.h"
 #include "src/components/Transform.h"
 
@@ -37,10 +37,11 @@ public:
     Renderer& operator=(Renderer&&) noexcept = delete;
     ~Renderer() = default;
 
-    void Render(RendererTime* renderer_time) const;
+    void Render() const;
     void SwitchCubemap(std::weak_ptr<Cubemap> weak_cubemap);
 
     void AddEntityUID(ECS::EntityUID entityUID) override;
+    GLuint GetColorBufferTextureID() const;
 
 private:
     void RenderDepthPass() const;

@@ -13,8 +13,8 @@ in VS_OUT {
 layout(std140, binding = 1) uniform GlobUniforms
 {
     vec3 u_viewPos;
-    vec3 spotLightPos;
-    vec3 spotLightDir;
+    vec3 u_spotLightPos;
+    vec3 u_spotLightDir;
 };
 
 struct Material
@@ -64,42 +64,56 @@ struct SpotLight
     vec3 specular;
 };
 
-uniform int u_numDirLight = 0;
-uniform int u_numPointLight = 1;
-uniform int u_numSpotLight = 0;
-uniform DirLight u_dirLight;
-uniform PointLight u_pointLight;
-uniform SpotLight u_spotLight;
+uniform int u_num_dir_light = 1;
+uniform int u_num_point_light = 1;
+uniform int u_num_spot_light = 0;
+uniform sampler2D u_framebuffer_depth_texture;
+uniform DirLight u_dir_light;
+uniform PointLight u_point_light;
+uniform SpotLight u_spot_light;
 uniform Material u_material;
 
-vec3 CalcDirLight(DirLight dirLight, vec3 normal, vec3 dirToView, vec3 albedoFrag, vec3 specularFrag)
+float ShadowFactor(vec4 frag_pos_depth_space)
 {
-    vec3 ambient = dirLight.ambient * albedoFrag;
+    // perspective divide
+    vec3 ndc = frag_pos_depth_space.xyz / frag_pos_depth_space.w;
+    vec2 uv = ndc.xy * 0.5 + 0.5;
 
-    float diffuseCoef = max(dot(normal, -dirLight.direction), 0.0);
-    vec3 diffuse = dirLight.diffuse * diffuseCoef * albedoFrag;
+    float closestDepth = texture(u_framebuffer_depth_texture, uv).r;
+    float currentDepth = ndc.z;
+    float shadow = currentDepth > closestDepth ? 0.0 : 1.0;
 
-    vec3 reflectDir = reflect(dirLight.direction, normal);
-    float specularCoef = pow(max(dot(reflectDir, dirToView), 0.0), u_material.shininess);
-    vec3 specular = dirLight.specular * specularCoef * specularFrag;
+    return shadow;
+}
+
+vec3 CalcDirLight(DirLight dir_light, vec3 normal, vec3 dir_to_view, float shadow_factor, vec3 albedo_frag, vec3 specular_frag)
+{
+    vec3 ambient = dir_light.ambient * albedo_frag;
+
+    float diffuseCoef = max(dot(normal, -dir_light.direction), 0.0);
+    vec3 diffuse = dir_light.diffuse * diffuseCoef * albedo_frag;
+
+    vec3 reflectDir = reflect(dir_light.direction, normal);
+    float specularCoef = pow(max(dot(reflectDir, dir_to_view), 0.0), u_material.shininess);
+    vec3 specular = dir_light.specular * specularCoef * specular_frag;
 
     return ambient + diffuse + specular;
 }
 
-vec3 CalcPointLight(PointLight pointLight, vec3 normal, vec3 dirToView, vec3 albedoFrag, vec3 specularFrag)
+vec3 CalcPointLight(PointLight pointLight, vec3 normal, vec3 dir_to_view, vec3 albedo_frag, vec3 specular_frag)
 {
     vec3 fragToLight = pointLight.position - fs_in.FragPos;
     vec3 dirToLight = normalize(fragToLight);
-    vec3 halfwayVec = normalize(dirToLight + dirToView);
+    vec3 halfwayVec = normalize(dirToLight + dir_to_view);
 
     // ambient - diffuse - specular
-    vec3 ambient = pointLight.ambient * albedoFrag;
+    vec3 ambient = pointLight.ambient * albedo_frag;
 
     float diffuseCoef = max(dot(normal, dirToLight), 0.0);
-    vec3 diffuse = pointLight.diffuse * diffuseCoef * albedoFrag;
+    vec3 diffuse = pointLight.diffuse * diffuseCoef * albedo_frag;
 
     float specularCoef = pow(max(dot(normal, halfwayVec), 0.0), u_material.shininess);
-    vec3 specular = pointLight.specular * specularCoef * specularFrag;
+    vec3 specular = pointLight.specular * specularCoef * specular_frag;
     
     // attenuation
     float dist = length(fragToLight);
@@ -108,25 +122,25 @@ vec3 CalcPointLight(PointLight pointLight, vec3 normal, vec3 dirToView, vec3 alb
     return (ambient + diffuse + specular) * attenuation;
 }
 
-vec3 CalcSpotLight(SpotLight spotLight, vec3 normal, vec3 dirToView, vec3 albedoFrag, vec3 specularFrag)
+vec3 CalcSpotLight(SpotLight spotLight, vec3 normal, vec3 dir_to_view, vec3 albedo_frag, vec3 specular_frag)
 {
     vec3 fragToLight = u_viewPos - fs_in.FragPos;
     vec3 dirToLight = normalize(fragToLight);
-    vec3 halfwayVec = normalize(dirToLight + dirToView);
+    vec3 halfwayVec = normalize(dirToLight + dir_to_view);
 
     // light boundary
-    float theta = dot(dirToLight, normalize(-spotLightDir));
+    float theta = dot(dirToLight, normalize(-u_spotLightDir));
     float epsilon = spotLight.cutOff - spotLight.outerCutOff;
     float intensity = clamp((theta - spotLight.outerCutOff) / epsilon, 0.0, 1.0);
 
     // ambient - diffuse - specular
-    vec3 ambient = spotLight.ambient * albedoFrag;
+    vec3 ambient = spotLight.ambient * albedo_frag;
 
     float diffuseCoef = max(dot(normal, dirToLight), 0.0);
-    vec3 diffuse = spotLight.diffuse * diffuseCoef * albedoFrag;
+    vec3 diffuse = spotLight.diffuse * diffuseCoef * albedo_frag;
 
     float specularCoef = pow(max(dot(normal, halfwayVec), 0.0), u_material.shininess);
-    vec3 specular = spotLight.specular * specularCoef * specularFrag;
+    vec3 specular = spotLight.specular * specularCoef * specular_frag;
 
     // attenuation
     float dist = length(fragToLight);
@@ -141,17 +155,26 @@ void main()
     vec3 result = vec3(0.0);
     vec3 fragToView = u_viewPos - fs_in.FragPos;
     vec3 dirToView = normalize(fragToView);
+
+    // Textures
     vec4 albedoFrag = texture(u_material.albedo, fs_in.TexCoord);
     vec4 specularFrag = texture(u_material.specular, fs_in.TexCoord);
 
-    for (int i = 0; i < u_numDirLight; i++)
-        result += CalcDirLight(u_dirLight, fs_in.Normal, dirToView, vec3(albedoFrag), vec3(specularFrag));
+    // Shadow space calculations
+    float shadowFactor = ShadowFactor(fs_in.FragPosDepthSpace);
 
-    for (int i = 0; i < u_numPointLight; i++)
-        result += CalcPointLight(u_pointLight, fs_in.Normal, dirToView, vec3(albedoFrag), vec3(specularFrag));
+    // Accumulate light
+    for (int i = 0; i < u_num_dir_light; i++)
+        result += CalcDirLight(u_dir_light, fs_in.Normal, dirToView, shadowFactor, vec3(albedoFrag), vec3(specularFrag));
+
+    for (int i = 0; i < u_num_point_light; i++)
+        result += CalcPointLight(u_point_light, fs_in.Normal, dirToView, vec3(albedoFrag), vec3(specularFrag));
         
-    for (int i = 0; i < u_numSpotLight; i++)
-        result += CalcSpotLight(u_spotLight, fs_in.Normal, dirToView, vec3(albedoFrag), vec3(specularFrag));
+    for (int i = 0; i < u_num_spot_light; i++)
+        result += CalcSpotLight(u_spot_light, fs_in.Normal, dirToView, vec3(albedoFrag), vec3(specularFrag));
+
+    // No clamping since using HDR
+    // result = clamp(result, vec3(0.0), vec3(1.0));
 
     FragColor = vec4(fs_in.VertColor, 1.0) * vec4(result, albedoFrag.w);
 }

@@ -1,34 +1,34 @@
-#include "src/pch/pch.h"
+#include "src/pch/hncrsp_pch.h"
 
 #include "DepthPassCamera.h"
 
 
 HNCRSP_NAMESPACE_START
 
-DepthPassCamera::DepthPassCamera(const glm::vec3& initialPos)
+DepthPassCamera::DepthPassCamera(const glm::vec3& initial_pos)
 {
-    position = initialPos;
+    position = initial_pos;
 }
 
-void DepthPassCamera::SetPos(const glm::vec3& newPos)
+void DepthPassCamera::SetPos(const glm::vec3& new_pos)
 {
-    position = newPos;
+    position = new_pos;
 }
 
-void DepthPassCamera::ChangePos(const glm::vec3& posOffset)
+void DepthPassCamera::ChangePos(const glm::vec3& pos_offset)
 {
-    position += posOffset;
+    position += pos_offset;
 }
 
-void DepthPassCamera::SetDirection(const glm::vec3& newDirection)
+void DepthPassCamera::SetDirection(const glm::vec3& new_direction)
 {
-    direction = newDirection;
+    direction = new_direction;
 }
 
-glm::mat4 DepthPassCamera::GetViewMatrix(const glm::vec3& lightPos, const glm::vec3& target) const
+glm::mat4 DepthPassCamera::GetViewMatrix(const glm::vec3& light_pos, const glm::vec3& target) const
 {
     return glm::lookAt(
-        lightPos,
+        light_pos,
         target,
         cameraUp
     );
@@ -44,6 +44,11 @@ glm::mat4 DepthPassCamera::GetProjectionMatrix() const
         nearClippingPlane,
         farClippingPlane
     );
+}
+
+glm::mat4 DepthPassCamera::GetViewProjectionMatrix(const glm::vec3& light_pos, const glm::vec3& target) const
+{
+    return GetProjectionMatrix() * GetViewMatrix(light_pos, target);
 }
 
 HNCRSP_NAMESPACE_END

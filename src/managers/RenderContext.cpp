@@ -73,8 +73,7 @@ HNCRSP_NAMESPACE_START
     // gamma correction
     // glEnable(GL_FRAMEBUFFER_SRGB);
 
-    int viewportWidth = (1.0f - m_callbackData.settingsWidthPercentage) * m_callbackData.windowWidth;
-    glViewport(m_callbackData.windowWidth - viewportWidth, 0, viewportWidth, m_callbackData.windowHeight);
+    glViewport(0, 0, m_callbackData.windowWidth * 0.8f, m_callbackData.windowHeight);
 
     return &m_callbackData;
 }

@@ -40,6 +40,7 @@ const Shader* ShaderManager::GetShader(
     if (m_cachedShaders[hash_string] == nullptr)
     {
         m_cachedShaders[hash_string] = std::make_unique<Shader>(vertexFile, fragmentFile, geometryFile);
+        m_cachedShaders[hash_string]->setIntUnf("u_framebuffer_depth_texture", DEPTH_BUFFER_TEXTURE_UNIT_INDEX);
     }
 
     return m_cachedShaders[hash_string].get();
@@ -55,7 +56,7 @@ void ShaderManager::SetPostProcessingShader(
         FileSystem::Path("resources/shaders/postprocessing/ScreenQuadVertex.glsl"),
         fragmentFile
     );
-    m_postprocessing_shader->setIntUnf("u_framebuffer_color_texture", 14);
+    m_postprocessing_shader->setIntUnf("u_framebuffer_color_texture", COLOR_BUFFER_TEXTURE_UNIT_INDEX);
 }
 
 const Shader* ShaderManager::GetPostProcessingShader() const

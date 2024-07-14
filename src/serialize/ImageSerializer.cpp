@@ -3,8 +3,8 @@
 
 HNCRSP_NAMESPACE_START
 
-ImageSerializer::ImageSerializer(int components_per_pixel)
-    : m_components_per_pixel(components_per_pixel)
+ImageSerializer::ImageSerializer(int components_per_pixel) :
+    m_componentsPerPixel(components_per_pixel)
 {}
 
 void ImageSerializer::AddImage(
@@ -13,7 +13,7 @@ void ImageSerializer::AddImage(
     int height,
     const FileSystem::Path& path_to_image
 ) {
-    auto serialized_image_data = m_builder.CreateVector(image_data, width * height * m_components_per_pixel);
+    auto serialized_image_data = m_builder.CreateVector(image_data, width * height * m_componentsPerPixel);
     auto serialized_image = Serialized::CreateImage(
         m_builder,
         serialized_image_data,
@@ -54,11 +54,11 @@ Serialized::Image* ImageSerializer::GetDeserializedObject(const FileSystem::Path
     inFile.seekg(0, std::ios::end);
     unsigned int length = inFile.tellg();
     inFile.seekg(0, std::ios::beg);
-    m_serialized_data = std::make_unique<char[]>(length);
-    inFile.read(m_serialized_data.get(), length);
+    m_serializedData = std::make_unique<char[]>(length);
+    inFile.read(m_serializedData.get(), length);
     inFile.close();
 
-    return Serialized::GetMutableImage(m_serialized_data.get());
+    return Serialized::GetMutableImage(m_serializedData.get());
 }
 
 HNCRSP_NAMESPACE_END

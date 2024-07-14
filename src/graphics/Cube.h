@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src/pch/pch.h"
+#include "src/pch/hncrsp_pch.h"
 #include "src/ecs/ECSManager.h"
 #include "src/Renderable.h"
 #include "src/graphics/core/VertexArray.h"

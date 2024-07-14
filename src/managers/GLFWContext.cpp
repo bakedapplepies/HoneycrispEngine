@@ -11,7 +11,7 @@ void GLFWContext::StartUp()
         return;
     }
         
-    if(!glfwInit())
+    if (!glfwInit())
     {
         HNCRSP_TERMINATE("GLFW Initialization failed.");
     }

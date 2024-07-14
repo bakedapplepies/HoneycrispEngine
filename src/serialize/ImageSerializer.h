@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src/pch/pch.h"
+#include "src/pch/hncrsp_pch.h"
 #include "src/serialize/Serializer.h"
 #include "src/serialize/schemas/image_generated.h"
 
@@ -11,9 +11,9 @@ class ImageSerializer : public Serializer<Serialized::Image>
 {
 private:
     flatbuffers::FlatBufferBuilder m_builder;
-    int m_components_per_pixel;
+    int m_componentsPerPixel;
 
-    std::unique_ptr<char[]> m_serialized_data;
+    std::unique_ptr<char[]> m_serializedData;
 
 public:
     ImageSerializer(int components_per_pixel);

@@ -15,6 +15,7 @@ layout (std140, binding = 0) uniform Matrices
 };
 
 uniform sampler2D u_framebuffer_color_texture;
+uniform sampler2D u_framebuffer_depth_texture;
 
 float luminance(vec3 v)
 {
