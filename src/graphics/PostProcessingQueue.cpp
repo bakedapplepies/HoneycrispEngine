@@ -1,4 +1,5 @@
 #include "PostProcessingQueue.h"
+#include "src/utils/TracyProfile.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -12,6 +13,7 @@ PostProcessingQueue::PostProcessingQueue(int width, int height, const VertexArra
 
 void PostProcessingQueue::DrawSequence(const CallbackData* callbackData)
 {
+    ZoneScopedN("Post processing");
     m_screenQuadVAO->Bind();
     for (const Shader* shader : m_postprocessingShaders)
     {
@@ -27,28 +29,12 @@ void PostProcessingQueue::DrawSequence(const CallbackData* callbackData)
             m_framebufferOne.Bind();
             m_framebufferTwo.BindColorBuffer();
         }
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT);
         GLCall(
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
 
         m_drawToFramebufferOne = !m_drawToFramebufferOne;
     }
-
-    if (m_drawToFramebufferOne)
-        m_framebufferOne.Unbind();
-    else
-        m_framebufferTwo.Unbind();
-
-    glClear(GL_COLOR_BUFFER_BIT);
-    GLCall(  // resetting viewport to offset ImGui settings
-        glViewport(
-            callbackData->windowWidth * callbackData->settingsWidthPercentage,
-            0,
-            callbackData->windowWidth * (1.0f - callbackData->settingsWidthPercentage),
-            callbackData->windowHeight
-        ));
-    GLCall(
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
 }
 
 void PostProcessingQueue::BindInitialFramebuffer()
@@ -58,13 +44,19 @@ void PostProcessingQueue::BindInitialFramebuffer()
     else
         m_framebufferTwo.Bind();
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     m_drawToFramebufferOne = !m_drawToFramebufferOne;
 }
 
 void PostProcessingQueue::AddPostprocessingPass(const Shader* postprocessing_shader)
 {
     m_postprocessingShaders.push_back(postprocessing_shader);
+}
+
+GLuint PostProcessingQueue::GetCurrentFramebufferColorTexture() const
+{
+    if (m_drawToFramebufferOne)
+        return m_framebufferTwo.GetColorTextureID();
+    return m_framebufferOne.GetColorTextureID();
 }
 
 HNCRSP_NAMESPACE_END

@@ -87,4 +87,9 @@ void Framebuffer::BindColorBuffer() const
     GLCall(glBindTexture(GL_TEXTURE_2D, m_colorBufferTexture_ID));
 }
 
+GLuint Framebuffer::GetColorTextureID() const
+{
+    return m_colorBufferTexture_ID;
+}
+
 HNCRSP_NAMESPACE_END

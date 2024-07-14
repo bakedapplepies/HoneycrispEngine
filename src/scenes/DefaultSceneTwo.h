@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src/pch/pch.h"
+#include "src/pch/hncrsp_pch.h"
 #include "src/graphics/PointLight.h"
 #include "src/graphics/SpotLight.h"
 

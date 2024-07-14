@@ -37,8 +37,8 @@ set(LINK_DIRECTORIES
     ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/vendor/assimp/contrib/zlib
 )
 set(PCH
-    ${CMAKE_SOURCE_DIR}/src/pch/pch.h
-    ${CMAKE_SOURCE_DIR}/src/pch/pch.cpp
+    ${CMAKE_SOURCE_DIR}/src/pch/hncrsp_pch.h
+    ${CMAKE_SOURCE_DIR}/src/pch/hncrsp_pch.cpp
 )
 
 add_executable(${CMAKE_PROJECT_NAME}
@@ -115,9 +115,22 @@ target_link_directories(${CMAKE_PROJECT_NAME}.ECSSystems    PRIVATE ${LINK_DIREC
 target_link_directories(${CMAKE_PROJECT_NAME}.Serializer    PRIVATE ${LINK_DIRECTORIES})
 target_link_directories(${CMAKE_PROJECT_NAME}.Scenes        PRIVATE ${LINK_DIRECTORIES})
 # ----------
+# Link Tracy ----------
+if(${CMAKE_BUILD_TYPE} STREQUAL "Release")  # for some reason Tracy raises an error in Debug
+    target_link_libraries(${CMAKE_PROJECT_NAME}               PRIVATE Tracy::TracyClient)
+    target_link_libraries(${CMAKE_PROJECT_NAME}.Managers      PRIVATE Tracy::TracyClient)
+    target_link_libraries(${CMAKE_PROJECT_NAME}.Graphics      PRIVATE Tracy::TracyClient)
+    target_link_libraries(${CMAKE_PROJECT_NAME}.Graphics.Core PRIVATE Tracy::TracyClient)
+    target_link_libraries(${CMAKE_PROJECT_NAME}.Utils         PRIVATE Tracy::TracyClient)
+    target_link_libraries(${CMAKE_PROJECT_NAME}.ECS           PRIVATE Tracy::TracyClient)
+    target_link_libraries(${CMAKE_PROJECT_NAME}.Components    PRIVATE Tracy::TracyClient)
+    target_link_libraries(${CMAKE_PROJECT_NAME}.ECSSystems    PRIVATE Tracy::TracyClient)
+    target_link_libraries(${CMAKE_PROJECT_NAME}.Serializer    PRIVATE Tracy::TracyClient)
+    target_link_libraries(${CMAKE_PROJECT_NAME}.Scenes        PRIVATE Tracy::TracyClient)
+endif()
+# ----------
 
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
-    Tracy::TracyClient
     GLAD
     IMGUI
     STB_IMAGE

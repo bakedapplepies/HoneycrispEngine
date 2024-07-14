@@ -66,15 +66,13 @@ void Window::Loop()
         GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
 
         // ImGui
-        m_callbackData->settingsWidth = m_callbackData->settingsWidthPercentage * m_callbackData->windowWidth;
-
         ImGui_ImplGlfw_NewFrame();
         ImGui_ImplOpenGL3_NewFrame(); 
         ImGui::NewFrame();
 
-        // Global settings ----------
+        // ----- Global settings -----
         ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Always);
-        ImGui::SetNextWindowSize(ImVec2(m_callbackData->settingsWidth, m_callbackData->windowHeight * 0.5f), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(m_callbackData->windowWidth * 0.2f, m_callbackData->windowHeight * 0.5f), ImGuiCond_Always);
         ImGui::Begin("Global settings");
         ImGui::GetCurrentWindow()->FontWindowScale = m_windowHeightScalar;  // scale ui based on window height, might make it decay exponentially
         
@@ -98,7 +96,7 @@ void Window::Loop()
         }
 
         ImGui::NewLine();
-        ImGui::Text("Added Post-processing shaders:");
+        ImGui::Text("Refresh");
         if (ImGui::BeginListBox(" "))
         {
             for (uint32_t i = 0; i < m_pps.size(); i++)
@@ -121,14 +119,8 @@ void Window::Loop()
 
         ImGui::NewLine();
         ImGui::SeparatorText("Statistics");
-        float depthPass = g_ECSManager->GetTimeBySystems()->renderer.depthPass;
-        float scenePass = g_ECSManager->GetTimeBySystems()->renderer.scenePass;
-        float postprocessing = g_ECSManager->GetTimeBySystems()->renderer.postprocessing;
-        float totalRenderTime = depthPass + scenePass + postprocessing;
-        ImGui::Text("Depth Pass: %fms (%f%%)", depthPass * 1000, depthPass/m_deltaTime*100);
-        ImGui::Text("Scene Pass: %fms (%f%%)", scenePass * 1000, scenePass/m_deltaTime*100);
-        ImGui::Text("Postprocessing: %fms (%f%%)", postprocessing * 1000, postprocessing/m_deltaTime*100);
-        ImGui::Text("Total Render time: %fms (%f%%)", totalRenderTime * 1000, totalRenderTime/m_deltaTime);
+        // float totalRenderTime = depthPass + scenePass + postprocessing;
+        // ImGui::Text("Total Render time: %fms (%f%%)", totalRenderTime * 1000, totalRenderTime/m_deltaTime);
 
         // static bool anti_aliasing;
         // if (ImGui::Checkbox("Anti-aliasing", &anti_aliasing))
@@ -140,9 +132,9 @@ void Window::Loop()
         
         ImGui::End();
 
-        // Per-scene settings ----------
+        // ----- Per-scene settings -----
         ImGui::SetNextWindowPos(ImVec2(0.0f, m_callbackData->windowHeight * 0.5f), ImGuiCond_Always);
-        ImGui::SetNextWindowSize(ImVec2(m_callbackData->settingsWidth, m_callbackData->windowHeight * 0.5f), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(m_callbackData->windowWidth * 0.2f, m_callbackData->windowHeight * 0.5f), ImGuiCond_Always);
         ImGui::Begin("Scene settings");
         ImGui::GetCurrentWindow()->FontWindowScale = m_windowHeightScalar;
 
@@ -151,10 +143,26 @@ void Window::Loop()
 
         ImGui::End();
 
+        // ----- Scene Viewport -----
+        ImGui::SetNextWindowPos(ImVec2(m_callbackData->windowWidth * 0.2f, 0.0f), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(m_callbackData->windowWidth * 0.8f, m_callbackData->windowHeight), ImGuiCond_Always);
+        ImGui::Begin("Viewport");
+        ImGui::GetCurrentWindow()->FontWindowScale = m_windowHeightScalar;
+
+        GLuint colorBufferTextureID = g_ECSManager->renderer->GetColorBufferTextureID();
+        ImGui::Image(
+            reinterpret_cast<ImTextureID>(g_ECSManager->renderer->GetColorBufferTextureID()),
+            ImGui::GetContentRegionAvail(),
+            ImVec2(0.0f, 1.0f),
+            ImVec2(1.0f, 0.0f)
+        );
+
+        ImGui::End();
+
         // Update camera
         camera.SetDirection(glm::normalize(camera.direction));
 
-        // Global uniforms ----------
+        // ----- Global uniforms -----
         float u_time = begin * waveSpeed;
         uboMatrices.Bind();
         uboMatrices.Update(
@@ -170,11 +178,11 @@ void Window::Loop()
             glm::value_ptr(camera.direction)
         );
 
-        // Update and Render scenes ----------
+        // ----- Update and Render scenes -----
         g_SceneManager.Update(m_deltaTime);  // update scene before rendering
         g_ECSManager->Update();
 
-        // Render ImGui ---------- always render after scene so it doesn't get drawn over
+        // ----- Render ImGui ----- always render after scene so it doesn't get drawn over
         g_ImGuiManager.Render();
                 
         glfwSwapBuffers(m_glfwWindow);
@@ -228,7 +236,7 @@ static uint32_t countedFPSes = 0;
 static uint32_t totalFPS = 0;  // uint32_t is more than enough
 void Window::CalcFPS()
 {
-    HNCRSP_PROFILE;
+    ZoneScoped;
 
     m_totalTime += m_deltaTime;
     m_frames++;
@@ -248,7 +256,7 @@ void Window::CalcFPS()
 
 void Window::UpdatePPS()
 {
-    HNCRSP_PROFILE;
+    ZoneScoped;
 
     static std::unordered_map<std::string, bool> umap;
 

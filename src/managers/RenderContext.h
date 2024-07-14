@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src/pch/pch.h"
+#include "src/pch/hncrsp_pch.h"
 #include "src/graphics/Camera.h"
 
 
@@ -20,8 +20,6 @@ struct CallbackData
 
     int windowWidth;
     int windowHeight;
-    int settingsWidth;
-    float settingsWidthPercentage = 0.2f;
 
     // glm::vec3 cameraDirection = glm::vec3(-1.0f, 0.0f, 0.0f);  // initial camera direction or it would look at origin by default        
     Camera camera = Camera(glm::vec3(-1.0f, 0.0f, 0.0f));

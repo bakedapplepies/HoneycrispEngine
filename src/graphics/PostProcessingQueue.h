@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src/pch/pch.h"
+#include "src/pch/hncrsp_pch.h"
 #include "src/managers/RenderContext.h"
 #include "src/graphics/core/Framebuffer.h"
 #include "src/graphics/core/VertexArray.h"
@@ -36,6 +36,8 @@ public:
 
     // Ping pong between framebuffers to apply postprocessing effects.
     void DrawSequence(const CallbackData* callbackData);
+
+    GLuint GetCurrentFramebufferColorTexture() const;
 };
 
 HNCRSP_NAMESPACE_END

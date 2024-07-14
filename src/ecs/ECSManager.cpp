@@ -21,7 +21,7 @@ namespace ECS
     void ECSManager::Update() const
     {
         // ZoneScoped;
-        m_renderer->Render(&m_timeBySystems.renderer);
+        renderer->Render();
         // FrameMark;
     }
 
@@ -34,12 +34,7 @@ namespace ECS
 
     void ECSManager::Renderer_SetCubemap(std::weak_ptr<Cubemap> weak_cubemap)
     {
-        m_renderer->SwitchCubemap(weak_cubemap);
-    }
-
-    const TimeBySystems* ECSManager::GetTimeBySystems() const
-    {
-        return &m_timeBySystems;
+        renderer->SwitchCubemap(weak_cubemap);
     }
 
     [[nodiscard]] EntityUID ECSManager::NewEntityUID() const

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src/pch/pch.h"
+#include "src/pch/hncrsp_pch.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -21,6 +21,8 @@ public:
     void Bind() const;
     void Unbind() const;
     void BindColorBuffer() const;
+
+    GLuint GetColorTextureID() const;
 };
 
 HNCRSP_NAMESPACE_END

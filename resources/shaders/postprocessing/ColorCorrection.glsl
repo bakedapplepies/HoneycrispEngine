@@ -15,6 +15,7 @@ layout (std140, binding = 0) uniform Matrices
 };
 
 uniform sampler2D u_framebuffer_color_texture;
+uniform sampler2D u_framebuffer_depth_texture;
 
 float luminance(vec3 v)
 {
@@ -37,14 +38,14 @@ vec3 extended_reinhard_tmo(vec3 color, float max_white)
 
 void main()
 {
-    vec3 color;
-    color = vec3(texture(u_framebuffer_color_texture, fs_in.UV));
+    vec3 color = vec3(1.0);
+    // color = vec3(texture(u_framebuffer_color_texture, fs_in.UV));
 
-    // Extended Reinhard Tone mapping
-    color = extended_reinhard_tmo(color, 800.0);
+    // // Extended Reinhard Tone mapping
+    // color = extended_reinhard_tmo(color, 800.0);
 
-    // Gamma Correction
-    color = pow(color, vec3(1.0/2.2));
+    // // Gamma Correction
+    // color = pow(color, vec3(1.0/2.2));
 
     FragColor = vec4(color, 1.0);
 }

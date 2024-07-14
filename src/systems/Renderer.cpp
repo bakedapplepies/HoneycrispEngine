@@ -1,9 +1,8 @@
 #include "Renderer.h"
+#include "src/utils/TracyProfile.h"
 #include "src/managers/SceneManager.h"
 #include "src/ecs/ECSManager.h"
 #include "src/components/DrawData.h"
-// #include "src/utils/TracyProfile.h"
-#include <Tracy.hpp>
 
 
 HNCRSP_NAMESPACE_START
@@ -33,23 +32,11 @@ Renderer::Renderer()
 
     m_callbackData = g_SceneManager.GetCallbackData();
     m_postprocessingQueue = std::make_unique<PostProcessingQueue>(
-        m_callbackData->windowWidth * (1.0f - m_callbackData->settingsWidthPercentage),
+        m_callbackData->windowWidth,
         m_callbackData->windowHeight,
         m_screenQuad.get()
     );
 
-    // g_ShaderManager.SetPostProcessingShader(
-    //     FileSystem::Path("resources/shaders/postprocessing/Inverse.glsl")
-    // );
-    // m_postprocessing_queue->AddPostprocessingPass(g_ShaderManager.GetPostProcessingShader());
-    // g_ShaderManager.SetPostProcessingShader(
-    //     FileSystem::Path("resources/shaders/postprocessing/Blur.glsl")
-    // );
-    // m_postprocessing_queue->AddPostprocessingPass(g_ShaderManager.GetPostProcessingShader());
-    // g_ShaderManager.SetPostProcessingShader(
-    //     FileSystem::Path("resources/shaders/postprocessing/Inverse.glsl")
-    // );
-    // m_postprocessing_queue->AddPostprocessingPass(g_ShaderManager.GetPostProcessingShader());
     g_ShaderManager.SetPostProcessingShader(
         FileSystem::Path("resources/shaders/postprocessing/ColorCorrection.glsl")
     );
@@ -57,47 +44,41 @@ Renderer::Renderer()
 
     // Setting up depth map ----------
     m_depthMap = std::make_unique<DepthMap>(
-        m_callbackData->windowWidth * (1.0f - m_callbackData->settingsWidthPercentage),
+        m_callbackData->windowWidth,
         m_callbackData->windowHeight
     );
-    #ifdef HNCRSP_TRACY_PROFILE
-        std::cout << "hi" << '\n';
-    #endif
 }
 
-void Renderer::Render(RendererTime* rendererTime) const
+// General pipeline here
+void Renderer::Render() const
 {
-    // ZoneScopedN("Render");
+    ZoneScopedN("Render");
 
-    rendererTime->depthPass = glfwGetTime();
-    // RenderDepthPass();
-    rendererTime->depthPass = glfwGetTime() - rendererTime->depthPass;
+    m_depthMap->Bind();
+    glEnable(GL_DEPTH_TEST);
+    glClear(GL_DEPTH_BUFFER_BIT);
+    RenderDepthPass();
 
-    rendererTime->scenePass = glfwGetTime();
     m_postprocessingQueue->BindInitialFramebuffer();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    m_depthMap->BindDepthBuffer();
     RenderScenePass();
-    rendererTime->scenePass = glfwGetTime() - rendererTime->scenePass;
 
-    rendererTime->postprocessing = glfwGetTime();
     glDisable(GL_DEPTH_TEST);
     m_postprocessingQueue->DrawSequence(m_callbackData);
-    rendererTime->postprocessing = glfwGetTime() - rendererTime->postprocessing;
 
-    // FrameMark;
+    // bind default framebuffer and clear to clean up any ImGui stuff from last frame
+    GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+    glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void Renderer::RenderDepthPass() const
-{   
-    glEnable(GL_DEPTH_TEST);
-    m_depthMap->Bind();
-    glClear(GL_DEPTH_BUFFER_BIT);
-
+{
     const Shader* depthPassShader = g_ShaderManager.depthPassShader;
     depthPassShader->Use();
 
     // Configure shader
-    glm::mat4 view_projection_matrix =
-        m_depthPassCamera.GetProjectionMatrix() * m_depthPassCamera.GetViewMatrix(m_callbackData->dirLightPos, glm::vec3(0.0f));
+    glm::mat4 view_projection_matrix = m_depthPassCamera.GetViewProjectionMatrix(m_callbackData->dirLightPos, glm::vec3(0.0f));
     depthPassShader->setMat4Unf("u_depthSpaceMatrix", view_projection_matrix);
 
     for (const ECS::EntityUID& uid : entityUIDs)
@@ -129,8 +110,6 @@ void Renderer::RenderDepthPass() const
 
 void Renderer::RenderScenePass() const
 {
-    glEnable(GL_DEPTH_TEST);
-
     GLuint shaderID = 0;
     if (auto cubemap = m_weak_currentCubemap.lock())  // TODO: slow?
     {
@@ -157,6 +136,7 @@ void Renderer::RenderScenePass() const
         }
 
         glm::mat4 model_matrix = GetModelMatrix(transform);
+        shader->setMat4Unf("u_depthSpaceMatrix", m_depthPassCamera.GetViewProjectionMatrix(m_callbackData->dirLightPos, glm::vec3(0.0f)));
         shader->setMat3Unf("u_normalMatrix", glm::mat3(glm::transpose(glm::inverse(model_matrix))));
         shader->setMat4Unf("u_model", model_matrix);
         uint64_t index_buffer_offset = 0;
@@ -225,6 +205,11 @@ void Renderer::AddEntityUID(ECS::EntityUID entityUID)
     GLuint shaderID = 
         g_ECSManager->GetComponent<DrawData>(entityUID).materials[0]->getShader()->getID();
     binary_insert_shader_comparator(entityUIDs, m_shaderIDs_Order, entityUID, shaderID);
+}
+
+GLuint Renderer::GetColorBufferTextureID() const
+{
+    return m_postprocessingQueue->GetCurrentFramebufferColorTexture();
 }
 
 HNCRSP_NAMESPACE_END

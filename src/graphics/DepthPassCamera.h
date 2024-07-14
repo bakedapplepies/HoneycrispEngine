@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src/pch/pch.h"
+#include "src/pch/hncrsp_pch.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -19,18 +19,20 @@ public:
 
 public:
     DepthPassCamera() = default;
-    DepthPassCamera(const glm::vec3& initialPos);
+    DepthPassCamera(const glm::vec3& initial_pos);
     ~DepthPassCamera() = default;
 
-    void SetPos(const glm::vec3& newPos);
-    void ChangePos(const glm::vec3& posOffset);
+    void SetPos(const glm::vec3& new_pos);
+    void ChangePos(const glm::vec3& pos_offset);
     void SetDirection(const glm::vec3& direction);
     
     // Returns a view matrix
-    glm::mat4 GetViewMatrix(const glm::vec3& lightPos, const glm::vec3& target) const;
+    glm::mat4 GetViewMatrix(const glm::vec3& light_pos, const glm::vec3& target) const;
 
     // Returns an orthographic projection matrix
     glm::mat4 GetProjectionMatrix() const;
+
+    glm::mat4 GetViewProjectionMatrix(const glm::vec3& light_pos, const glm::vec3& target) const;
 };
 
 HNCRSP_NAMESPACE_END

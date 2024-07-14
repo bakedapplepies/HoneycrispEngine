@@ -1,12 +1,7 @@
 #pragma once
 
-#include <Tracy.hpp>
-
-
-#ifdef HNCRSP_TRACY_PROFILE
-    #define HNCRSP_PROFILE ZoneScoped
-    #define HNCRSP_PROFILE_FRAME FrameMark
-#else
-    #define HNCRSP_PROFILE
-    #define HNCRSP_PROFILE_FRAME
+#ifdef HNCRSP_DEBUG
+    #undef TRACY_ENABLE
 #endif
+
+#include <Tracy.hpp>

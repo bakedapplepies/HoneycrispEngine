@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src/pch/pch.h"
+#include "src/pch/hncrsp_pch.h"
 #include "ComponentCounter.h"
 #include "EntityManager.h"
 #include "ComponentManager.h"
@@ -23,10 +23,11 @@ namespace ECS
         std::unique_ptr<EntityManager> m_entityManager;
         std::unique_ptr<ComponentManager> m_componentManager;
         std::unique_ptr<SystemManager> m_systemManager;
+        // mutable TimeBySystems m_timeBySystems;  // TODO: Use this to update GUI
 
+    public:
         // Systems are set by the template functions below
-        Renderer* m_renderer;
-        mutable TimeBySystems m_timeBySystems;  // TODO: Use this to update GUI
+        Renderer* renderer;
 
     public:
         ECSManager() = default;
@@ -40,7 +41,6 @@ namespace ECS
         void ShutDown();
         void Update() const;
         void Renderer_SetCubemap(std::weak_ptr<Cubemap> weak_cubemap);
-        const TimeBySystems* GetTimeBySystems() const;
 
         EntityUID NewEntityUID() const;
         void DestroyEntity(EntityUID uid) const;
@@ -90,7 +90,7 @@ namespace ECS
             TSystem* system = m_systemManager->RegisterSystem<TSystem>(component_bitset);
 
             // TODO: Need some rework here, this is ugly
-            if constexpr(std::is_same_v<TSystem, Renderer>) m_renderer = system;
+            if constexpr(std::is_same_v<TSystem, Renderer>) renderer = system;
         }
 
         template <typename TSystem>

@@ -7,3 +7,7 @@ set(SOURCE
 )
 
 add_library(${CMAKE_PROJECT_NAME}.ECSSystems ${SOURCE})
+
+# target_link_libraries(${CMAKE_PROJECT_NAME}.ECSSystems PRIVATE
+#     Tracy::TracyClient
+# )
