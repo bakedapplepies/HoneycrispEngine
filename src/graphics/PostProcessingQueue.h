@@ -12,8 +12,8 @@ HNCRSP_NAMESPACE_START
 class PostProcessingQueue
 {
 private:
-    std::unique_ptr<Framebuffer> m_framebufferOne;
-    std::unique_ptr<Framebuffer> m_framebufferTwo;
+    Framebuffer m_framebufferOne;
+    Framebuffer m_framebufferTwo;
     const VertexArray* m_screenQuadVAO;
     std::vector<const Shader*> m_postprocessingShaders;
     

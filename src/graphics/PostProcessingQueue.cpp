@@ -3,10 +3,10 @@
 
 HNCRSP_NAMESPACE_START
 
-PostProcessingQueue::PostProcessingQueue(int width, int height, const VertexArray* screenQuadVAO)
+PostProcessingQueue::PostProcessingQueue(int width, int height, const VertexArray* screenQuadVAO) :
+    m_framebufferOne(width, height),
+    m_framebufferTwo(width, height)
 {
-    m_framebufferOne = std::make_unique<Framebuffer>(width, height);
-    m_framebufferTwo = std::make_unique<Framebuffer>(width, height);
     m_screenQuadVAO = screenQuadVAO;
 }
 
@@ -19,13 +19,13 @@ void PostProcessingQueue::DrawSequence(const CallbackData* callbackData)
 
         if (!m_drawToFramebufferOne)
         {
-            m_framebufferTwo->Bind();
-            m_framebufferOne->BindColorBuffer();
+            m_framebufferTwo.Bind();
+            m_framebufferOne.BindColorBuffer();
         }
         else
         {
-            m_framebufferOne->Bind();
-            m_framebufferTwo->BindColorBuffer();
+            m_framebufferOne.Bind();
+            m_framebufferTwo.BindColorBuffer();
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         GLCall(
@@ -35,9 +35,9 @@ void PostProcessingQueue::DrawSequence(const CallbackData* callbackData)
     }
 
     if (m_drawToFramebufferOne)
-        m_framebufferOne->Unbind();
+        m_framebufferOne.Unbind();
     else
-        m_framebufferTwo->Unbind();
+        m_framebufferTwo.Unbind();
 
     glClear(GL_COLOR_BUFFER_BIT);
     GLCall(  // resetting viewport to offset ImGui settings
@@ -54,9 +54,9 @@ void PostProcessingQueue::DrawSequence(const CallbackData* callbackData)
 void PostProcessingQueue::BindInitialFramebuffer()
 {
     if (m_drawToFramebufferOne)
-        m_framebufferOne->Bind();
+        m_framebufferOne.Bind();
     else
-        m_framebufferTwo->Bind();
+        m_framebufferTwo.Bind();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     m_drawToFramebufferOne = !m_drawToFramebufferOne;
