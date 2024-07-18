@@ -25,6 +25,7 @@ Window::Window(CallbackData* callbackData)
         100.0f
     );
 
+    // Add all post process shaders to m_pps
     UpdatePPS();
 
     HNCRSP_LOG_INFO("Window Initialization done.");
@@ -34,14 +35,17 @@ void Window::Loop()
 {
     if (!m_continueProgram) return;
 
-    size_t scene_one = g_SceneManager.CreateScene<DefaultScene>();
-    size_t scene_two = g_SceneManager.CreateScene<DefaultSceneTwo>();
-    size_t space_scene = g_SceneManager.CreateScene<SpaceScene>();
-    g_SceneManager.SetActiveScene(scene_one);
+    // ----- Scenes -----
+    uint32_t sceneOne = g_SceneManager.CreateScene<DefaultScene>();
+    uint32_t sceneTwo = g_SceneManager.CreateScene<DefaultSceneTwo>();
+    uint32_t spaceScene = g_SceneManager.CreateScene<SpaceScene>();
+    g_SceneManager.SetActiveScene(sceneOne);
 
+    // ----- Systems -----
+    Renderer* renderer = g_ECSManager.GetSystem<Renderer>();
+
+    // ----- Window stuff -----
     float begin = glfwGetTime();
-    g_Texture2DManager.mainTextureMap->Bind();
-    g_Texture2DManager.mainTextureSpecularMap->Bind();
 
     Camera& camera = m_callbackData->camera;
     camera.SetPos(camera.position + glm::vec3(0, 10, 0));
@@ -50,6 +54,7 @@ void Window::Loop()
     UniformBuffer<glm::mat4, glm::mat4, float> uboMatrices(0);  // UBO binding index
     // viewPos, spotlightPos, spotlightDir
     UniformBuffer<glm::vec3, glm::vec3, glm::vec3> uboOther(1);
+    
     g_ShaderManager.SetPostProcessingShader(FileSystem::Path("resources/shaders/postprocessing/None.glsl"));
 
     while(!glfwWindowShouldClose(m_glfwWindow))
@@ -102,12 +107,23 @@ void Window::Loop()
             for (uint32_t i = 0; i < m_pps.size(); i++)
             {
                 const bool is_selected = (i == current_postprocessor_index);
-                if (ImGui::Selectable(m_pps[i].c_str(), is_selected))
+                const char* item = m_pps[i].c_str();
+                if (ImGui::Selectable(item, is_selected))
                 {
                     g_ShaderManager.SetPostProcessingShader(
                         FileSystem::Path(fmt::format("resources/shaders/postprocessing/{}.glsl", m_pps[i]))
                     );
                     current_postprocessor_index = i;
+                }
+                if (ImGui::IsItemActive() && !ImGui::IsItemHovered())
+                {
+                    int i_next = i + (ImGui::GetMouseDragDelta(0).y < 0.0f ? -1 : 1);
+                    if (i_next >= 0 && i_next < static_cast<int>(m_pps.size()))
+                    {
+                        m_pps[i] = m_pps[i_next];
+                        m_pps[i_next] = item;
+                        ImGui::ResetMouseDragDelta();
+                    }
                 }
                 if (is_selected)
                 {
@@ -149,9 +165,9 @@ void Window::Loop()
         ImGui::Begin("Viewport");
         ImGui::GetCurrentWindow()->FontWindowScale = m_windowHeightScalar;
 
-        GLuint colorBufferTextureID = g_ECSManager->renderer->GetColorBufferTextureID();
+        GLuint colorBufferTextureID = renderer->GetColorBufferTextureID();
         ImGui::Image(
-            reinterpret_cast<ImTextureID>(g_ECSManager->renderer->GetColorBufferTextureID()),
+            reinterpret_cast<ImTextureID>(renderer->GetColorBufferTextureID()),
             ImGui::GetContentRegionAvail(),
             ImVec2(0.0f, 1.0f),
             ImVec2(1.0f, 0.0f)
@@ -180,7 +196,7 @@ void Window::Loop()
 
         // ----- Update and Render scenes -----
         g_SceneManager.Update(m_deltaTime);  // update scene before rendering
-        g_ECSManager->Update();
+        renderer->Render();
 
         // ----- Render ImGui ----- always render after scene so it doesn't get drawn over
         g_ImGuiManager.Render();

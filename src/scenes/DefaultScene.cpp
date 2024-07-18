@@ -1,6 +1,7 @@
 #include "DefaultScene.h"
 
 #include "src/managers/Texture2DManager.h"
+#include "src/managers/SceneManager.h"
 
 
 using namespace Honeycrisp;
@@ -188,7 +189,7 @@ void DefaultScene::OnUpdate(const float& dt)
 
 void DefaultScene::SetInitialUniforms(void)
 {
-    DrawData& meshData = g_ECSManager->GetComponent<DrawData>(customMesh->entityUID);
+    DrawData& meshData = g_ECSManager.GetComponent<DrawData>(customMesh->entityUID);
     meshData.materials[0]->setAlbedoMap(g_Texture2DManager.mainTextureMap);
     meshData.materials[0]->setSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
 }

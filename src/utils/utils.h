@@ -1,14 +1,19 @@
 #pragma once
 
-#include <iostream>
-
 #define HNCRSP_NAMESPACE_START namespace Honeycrisp {
 #define HNCRSP_NAMESPACE_END }
 #define HNCRSP_STRINGIFY(x) #x
 #define HNCRSP_CONST_AUTO_REF const auto&
 
-HNCRSP_NAMESPACE_START
+#if __cplusplus >= 201703L
+    #define HNCRSP_NODISCARD [[nodiscard]]
+#else
+    #define HNCRSP_NODISCARD
+#endif
 
-std::string exec(const char* cmd);
+#include <string>
 
-HNCRSP_NAMESPACE_END
+namespace Honeycrisp
+{
+    std::string exec(const char* cmd);
+}

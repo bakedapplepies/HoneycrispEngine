@@ -81,11 +81,11 @@ void Renderer::RenderDepthPass() const
     glm::mat4 view_projection_matrix = m_depthPassCamera.GetViewProjectionMatrix(m_callbackData->dirLightPos, glm::vec3(0.0f));
     depthPassShader->setMat4Unf("u_depthSpaceMatrix", view_projection_matrix);
 
-    for (const ECS::EntityUID& uid : entityUIDs)
+    for (const ECS::EntityUID& uid : p_entityUIDs)
     {
         // Get Data
-        DrawData& drawData = g_ECSManager->GetComponent<DrawData>(uid);
-        Transform& transform = g_ECSManager->GetComponent<Transform>(uid);
+        DrawData& drawData = g_ECSManager.GetComponent<DrawData>(uid);
+        Transform& transform = g_ECSManager.GetComponent<Transform>(uid);
 
         // Draw
         glBindVertexArray(drawData.VAO_id);
@@ -111,9 +111,9 @@ void Renderer::RenderDepthPass() const
 void Renderer::RenderScenePass() const
 {
     GLuint shaderID = 0;
-    if (auto cubemap = m_weak_currentCubemap.lock())  // TODO: slow?
+    if (m_currentCubemap)
     {
-        cubemap->Draw();
+        m_currentCubemap->Draw();
     }
 
     const Texture2D* albedoMap = nullptr;
@@ -121,12 +121,12 @@ void Renderer::RenderScenePass() const
     const Texture2D* aoMap = nullptr;
     const Texture2D* normalMap = nullptr;
     const Texture2D* specularMap = nullptr;
-    for (const ECS::EntityUID& uid : entityUIDs)
+    for (const ECS::EntityUID& uid : p_entityUIDs)
     {
-        DrawData& drawData = g_ECSManager->GetComponent<DrawData>(uid);
+        DrawData& drawData = g_ECSManager.GetComponent<DrawData>(uid);
         const Shader* shader = drawData.materials[0]->getShader();
 
-        Transform& transform = g_ECSManager->GetComponent<Transform>(uid);
+        Transform& transform = g_ECSManager.GetComponent<Transform>(uid);
         glBindVertexArray(drawData.VAO_id);
 
         if (shaderID != shader->getID())
@@ -194,17 +194,25 @@ glm::mat4 Renderer::GetModelMatrix(Transform& transform) const
     return modelMatrix;
 }
 
-void Renderer::SwitchCubemap(std::weak_ptr<Cubemap> weak_cubemap)
+void Renderer::SwitchCubemap(const Cubemap* cubemap)
 {
-    m_weak_currentCubemap = weak_cubemap;
+    m_currentCubemap = cubemap;
 }
 
-// for ECS
-void Renderer::AddEntityUID(ECS::EntityUID entityUID)
+// Called from SystemManager to add related entities
+void Renderer::AddEntityUID(ECS::EntityUID entity_UID)
 {
+    uint32_t currentSceneIndex = g_SceneManager.GetCurrentSceneIndex();
+    while (currentSceneIndex + 1 > m_shaderIDs_Order.size())
+    {
+        m_shaderIDs_Order.push_back({});
+    }
+
     GLuint shaderID = 
-        g_ECSManager->GetComponent<DrawData>(entityUID).materials[0]->getShader()->getID();
-    binary_insert_shader_comparator(entityUIDs, m_shaderIDs_Order, entityUID, shaderID);
+        g_ECSManager.GetComponent<DrawData>(entity_UID).materials[0]->getShader()->getID();
+    binary_insert_shader_comparator(
+        p_entityUIDs, m_shaderIDs_Order[currentSceneIndex], entity_UID, shaderID
+    );
 }
 
 GLuint Renderer::GetColorBufferTextureID() const

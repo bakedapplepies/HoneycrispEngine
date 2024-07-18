@@ -245,6 +245,16 @@ void Shader::setVec2Unf(const std::string& name, const glm::vec2& vector) const
     ));
 }
 
+void Shader::setUVec2Unf(const std::string& name, const glm::uvec2& vector) const
+{
+    GLCall(glProgramUniform2uiv(
+        m_shaderID,
+        getUniformLocation(name),
+        1,
+        glm::value_ptr(vector)
+    ));
+}
+
 void Shader::setVec3Unf(const std::string& name, const glm::vec3& vector) const
 {
     GLCall(glProgramUniform3fv(

@@ -16,14 +16,13 @@
 HNCRSP_NAMESPACE_START
 
 struct DrawElementsIndirectCommand;  // end of file
-struct RendererTime;  // end of file
 
 class Renderer : public ECS::System
 {
 private:
     const CallbackData* m_callbackData;
-    std::weak_ptr<Cubemap> m_weak_currentCubemap;
-    std::vector<GLuint> m_shaderIDs_Order;
+    const Cubemap* m_currentCubemap = nullptr;
+    std::vector< std::vector<GLuint> > m_shaderIDs_Order;
     std::unique_ptr<VertexArray> m_screenQuad;
     std::unique_ptr<PostProcessingQueue> m_postprocessingQueue;
     std::unique_ptr<DepthMap> m_depthMap;
@@ -38,12 +37,12 @@ public:
     ~Renderer() = default;
 
     void Render() const;
-    void SwitchCubemap(std::weak_ptr<Cubemap> weak_cubemap);
+    void SwitchCubemap(const Cubemap* cubemap);
 
-    void AddEntityUID(ECS::EntityUID entityUID) override;
     GLuint GetColorBufferTextureID() const;
 
 private:
+    void AddEntityUID(ECS::EntityUID entity_UID) override;
     void RenderDepthPass() const;
     void RenderScenePass() const;
 
@@ -58,13 +57,6 @@ struct DrawElementsIndirectCommand
     GLuint firstIndex = 0;
     GLint baseVertex = 0;
     GLuint baseInstance = 0;
-};
-
-struct RendererTime
-{
-    float depthPass;
-    float scenePass;
-    float postprocessing;
 };
 
 HNCRSP_NAMESPACE_END

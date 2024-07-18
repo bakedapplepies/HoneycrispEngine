@@ -344,7 +344,7 @@ void Model::virt_AddDrawDataToRenderer(ECS::EntityUID entityUID) const
         m_materials.end()
     );
 
-    g_ECSManager->AddComponent<DrawData>(entityUID, meshData);
+    g_ECSManager.AddComponent<DrawData>(entityUID, meshData);
 }
 
 HNCRSP_NAMESPACE_END

@@ -1,4 +1,5 @@
 #include "FileSystem.h"
+#include "src/utils/utils.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -11,17 +12,17 @@ FileSystem::Path::Path(std::string_view path)
     m_path = m_path.lexically_normal();
 }
 
-[[nodiscard]] std::string FileSystem::Path::string() const
+HNCRSP_NODISCARD std::string FileSystem::Path::string() const
 {
     return m_path.string();
 }
 
-[[nodiscard]] std::string FileSystem::Path::relative_string() const
+HNCRSP_NODISCARD std::string FileSystem::Path::relative_string() const
 {
     return std::filesystem::relative(m_path, HNCRSP_PROJECT_DIR).string();
 }
 
-[[nodiscard]] std::string FileSystem::Path::extension() const
+HNCRSP_NODISCARD std::string FileSystem::Path::extension() const
 {
     return m_path.extension().string();
 }

@@ -223,7 +223,7 @@ void Cube::virt_AddDrawDataToRenderer(ECS::EntityUID entityUID) const
     drawData.materials[0]->setAlbedoMap(g_Texture2DManager.mainTextureMap);
     drawData.materials[0]->setSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
 
-    g_ECSManager->AddComponent<DrawData>(entityUID, drawData);
+    g_ECSManager.AddComponent<DrawData>(entityUID, drawData);
 }
 
 HNCRSP_NAMESPACE_END

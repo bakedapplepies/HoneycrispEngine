@@ -4,7 +4,7 @@
 
 HNCRSP_NAMESPACE_START
 
-[[nodiscard]] CallbackData* RenderContext::StartUp_GetWindow()
+HNCRSP_NODISCARD CallbackData* RenderContext::StartUp_GetWindow()
 {
     // Create and assign OpenGL window context ----------
     const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -24,7 +24,7 @@ HNCRSP_NAMESPACE_START
         HNCRSP_TERMINATE("GLFW Window Initialization failed.");
     }
     glfwMakeContextCurrent(glfwWindow);
-    glfwSwapInterval(0);  // vsync
+    glfwSwapInterval(1);  // vsync
     glfwWindowHint(GLFW_SAMPLES, 4);
 
     // Callbacks ----------

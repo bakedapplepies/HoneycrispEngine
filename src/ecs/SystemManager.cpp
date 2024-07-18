@@ -9,40 +9,58 @@ namespace ECS
 {
     void SystemManager::EntityComponentBitsetChanged(EntityUID uid, const ComponentBitset& entity_component_bitset)
     {
-        for (const auto& i : m_systemComponentBitsets)  // update all systems to add appropriate EntityUID
+        for (const auto& i : m_systems)  // Update all systems to add appropriate EntityUID
         {
-            const auto& system_name = i.first;  // str
-            const ComponentBitset& system_bitset = i.second;
-            System* const system = m_systems[system_name].get();
+            const char* system_name = i.first;
+            const ComponentBitset& system_bitset = i.second.componentBitset;
+            System* const system = m_systems[system_name].system.get();
 
-            std::vector<EntityUID>& systemEUIDs = system->entityUIDs;
+            std::vector<EntityUID>& systemEUIDs = system->p_entityUIDs;
             const auto& EUID_iter = std::find(systemEUIDs.begin(), systemEUIDs.end(), uid);
             if ((entity_component_bitset & system_bitset) == system_bitset)
             {
-                if (EUID_iter == systemEUIDs.end())
+                if (EUID_iter == systemEUIDs.end())  // In case ID haven't been added to this system yet
                 {
-                    system->AddEntityUID(uid);  // unique implementation by each system
+                    system->AddEntityUID(uid);  // Unique implementation by each system
                 }
             }
-            else if (EUID_iter != systemEUIDs.end())
+            else if (EUID_iter != systemEUIDs.end())  // If ID bitset doesn't match and it's still in the system, delete it
             {
-                system->entityUIDs.erase(EUID_iter);
+                system->p_entityUIDs.erase(EUID_iter);
             }
         }
     }
 
     void SystemManager::EntityDestroyed(EntityUID uid)
     {
-        for (const auto& i : m_systems)
+        for (const auto& i : m_systems)  // Delete entity ID from all systems
         {
-            System* system = i.second.get();
+            System* system = i.second.system.get();
 
-            std::vector<EntityUID>& systemEUIDs = system->entityUIDs;
+            std::vector<EntityUID>& systemEUIDs = system->p_entityUIDs;
             const auto& EUID_iter = std::find(systemEUIDs.begin(), systemEUIDs.end(), uid);
             if (EUID_iter != systemEUIDs.end())
             {
-                system->entityUIDs.erase(EUID_iter);
+                system->p_entityUIDs.erase(EUID_iter);
             }
+        }
+    }
+
+    void SystemManager::SceneCreated()
+    {
+        for (auto& i : m_systems)
+        {
+            i.second.entityListPerScene.push_back({});  // Create new empty EntityUID list for new scene
+        }
+    }
+
+    void SystemManager::SceneChanged(uint32_t current_scene, uint32_t target_scene)
+    {
+        for (auto& i : m_systems)
+        {
+            System* system = i.second.system.get();
+            std::swap(system->p_entityUIDs, i.second.entityListPerScene[current_scene]);  // store the current entity list away
+            std::swap(system->p_entityUIDs, i.second.entityListPerScene[target_scene]);  // swap for new entity list
         }
     }
 }  // namespace ECS

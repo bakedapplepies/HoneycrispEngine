@@ -18,28 +18,28 @@ public:
     SceneRenderObj(Args&&... args) : T(std::forward<Args>(args)...)
     {
         static_assert(std::is_base_of<Renderable, T>());
-        entityUID = g_ECSManager->NewEntityUID();
+        entityUID = g_ECSManager.NewEntityUID();
 
         // default object position is at origin
-        g_ECSManager->AddComponent<Transform>(entityUID, {});
+        g_ECSManager.AddComponent<Transform>(entityUID, {});
 
         this->virt_AddDrawDataToRenderer(entityUID);
     }
 
     ~SceneRenderObj()
     {
-        g_ECSManager->DestroyEntity(entityUID);
+        g_ECSManager.DestroyEntity(entityUID);
     }
 
     void setShader(const Shader* newShader)
     {
-        DrawData& thisDrawData = g_ECSManager->GetComponent<DrawData>(entityUID);
+        DrawData& thisDrawData = g_ECSManager.GetComponent<DrawData>(entityUID);
         thisDrawData.materials[0]->setShader(newShader);
     }
 
     void setTransform(const Transform& newTransform)
     {
-        Transform& thisTransform = g_ECSManager->GetComponent<Transform>(entityUID);
+        Transform& thisTransform = g_ECSManager.GetComponent<Transform>(entityUID);
         thisTransform = newTransform;
     }
 };

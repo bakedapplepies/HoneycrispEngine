@@ -16,14 +16,13 @@ namespace ECS
         EntityUID m_entityUIDCount = 0;
 
     public:
-        EntityManager() = default;
+        EntityManager();
         EntityManager(const EntityManager&) = delete;
         EntityManager& operator=(const EntityManager&) = delete;
         EntityManager(EntityManager&&) noexcept = delete;
         EntityManager& operator=(EntityManager&&) noexcept = delete;
         ~EntityManager() = default;
         
-        void StartUp();  // easier control over managers
         EntityUID CreateEntity();
         void DestroyEntity(EntityUID uid);
         void SetComponentBitset(EntityUID uid, const ComponentBitset& component_bitset);

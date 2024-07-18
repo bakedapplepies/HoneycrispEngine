@@ -35,8 +35,6 @@ namespace ECS
         ComponentManager& operator=(ComponentManager&&) noexcept = delete;
         ~ComponentManager() = default;
 
-        void StartUp() {}
-
         template <typename TComponent>
         void RegisterComponent()
         {

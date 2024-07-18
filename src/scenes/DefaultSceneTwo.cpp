@@ -23,7 +23,7 @@ DefaultSceneTwo::DefaultSceneTwo()
     InitializeShaders();
 
     cube = CreateStaticRenderObj<Cube>();
-    cubeTransform = &g_ECSManager->GetComponent<Transform>(cube->entityUID);
+    cubeTransform = &g_ECSManager.GetComponent<Transform>(cube->entityUID);
     cube->setShader(phongWTintShader);
     cube->setTransform(Transform(glm::vec3(1.0f, 10.0f ,5.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
 
@@ -96,7 +96,7 @@ DefaultSceneTwo::DefaultSceneTwo()
     );
     mesh->setTransform(Transform(glm::vec3(-8.0f, -6.0f, -20.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
     mesh->setShader(phongWTintShader);
-    std::shared_ptr<Material> meshMaterial = g_ECSManager->GetComponent<DrawData>(mesh->entityUID).materials[0];
+    std::shared_ptr<Material> meshMaterial = g_ECSManager.GetComponent<DrawData>(mesh->entityUID).materials[0];
     meshMaterial->setAlbedoMap(g_Texture2DManager.mainTextureMap);
     meshMaterial->setSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
     meshMaterial->setShininess(128.0f);
@@ -134,10 +134,10 @@ DefaultSceneTwo::DefaultSceneTwo()
     //     normalShader,
     //     false
     // );
-    Transform& sponzaTransform = g_ECSManager->GetComponent<Transform>(sponza->entityUID);
+    Transform& sponzaTransform = g_ECSManager.GetComponent<Transform>(sponza->entityUID);
     sponzaTransform.position = glm::vec3(0.0f, 2.0f, -2.0f);
     sponzaTransform.scale = glm::vec3(0.008f);
-    // Transform& sponzaNormalTransform = g_ECSManager->GetComponent<Transform>(sponzaNormal->entityUID);
+    // Transform& sponzaNormalTransform = g_ECSManager.GetComponent<Transform>(sponzaNormal->entityUID);
     // sponzaNormalTransform.position = glm::vec3(0.0f, 2.0f, -2.0f);
     // sponzaNormalTransform.scale = glm::vec3(0.008f);
 
@@ -155,8 +155,6 @@ DefaultSceneTwo::DefaultSceneTwo()
 
 void DefaultSceneTwo::OnUpdate(const float& dt)
 {
-    phongShader->setVec3Unf("u_pointLight.position", pointLight->position);
-    phongWTintShader->setVec3Unf("u_pointLight.position", pointLight->position);
     // normalShader->setFloatUnf("u_normal_length", m_u_normal_length);
 
     cubeTransform->eulerAngles += glm::vec3(1.0f, 1.0f, 0.0f) * dt;
@@ -195,6 +193,8 @@ void DefaultSceneTwo::OnImGui(void)
         | ImGui::SliderFloat("position.z", &pointLight->position.z, -50.0f, 50.0f)
     ) {
         callback_data->dirLightPos = pointLight->position;
+        phongShader->setVec3Unf("u_point_light.position", pointLight->position);
+        phongWTintShader->setVec3Unf("u_point_light.position", pointLight->position);
     }
 
     ImGui::SliderFloat("u_normal_length", &m_u_normal_length, 0.001f, 1.0f);

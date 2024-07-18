@@ -16,8 +16,10 @@ HNCRSP_NAMESPACE_START
 class SceneManager;
 class Scene
 {
+public:
+    std::unique_ptr<Cubemap> cubemap;
+
 private:
-    std::shared_ptr<Cubemap> m_cubemap;
     std::vector<const Shader*> m_shadersInScene;
     std::vector< std::unique_ptr<Light> > m_lightsInscene;
 

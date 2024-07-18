@@ -40,7 +40,9 @@ void Application::Run()  // this is where the main control flow happens
     g_ImGuiManager.StartUp();
     g_ShaderManager.StartUp();
     g_Texture2DManager.StartUp();
-    g_SceneManager.StartUp(callbackData, Application_RegisterSystems, Application_RegisterComponents);
+    g_SceneManager.StartUp(callbackData);
+    Application_RegisterComponents();
+    Application_RegisterSystems();
 
     // resources in Window class are mostly managed by other managers
     // post-deletion of resources is mostly trivial
@@ -60,8 +62,8 @@ void Application::Run()  // this is where the main control flow happens
 
 void Application_RegisterComponents()
 {
-    g_ECSManager->RegisterComponent<Transform>();
-    g_ECSManager->RegisterComponent<DrawData>();
+    g_ECSManager.RegisterComponent<Transform>();
+    g_ECSManager.RegisterComponent<DrawData>();
 }
 
 void Application_RegisterSystems()
@@ -72,7 +74,7 @@ void Application_RegisterSystems()
     ECS::ComponentBitset renderer_component_bitset;
     renderer_component_bitset.set(ECS::GetBitIndex<DrawData>());
     renderer_component_bitset.set(ECS::GetBitIndex<Transform>());
-    g_ECSManager->RegisterSystem<Renderer>(renderer_component_bitset);
+    g_ECSManager.RegisterSystem<Renderer>(renderer_component_bitset);
 }
 
 static void GetExtensions()

@@ -15,9 +15,9 @@ namespace FileSystem
 
     public:
         Path(std::string_view path);
-        [[nodiscard]] std::string string() const;
-        [[nodiscard]] std::string relative_string() const;
-        [[nodiscard]] std::string extension() const;
+        HNCRSP_NODISCARD std::string string() const;
+        HNCRSP_NODISCARD std::string relative_string() const;
+        HNCRSP_NODISCARD std::string extension() const;
         void remove_filename();
 
         bool operator==(const FileSystem::Path& other);

@@ -4,70 +4,35 @@
 
 HNCRSP_NAMESPACE_START
 
-ECS::ECSManager* g_ECSManager = nullptr;
+ECS::ECSManager g_ECSManager;
 
 namespace ECS
 {
-    void ECSManager::StartUp()
+    HNCRSP_NODISCARD EntityUID ECSManager::NewEntityUID()
     {
-        m_entityManager = std::make_unique<EntityManager>();
-        m_entityManager->StartUp();
-        m_componentManager = std::make_unique<ComponentManager>();
-        m_componentManager->StartUp();
-        m_systemManager = std::make_unique<SystemManager>();
-        m_systemManager->StartUp();
+        return m_entityManager.CreateEntity();
     }
 
-    void ECSManager::Update() const
-    {
-        // ZoneScoped;
-        renderer->Render();
-        // FrameMark;
-    }
-
-    void ECSManager::ShutDown()
-    {
-        m_entityManager.reset();
-        m_componentManager.reset();
-        m_systemManager.reset();
-    }
-
-    void ECSManager::Renderer_SetCubemap(std::weak_ptr<Cubemap> weak_cubemap)
-    {
-        renderer->SwitchCubemap(weak_cubemap);
-    }
-
-    [[nodiscard]] EntityUID ECSManager::NewEntityUID() const
-    {
-        return m_entityManager->CreateEntity();
-    }
-
-    void ECSManager::DestroyEntity(EntityUID uid) const
+    void ECSManager::DestroyEntity(EntityUID uid)
     {
         // put uid back in queue
-        m_entityManager->DestroyEntity(uid);
+        m_entityManager.DestroyEntity(uid);
 
         // delete entity's data and keep data packed
-        m_componentManager->EntityDestroyed(uid);
+        m_componentManager.EntityDestroyed(uid);
 
         // delete entity uid off system
-        m_systemManager->EntityDestroyed(uid);
+        m_systemManager.EntityDestroyed(uid);
     }
 
-    ECSManager::ECSManager(ECSManager&& other) noexcept
+    void ECSManager::SceneCreated()
     {
-        m_entityManager = std::move(other.m_entityManager);
-        m_componentManager = std::move(other.m_componentManager);
-        m_systemManager = std::move(other.m_systemManager);
+        m_systemManager.SceneCreated();
     }
 
-    ECSManager& ECSManager::operator=(ECSManager&& other) noexcept
+    void ECSManager::SceneChanged(uint32_t current_scene, uint32_t target_scene)
     {
-        m_entityManager = std::move(other.m_entityManager);
-        m_componentManager = std::move(other.m_componentManager);
-        m_systemManager = std::move(other.m_systemManager);
-
-        return *this;
+        m_systemManager.SceneChanged(current_scene, target_scene);
     }
 }  // namespace ECS
 

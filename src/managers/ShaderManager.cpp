@@ -57,6 +57,7 @@ void ShaderManager::SetPostProcessingShader(
         fragmentFile
     );
     m_postprocessing_shader->setIntUnf("u_framebuffer_color_texture", COLOR_BUFFER_TEXTURE_UNIT_INDEX);
+    m_postprocessing_shader->setVec2Unf("u_viewport_size", glm::vec2(callbackData->windowWidth * 0.8f, callbackData->windowHeight));
 }
 
 const Shader* ShaderManager::GetPostProcessingShader() const

@@ -32,7 +32,7 @@ private:
     CallbackData m_callbackData;
 
 public:
-    [[nodiscard]] CallbackData* StartUp_GetWindow();
+    HNCRSP_NODISCARD CallbackData* StartUp_GetWindow();
 };
 
 HNCRSP_NAMESPACE_END

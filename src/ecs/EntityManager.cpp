@@ -6,7 +6,7 @@ HNCRSP_NAMESPACE_START
 
 namespace ECS
 {
-    void EntityManager::StartUp()
+    EntityManager::EntityManager()
     {
         for (EntityUID uid = 0; uid < MAX_ENTITIES; uid++)
         {
@@ -14,7 +14,7 @@ namespace ECS
         }
     }
 
-    [[nodiscard]] EntityUID EntityManager::CreateEntity()
+    HNCRSP_NODISCARD EntityUID EntityManager::CreateEntity()
     {
         if (m_entityUIDCount >= MAX_ENTITIES)
             HNCRSP_TERMINATE("Reached max current entities.");

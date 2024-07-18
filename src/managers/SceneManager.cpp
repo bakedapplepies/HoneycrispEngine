@@ -6,24 +6,14 @@ HNCRSP_NAMESPACE_START
 SceneManager g_SceneManager;
 
 void SceneManager::StartUp(
-    CallbackData* callbackData,
-    const std::function<void()>& application_ECS_register_systems,
-    const std::function<void()>& application_ECS_register_components
+    CallbackData* callbackData
 ) {
     m_callbackData = callbackData;
-    m_application_ECS_register_systems = application_ECS_register_systems;
-    m_application_ECS_register_components = application_ECS_register_components;
 }
 
 void SceneManager::ShutDown()
 {
     m_scenesMap.clear();
-    
-    for (auto& i : m_ECSManagers)
-    {
-        ECS::ECSManager& ecsManager = i.second;
-        ecsManager.ShutDown();
-    }
 }
 
 void SceneManager::Update(const float& dt)
@@ -42,20 +32,23 @@ void SceneManager::ClearAllScenes()
     m_scenesMap.clear();
 }
 
-void SceneManager::SetActiveScene(size_t index)
+void SceneManager::SetActiveScene(uint32_t index)
 {
     if (!m_scenesMap[index])
     {
         HNCRSP_LOG_ERROR(fmt::format("Scene index [{}] not found.", index));
         return;
     }
-    m_activeSceneIndex = index;
-    g_ECSManager = &m_ECSManagers[m_activeSceneIndex];
 
+    g_ECSManager.SceneChanged(m_activeSceneIndex, index);
+    m_activeSceneIndex = index;
     m_scenesMap[m_activeSceneIndex]->ReconfigureAllShaders();
+
+    Renderer* renderer = g_ECSManager.GetSystem<Renderer>();
+    renderer->SwitchCubemap(m_scenesMap[m_activeSceneIndex]->cubemap.get());
 }
 
-size_t SceneManager::GetCurrentSceneIndex() const
+uint32_t SceneManager::GetCurrentSceneIndex() const
 {
     return m_activeSceneIndex;
 }

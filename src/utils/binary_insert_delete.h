@@ -32,7 +32,7 @@ void binary_insert_shader_comparator(
     size_t left = 0, right = vec.size() - 1;
     size_t mid = (left + right) / 2;
 
-    while (!(shader_list[mid] < comparator && comparator < shader_list[mid + 1]))
+    while (!(shader_list[mid] <= comparator && comparator <= shader_list[mid + 1]))
     {
         if (comparator < shader_list[mid]) right = mid;
         else left = mid + 1;

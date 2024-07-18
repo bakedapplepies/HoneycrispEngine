@@ -12,14 +12,10 @@ HNCRSP_NAMESPACE_START
 class SceneManager
 {
 private:
-    size_t m_nextSceneIndex = 0;
-    size_t m_activeSceneIndex = 0;
-    std::unordered_map< size_t, std::unique_ptr<Scene> > m_scenesMap;
-    std::unordered_map< size_t, ECS::ECSManager > m_ECSManagers;
+    uint32_t m_nextSceneIndex = 0;
+    uint32_t m_activeSceneIndex = 0;
+    std::unordered_map< uint32_t, std::unique_ptr<Scene> > m_scenesMap;
     CallbackData* m_callbackData;  // TODO: Temporary placement
-
-    std::function<void()> m_application_ECS_register_systems;
-    std::function<void()> m_application_ECS_register_components;
 
 public:
     SceneManager() = default;
@@ -29,16 +25,12 @@ public:
     SceneManager& operator=(SceneManager&&) = delete;
     ~SceneManager() = default;
 
-    void StartUp(
-        CallbackData* callbackData,
-        const std::function<void()>& application_ECS_register_systems,
-        const std::function<void()>& application_ECS_register_components
-    );
+    void StartUp(CallbackData* callbackData);
     void ShutDown();
 
     void ClearAllScenes();
-    void SetActiveScene(size_t index);
-    size_t GetCurrentSceneIndex() const;
+    void SetActiveScene(uint32_t index);
+    uint32_t GetCurrentSceneIndex() const;
     const CallbackData* GetCallbackData() const;
     CallbackData* GetMutableCallbackData() const;
     // GetCurrentLight
@@ -47,23 +39,15 @@ public:
     void UpdateImGui();
 
     template <typename TScene>
-    [[nodiscard]] size_t CreateScene()
+    HNCRSP_NODISCARD uint32_t CreateScene()
     {
-        static_assert(std::is_base_of<Scene, TScene>(), "SceneManager::CreateScene didn't receive a scene object.");
+        static_assert(std::is_base_of<Scene, TScene>(), "SceneManager::CreateScene didn't receive object derived from Scene.");
 
-        // Each scene has a unique ECS system
-        m_ECSManagers[m_nextSceneIndex] = ECS::ECSManager();
-        g_ECSManager = &m_ECSManagers[m_nextSceneIndex];
-        g_ECSManager->StartUp();
-        m_application_ECS_register_components();  // re-register ECS Components
-        m_application_ECS_register_systems();  // re-register ECS Systems
-
-        size_t tempSceneIndex = m_activeSceneIndex;  // also for easier debugging between scenes
-        m_activeSceneIndex = m_nextSceneIndex;
-
+        g_ECSManager.SceneCreated();  // This goes first so the function below can work
+        g_ECSManager.SceneChanged(m_activeSceneIndex, m_nextSceneIndex);  // Replaces the entity list in the scene
         m_scenesMap[m_nextSceneIndex] = std::make_unique<TScene>();
-        m_activeSceneIndex = tempSceneIndex;
-        g_ECSManager = &m_ECSManagers[m_activeSceneIndex];
+        g_ECSManager.SceneChanged(m_nextSceneIndex, m_activeSceneIndex);
+
         return m_nextSceneIndex++;
     }
 };

@@ -37,6 +37,7 @@ public:
     void setMat4Unf(const std::string& name, const glm::mat4& matrix) const;
     void setMat3Unf(const std::string& name, const glm::mat3& matrix) const;
     void setVec2Unf(const std::string& name, const glm::vec2& vector) const;
+    void setUVec2Unf(const std::string& name, const glm::uvec2& vector) const;
     void setVec3Unf(const std::string& name, const glm::vec3& vector) const;
 };
 

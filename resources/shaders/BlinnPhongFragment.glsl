@@ -63,7 +63,7 @@ struct SpotLight
     vec3 specular;
 };
 
-uniform int u_num_dir_light = 1;
+uniform int u_num_dir_light = 0;
 uniform int u_num_point_light = 1;
 uniform int u_num_spot_light = 0;
 uniform sampler2D u_framebuffer_depth_texture;
@@ -176,7 +176,7 @@ void main()
     // No clamping since using HDR
     // result = clamp(result, vec3(0.0), vec3(1.0));
 
-    result *= shadowFactor;
+    // result *= shadowFactor;
 
     FragColor = vec4(result, albedoFrag.w);
 }
