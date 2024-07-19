@@ -4,9 +4,17 @@
 
 HNCRSP_NAMESPACE_START
 
-Material::Material(const Shader* shader)
+Material::Material(const Shader* shader) :
+    m_shader(nullptr),
+    m_albedo(nullptr),
+    m_roughness(nullptr),
+    m_ao(nullptr),
+    m_normal(nullptr),
+    m_specular(nullptr),
+    m_shininess(64.0f)
 {
     setShader(shader);
+    shader->setFloatUnf("u_material.shininess", m_shininess);
 }
 
 Material::~Material()

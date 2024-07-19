@@ -3,8 +3,8 @@
 
 HNCRSP_NAMESPACE_START
 
-PointLight::PointLight(const glm::vec3& position, const glm::vec3& color, float ambient, float diffuse, float specular)
-    : Light(color), position(position), ambient(ambient), diffuse(diffuse), specular(specular)
+PointLight::PointLight(const glm::vec3& position, const glm::vec3& color, float ambient, float diffuse, float specular) :
+    Light(color), position(position), ambient(ambient), diffuse(diffuse), specular(specular)
 {}
 
 void PointLight::ConfigureShader(const Shader* shader) const

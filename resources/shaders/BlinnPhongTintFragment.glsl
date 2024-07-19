@@ -64,7 +64,7 @@ struct SpotLight
     vec3 specular;
 };
 
-uniform int u_num_dir_light = 1;
+uniform int u_num_dir_light = 0;
 uniform int u_num_point_light = 1;
 uniform int u_num_spot_light = 0;
 uniform sampler2D u_framebuffer_depth_texture;
@@ -119,7 +119,8 @@ vec3 CalcPointLight(PointLight pointLight, vec3 normal, vec3 dir_to_view, vec3 a
     float dist = length(fragToLight);
     // float attenuation = 1 / (pointLight.constant + pointLight.linear * dist + pointLight.quadratic * dist * dist);
     float attenuation = 1 / (dist * dist);
-    return (ambient + diffuse + specular) * attenuation;
+    // return (ambient + diffuse + specular) * attenuation;
+    return ambient;
 }
 
 vec3 CalcSpotLight(SpotLight spotLight, vec3 normal, vec3 dir_to_view, vec3 albedo_frag, vec3 specular_frag)

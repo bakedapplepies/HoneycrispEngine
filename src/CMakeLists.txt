@@ -5,7 +5,6 @@ set(SOURCE
     # Application
     ${CMAKE_SOURCE_DIR}/src/constants.h
     ${CMAKE_SOURCE_DIR}/src/constants.cpp
-    ${CMAKE_SOURCE_DIR}/src/Object.h
     ${CMAKE_SOURCE_DIR}/src/Callbacks.h
     ${CMAKE_SOURCE_DIR}/src/Callbacks.cpp
     ${CMAKE_SOURCE_DIR}/src/Application.h

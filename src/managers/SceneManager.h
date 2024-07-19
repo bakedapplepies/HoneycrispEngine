@@ -33,7 +33,6 @@ public:
     uint32_t GetCurrentSceneIndex() const;
     const CallbackData* GetCallbackData() const;
     CallbackData* GetMutableCallbackData() const;
-    // GetCurrentLight
 
     void Update(const float& dt);
     void UpdateImGui();

@@ -10,15 +10,15 @@ HNCRSP_NAMESPACE_START
 class Material
 {
 private:
-    const Shader* m_shader = nullptr;
+    const Shader* m_shader;
 
-    const Texture2D* m_albedo = nullptr;
-    const Texture2D* m_roughness = nullptr;
-    const Texture2D* m_ao = nullptr;
-    const Texture2D* m_normal = nullptr;
-    const Texture2D* m_specular = nullptr;
+    const Texture2D* m_albedo;
+    const Texture2D* m_roughness;
+    const Texture2D* m_ao;
+    const Texture2D* m_normal;
+    const Texture2D* m_specular;
 
-    float m_shininess = 128.0f;
+    float m_shininess;
 
 public:
     Material(const Shader* shader);

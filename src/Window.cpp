@@ -48,7 +48,8 @@ void Window::Loop()
     float begin = glfwGetTime();
 
     Camera& camera = m_callbackData->camera;
-    camera.SetPos(camera.position + glm::vec3(0, 10, 0));
+    camera.position = camera.position + glm::vec3(0, 10, 0);
+    camera.direction = glm::vec3(0.0f, 0.0f, -1.0f);
 
     // view matrix, proj matrix, time
     UniformBuffer<glm::mat4, glm::mat4, float> uboMatrices(0);  // UBO binding index
@@ -176,7 +177,7 @@ void Window::Loop()
         ImGui::End();
 
         // Update camera
-        camera.SetDirection(glm::normalize(camera.direction));
+        camera.direction = glm::normalize(camera.direction);
 
         // ----- Global uniforms -----
         float u_time = begin * waveSpeed;

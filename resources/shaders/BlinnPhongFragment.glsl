@@ -106,20 +106,25 @@ vec3 CalcPointLight(PointLight point_light, vec3 normal, vec3 dir_to_view, vec3 
     vec3 dirToLight = normalize(fragToLight);
     vec3 halfwayVec = normalize(dirToLight + dir_to_view);
 
-    // ambient - diffuse - specular
+    // ambient
     vec3 ambient = point_light.ambient * albedo_frag;
 
+    // diffuse
     float diffuseCoef = max(dot(normal, dirToLight), 0.0);
     vec3 diffuse = point_light.diffuse * diffuseCoef * albedo_frag;
 
+    // specular
     float specularCoef = pow(max(dot(normal, halfwayVec), 0.0), u_material.shininess);
-    vec3 specular = point_light.specular * specularCoef * specular_frag;
+    vec3 specular = point_light.specular * specularCoef * specular_frag.x;
     
     // attenuation
     float dist = length(fragToLight);
+
+    // This is still useful for fine-tuning attenuation
     // float attenuation = 1 / (point_light.constant + point_light.linear * dist + point_light.quadratic * dist * dist);
     float attenuation = 1.0 / (dist * dist);
-    return (ambient + diffuse + specular) * attenuation;
+    // return (ambient + diffuse + specular) * attenuation;
+    return (ambient + diffuse) * attenuation;
 }
 
 vec3 CalcSpotLight(SpotLight spot_light, vec3 normal, vec3 dir_to_view, vec3 albedo_frag, vec3 specular_frag)
@@ -173,7 +178,7 @@ void main()
     for (int i = 0; i < u_num_spot_light; i++)
         result += CalcSpotLight(u_spot_light, fs_in.Normal, dirToView, vec3(albedoFrag), vec3(specularFrag));
 
-    // No clamping since using HDR
+    // No clamping since using HDR framebuffer
     // result = clamp(result, vec3(0.0), vec3(1.0));
 
     // result *= shadowFactor;
