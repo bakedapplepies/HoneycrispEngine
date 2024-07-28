@@ -49,7 +49,7 @@ public:
     const Serialized::Model* GetDeserializedObject(const FileSystem::Path& path_to_model);
 
 private:
-    flatbuffers::Offset<Serialized::Model> FinishModel(
+    flatbuffers::Offset<Serialized::Model> _FinishModel(
         uint64_t last_write_time
     );
 };

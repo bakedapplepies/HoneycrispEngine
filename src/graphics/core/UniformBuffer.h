@@ -15,7 +15,8 @@ private:
     size_t totalByteSize = 0;
 
 public:
-    UniformBuffer(GLuint bindingIndex) : m_bindingIndex(bindingIndex)
+    UniformBuffer(GLuint bindingIndex) :
+        m_bindingIndex(bindingIndex)
     {
         if (takenBindingIndices[bindingIndex])
         {
@@ -25,7 +26,7 @@ public:
         }
         takenBindingIndices[bindingIndex] = true;
 
-        AddTypeSizes();
+        _AddTypeSizes();
 
         GLCall(glGenBuffers(1, &m_uboID));
         GLCall(glBindBuffer(GL_UNIFORM_BUFFER, m_uboID));
@@ -40,7 +41,7 @@ public:
         GLCall(glBindBuffer(GL_UNIFORM_BUFFER, m_uboID));
         size_t offset = 0;
         size_t index = 0;
-        Update(index, offset, args...);
+        _Update(index, offset, args...);
     }
 
     ~UniformBuffer()
@@ -52,16 +53,16 @@ public:
 
 private:
     template <typename T, typename... Args>
-    inline void Update(size_t index, size_t offset, const T* const t, const Args* const... args) const
+    inline void _Update(size_t index, size_t offset, const T* const t, const Args* const... args) const
     {
         GLCall(glBufferSubData(GL_UNIFORM_BUFFER, m_offsets[index], m_sizes[index], t));
         offset += m_sizes[index];
         index++;
-        Update(index, offset, args...);
+        _Update(index, offset, args...);
     }
 
     template <typename T>
-    inline void Update(size_t index, size_t offset, const T* const t) const
+    inline void _Update(size_t index, size_t offset, const T* const t) const
     {
         GLCall(glBufferSubData(GL_UNIFORM_BUFFER, m_offsets[index], m_sizes[index], t));
     }
@@ -80,7 +81,7 @@ public:
 
 private:
     template <int i = 0>
-    constexpr void AddTypeSizes()
+    constexpr void _AddTypeSizes()
     {
         if constexpr(i < sizeof...(Ts))
         {
@@ -95,7 +96,7 @@ private:
 
             m_sizes[i] = sizeof(T);
 
-            AddTypeSizes<i + 1>();
+            _AddTypeSizes<i + 1>();
         }
     }
 };

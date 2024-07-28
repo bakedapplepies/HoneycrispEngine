@@ -11,10 +11,10 @@ DirectionalLight::DirectionalLight(const glm::vec3& direction, const glm::vec3& 
 
 void DirectionalLight::ConfigureShader(const Shader* shader) const
 {
-    shader->setVec3Unf("u_dir_light.direction", direction);
-    shader->setVec3Unf("u_dir_light.ambient", getAmbient());
-    shader->setVec3Unf("u_dir_light.diffuse", getDiffuse());
-    shader->setVec3Unf("u_dir_light.specular", getSpecular());
+    shader->SetVec3Unf("u_dir_light.direction", direction);
+    shader->SetVec3Unf("u_dir_light.ambient", getAmbient());
+    shader->SetVec3Unf("u_dir_light.diffuse", getDiffuse());
+    shader->SetVec3Unf("u_dir_light.specular", getSpecular());
 }
 
 HNCRSP_NAMESPACE_END

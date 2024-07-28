@@ -57,12 +57,12 @@ void Renderer::Render() const
     m_depthMap->Bind();
     glEnable(GL_DEPTH_TEST);
     glClear(GL_DEPTH_BUFFER_BIT);
-    RenderDepthPass();
+    _RenderDepthPass();
 
     m_postprocessingQueue->BindInitialFramebuffer();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     m_depthMap->BindDepthBuffer();
-    RenderScenePass();
+    _RenderScenePass();
 
     glDisable(GL_DEPTH_TEST);
     m_postprocessingQueue->DrawSequence(m_callbackData);
@@ -72,14 +72,14 @@ void Renderer::Render() const
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void Renderer::RenderDepthPass() const
+void Renderer::_RenderDepthPass() const
 {
     const Shader* depthPassShader = g_ShaderManager.depthPassShader;
     depthPassShader->Use();
 
     // Configure shader
     glm::mat4 view_projection_matrix = m_depthPassCamera.GetViewProjectionMatrix(m_callbackData->dirLightPos, glm::vec3(0.0f));
-    depthPassShader->setMat4Unf("u_depthSpaceMatrix", view_projection_matrix);
+    depthPassShader->SetMat4Unf("u_depthSpaceMatrix", view_projection_matrix);
 
     for (const ECS::EntityUID& uid : p_entityUIDs)
     {
@@ -92,8 +92,8 @@ void Renderer::RenderDepthPass() const
         uint64_t index_buffer_offset = 0;
         for (unsigned int i = 0; i < drawData.meta_data.size(); i++)
         {
-            glm::mat4 model_matrix = GetModelMatrix(transform);
-            depthPassShader->setMat4Unf("u_model", model_matrix);
+            glm::mat4 model_matrix = _GetModelMatrix(transform);
+            depthPassShader->SetMat4Unf("u_model", model_matrix);
             GLCall(
                 glDrawElementsBaseVertex(
                     GL_TRIANGLES,
@@ -108,7 +108,7 @@ void Renderer::RenderDepthPass() const
     }
 }
 
-void Renderer::RenderScenePass() const
+void Renderer::_RenderScenePass() const
 {
     GLuint shaderID = 0;
     if (m_currentCubemap)
@@ -129,25 +129,25 @@ void Renderer::RenderScenePass() const
         Transform& transform = g_ECSManager.GetComponent<Transform>(uid);
         glBindVertexArray(drawData.VAO_id);
 
-        if (shaderID != shader->getID())
+        if (shaderID != shader->GetID())
         {
             shader->Use();
-            shaderID = shader->getID();
+            shaderID = shader->GetID();
         }
 
-        glm::mat4 model_matrix = GetModelMatrix(transform);
-        shader->setMat4Unf("u_depthSpaceMatrix", m_depthPassCamera.GetViewProjectionMatrix(m_callbackData->dirLightPos, glm::vec3(0.0f)));
-        shader->setMat3Unf("u_normalMatrix", glm::mat3(glm::transpose(glm::inverse(model_matrix))));
-        shader->setMat4Unf("u_model", model_matrix);
+        glm::mat4 model_matrix = _GetModelMatrix(transform);
+        shader->SetMat4Unf("u_depthSpaceMatrix", m_depthPassCamera.GetViewProjectionMatrix(m_callbackData->dirLightPos, glm::vec3(0.0f)));
+        shader->SetMat3Unf("u_normalMatrix", glm::mat3(glm::transpose(glm::inverse(model_matrix))));
+        shader->SetMat4Unf("u_model", model_matrix);
         uint64_t index_buffer_offset = 0;
         for (unsigned int i = 0; i < drawData.meta_data.size(); i++)
         {
             Material* material = drawData.materials[drawData.meta_data[i].material_index].get();
-            albedoMap = material->getAlbedoMap();
-            roughnessMap = material->getRoughnessMap();
-            aoMap = material->getAoMap();
-            normalMap = material->getNormalMap();
-            specularMap = material->getSpecularMap();
+            albedoMap = material->GetAlbedoMap();
+            roughnessMap = material->GetRoughnessMap();
+            aoMap = material->GetAoMap();
+            normalMap = material->GetNormalMap();
+            specularMap = material->GetSpecularMap();
 
             if (albedoMap) albedoMap->Bind();
             if (roughnessMap) roughnessMap->Bind();
@@ -177,7 +177,7 @@ void Renderer::RenderScenePass() const
 }
 
 // TODO: quaternions
-glm::mat4 Renderer::GetModelMatrix(Transform& transform) const 
+glm::mat4 Renderer::_GetModelMatrix(Transform& transform) const 
 {
     glm::mat4 modelMatrix = glm::mat4(1.0f);
 
@@ -209,7 +209,7 @@ void Renderer::AddEntityUID(ECS::EntityUID entity_UID)
     }
 
     GLuint shaderID = 
-        g_ECSManager.GetComponent<DrawData>(entity_UID).materials[0]->getShader()->getID();
+        g_ECSManager.GetComponent<DrawData>(entity_UID).materials[0]->getShader()->GetID();
     binary_insert_shader_comparator(
         p_entityUIDs, m_shaderIDs_Order[currentSceneIndex], entity_UID, shaderID
     );

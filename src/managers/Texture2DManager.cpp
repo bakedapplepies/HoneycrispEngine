@@ -52,11 +52,7 @@ void Texture2DManager::StartUp()
 
 void Texture2DManager::ShutDown()
 {
-    for (auto& iter : m_cachedTexture2Ds)
-    {
-        iter.second->Delete();
-        iter.second.reset();
-    }
+    m_cachedTexture2Ds.clear();
 }
 
 HNCRSP_NAMESPACE_END

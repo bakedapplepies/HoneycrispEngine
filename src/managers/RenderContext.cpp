@@ -18,6 +18,7 @@ HNCRSP_NODISCARD CallbackData* RenderContext::StartUp_GetWindow()
         nullptr,
         nullptr
     );
+    glfwSetWindowPos(glfwWindow, 0, 80);
 
     if (glfwWindow == nullptr)
     {

@@ -19,7 +19,7 @@ private:
     Cubemap(Cubemap&&) = delete;
     Cubemap& operator=(Cubemap&&) = delete;
 
-    void SetMesh();
+    void _SetMesh();
 
 public:
     Cubemap(const std::array<FileSystem::Path, 6>& faces);

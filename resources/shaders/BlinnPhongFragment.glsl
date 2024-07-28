@@ -63,7 +63,7 @@ struct SpotLight
     vec3 specular;
 };
 
-uniform int u_num_dir_light = 0;
+[LinkImGui] uniform int u_num_dir_light = 0;
 uniform int u_num_point_light = 1;
 uniform int u_num_spot_light = 0;
 uniform sampler2D u_framebuffer_depth_texture;
@@ -114,17 +114,18 @@ vec3 CalcPointLight(PointLight point_light, vec3 normal, vec3 dir_to_view, vec3 
     vec3 diffuse = point_light.diffuse * diffuseCoef * albedo_frag;
 
     // specular
-    float specularCoef = pow(max(dot(normal, halfwayVec), 0.0), u_material.shininess);
-    vec3 specular = point_light.specular * specularCoef * specular_frag.x;
+    vec3 reflectDir = reflect(-dirToLight, normal);
+    float specularCoef = pow(max(dot(normal, reflectDir), 0.0), 64);
+    vec3 specular = specular_frag * point_light.specular * specularCoef;
     
     // attenuation
     float dist = length(fragToLight);
 
     // This is still useful for fine-tuning attenuation
     // float attenuation = 1 / (point_light.constant + point_light.linear * dist + point_light.quadratic * dist * dist);
-    float attenuation = 1.0 / (dist * dist);
+    float attenuation = 1.0 / (dist * dist + 0.01);
     // return (ambient + diffuse + specular) * attenuation;
-    return (ambient + diffuse) * attenuation;
+    return vec3(specularCoef) * attenuation;
 }
 
 vec3 CalcSpotLight(SpotLight spot_light, vec3 normal, vec3 dir_to_view, vec3 albedo_frag, vec3 specular_frag)
@@ -138,12 +139,14 @@ vec3 CalcSpotLight(SpotLight spot_light, vec3 normal, vec3 dir_to_view, vec3 alb
     float epsilon = spot_light.cutOff - spot_light.outerCutOff;
     float intensity = clamp((theta - spot_light.outerCutOff) / epsilon, 0.0, 1.0);
 
-    // ambient - diffuse - specular
+    // ambient
     vec3 ambient = spot_light.ambient * albedo_frag;
 
+    // diffuse
     float diffuseCoef = max(dot(normal, dirToLight), 0.0);
     vec3 diffuse = spot_light.diffuse * diffuseCoef * albedo_frag;
 
+    // specular
     float specularCoef = pow(max(dot(normal, halfwayVec), 0.0), u_material.shininess);
     vec3 specular = spot_light.specular * specularCoef * specular_frag;
 
@@ -179,7 +182,7 @@ void main()
         result += CalcSpotLight(u_spot_light, fs_in.Normal, dirToView, vec3(albedoFrag), vec3(specularFrag));
 
     // No clamping since using HDR framebuffer
-    // result = clamp(result, vec3(0.0), vec3(1.0));
+    result = clamp(result, vec3(0.0), vec3(1.0));
 
     // result *= shadowFactor;
 

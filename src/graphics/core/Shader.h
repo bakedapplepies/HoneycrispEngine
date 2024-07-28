@@ -13,8 +13,8 @@ private:
     mutable std::unordered_map<std::string, GLint> m_uniformLocationCache;
 
 private:
-    std::string parseShader(std::string_view path);
-    GLint getUniformLocation(const std::string& name) const;
+    std::string _ParseShader(std::string_view path);
+    GLint _GetUniformLocation(const std::string& name) const;
 
 public:
     Shader() = default;
@@ -25,20 +25,78 @@ public:
     );
     Shader(const Shader& other) = delete;
     Shader& operator=(const Shader& other) = delete;
-    Shader(Shader&& other) noexcept;
-    Shader& operator=(Shader&& other) noexcept;
+    Shader(Shader&& other) = delete;
+    Shader& operator=(Shader&& other) = delete;
     ~Shader();
     
-    GLuint getID() const;
-    void Use() const;
+    GLuint GetID() const;
+    
+    inline void Use() const
+    {
+        GLCall(glUseProgram(m_shaderID));
+    }
 
-    void setIntUnf(const std::string& name, int value) const;
-    void setFloatUnf(const std::string& name, float value) const;
-    void setMat4Unf(const std::string& name, const glm::mat4& matrix) const;
-    void setMat3Unf(const std::string& name, const glm::mat3& matrix) const;
-    void setVec2Unf(const std::string& name, const glm::vec2& vector) const;
-    void setUVec2Unf(const std::string& name, const glm::uvec2& vector) const;
-    void setVec3Unf(const std::string& name, const glm::vec3& vector) const;
+    inline void SetIntUnf(const std::string& name, int value) const
+    {
+        GLCall(glProgramUniform1i(m_shaderID, _GetUniformLocation(name), value));
+    }
+
+    inline void SetFloatUnf(const std::string& name, float value) const
+    {
+        GLCall(glProgramUniform1f(m_shaderID, _GetUniformLocation(name), value));
+    }
+
+    inline void SetMat4Unf(const std::string& name, const glm::mat4& matrix) const
+    {
+        GLCall(glProgramUniformMatrix4fv(
+            m_shaderID,
+            _GetUniformLocation(name),
+            1,
+            GL_FALSE,
+            glm::value_ptr(matrix)
+        ));
+    }
+
+    inline void SetMat3Unf(const std::string& name, const glm::mat3& matrix) const
+    {
+        GLCall(glProgramUniformMatrix3fv(
+            m_shaderID,
+            _GetUniformLocation(name),
+            1,
+            GL_FALSE,
+            glm::value_ptr(matrix)
+        ));
+    }
+
+    inline void SetVec2Unf(const std::string& name, const glm::vec2& vector) const
+    {
+        GLCall(glProgramUniform2fv(
+            m_shaderID,
+            _GetUniformLocation(name),
+            1,
+            glm::value_ptr(vector)
+        ));
+    }
+
+    inline void SetUVec2Unf(const std::string& name, const glm::uvec2& vector) const
+    {
+        GLCall(glProgramUniform2uiv(
+            m_shaderID,
+            _GetUniformLocation(name),
+            1,
+            glm::value_ptr(vector)
+        ));
+    }
+
+    inline void SetVec3Unf(const std::string& name, const glm::vec3& vector) const
+    {
+        GLCall(glProgramUniform3fv(
+            m_shaderID,
+            _GetUniformLocation(name),
+            1,
+            glm::value_ptr(vector)
+        ));
+    }
 };
 
 HNCRSP_NAMESPACE_END

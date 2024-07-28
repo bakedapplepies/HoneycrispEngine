@@ -43,9 +43,9 @@ public:
 
     void Bind() const;
     void Unbind() const;
-    GLuint getID() const;
-    const float* getData() const;
-    size_t getDataLen() const;
+    GLuint GetID() const;
+    const float* GetData() const;
+    size_t GetDataLen() const;
 
     void EnableVertexAttribPosition(bool on) const;
     void EnableVertexAttribColor(bool on) const;

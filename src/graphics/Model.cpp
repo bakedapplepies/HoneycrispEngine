@@ -198,35 +198,35 @@ void Model::getMaterials(
             texturePath = modelDirectory.string() + textureFilename.C_Str();
             albedo = FileSystem::Path(texturePath);
 
-            currentMat->setAlbedoMap(albedo);
+            currentMat->SetAlbedoMap(albedo);
         }
         if (material->GetTexture(aiTextureType_NORMALS, 0, &textureFilename) != aiReturn_FAILURE)
         {
             texturePath = modelDirectory.string() + textureFilename.C_Str();
             normal = FileSystem::Path(texturePath);
 
-            currentMat->setNormalMap(normal);
+            currentMat->SetNormalMap(normal);
         }
         if (material->GetTexture(aiTextureType_SPECULAR, 0, &textureFilename) != aiReturn_FAILURE)
         {
             texturePath = modelDirectory.string() + textureFilename.C_Str();
             specular = FileSystem::Path(texturePath);
 
-            currentMat->setSpecularMap(specular);
+            currentMat->SetSpecularMap(specular);
         }
         if (material->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &textureFilename) != aiReturn_FAILURE)
         {
             texturePath = modelDirectory.string() + textureFilename.C_Str();
             roughness = FileSystem::Path(texturePath);
 
-            currentMat->setRoughnessMap(roughness);
+            currentMat->SetRoughnessMap(roughness);
         }
         if (material->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &textureFilename) != aiReturn_FAILURE)
         {
             texturePath = modelDirectory.string() + textureFilename.C_Str();
             ao = FileSystem::Path(texturePath);
 
-            currentMat->setAoMap(ao);
+            currentMat->SetAoMap(ao);
         }
 
         modelSerializer.AddMaterial(
@@ -316,19 +316,19 @@ void Model::loadDeserializedModel(const Serialized::Model* deserialized_model)
         m_materials.push_back(std::make_shared<Material>(m_shader));
         std::shared_ptr<Material>& currentMat = m_materials.back();
 
-        if (albedo != "") currentMat->setAlbedoMap(
+        if (albedo != "") currentMat->SetAlbedoMap(
             FileSystem::Path(albedo)
         );
-        if (roughness != "") currentMat->setRoughnessMap(
+        if (roughness != "") currentMat->SetRoughnessMap(
             FileSystem::Path(roughness)
         );
-        if (ao != "") currentMat->setAoMap(
+        if (ao != "") currentMat->SetAoMap(
             FileSystem::Path(ao)
         );
-        if (normal != "") currentMat->setNormalMap(
+        if (normal != "") currentMat->SetNormalMap(
             FileSystem::Path(normal)
         );
-        if (specular != "") currentMat->setSpecularMap(
+        if (specular != "") currentMat->SetSpecularMap(
             FileSystem::Path(specular)
         );
     }
@@ -337,7 +337,7 @@ void Model::loadDeserializedModel(const Serialized::Model* deserialized_model)
 void Model::virt_AddDrawDataToRenderer(ECS::EntityUID entityUID) const
 {
     DrawData meshData;
-    meshData.VAO_id = m_VAO->getID();
+    meshData.VAO_id = m_VAO->GetID();
     meshData.meta_data = std::vector<MeshMetaData>(m_meshesMetaData.begin(), m_meshesMetaData.end());
     meshData.materials = std::vector< std::shared_ptr<Material> >(
         m_materials.begin(),

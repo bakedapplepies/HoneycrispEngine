@@ -71,48 +71,38 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureTy
     }
 }
 
-const GLuint& Texture2D::getID() const
+const GLuint& Texture2D::GetID() const
 {
     return m_textureID;
 }
 
-GLuint Texture2D::getTextureUnit() const
+GLuint Texture2D::GetTextureUnit() const
 {
     return static_cast<GLuint>(m_textureType);
 }
 
-ETextureType Texture2D::getTextureType() const
+ETextureType Texture2D::GetTextureType() const
 {
     return m_textureType;
 }
 
 void Texture2D::Bind() const
 {
-    GLCall(glActiveTexture(GL_TEXTURE0 + getTextureUnit()));
+    GLCall(glActiveTexture(GL_TEXTURE0 + GetTextureUnit()));
     GLCall(glBindTexture(GL_TEXTURE_2D, m_textureID));
 }
 
 void Texture2D::Unbind() const
 {
-    GLCall(glActiveTexture(GL_TEXTURE0 + getTextureUnit()));
+    GLCall(glActiveTexture(GL_TEXTURE0 + GetTextureUnit()));
     GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
 Texture2D::~Texture2D()
 {
-    // TODO: Preferably use this somehow
-    HNCRSP_CHECK_RENDER_CONTEXT();
-
-    // HNCRSP_LOG_INFO(glfwGetCurrentContext(), "   ", m_textureID);
-    // GLCall(glDeleteTextures(1, &m_textureID));
-}
-
-void Texture2D::Delete()
-{
     HNCRSP_CHECK_RENDER_CONTEXT();
 
     GLCall(glDeleteTextures(1, &m_textureID));
-    m_textureID = 0;
 }
 
 HNCRSP_NAMESPACE_END

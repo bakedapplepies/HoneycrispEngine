@@ -34,7 +34,7 @@ public:
     void setShader(const Shader* newShader)
     {
         DrawData& thisDrawData = g_ECSManager.GetComponent<DrawData>(entityUID);
-        thisDrawData.materials[0]->setShader(newShader);
+        thisDrawData.materials[0]->SetShader(newShader);
     }
 
     void setTransform(const Transform& newTransform)

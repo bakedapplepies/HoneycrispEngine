@@ -73,7 +73,7 @@ Cubemap::Cubemap(const std::array<FileSystem::Path, 6>& faces)
         }
     }
 
-    SetMesh();
+    _SetMesh();
 }
 
 Cubemap::~Cubemap()
@@ -83,7 +83,7 @@ Cubemap::~Cubemap()
     GLCall(glDeleteTextures(1, &m_cubemapTextureID));
 }
 
-void Cubemap::SetMesh()
+void Cubemap::_SetMesh()
 {
     std::vector<glm::vec3> verticesPos = {
         glm::vec3(-1.0f,  1.0f,  1.0f),
@@ -166,13 +166,13 @@ void Cubemap::Draw() const
     GLCall(glDepthFunc(GL_LEQUAL));
 
     g_ShaderManager.cubemapShader->Use();
-    if (vao_id != m_VAO->getID())
+    if (vao_id != m_VAO->GetID())
     {
         GLCall(glActiveTexture(GL_TEXTURE0 + CUBEMAP_TEXTURE_UNIT_INDEX));
         GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemapTextureID));  // TODO: don't rebind every frame
-        g_ShaderManager.cubemapShader->setIntUnf("u_cubemap", CUBEMAP_TEXTURE_UNIT_INDEX);
+        g_ShaderManager.cubemapShader->SetIntUnf("u_cubemap", CUBEMAP_TEXTURE_UNIT_INDEX);
 
-        vao_id = m_VAO->getID();
+        vao_id = m_VAO->GetID();
     }
 
     GLCall(glDrawElements(GL_TRIANGLES, m_verticesCount, GL_UNSIGNED_INT, nullptr));

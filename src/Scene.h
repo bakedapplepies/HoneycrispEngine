@@ -107,7 +107,7 @@ public:
 
 private:
     friend SceneManager;
-    void ReconfigureAllShaders() const;
+    void _ReconfigureAllShaders() const;
 };
 
 HNCRSP_NAMESPACE_END

@@ -8,7 +8,7 @@ HNCRSP_NAMESPACE_START
 class VertexBuffer
 {
 private:
-    GLuint m_VBO_ID;
+    GLuint m_VBO_ID = 0;
 
 public:
     VertexBuffer() = default;

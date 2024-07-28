@@ -25,9 +25,9 @@ public:
     Texture2D& operator=(Texture2D&& other) noexcept = delete;
 
 public:
-    const GLuint& getID() const;
-    GLuint getTextureUnit() const;
-    ETextureType getTextureType() const;
+    const GLuint& GetID() const;
+    GLuint GetTextureUnit() const;
+    ETextureType GetTextureType() const;
 
     void Bind() const;
     void Unbind() const;

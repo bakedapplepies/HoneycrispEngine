@@ -8,7 +8,7 @@ HNCRSP_NAMESPACE_START
 
 Cube::Cube()
 {
-    InitializeAttributeData();
+    _InitializeAttributeData();
 }
 
 Cube::Cube(Cube&& other) noexcept
@@ -23,7 +23,7 @@ Cube& Cube::operator=(Cube&& other) noexcept
     return *this;
 }
 
-void Cube::InitializeAttributeData()
+void Cube::_InitializeAttributeData()
 {
     std::vector<glm::vec3> verticesPos = std::vector<glm::vec3> {
         // front
@@ -216,12 +216,12 @@ void Cube::InitializeAttributeData()
 void Cube::virt_AddDrawDataToRenderer(ECS::EntityUID entityUID) const
 {
     DrawData drawData;
-    drawData.VAO_id = m_VAO->getID();
+    drawData.VAO_id = m_VAO->GetID();
     drawData.meta_data.emplace_back(0, m_numVertices);
     drawData.materials.push_back(std::make_shared<Material>(g_ShaderManager.basicShader));
 
-    drawData.materials[0]->setAlbedoMap(g_Texture2DManager.mainTextureMap);
-    drawData.materials[0]->setSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
+    drawData.materials[0]->SetAlbedoMap(g_Texture2DManager.mainTextureMap);
+    drawData.materials[0]->SetSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
 
     g_ECSManager.AddComponent<DrawData>(entityUID, drawData);
 }

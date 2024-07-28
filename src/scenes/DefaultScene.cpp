@@ -184,14 +184,14 @@ DefaultScene::DefaultScene()
 
 void DefaultScene::OnUpdate(const float& dt)
 {
-    adjustableColorShader->setVec3Unf("u_color", glm::vec3(m_color));
+    adjustableColorShader->SetVec3Unf("u_color", glm::vec3(m_color));
 }
 
 void DefaultScene::SetInitialUniforms(void)
 {
     DrawData& meshData = g_ECSManager.GetComponent<DrawData>(customMesh->entityUID);
-    meshData.materials[0]->setAlbedoMap(g_Texture2DManager.mainTextureMap);
-    meshData.materials[0]->setSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
+    meshData.materials[0]->SetAlbedoMap(g_Texture2DManager.mainTextureMap);
+    meshData.materials[0]->SetSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
 }
 
 void DefaultScene::OnImGui(void)

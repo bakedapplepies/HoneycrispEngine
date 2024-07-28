@@ -13,12 +13,8 @@ Material::Material(const Shader* shader) :
     m_specular(nullptr),
     m_shininess(64.0f)
 {
-    setShader(shader);
-    shader->setFloatUnf("u_material.shininess", m_shininess);
-}
-
-Material::~Material()
-{
+    SetShader(shader);
+    shader->SetFloatUnf("u_material.shininess", m_shininess);
 }
 
 Material::Material(const Material& other)
@@ -83,57 +79,57 @@ Material& Material::operator=(Material&& other) noexcept
     return *this;
 }
 
-void Material::setAlbedoMap(const FileSystem::Path& path)
+void Material::SetAlbedoMap(const FileSystem::Path& path)
 {
     m_albedo = g_Texture2DManager.GetTexture2D(path, ETextureType::ALBEDO);
 }
 
-void Material::setAlbedoMap(const Texture2D* textureObj)
+void Material::SetAlbedoMap(const Texture2D* textureObj)
 {
     m_albedo = textureObj;
 }
 
-void Material::setRoughnessMap(const FileSystem::Path& path)
+void Material::SetRoughnessMap(const FileSystem::Path& path)
 {
     m_roughness = g_Texture2DManager.GetTexture2D(path, ETextureType::ROUGHNESS);
 }
 
-void Material::setRoughnessMap(const Texture2D* textureObj)
+void Material::SetRoughnessMap(const Texture2D* textureObj)
 {
     m_roughness = textureObj;
 }
 
-void Material::setAoMap(const FileSystem::Path& path)
+void Material::SetAoMap(const FileSystem::Path& path)
 {
     m_ao = g_Texture2DManager.GetTexture2D(path, ETextureType::AO);
 }
 
-void Material::setAoMap(const Texture2D* textureObj)
+void Material::SetAoMap(const Texture2D* textureObj)
 {
     m_ao = textureObj;
 }
 
-void Material::setNormalMap(const FileSystem::Path& path)
+void Material::SetNormalMap(const FileSystem::Path& path)
 {
     m_normal = g_Texture2DManager.GetTexture2D(path, ETextureType::NORMAL);
 }
 
-void Material::setNormalMap(const Texture2D* textureObj)
+void Material::SetNormalMap(const Texture2D* textureObj)
 {
     m_normal = textureObj;
 }
 
-void Material::setSpecularMap(const FileSystem::Path& path)
+void Material::SetSpecularMap(const FileSystem::Path& path)
 {
     m_specular = g_Texture2DManager.GetTexture2D(path, ETextureType::SPECULAR);
 }
 
-void Material::setSpecularMap(const Texture2D* textureObj)
+void Material::SetSpecularMap(const Texture2D* textureObj)
 {
     m_specular = textureObj;
 }
 
-void Material::setShininess(float shininess)
+void Material::SetShininess(float shininess)
 {
     m_shininess = shininess;
 }
@@ -143,49 +139,49 @@ const Shader* Material::getShader() const
     return m_shader;
 }
 
-void Material::setShader(const Shader* newShader)
+void Material::SetShader(const Shader* newShader)
 {
     m_shader = newShader;
-    UpdateTextureUniforms();
+    _UpdateTextureUniforms();
 }
 
-const Texture2D* Material::getAlbedoMap()
+const Texture2D* Material::GetAlbedoMap()
 {
     return m_albedo;
 }
 
-const Texture2D* Material::getRoughnessMap()
+const Texture2D* Material::GetRoughnessMap()
 {
     return m_roughness;
 }
 
-const Texture2D* Material::getAoMap()
+const Texture2D* Material::GetAoMap()
 {
     return m_ao;
 }
 
-const Texture2D* Material::getNormalMap()
+const Texture2D* Material::GetNormalMap()
 {
     return m_normal;
 }
 
-const Texture2D* Material::getSpecularMap()
+const Texture2D* Material::GetSpecularMap()
 {
     return m_specular;
 }
 
-float Material::getShininess() const
+float Material::GetShininess() const
 {
     return m_shininess;
 }
 
-void Material::UpdateTextureUniforms() const
+void Material::_UpdateTextureUniforms() const
 {
-    m_shader->setIntUnf("u_material.albedo", static_cast<int>(ETextureType::ALBEDO));
-    m_shader->setIntUnf("u_material.roughness", static_cast<int>(ETextureType::ROUGHNESS));
-    m_shader->setIntUnf("u_material.ao", static_cast<int>(ETextureType::AO));
-    m_shader->setIntUnf("u_material.normal", static_cast<int>(ETextureType::NORMAL));
-    m_shader->setIntUnf("u_material.specular", static_cast<int>(ETextureType::SPECULAR));
+    m_shader->SetIntUnf("u_material.albedo", static_cast<int>(ETextureType::ALBEDO));
+    m_shader->SetIntUnf("u_material.roughness", static_cast<int>(ETextureType::ROUGHNESS));
+    m_shader->SetIntUnf("u_material.ao", static_cast<int>(ETextureType::AO));
+    m_shader->SetIntUnf("u_material.normal", static_cast<int>(ETextureType::NORMAL));
+    m_shader->SetIntUnf("u_material.specular", static_cast<int>(ETextureType::SPECULAR));
 }
 
 HNCRSP_NAMESPACE_END

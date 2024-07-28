@@ -52,7 +52,7 @@ Mesh& Mesh::operator=(Mesh&& other) noexcept
 void Mesh::virt_AddDrawDataToRenderer(ECS::EntityUID entityUID) const
 {
     DrawData drawData;
-    drawData.VAO_id = m_VAO.getID();
+    drawData.VAO_id = m_VAO.GetID();
     drawData.meta_data.emplace_back(0, m_numVertices);
     drawData.materials.push_back(std::make_shared<Material>(g_ShaderManager.basicShader));
 

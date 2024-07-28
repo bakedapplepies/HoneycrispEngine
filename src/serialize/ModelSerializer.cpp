@@ -61,7 +61,7 @@ void ModelSerializer::AddMaterial(
     ));
 }
 
-flatbuffers::Offset<Serialized::Model> ModelSerializer::FinishModel(
+flatbuffers::Offset<Serialized::Model> ModelSerializer::_FinishModel(
     uint64_t last_write_time
 ) {
     auto materials = m_builder.CreateVector<Serialized::Material>(m_materials.data(), m_materials.size());
@@ -92,7 +92,7 @@ void ModelSerializer::Serialize(const FileSystem::Path& path_to_model)
     auto time_count = std::chrono::duration_cast<std::chrono::seconds>(last_write_time_since_epoch);
 
     // Finish material & model
-    auto serialized_model = FinishModel(time_count.count());
+    auto serialized_model = _FinishModel(time_count.count());
     m_builder.Finish(serialized_model);
 
     // store buffer

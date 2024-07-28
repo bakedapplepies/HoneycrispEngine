@@ -8,7 +8,7 @@ HNCRSP_NAMESPACE_START
 class ElementBuffer
 {
 private:
-    GLuint m_EBO_ID;
+    GLuint m_EBO_ID = 0;
 
 public:
     ElementBuffer() = default;

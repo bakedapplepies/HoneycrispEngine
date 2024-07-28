@@ -22,6 +22,32 @@ DefaultSceneTwo::DefaultSceneTwo()
 
     InitializeShaders();
 
+    const int maxLength = 512;
+    char name[maxLength];
+
+    int uniformCount;
+    glGetProgramiv(phongShader->GetID(), GL_ACTIVE_UNIFORMS, &uniformCount);
+    for (int i = 0; i < uniformCount; i++)
+    {
+        GLint size;
+        GLenum type;
+        glGetActiveUniform(phongShader->GetID(), i, maxLength, NULL, &size, &type, name);
+
+        HNCRSP_LOG_INFO(fmt::format("Size: {}, Type: {}\nInfo: {}", size, type, name));
+    }
+
+    int attribCount;
+    glGetProgramiv(phongShader->GetID(), GL_ACTIVE_ATTRIBUTES, &attribCount);
+    for (int i = 0; i < attribCount; i++)
+    {
+        GLint size;
+        GLenum type;
+        glGetActiveAttrib(phongShader->GetID(), i, maxLength, NULL, &size, &type, name);
+
+        HNCRSP_LOG_INFO(fmt::format("Size: {}, Type: {}\nInfo: {}", size, type, name));
+    }
+
+
     cube = CreateStaticRenderObj<Cube>();
     cubeTransform = &g_ECSManager.GetComponent<Transform>(cube->entityUID);
     cube->setShader(phongWTintShader);
@@ -97,9 +123,9 @@ DefaultSceneTwo::DefaultSceneTwo()
     mesh->setTransform(Transform(glm::vec3(-8.0f, -6.0f, -20.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
     mesh->setShader(phongWTintShader);
     std::shared_ptr<Material> meshMaterial = g_ECSManager.GetComponent<DrawData>(mesh->entityUID).materials[0];
-    meshMaterial->setAlbedoMap(g_Texture2DManager.mainTextureMap);
-    meshMaterial->setSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
-    meshMaterial->setShininess(128.0f);
+    meshMaterial->SetAlbedoMap(g_Texture2DManager.mainTextureMap);
+    meshMaterial->SetSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
+    meshMaterial->SetShininess(128.0f);
 
     backpackModel = CreateStaticRenderObj<Model>(
         FileSystem::Path("resources/models/backpack/backpack.obj"),
@@ -193,8 +219,8 @@ void DefaultSceneTwo::OnImGui(void)
         | ImGui::SliderFloat("position.z", &pointLight->position.z, -50.0f, 50.0f)
     ) {
         callback_data->dirLightPos = pointLight->position;
-        phongShader->setVec3Unf("u_point_light.position", pointLight->position);
-        phongWTintShader->setVec3Unf("u_point_light.position", pointLight->position);
+        phongShader->SetVec3Unf("u_point_light.position", pointLight->position);
+        phongWTintShader->SetVec3Unf("u_point_light.position", pointLight->position);
     }
 
     ImGui::SliderFloat("u_normal_length", &m_u_normal_length, 0.001f, 1.0f);

@@ -372,17 +372,17 @@ void VertexArray::Unbind() const
     GLCall(glBindVertexArray(0));
 }
 
-GLuint VertexArray::getID() const
+GLuint VertexArray::GetID() const
 {
     return m_VAO_ID;
 }
 
-const float* VertexArray::getData() const
+const float* VertexArray::GetData() const
 {
     return m_vertexData.data();
 }
 
-size_t VertexArray::getDataLen() const
+size_t VertexArray::GetDataLen() const
 {
     return m_vertexData.size();
 }

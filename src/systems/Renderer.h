@@ -43,11 +43,11 @@ public:
 
 private:
     void AddEntityUID(ECS::EntityUID entity_UID) override;
-    void RenderDepthPass() const;
-    void RenderScenePass() const;
+    void _RenderDepthPass() const;
+    void _RenderScenePass() const;
 
-    glm::mat4 GetModelMatrix(Transform& transform) const;
-    void GenerateDrawCommands();
+    glm::mat4 _GetModelMatrix(Transform& transform) const;
+    void _GenerateDrawCommands();
 };
 
 struct DrawElementsIndirectCommand

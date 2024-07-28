@@ -8,9 +8,9 @@ Shader::Shader(
     const FileSystem::Path& fragmentFile,
     const FileSystem::Path& geometryFile
 ) {
-    const std::string vertexShaderSource = parseShader(vertexFile.string());
-    const std::string fragmentShaderSource = parseShader(fragmentFile.string());
-    const std::string geometryShaderSource = geometryFile.string().size() ? parseShader(geometryFile.string()) : "";
+    const std::string vertexShaderSource = _ParseShader(vertexFile.string());
+    const std::string fragmentShaderSource = _ParseShader(fragmentFile.string());
+    const std::string geometryShaderSource = geometryFile.string().size() ? _ParseShader(geometryFile.string()) : "";
 
     const char* vsSource = vertexShaderSource.c_str();
     const char* fsSource = fragmentShaderSource.c_str();
@@ -145,31 +145,17 @@ Shader::Shader(
     HNCRSP_LOG_INFO(fmt::format("{}\n{}\n{}\n\t{}", vertexFile.string(), fragmentFile.string(), geometryFile.string(), m_shaderID));
 }
 
-std::string Shader::parseShader(std::string_view path)
+std::string Shader::_ParseShader(std::string_view path)
 {
     std::string line;
     std::stringstream ss;
-    std::ifstream infile(path.data());
+    std::ifstream infile(path);
     while (std::getline(infile, line))
     {
         ss << line << '\n';
     }
 
     return ss.str();
-}
-
-Shader::Shader(Shader&& other) noexcept
-{
-    m_shaderID = other.m_shaderID;  //        v
-    other.m_shaderID = 0;  // glDeleteProgram(0); will be ignored
-}
-
-Shader& Shader::operator=(Shader&& other) noexcept
-{
-    m_shaderID = other.m_shaderID;
-    other.m_shaderID = 0;
-
-    return *this;
 }
 
 Shader::~Shader()
@@ -179,17 +165,12 @@ Shader::~Shader()
     GLCall(glDeleteProgram(m_shaderID));
 }
 
-void Shader::Use() const
-{
-    GLCall(glUseProgram(m_shaderID));
-}
-
-GLuint Shader::getID() const
+GLuint Shader::GetID() const
 {
     return m_shaderID;
 }
 
-GLint Shader::getUniformLocation(const std::string& name) const
+GLint Shader::_GetUniformLocation(const std::string& name) const
 {
     // Use();
     // TODO: Supposedly a quick & dirty way, find a better way?
@@ -201,68 +182,6 @@ GLint Shader::getUniformLocation(const std::string& name) const
     if (location == -1) HNCRSP_LOG_INFO(name, "\t", m_shaderID);
     m_uniformLocationCache[name] = location;
     return location;
-}
-
-void Shader::setIntUnf(const std::string& name, int value) const
-{
-    GLCall(glProgramUniform1i(m_shaderID, getUniformLocation(name), value));
-}
-
-void Shader::setFloatUnf(const std::string& name, float value) const
-{
-    GLCall(glProgramUniform1f(m_shaderID, getUniformLocation(name), value));
-}
-
-void Shader::setMat4Unf(const std::string& name, const glm::mat4& matrix) const
-{
-    GLCall(glProgramUniformMatrix4fv(
-        m_shaderID,
-        getUniformLocation(name),
-        1,
-        GL_FALSE,
-        glm::value_ptr(matrix)
-    ));
-}
-
-void Shader::setMat3Unf(const std::string& name, const glm::mat3& matrix) const
-{
-    GLCall(glProgramUniformMatrix3fv(
-        m_shaderID,
-        getUniformLocation(name),
-        1,
-        GL_FALSE,
-        glm::value_ptr(matrix)
-    ));
-}
-
-void Shader::setVec2Unf(const std::string& name, const glm::vec2& vector) const
-{
-    GLCall(glProgramUniform2fv(
-        m_shaderID,
-        getUniformLocation(name),
-        1,
-        glm::value_ptr(vector)
-    ));
-}
-
-void Shader::setUVec2Unf(const std::string& name, const glm::uvec2& vector) const
-{
-    GLCall(glProgramUniform2uiv(
-        m_shaderID,
-        getUniformLocation(name),
-        1,
-        glm::value_ptr(vector)
-    ));
-}
-
-void Shader::setVec3Unf(const std::string& name, const glm::vec3& vector) const
-{
-    GLCall(glProgramUniform3fv(
-        m_shaderID,
-        getUniformLocation(name),
-        1,
-        glm::value_ptr(vector)
-    ));
 }
 
 HNCRSP_NAMESPACE_END

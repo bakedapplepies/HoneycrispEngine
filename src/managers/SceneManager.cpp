@@ -42,7 +42,7 @@ void SceneManager::SetActiveScene(uint32_t index)
 
     g_ECSManager.SceneChanged(m_activeSceneIndex, index);
     m_activeSceneIndex = index;
-    m_scenesMap[m_activeSceneIndex]->ReconfigureAllShaders();
+    m_scenesMap[m_activeSceneIndex]->_ReconfigureAllShaders();
 
     Renderer* renderer = g_ECSManager.GetSystem<Renderer>();
     renderer->SwitchCubemap(m_scenesMap[m_activeSceneIndex]->cubemap.get());

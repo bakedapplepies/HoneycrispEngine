@@ -34,7 +34,7 @@ const Shader* Scene::CreateShader(
     return m_shadersInScene.back();
 }
 
-void Scene::ReconfigureAllShaders() const
+void Scene::_ReconfigureAllShaders() const
 {
     for (auto& light : m_lightsInscene)
     {

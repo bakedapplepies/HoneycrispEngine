@@ -12,6 +12,7 @@ class Cube : public Renderable
 {
 private:
     GLuint m_numVertices;
+    std::unique_ptr<VertexArray> m_VAO;
 
 public:
     Cube();
@@ -24,10 +25,7 @@ public:
     void virt_AddDrawDataToRenderer(ECS::EntityUID entityUID) const override final;
 
 private:
-    void InitializeAttributeData();
-
-private:
-    std::unique_ptr<VertexArray> m_VAO;
+    void _InitializeAttributeData();
 };
 
 HNCRSP_NAMESPACE_END

@@ -39,7 +39,7 @@ void main()
     color = vec3(texture(u_framebuffer_color_texture, fs_in.UV));
 
     // Extended Reinhard Tone mapping
-    color = extended_reinhard_tmo(color, 800.0);
+    // color = extended_reinhard_tmo(color, 800.0);
 
     // Gamma Correction
     color = pow(color, vec3(1.0/2.2));

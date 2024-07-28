@@ -26,7 +26,7 @@ Window::Window(CallbackData* callbackData)
     );
 
     // Add all post process shaders to m_pps
-    UpdatePPS();
+    _UpdatePPS();
 
     HNCRSP_LOG_INFO("Window Initialization done.");
 }
@@ -64,9 +64,9 @@ void Window::Loop()
         m_deltaTime = glfwGetTime() - begin;
         begin = glfwGetTime();
 
-        CalcFPS();
+        _CalcFPS();
 
-        ProcessInput();
+        _ProcessInput();
 
         // Set window background color
         GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
@@ -98,7 +98,7 @@ void Window::Loop()
 
         if (ImGui::Button("Update postprocessing shader list"))
         {
-            UpdatePPS();
+            _UpdatePPS();
         }
 
         ImGui::NewLine();
@@ -209,7 +209,7 @@ void Window::Loop()
     }
 }
 
-void Window::ProcessInput()
+void Window::_ProcessInput()
 {
     ZoneScoped;
 
@@ -251,7 +251,7 @@ static uint32_t lowFPS  = 0xFFFFFFFF;
 static uint32_t highFPS = 0;
 static uint32_t countedFPSes = 0;
 static uint32_t totalFPS = 0;  // uint32_t is more than enough
-void Window::CalcFPS()
+void Window::_CalcFPS()
 {
     ZoneScoped;
 
@@ -271,7 +271,7 @@ void Window::CalcFPS()
     }
 }
 
-void Window::UpdatePPS()
+void Window::_UpdatePPS()
 {
     ZoneScoped;
 
