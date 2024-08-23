@@ -15,6 +15,8 @@ set(SOURCE
     ${CMAKE_SOURCE_DIR}/src/utils/FileSystem.h
     ${CMAKE_SOURCE_DIR}/src/utils/FileSystem.cpp
     ${CMAKE_SOURCE_DIR}/src/utils/binary_insert_delete.h
+    ${CMAKE_SOURCE_DIR}/src/utils/Timer.h
+    ${CMAKE_SOURCE_DIR}/src/utils/Timer.cpp
 )
 
 add_library(${CMAKE_PROJECT_NAME}.Utils ${SOURCE})

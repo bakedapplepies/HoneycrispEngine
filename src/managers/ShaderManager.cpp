@@ -20,6 +20,10 @@ void ShaderManager::StartUp()
         FileSystem::Path("resources/shaders/depth_pass/DepthPassVertex.glsl"),
         FileSystem::Path("resources/shaders/depth_pass/DepthPassFragment.glsl")
     );
+    depthPassNoAlphaShader = GetShader(
+        FileSystem::Path("resources/shaders/depth_pass/DepthPassNoAlphaVertex.glsl"),
+        FileSystem::Path("resources/shaders/depth_pass/DepthPassNoAlphaFragment.glsl")
+    );
 }
 
 void ShaderManager::ShutDown()
@@ -41,6 +45,7 @@ const Shader* ShaderManager::GetShader(
     {
         m_cachedShaders[hash_string] = std::make_unique<Shader>(vertexFile, fragmentFile, geometryFile);
         m_cachedShaders[hash_string]->SetIntUnf("u_framebuffer_depth_texture", DEPTH_BUFFER_TEXTURE_UNIT_INDEX);
+        m_cachedShaders[hash_string]->SetIntUnf("u_framebuffer_depth_texture_no_alpha", DEPTH_BUFFER_NO_ALPHA_TEXTURE_UNIT_INDEX);
     }
 
     return m_cachedShaders[hash_string].get();

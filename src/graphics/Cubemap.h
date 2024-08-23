@@ -12,6 +12,7 @@ private:
     GLuint m_cubemapTextureID;
     std::unique_ptr<VertexArray> m_VAO = nullptr;
     GLuint m_verticesCount;
+    int32_t m_channels;
 
 private:
     Cubemap(const Cubemap&) = delete;

@@ -22,6 +22,7 @@ DefaultSceneTwo::DefaultSceneTwo()
 
     InitializeShaders();
 
+    // TODO: Parse shaders
     const int maxLength = 512;
     char name[maxLength];
 

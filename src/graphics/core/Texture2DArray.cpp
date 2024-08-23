@@ -22,14 +22,14 @@ Texture2DArray::Texture2DArray(const std::vector<FileSystem::Path>& texturePaths
     uint8_t* data;
     for (int i = 0; i < texturePaths.size(); i++)
     {
-        ImageSerializer imageSerializer(desiredChannels);
+        ImageSerializer imageSerializer;
         Serialized::Image* deserialized_image = imageSerializer.GetDeserializedObject(texturePaths[i]);
         
         if (!deserialized_image)
         {
             data = stbi_load(texturePaths[i].string().c_str(), &width, &height, &nrChannels, desiredChannels);
 
-            imageSerializer.AddImage(data, width, height, texturePaths[i]);
+            imageSerializer.AddImage(data, nrChannels, width, height, texturePaths[i]);
         }
         else
         {

@@ -25,7 +25,7 @@ HNCRSP_NODISCARD CallbackData* RenderContext::StartUp_GetWindow()
         HNCRSP_TERMINATE("GLFW Window Initialization failed.");
     }
     glfwMakeContextCurrent(glfwWindow);
-    glfwSwapInterval(1);  // vsync
+    glfwSwapInterval(0);  // vsync
     glfwWindowHint(GLFW_SAMPLES, 4);
 
     // Callbacks ----------
@@ -52,9 +52,6 @@ HNCRSP_NODISCARD CallbackData* RenderContext::StartUp_GetWindow()
     stbi_image_free(image->pixels);
 
     /* Depth, Stencil, Blending, Gamma correction */
-    // depth test
-    glEnable(GL_DEPTH_TEST);
-
     // cull faces
     glEnable(GL_CULL_FACE);
     glFrontFace(GL_CW);
@@ -65,8 +62,8 @@ HNCRSP_NODISCARD CallbackData* RenderContext::StartUp_GetWindow()
 
     // blending
     glEnable(GL_BLEND);
-    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  TODO
-    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  // TODO
+    // glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 
     // multisample anti-aliasing
     glEnable(GL_MULTISAMPLE);

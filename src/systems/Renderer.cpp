@@ -42,8 +42,8 @@ Renderer::Renderer()
     );
     m_postprocessingQueue->AddPostprocessingPass(g_ShaderManager.GetPostProcessingShader());
 
-    // Setting up depth map ----------
-    m_depthMap = std::make_unique<DepthMap>(
+    // Setting up depth maps ----------
+    m_depthMap = std::make_unique<DepthMap>(  // directional shadows
         m_callbackData->windowWidth,
         m_callbackData->windowHeight
     );
@@ -60,9 +60,15 @@ void Renderer::Render() const
     _RenderDepthPass();
 
     m_postprocessingQueue->BindInitialFramebuffer();
+    glDisable(GL_BLEND);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    m_depthMap->BindDepthBuffer();
+    m_depthMap->BindDepthBuffer(DEPTH_BUFFER_TEXTURE_UNIT_INDEX);
+    // m_depthMapNoAlpha->BindDepthBuffer(DEPTH_BUFFER_NO_ALPHA_TEXTURE_UNIT_INDEX);
     _RenderScenePass();
+
+    _SortTransparentObjects();
+    glEnable(GL_BLEND);
+    _RenderTransparentObjectsPass();
 
     glDisable(GL_DEPTH_TEST);
     m_postprocessingQueue->DrawSequence(m_callbackData);
@@ -74,6 +80,8 @@ void Renderer::Render() const
 
 void Renderer::_RenderDepthPass() const
 {
+    ZoneScoped;
+
     const Shader* depthPassShader = g_ShaderManager.depthPassShader;
     depthPassShader->Use();
 
@@ -89,7 +97,7 @@ void Renderer::_RenderDepthPass() const
 
         // Draw
         glBindVertexArray(drawData.VAO_id);
-        uint64_t index_buffer_offset = 0;
+        uint64_t indexBufferOffset = 0;
         for (unsigned int i = 0; i < drawData.meta_data.size(); i++)
         {
             glm::mat4 model_matrix = _GetModelMatrix(transform);
@@ -97,19 +105,20 @@ void Renderer::_RenderDepthPass() const
             GLCall(
                 glDrawElementsBaseVertex(
                     GL_TRIANGLES,
-                    drawData.meta_data[i].indices_buffer_count,
+                    drawData.meta_data[i].indices_buffer_count, 
                     GL_UNSIGNED_INT,
-                    reinterpret_cast<void*>(index_buffer_offset * sizeof(float)),
+                    reinterpret_cast<void*>(indexBufferOffset * sizeof(float)),
                     drawData.meta_data[i].mesh_vertex_count
                 )
             );
-            index_buffer_offset += drawData.meta_data[i].indices_buffer_count;
+            indexBufferOffset += drawData.meta_data[i].indices_buffer_count;
         }
     }
 }
 
 void Renderer::_RenderScenePass() const
 {
+    ZoneScoped;
     GLuint shaderID = 0;
     if (m_currentCubemap)
     {
@@ -124,7 +133,7 @@ void Renderer::_RenderScenePass() const
     for (const ECS::EntityUID& uid : p_entityUIDs)
     {
         DrawData& drawData = g_ECSManager.GetComponent<DrawData>(uid);
-        const Shader* shader = drawData.materials[0]->getShader();
+        const Shader* shader = drawData.materials[0]->GetShader();
 
         Transform& transform = g_ECSManager.GetComponent<Transform>(uid);
         glBindVertexArray(drawData.VAO_id);
@@ -139,10 +148,16 @@ void Renderer::_RenderScenePass() const
         shader->SetMat4Unf("u_depthSpaceMatrix", m_depthPassCamera.GetViewProjectionMatrix(m_callbackData->dirLightPos, glm::vec3(0.0f)));
         shader->SetMat3Unf("u_normalMatrix", glm::mat3(glm::transpose(glm::inverse(model_matrix))));
         shader->SetMat4Unf("u_model", model_matrix);
-        uint64_t index_buffer_offset = 0;
-        for (unsigned int i = 0; i < drawData.meta_data.size(); i++)
+        uint32_t indexBufferOffset = 0;
+        for (uint32_t i = 0; i < drawData.meta_data.size(); i++)
         {
             Material* material = drawData.materials[drawData.meta_data[i].material_index].get();
+            if (!material->IsOpaque())
+            {
+                indexBufferOffset += drawData.meta_data[i].indices_buffer_count;
+                continue;                
+            }
+
             albedoMap = material->GetAlbedoMap();
             roughnessMap = material->GetRoughnessMap();
             aoMap = material->GetAoMap();
@@ -161,19 +176,99 @@ void Renderer::_RenderScenePass() const
                     GL_TRIANGLES,
                     drawData.meta_data[i].indices_buffer_count,
                     GL_UNSIGNED_INT,
-                    reinterpret_cast<void*>(index_buffer_offset * sizeof(float)),
+                    reinterpret_cast<void*>(indexBufferOffset * sizeof(float)),
                     drawData.meta_data[i].mesh_vertex_count
                 )
             );
-            index_buffer_offset += drawData.meta_data[i].indices_buffer_count;
+            indexBufferOffset += drawData.meta_data[i].indices_buffer_count;
 
             if (albedoMap) albedoMap->Unbind();
             if (roughnessMap) roughnessMap->Unbind();
             if (aoMap) aoMap->Unbind();
-            if (normalMap) albedoMap->Unbind();
+            if (normalMap) normalMap->Unbind();
             if (specularMap) specularMap->Unbind();
         }
     }
+}
+
+void Renderer::_RenderTransparentObjectsPass() const
+{
+    ZoneScoped;
+
+    GLuint shaderID = 0;
+
+    const Texture2D* albedoMap = nullptr;
+    const Texture2D* roughnessMap = nullptr;
+    const Texture2D* aoMap = nullptr;
+    const Texture2D* normalMap = nullptr;
+    const Texture2D* specularMap = nullptr;
+    for (const DelayedTransparentObjectDrawData& obj : m_transparentObjects[m_currentSceneIndex])
+    {
+        DrawData& drawData = g_ECSManager.GetComponent<DrawData>(obj.entityUID);
+        const Shader* shader = drawData.materials[0]->GetShader();
+
+        Transform& transform = g_ECSManager.GetComponent<Transform>(obj.entityUID);
+        glBindVertexArray(drawData.VAO_id);
+
+        if (shaderID != shader->GetID())
+        {
+            shader->Use();
+            shaderID = shader->GetID();
+        }
+
+        glm::mat4 model_matrix = _GetModelMatrix(transform);
+        shader->SetMat4Unf("u_depthSpaceMatrix", m_depthPassCamera.GetViewProjectionMatrix(m_callbackData->dirLightPos, glm::vec3(0.0f)));
+        shader->SetMat3Unf("u_normalMatrix", glm::mat3(glm::transpose(glm::inverse(model_matrix))));
+        shader->SetMat4Unf("u_model", model_matrix);
+
+        Material* material = drawData.materials[drawData.meta_data[obj.metaDataIndex].material_index].get();
+
+        albedoMap = material->GetAlbedoMap();
+        roughnessMap = material->GetRoughnessMap();
+        aoMap = material->GetAoMap();
+        normalMap = material->GetNormalMap();
+        specularMap = material->GetSpecularMap();
+
+        if (albedoMap) albedoMap->Bind();
+        if (roughnessMap) roughnessMap->Bind();
+        if (aoMap) aoMap->Bind();
+        if (normalMap) normalMap->Bind();
+        if (specularMap) specularMap->Bind();
+
+        // TODO: Send uniform for index into texture array
+        GLCall(
+            glDrawElementsBaseVertex(
+                GL_TRIANGLES,
+                drawData.meta_data[obj.metaDataIndex].indices_buffer_count,
+                GL_UNSIGNED_INT,
+                reinterpret_cast<void*>(obj.indexBufferOffset * sizeof(float)),
+                drawData.meta_data[obj.metaDataIndex].mesh_vertex_count
+            )
+        );
+
+        if (albedoMap) albedoMap->Unbind();
+        if (roughnessMap) roughnessMap->Unbind();
+        if (aoMap) aoMap->Unbind();
+        if (normalMap) albedoMap->Unbind();
+        if (specularMap) specularMap->Unbind();
+    }
+}
+
+void Renderer::_SortTransparentObjects() const
+{
+    ZoneScopedN("Sort Transparent");
+    
+    // Utilities
+    static glm::vec3& cameraPos = g_SceneManager.GetMutableCallbackData()->camera.position;
+    static std::function<bool(const DelayedTransparentObjectDrawData&, const DelayedTransparentObjectDrawData&)> comp =
+        [](const DelayedTransparentObjectDrawData& obj1, const DelayedTransparentObjectDrawData& obj2) {
+            glm::vec3& obj1Position = g_ECSManager.GetComponent<Transform>(obj1.entityUID).position;
+            glm::vec3& obj2Position = g_ECSManager.GetComponent<Transform>(obj2.entityUID).position;
+            return glm::length(obj1Position - cameraPos) < glm::length(obj2Position - cameraPos);
+        };
+
+    // Quicksort
+    std::sort(m_transparentObjects[m_currentSceneIndex].begin(), m_transparentObjects[m_currentSceneIndex].end(), comp);
 }
 
 // TODO: quaternions
@@ -202,22 +297,106 @@ void Renderer::SwitchCubemap(const Cubemap* cubemap)
 // Called from SystemManager to add related entities
 void Renderer::AddEntityUID(ECS::EntityUID entity_UID)
 {
-    uint32_t currentSceneIndex = g_SceneManager.GetCurrentSceneIndex();
-    while (currentSceneIndex + 1 > m_shaderIDs_Order.size())
+    while (m_currentSceneIndex + 1 > m_shaderIDs_Order.size())
     {
         m_shaderIDs_Order.push_back({});
     }
+    while (m_currentSceneIndex + 1 > m_transparentObjects.size())
+    {
+        m_transparentObjects.push_back({});
+    }
 
+    // Add transparent objects to m_transparentObjects
+    DrawData& drawData = g_ECSManager.GetComponent<DrawData>(entity_UID);
+    uint32_t indexBufferOffset = 0;
+    for (uint32_t i = 0; i < drawData.meta_data.size(); i++)
+    {
+        Material* material = drawData.materials[drawData.meta_data[i].material_index].get();
+        if (!material->IsOpaque())
+        {
+            m_transparentObjects[m_currentSceneIndex].emplace_back(entity_UID, i, indexBufferOffset);
+        }
+        indexBufferOffset += drawData.meta_data[i].indices_buffer_count;
+    }
+
+    // Binary-search + insert to optimize shader use
     GLuint shaderID = 
-        g_ECSManager.GetComponent<DrawData>(entity_UID).materials[0]->getShader()->GetID();
-    binary_insert_shader_comparator(
-        p_entityUIDs, m_shaderIDs_Order[currentSceneIndex], entity_UID, shaderID
+        g_ECSManager.GetComponent<DrawData>(entity_UID).materials[0]->GetShader()->GetID();
+    _BinaryInsert_ShaderComparator(
+        p_entityUIDs, m_shaderIDs_Order[m_currentSceneIndex], entity_UID, shaderID
     );
+}
+
+void Renderer::SceneChanged(uint32_t target_scene)
+{
+    m_currentSceneIndex = target_scene;
 }
 
 GLuint Renderer::GetColorBufferTextureID() const
 {
     return m_postprocessingQueue->GetCurrentFramebufferColorTexture();
+}
+
+void Renderer::_BinaryInsert_ShaderComparator(
+    std::vector<ECS::EntityUID>& vec,
+    std::vector<GLuint>& shader_list,
+    ECS::EntityUID value,
+    GLuint comparator
+) {
+    if (vec.size() == 0)
+    {
+        vec.push_back(value);
+        shader_list.push_back(comparator);
+        return;
+    }
+    else if (vec.size() == 1)
+    {
+        size_t pos = static_cast<size_t>(comparator > shader_list[0]);
+        vec.insert(vec.begin() + pos, value);
+        shader_list.insert(shader_list.begin() + pos, comparator);
+    }
+
+    size_t left = 0, right = vec.size() - 1;
+    size_t mid = (left + right) / 2;
+
+    while (!(shader_list[mid] <= comparator && comparator <= shader_list[mid + 1]))
+    {
+        if (comparator < shader_list[mid]) right = mid;
+        else left = mid + 1;
+
+        mid = (left + right) / 2;
+
+        if (mid == vec.size() - 1) break;
+        else if (mid == 0) break;
+    }
+
+    vec.insert(vec.begin() + mid + (size_t)(mid != 0), value);
+    shader_list.insert(shader_list.begin() + mid + (size_t)(mid != 0), comparator);
+}
+
+void Renderer::_BinaryDelete_WShaderList(
+    std::vector<ECS::EntityUID>& vec,
+    std::vector<GLuint>& shader_list,
+    ECS::EntityUID value
+) {
+    if (vec.size() == 0)
+    {
+        HNCRSP_TERMINATE("Vector is empty");
+    }
+
+    size_t left = 0, right = vec.size() - 1;
+    size_t mid = (left + right) / 2;
+
+    while (value != vec[mid])
+    {
+        if (value < vec[mid]) right = mid - 1;
+        else left = mid + 1;
+
+        mid = (left + right) / 2;
+    }
+
+    vec.erase(vec.begin() + mid);
+    shader_list.erase(shader_list.begin() + mid);
 }
 
 HNCRSP_NAMESPACE_END

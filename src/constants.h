@@ -37,6 +37,7 @@ enum ETextureType : int8_t
     SPECULAR
 };
 extern const uint16_t DEPTH_BUFFER_TEXTURE_UNIT_INDEX;
+extern const uint16_t DEPTH_BUFFER_NO_ALPHA_TEXTURE_UNIT_INDEX;
 extern const uint16_t COLOR_BUFFER_TEXTURE_UNIT_INDEX;
 extern const uint16_t CUBEMAP_TEXTURE_UNIT_INDEX;
 // ----------

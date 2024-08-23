@@ -23,6 +23,7 @@ namespace ECS
         // avoid state changes, might as well make all system do this
         // in case they want to optimize how they store things.
         virtual void AddEntityUID(EntityUID entity_UID) = 0;
+        virtual void SceneChanged(uint32_t target_scene) {};
 
     public:
         virtual ~System() = default;

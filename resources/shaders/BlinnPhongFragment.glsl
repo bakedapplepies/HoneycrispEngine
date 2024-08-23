@@ -1,5 +1,5 @@
 #version 460 core
-out vec4 FragColor;
+out vec4 glFragColor;
 
 in VS_OUT {
     vec3 VertColor;
@@ -63,7 +63,7 @@ struct SpotLight
     vec3 specular;
 };
 
-[LinkImGui] uniform int u_num_dir_light = 0;
+uniform int u_num_dir_light = 0;
 uniform int u_num_point_light = 1;
 uniform int u_num_spot_light = 0;
 uniform sampler2D u_framebuffer_depth_texture;
@@ -125,7 +125,7 @@ vec3 CalcPointLight(PointLight point_light, vec3 normal, vec3 dir_to_view, vec3 
     // float attenuation = 1 / (point_light.constant + point_light.linear * dist + point_light.quadratic * dist * dist);
     float attenuation = 1.0 / (dist * dist + 0.01);
     // return (ambient + diffuse + specular) * attenuation;
-    return vec3(specularCoef) * attenuation;
+    return (ambient + diffuse) * attenuation;
 }
 
 vec3 CalcSpotLight(SpotLight spot_light, vec3 normal, vec3 dir_to_view, vec3 albedo_frag, vec3 specular_frag)
@@ -186,5 +186,5 @@ void main()
 
     // result *= shadowFactor;
 
-    FragColor = vec4(result, albedoFrag.w);
+    glFragColor = vec4(result, albedoFrag.w);
 }

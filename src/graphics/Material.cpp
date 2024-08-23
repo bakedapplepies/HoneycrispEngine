@@ -4,14 +4,7 @@
 
 HNCRSP_NAMESPACE_START
 
-Material::Material(const Shader* shader) :
-    m_shader(nullptr),
-    m_albedo(nullptr),
-    m_roughness(nullptr),
-    m_ao(nullptr),
-    m_normal(nullptr),
-    m_specular(nullptr),
-    m_shininess(64.0f)
+Material::Material(const Shader* shader)
 {
     SetShader(shader);
     shader->SetFloatUnf("u_material.shininess", m_shininess);
@@ -26,6 +19,7 @@ Material::Material(const Material& other)
     m_normal = other.m_normal;
     m_specular = other.m_specular;
     m_shininess = other.m_shininess;
+    m_isOpaque = other.m_isOpaque;
 }
 
 Material& Material::operator=(const Material& other) noexcept
@@ -37,6 +31,7 @@ Material& Material::operator=(const Material& other) noexcept
     m_normal = other.m_normal;
     m_specular = other.m_specular;
     m_shininess = other.m_shininess;
+    m_isOpaque = other.m_isOpaque;
 
     return *this;
 }
@@ -50,13 +45,15 @@ Material::Material(Material&& other)
     m_normal = other.m_normal;
     m_specular = other.m_specular;
     m_shininess = other.m_shininess;
+    m_isOpaque = other.m_isOpaque;
 
-    m_albedo = nullptr;
-    m_roughness = nullptr;
-    m_ao = nullptr;
-    m_normal = nullptr;
-    m_specular = nullptr;
+    other.m_albedo = nullptr;
+    other.m_roughness = nullptr;
+    other.m_ao = nullptr;
+    other.m_normal = nullptr;
+    other.m_specular = nullptr;
     other.m_shininess = 0.0f;
+    other.m_isOpaque = true;
 }
 
 Material& Material::operator=(Material&& other) noexcept
@@ -68,25 +65,37 @@ Material& Material::operator=(Material&& other) noexcept
     m_normal = other.m_normal;
     m_specular = other.m_specular;
     m_shininess = other.m_shininess;
+    m_isOpaque = other.m_isOpaque;
 
-    m_albedo = nullptr;
-    m_roughness = nullptr;
-    m_ao = nullptr;
-    m_normal = nullptr;
-    m_specular = nullptr;
+    other.m_albedo = nullptr;
+    other.m_roughness = nullptr;
+    other.m_ao = nullptr;
+    other.m_normal = nullptr;
+    other.m_specular = nullptr;
     other.m_shininess = 0.0f;
+    other.m_isOpaque = true;
 
     return *this;
+}
+
+void Material::SetShader(const Shader* new_shader)
+{
+    m_shader = new_shader;
+    _UpdateTextureUniforms();
 }
 
 void Material::SetAlbedoMap(const FileSystem::Path& path)
 {
     m_albedo = g_Texture2DManager.GetTexture2D(path, ETextureType::ALBEDO);
+    if (m_albedo->GetChannels() == 4)
+        m_isOpaque = false;
 }
 
-void Material::SetAlbedoMap(const Texture2D* textureObj)
+void Material::SetAlbedoMap(const Texture2D* texture_obj)
 {
-    m_albedo = textureObj;
+    m_albedo = texture_obj;
+    if (m_albedo->GetChannels() == 4)
+        m_isOpaque = false;
 }
 
 void Material::SetRoughnessMap(const FileSystem::Path& path)
@@ -94,9 +103,9 @@ void Material::SetRoughnessMap(const FileSystem::Path& path)
     m_roughness = g_Texture2DManager.GetTexture2D(path, ETextureType::ROUGHNESS);
 }
 
-void Material::SetRoughnessMap(const Texture2D* textureObj)
+void Material::SetRoughnessMap(const Texture2D* texture_obj)
 {
-    m_roughness = textureObj;
+    m_roughness = texture_obj;
 }
 
 void Material::SetAoMap(const FileSystem::Path& path)
@@ -104,9 +113,9 @@ void Material::SetAoMap(const FileSystem::Path& path)
     m_ao = g_Texture2DManager.GetTexture2D(path, ETextureType::AO);
 }
 
-void Material::SetAoMap(const Texture2D* textureObj)
+void Material::SetAoMap(const Texture2D* texture_obj)
 {
-    m_ao = textureObj;
+    m_ao = texture_obj;
 }
 
 void Material::SetNormalMap(const FileSystem::Path& path)
@@ -114,9 +123,9 @@ void Material::SetNormalMap(const FileSystem::Path& path)
     m_normal = g_Texture2DManager.GetTexture2D(path, ETextureType::NORMAL);
 }
 
-void Material::SetNormalMap(const Texture2D* textureObj)
+void Material::SetNormalMap(const Texture2D* texture_obj)
 {
-    m_normal = textureObj;
+    m_normal = texture_obj;
 }
 
 void Material::SetSpecularMap(const FileSystem::Path& path)
@@ -124,9 +133,9 @@ void Material::SetSpecularMap(const FileSystem::Path& path)
     m_specular = g_Texture2DManager.GetTexture2D(path, ETextureType::SPECULAR);
 }
 
-void Material::SetSpecularMap(const Texture2D* textureObj)
+void Material::SetSpecularMap(const Texture2D* texture_obj)
 {
-    m_specular = textureObj;
+    m_specular = texture_obj;
 }
 
 void Material::SetShininess(float shininess)
@@ -134,45 +143,9 @@ void Material::SetShininess(float shininess)
     m_shininess = shininess;
 }
 
-const Shader* Material::getShader() const
+void Material::SetIsOpaque(bool is_opaque)
 {
-    return m_shader;
-}
-
-void Material::SetShader(const Shader* newShader)
-{
-    m_shader = newShader;
-    _UpdateTextureUniforms();
-}
-
-const Texture2D* Material::GetAlbedoMap()
-{
-    return m_albedo;
-}
-
-const Texture2D* Material::GetRoughnessMap()
-{
-    return m_roughness;
-}
-
-const Texture2D* Material::GetAoMap()
-{
-    return m_ao;
-}
-
-const Texture2D* Material::GetNormalMap()
-{
-    return m_normal;
-}
-
-const Texture2D* Material::GetSpecularMap()
-{
-    return m_specular;
-}
-
-float Material::GetShininess() const
-{
-    return m_shininess;
+    m_isOpaque = is_opaque;
 }
 
 void Material::_UpdateTextureUniforms() const

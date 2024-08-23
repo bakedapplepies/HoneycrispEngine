@@ -9,17 +9,17 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureTy
     GLCall(glGenTextures(1, &m_textureID));
     m_textureType = textureType;
 
-    int width, height, nrChannels;
-    int desiredChannels = 4;
+    int width, height;
 
-    ImageSerializer imageSerializer(desiredChannels);
-    Serialized::Image* deserialized_image = imageSerializer.GetDeserializedObject(texturePath);
+    ImageSerializer imageSerializer;
+    Serialized::Image* deserializedImage = imageSerializer.GetDeserializedObject(texturePath);
     uint8_t* data;
 
-    if (!deserialized_image)
+    // ----- Load data -----
+    if (!deserializedImage)
     {
         data = stbi_load(
-            texturePath.string().data(), &width, &height, &nrChannels, desiredChannels);
+            texturePath.string().data(), &width, &height, &m_channels, 0);
 
         if (!data)
         {
@@ -28,18 +28,28 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureTy
             stbi_image_free(data);
             HNCRSP_TERMINATE("Texture failed to load.");
         }
-        imageSerializer.AddImage(data, width, height, texturePath);
+        imageSerializer.AddImage(data, m_channels, width, height, texturePath);
     }
     else
     {
-        data = deserialized_image->mutable_image_data()->data();
-        width = deserialized_image->width();
-        height = deserialized_image->height();
+        data = deserializedImage->mutable_image_data()->data();
+        m_channels = deserializedImage->channels();
+        width = deserializedImage->width();
+        height = deserializedImage->height();
     }
     
+    // ----- Create texture object -----
     if (data)
     {
-        GLenum format = GL_RGBA;
+        GLenum format;
+        if (m_channels == 4)
+            format = GL_RGBA;
+        else if (m_channels == 3)
+            format = GL_RGB;
+        else if (m_channels == 1)
+            format = GL_R;
+        else
+            HNCRSP_TERMINATE("Inappropriate number of channels for Texture2D.");
 
         // Generate texture | bind -> buffer -> mipmap -> config
         GLCall(
@@ -60,7 +70,7 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureTy
         GLCall(
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
 
-        if (!deserialized_image) stbi_image_free(data);
+        if (!deserializedImage) stbi_image_free(data);
     }
     else
     {
@@ -86,16 +96,9 @@ ETextureType Texture2D::GetTextureType() const
     return m_textureType;
 }
 
-void Texture2D::Bind() const
+int32_t Texture2D::GetChannels() const
 {
-    GLCall(glActiveTexture(GL_TEXTURE0 + GetTextureUnit()));
-    GLCall(glBindTexture(GL_TEXTURE_2D, m_textureID));
-}
-
-void Texture2D::Unbind() const
-{
-    GLCall(glActiveTexture(GL_TEXTURE0 + GetTextureUnit()));
-    GLCall(glBindTexture(GL_TEXTURE_2D, 0));
+    return m_channels;
 }
 
 Texture2D::~Texture2D()

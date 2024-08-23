@@ -10,29 +10,38 @@ Cubemap::Cubemap(const std::array<FileSystem::Path, 6>& faces)
     GLCall(glGenTextures(1, &m_cubemapTextureID));
     GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemapTextureID));
 
-    int width, height, nrChannels, desiredChannels = 3;
+    int width, height;
     for (unsigned int i = 0; i < faces.size(); i++)
     {
-        ImageSerializer imageSerializer(desiredChannels);
-        Serialized::Image* deserialized_image = imageSerializer.GetDeserializedObject(faces[i]);
+        ImageSerializer imageSerializer;
+        Serialized::Image* deserializedImage = imageSerializer.GetDeserializedObject(faces[i]);
         uint8_t* data;
 
-        if (!deserialized_image)
+        if (!deserializedImage)
         {
             stbi_set_flip_vertically_on_load(false);
-            data = stbi_load(faces[i].string().c_str(), &width, &height, &nrChannels, desiredChannels);
+            data = stbi_load(faces[i].string().c_str(), &width, &height, &m_channels, 0);
             stbi_set_flip_vertically_on_load(true);
 
-            imageSerializer.AddImage(data, width, height, faces[i]);
+            imageSerializer.AddImage(data, m_channels, width, height, faces[i]);
         }
         else
         {
-            data = deserialized_image->mutable_image_data()->data();
-            width = deserialized_image->width();
-            height = deserialized_image->height();
+            data = deserializedImage->mutable_image_data()->data();
+            m_channels = deserializedImage->channels();
+            width = deserializedImage->width();
+            height = deserializedImage->height();
         }
 
-        GLenum format = GL_RGB;
+        GLenum format;
+        if (m_channels == 4)
+            format = GL_RGBA;
+        else if (m_channels == 3)
+            format = GL_RGB;
+        else if (m_channels == 1)
+            format = GL_R;
+        else
+            HNCRSP_TERMINATE("Inappropriate number of channels for Texture2D.");
 
         if (data)
         {
@@ -62,7 +71,7 @@ Cubemap::Cubemap(const std::array<FileSystem::Path, 6>& faces)
             GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
             GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE));
 
-            if (!deserialized_image) stbi_image_free(data);
+            if (!deserializedImage) stbi_image_free(data);
         }
         else
         {

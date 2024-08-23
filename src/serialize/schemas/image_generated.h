@@ -23,14 +23,21 @@ struct Image FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef ImageBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_IMAGE_DATA = 4,
-    VT_WIDTH = 6,
-    VT_HEIGHT = 8
+    VT_CHANNELS = 6,
+    VT_WIDTH = 8,
+    VT_HEIGHT = 10
   };
   const ::flatbuffers::Vector<uint8_t> *image_data() const {
     return GetPointer<const ::flatbuffers::Vector<uint8_t> *>(VT_IMAGE_DATA);
   }
   ::flatbuffers::Vector<uint8_t> *mutable_image_data() {
     return GetPointer<::flatbuffers::Vector<uint8_t> *>(VT_IMAGE_DATA);
+  }
+  int32_t channels() const {
+    return GetField<int32_t>(VT_CHANNELS, 0);
+  }
+  bool mutate_channels(int32_t _channels = 0) {
+    return SetField<int32_t>(VT_CHANNELS, _channels, 0);
   }
   int32_t width() const {
     return GetField<int32_t>(VT_WIDTH, 0);
@@ -48,6 +55,7 @@ struct Image FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
     return VerifyTableStart(verifier) &&
            VerifyOffset(verifier, VT_IMAGE_DATA) &&
            verifier.VerifyVector(image_data()) &&
+           VerifyField<int32_t>(verifier, VT_CHANNELS, 4) &&
            VerifyField<int32_t>(verifier, VT_WIDTH, 4) &&
            VerifyField<int32_t>(verifier, VT_HEIGHT, 4) &&
            verifier.EndTable();
@@ -60,6 +68,9 @@ struct ImageBuilder {
   ::flatbuffers::uoffset_t start_;
   void add_image_data(::flatbuffers::Offset<::flatbuffers::Vector<uint8_t>> image_data) {
     fbb_.AddOffset(Image::VT_IMAGE_DATA, image_data);
+  }
+  void add_channels(int32_t channels) {
+    fbb_.AddElement<int32_t>(Image::VT_CHANNELS, channels, 0);
   }
   void add_width(int32_t width) {
     fbb_.AddElement<int32_t>(Image::VT_WIDTH, width, 0);
@@ -81,11 +92,13 @@ struct ImageBuilder {
 inline ::flatbuffers::Offset<Image> CreateImage(
     ::flatbuffers::FlatBufferBuilder &_fbb,
     ::flatbuffers::Offset<::flatbuffers::Vector<uint8_t>> image_data = 0,
+    int32_t channels = 0,
     int32_t width = 0,
     int32_t height = 0) {
   ImageBuilder builder_(_fbb);
   builder_.add_height(height);
   builder_.add_width(width);
+  builder_.add_channels(channels);
   builder_.add_image_data(image_data);
   return builder_.Finish();
 }
@@ -93,12 +106,14 @@ inline ::flatbuffers::Offset<Image> CreateImage(
 inline ::flatbuffers::Offset<Image> CreateImageDirect(
     ::flatbuffers::FlatBufferBuilder &_fbb,
     const std::vector<uint8_t> *image_data = nullptr,
+    int32_t channels = 0,
     int32_t width = 0,
     int32_t height = 0) {
   auto image_data__ = image_data ? _fbb.CreateVector<uint8_t>(*image_data) : 0;
   return Honeycrisp::Serialized::CreateImage(
       _fbb,
       image_data__,
+      channels,
       width,
       height);
 }

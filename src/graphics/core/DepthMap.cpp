@@ -74,9 +74,9 @@ void DepthMap::Unbind() const
     GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 }
 
-void DepthMap::BindDepthBuffer() const
+void DepthMap::BindDepthBuffer(const uint16_t texture_unit) const
 {
-    GLCall(glActiveTexture(GL_TEXTURE0 + DEPTH_BUFFER_TEXTURE_UNIT_INDEX));
+    GLCall(glActiveTexture(GL_TEXTURE0 + texture_unit));
     GLCall(glBindTexture(GL_TEXTURE_2D, m_depthTexture_ID));
 }
 

@@ -16,11 +16,12 @@ private:
     std::unique_ptr<char[]> m_serializedData;
 
 public:
-    ImageSerializer(int components_per_pixel);
+    ImageSerializer() = default;
     ~ImageSerializer() = default;
 
     void AddImage(
         const uint8_t* image_data,
+        int channels,
         int width,
         int height,
         const FileSystem::Path& path_to_image

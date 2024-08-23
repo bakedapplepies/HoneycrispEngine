@@ -3,20 +3,18 @@
 
 HNCRSP_NAMESPACE_START
 
-ImageSerializer::ImageSerializer(int components_per_pixel) :
-    m_componentsPerPixel(components_per_pixel)
-{}
-
 void ImageSerializer::AddImage(
     const uint8_t* image_data,
+    int channels,
     int width,
     int height,
     const FileSystem::Path& path_to_image
 ) {
-    auto serialized_image_data = m_builder.CreateVector(image_data, width * height * m_componentsPerPixel);
+    auto serialized_image_data = m_builder.CreateVector(image_data, width * height * channels);
     auto serialized_image = Serialized::CreateImage(
         m_builder,
         serialized_image_data,
+        channels,
         width,
         height
     );

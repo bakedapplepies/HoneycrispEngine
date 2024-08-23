@@ -61,6 +61,8 @@ namespace ECS
             System* system = i.second.system.get();
             std::swap(system->p_entityUIDs, i.second.entityListPerScene[current_scene]);  // store the current entity list away
             std::swap(system->p_entityUIDs, i.second.entityListPerScene[target_scene]);  // swap for new entity list
+
+            system->SceneChanged(target_scene);
         }
     }
 }  // namespace ECS
