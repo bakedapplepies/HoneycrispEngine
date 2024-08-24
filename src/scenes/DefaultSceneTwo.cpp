@@ -23,30 +23,30 @@ DefaultSceneTwo::DefaultSceneTwo()
     InitializeShaders();
 
     // TODO: Parse shaders
-    const int maxLength = 512;
-    char name[maxLength];
+    // const int maxLength = 512;
+    // char name[maxLength];
 
-    int uniformCount;
-    glGetProgramiv(phongShader->GetID(), GL_ACTIVE_UNIFORMS, &uniformCount);
-    for (int i = 0; i < uniformCount; i++)
-    {
-        GLint size;
-        GLenum type;
-        glGetActiveUniform(phongShader->GetID(), i, maxLength, NULL, &size, &type, name);
+    // int uniformCount;
+    // glGetProgramiv(phongShader->GetID(), GL_ACTIVE_UNIFORMS, &uniformCount);
+    // for (int i = 0; i < uniformCount; i++)
+    // {
+    //     GLint size;
+    //     GLenum type;
+    //     glGetActiveUniform(phongShader->GetID(), i, maxLength, NULL, &size, &type, name);
 
-        HNCRSP_LOG_INFO(fmt::format("Size: {}, Type: {}\nInfo: {}", size, type, name));
-    }
+    //     HNCRSP_LOG_INFO(fmt::format("Size: {}, Type: {}\nInfo: {}", size, type, name));
+    // }
 
-    int attribCount;
-    glGetProgramiv(phongShader->GetID(), GL_ACTIVE_ATTRIBUTES, &attribCount);
-    for (int i = 0; i < attribCount; i++)
-    {
-        GLint size;
-        GLenum type;
-        glGetActiveAttrib(phongShader->GetID(), i, maxLength, NULL, &size, &type, name);
+    // int attribCount;
+    // glGetProgramiv(phongShader->GetID(), GL_ACTIVE_ATTRIBUTES, &attribCount);
+    // for (int i = 0; i < attribCount; i++)
+    // {
+    //     GLint size;
+    //     GLenum type;
+    //     glGetActiveAttrib(phongShader->GetID(), i, maxLength, NULL, &size, &type, name);
 
-        HNCRSP_LOG_INFO(fmt::format("Size: {}, Type: {}\nInfo: {}", size, type, name));
-    }
+    //     HNCRSP_LOG_INFO(fmt::format("Size: {}, Type: {}\nInfo: {}", size, type, name));
+    // }
 
 
     cube = CreateStaticRenderObj<Cube>();

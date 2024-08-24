@@ -164,11 +164,33 @@ void Renderer::_RenderScenePass() const
             normalMap = material->GetNormalMap();
             specularMap = material->GetSpecularMap();
 
-            if (albedoMap) albedoMap->Bind();
-            if (roughnessMap) roughnessMap->Bind();
-            if (aoMap) aoMap->Bind();
-            if (normalMap) albedoMap->Bind();
-            if (specularMap) specularMap->Bind();
+            uint32_t whichShader = 0;
+            if (albedoMap)
+            {
+                albedoMap->Bind();
+                whichShader |= 0 << 0;
+            }
+            if (roughnessMap)
+            {
+                roughnessMap->Bind();
+                whichShader |= 0 << 1;
+            }
+            if (aoMap)
+            {
+                aoMap->Bind();
+                whichShader |= 0 << 2;
+            }
+            if (normalMap)
+            {
+                albedoMap->Bind();
+                whichShader |= 0 << 3;
+            }
+            if (specularMap)
+            {
+                specularMap->Bind();
+                whichShader |= 0 << 4;
+            }
+            shader->SetIntUnf("u_material.whichShader", whichShader);
 
             // TODO: Send uniform for index into texture array
             GLCall(

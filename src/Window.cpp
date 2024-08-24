@@ -94,7 +94,7 @@ void Window::Loop()
         );
         ImGui::NewLine();
 
-        static uint32_t current_postprocessor_index = 0xFFFFFFFF;
+        static uint32_t current_postprocessor_index = UINT32_MAX;
 
         if (ImGui::Button("Update postprocessing shader list"))
         {
@@ -184,7 +184,7 @@ void Window::Loop()
         uboMatrices.Bind();
         uboMatrices.Update(
             glm::value_ptr(camera.GetViewMatrix()),
-            glm::value_ptr(camera.GetProjectionMatrix(m_callbackData->windowWidth - 500.0f, m_callbackData->windowHeight)),
+            glm::value_ptr(camera.GetProjectionMatrix(m_callbackData->windowWidth * 0.8f, m_callbackData->windowHeight)),
             &u_time
         );
         

@@ -18,6 +18,7 @@ layout(std140, binding = 1) uniform GlobUniforms
 
 struct Material
 {
+    uint whichMaterial;
     sampler2D albedo;
     sampler2D roughness;
     sampler2D ao;
@@ -115,8 +116,8 @@ vec3 CalcPointLight(PointLight point_light, vec3 normal, vec3 dir_to_view, vec3 
 
     // specular
     vec3 reflectDir = reflect(-dirToLight, normal);
-    float specularCoef = pow(max(dot(normal, reflectDir), 0.0), 64);
-    vec3 specular = specular_frag * point_light.specular * specularCoef;
+    float specularCoef = pow(max(dot(normal, halfwayVec), 0.0), u_material.shininess);
+    vec3 specular = specular_frag * specularCoef;
     
     // attenuation
     float dist = length(fragToLight);
@@ -124,8 +125,7 @@ vec3 CalcPointLight(PointLight point_light, vec3 normal, vec3 dir_to_view, vec3 
     // This is still useful for fine-tuning attenuation
     // float attenuation = 1 / (point_light.constant + point_light.linear * dist + point_light.quadratic * dist * dist);
     float attenuation = 1.0 / (dist * dist + 0.01);
-    // return (ambient + diffuse + specular) * attenuation;
-    return (ambient + diffuse) * attenuation;
+    return (ambient + diffuse + specular) * attenuation;
 }
 
 vec3 CalcSpotLight(SpotLight spot_light, vec3 normal, vec3 dir_to_view, vec3 albedo_frag, vec3 specular_frag)
@@ -166,7 +166,11 @@ void main()
 
     // Textures
     vec4 albedoFrag = texture(u_material.albedo, fs_in.TexCoord);
-    vec4 specularFrag = texture(u_material.specular, fs_in.TexCoord);
+    vec4 specularFrag = vec4(0.0);
+    if ((u_material.whichMaterial & (1 << 4)) == 1 << 4)
+    {
+        vec4 specularFrag = texture(u_material.specular, fs_in.TexCoord);
+    }
 
     // Shadow space calculations
     float shadowFactor = ShadowFactor(fs_in.FragPosDepthSpace);

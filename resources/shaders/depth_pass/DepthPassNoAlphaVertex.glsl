@@ -5,7 +5,7 @@
 #define UV_LOCATION 2
 #define NORMAL_LOCATION 3
 
-layout (location = POSITION_LOCATION) in vec3 aPos;
+layout(location = POSITION_LOCATION) in vec3 aPos;
 layout(location = UV_LOCATION)       in vec2 aTexCoord;
 
 out VS_OUT {
@@ -23,5 +23,6 @@ uniform mat4 u_model;
 
 void main()
 {
+    vs_out.TexCoord = aTexCoord;
     gl_Position = u_projection * u_view * u_model * vec4(aPos, 1.0);
 }
