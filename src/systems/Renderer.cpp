@@ -10,7 +10,7 @@ HNCRSP_NAMESPACE_START
 Renderer::Renderer()
 {
     // Creating Screen Quad ----------
-    unsigned short vertex_attrib_bits = 
+    uint8_t vertex_attrib_bits = 
         VERTEX_ATTRIB_POSITION_BIT | VERTEX_ATTRIB_UV_BIT;
 
     std::vector<float> vertex_data = {
@@ -108,7 +108,7 @@ void Renderer::_RenderDepthPass() const
                     drawData.meta_data[i].indices_buffer_count, 
                     GL_UNSIGNED_INT,
                     reinterpret_cast<void*>(indexBufferOffset * sizeof(float)),
-                    drawData.meta_data[i].mesh_vertex_count
+                    drawData.meta_data[i].mesh_vertex_offset
                 )
             );
             indexBufferOffset += drawData.meta_data[i].indices_buffer_count;
@@ -168,29 +168,29 @@ void Renderer::_RenderScenePass() const
             if (albedoMap)
             {
                 albedoMap->Bind();
-                whichShader |= 0 << 0;
+                whichShader |= 1 << 0;
             }
             if (roughnessMap)
             {
                 roughnessMap->Bind();
-                whichShader |= 0 << 1;
+                whichShader |= 1 << 1;
             }
             if (aoMap)
             {
                 aoMap->Bind();
-                whichShader |= 0 << 2;
+                whichShader |= 1 << 2;
             }
             if (normalMap)
             {
                 albedoMap->Bind();
-                whichShader |= 0 << 3;
+                whichShader |= 1 << 3;
             }
             if (specularMap)
             {
                 specularMap->Bind();
-                whichShader |= 0 << 4;
+                whichShader |= 1 << 4;
             }
-            shader->SetIntUnf("u_material.whichShader", whichShader);
+            shader->SetUIntUnf("u_material.whichShader", whichShader);
 
             // TODO: Send uniform for index into texture array
             GLCall(
@@ -199,7 +199,7 @@ void Renderer::_RenderScenePass() const
                     drawData.meta_data[i].indices_buffer_count,
                     GL_UNSIGNED_INT,
                     reinterpret_cast<void*>(indexBufferOffset * sizeof(float)),
-                    drawData.meta_data[i].mesh_vertex_count
+                    drawData.meta_data[i].mesh_vertex_offset
                 )
             );
             indexBufferOffset += drawData.meta_data[i].indices_buffer_count;
@@ -264,14 +264,14 @@ void Renderer::_RenderTransparentObjectsPass() const
                 drawData.meta_data[obj.metaDataIndex].indices_buffer_count,
                 GL_UNSIGNED_INT,
                 reinterpret_cast<void*>(obj.indexBufferOffset * sizeof(float)),
-                drawData.meta_data[obj.metaDataIndex].mesh_vertex_count
+                drawData.meta_data[obj.metaDataIndex].mesh_vertex_offset
             )
         );
 
         if (albedoMap) albedoMap->Unbind();
         if (roughnessMap) roughnessMap->Unbind();
         if (aoMap) aoMap->Unbind();
-        if (normalMap) albedoMap->Unbind();
+        if (normalMap) normalMap->Unbind();
         if (specularMap) specularMap->Unbind();
     }
 }
@@ -333,7 +333,7 @@ void Renderer::AddEntityUID(ECS::EntityUID entity_UID)
     uint32_t indexBufferOffset = 0;
     for (uint32_t i = 0; i < drawData.meta_data.size(); i++)
     {
-        Material* material = drawData.materials[drawData.meta_data[i].material_index].get();
+        const Material* material = drawData.materials[drawData.meta_data[i].material_index].get();
         if (!material->IsOpaque())
         {
             m_transparentObjects[m_currentSceneIndex].emplace_back(entity_UID, i, indexBufferOffset);

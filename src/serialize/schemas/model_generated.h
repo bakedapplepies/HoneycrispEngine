@@ -26,26 +26,26 @@ struct ModelBuilder;
 
 FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) MeshMetaData FLATBUFFERS_FINAL_CLASS {
  private:
-  uint32_t mesh_vertex_count_;
+  uint32_t mesh_vertex_offset_;
   uint32_t indices_buffer_count_;
   uint32_t material_index_;
 
  public:
   MeshMetaData()
-      : mesh_vertex_count_(0),
+      : mesh_vertex_offset_(0),
         indices_buffer_count_(0),
         material_index_(0) {
   }
-  MeshMetaData(uint32_t _mesh_vertex_count, uint32_t _indices_buffer_count, uint32_t _material_index)
-      : mesh_vertex_count_(::flatbuffers::EndianScalar(_mesh_vertex_count)),
+  MeshMetaData(uint32_t _mesh_vertex_offset, uint32_t _indices_buffer_count, uint32_t _material_index)
+      : mesh_vertex_offset_(::flatbuffers::EndianScalar(_mesh_vertex_offset)),
         indices_buffer_count_(::flatbuffers::EndianScalar(_indices_buffer_count)),
         material_index_(::flatbuffers::EndianScalar(_material_index)) {
   }
-  uint32_t mesh_vertex_count() const {
-    return ::flatbuffers::EndianScalar(mesh_vertex_count_);
+  uint32_t mesh_vertex_offset() const {
+    return ::flatbuffers::EndianScalar(mesh_vertex_offset_);
   }
-  void mutate_mesh_vertex_count(uint32_t _mesh_vertex_count) {
-    ::flatbuffers::WriteScalar(&mesh_vertex_count_, _mesh_vertex_count);
+  void mutate_mesh_vertex_offset(uint32_t _mesh_vertex_offset) {
+    ::flatbuffers::WriteScalar(&mesh_vertex_offset_, _mesh_vertex_offset);
   }
   uint32_t indices_buffer_count() const {
     return ::flatbuffers::EndianScalar(indices_buffer_count_);

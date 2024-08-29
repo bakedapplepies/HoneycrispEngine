@@ -14,7 +14,7 @@ private:
     flatbuffers::FlatBufferBuilder m_builder;
     std::unique_ptr<Serialized::ModelBuilder> m_model_builder;
 
-    unsigned short m_vertex_attrib_bits;
+    uint8_t m_vertex_attrib_bits;
     flatbuffers::Offset< flatbuffers::Vector<float> > m_vertex_data;
     flatbuffers::Offset< flatbuffers::Vector<GLuint> > m_indices;
     flatbuffers::Offset< flatbuffers::Vector<const Serialized::MeshMetaData*> > m_meshes_meta_data;
@@ -30,7 +30,7 @@ public:
     ~ModelSerializer() = default;
 
     void AddModel(
-        unsigned short vertex_attrib_bits,
+        uint8_t vertex_attrib_bits,
         const float* vertex_data,
         size_t vertex_data_len,
         const GLuint* indices_data,

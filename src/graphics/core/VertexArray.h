@@ -14,12 +14,14 @@ private:
     GLuint m_VAO_ID = 0;
     VertexBuffer m_vertexBuffer;
     ElementBuffer m_elementBuffer;
+    uint8_t m_vertexAttribBits = 0;
 
     // mesh data
     std::vector<float> m_vertexData;
     std::vector<GLuint> m_indices;
     
-    void CreateVAO(const float* vboData, size_t vboSize, const GLuint* eboData, size_t eboSize, GLenum mode);
+private:
+    void _CreateVAO(const float* vboData, size_t vboSize, const GLuint* eboData, size_t eboSize, GLenum mode);
 
 public:
     VertexArray() = default;
@@ -31,7 +33,7 @@ public:
         const std::vector<glm::vec2>* uvs
     );
     VertexArray(
-        unsigned short vertex_attrib_bits,
+        uint8_t vertex_attrib_bits,
         const std::vector<float>& vertex_data,
         const std::vector<GLuint>& indices_data
     );
@@ -46,6 +48,9 @@ public:
     GLuint GetID() const;
     const float* GetData() const;
     size_t GetDataLen() const;
+    size_t GetIndicesLen() const;
+    uint32_t GetVertexAttribCount() const;
+    uint32_t GetVertexCount() const;
 
     void EnableVertexAttribPosition(bool on) const;
     void EnableVertexAttribColor(bool on) const;

@@ -20,13 +20,13 @@ struct DrawData
 
 struct MeshMetaData
 {
-    GLuint mesh_vertex_count;
+    GLuint mesh_vertex_offset;
     GLuint indices_buffer_count;
     uint32_t material_index;
 
     operator Serialized::MeshMetaData() const
     {
-        return Serialized::MeshMetaData(mesh_vertex_count, indices_buffer_count, material_index);
+        return Serialized::MeshMetaData(mesh_vertex_offset, indices_buffer_count, material_index);
     }
 };
 

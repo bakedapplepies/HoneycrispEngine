@@ -8,7 +8,7 @@ ModelSerializer::ModelSerializer()
 }
 
 void ModelSerializer::AddModel(
-    unsigned short vertex_attrib_bits,
+    uint8_t vertex_attrib_bits,
     const float* vertex_data,
     size_t vertex_data_len,
     const GLuint* indices_data,
@@ -25,7 +25,7 @@ void ModelSerializer::AddModel(
     for (unsigned int i = 0; i < mesh_meta_data_len; i++)
     {
         mesh_meta_data_vec.emplace_back(
-            mesh_meta_data[i].mesh_vertex_count,
+            mesh_meta_data[i].mesh_vertex_offset,
             mesh_meta_data[i].indices_buffer_count,
             mesh_meta_data[i].material_index
         );

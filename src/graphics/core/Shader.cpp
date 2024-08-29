@@ -170,7 +170,7 @@ GLuint Shader::GetID() const
     return m_shaderID;
 }
 
-GLint Shader::_GetUniformLocation(const std::string& name) const
+GLint Shader::_GetUniformLocation(const std::string_view name) const
 {
     // Use();
     // TODO: Supposedly a quick & dirty way, find a better way?
@@ -178,7 +178,7 @@ GLint Shader::_GetUniformLocation(const std::string& name) const
     {
         return m_uniformLocationCache[name];
     }
-    GLint location = glGetUniformLocation(m_shaderID, name.c_str());
+    GLint location = glGetUniformLocation(m_shaderID, name.data());
     if (location == -1) HNCRSP_LOG_INFO(name, "\t", m_shaderID);
     m_uniformLocationCache[name] = location;
     return location;

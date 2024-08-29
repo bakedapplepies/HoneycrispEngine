@@ -217,7 +217,8 @@ void Cube::virt_AddDrawDataToRenderer(ECS::EntityUID entityUID) const
 {
     DrawData drawData;
     drawData.VAO_id = m_VAO->GetID();
-    drawData.meta_data.emplace_back(0, m_numVertices);
+    drawData.meta_data.emplace_back(0, m_numVertices, 0);
+    // drawData.meta_data.emplace_back(m_VAO->GetVertexCount(), m_VAO->GetIndicesLen(), 0);
     drawData.materials.push_back(std::make_shared<Material>(g_ShaderManager.basicShader));
 
     drawData.materials[0]->SetAlbedoMap(g_Texture2DManager.mainTextureMap);

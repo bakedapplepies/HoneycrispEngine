@@ -80,18 +80,21 @@ VertexArray::VertexArray(
         m_vertexData.push_back(verticesRef[vertIndex].x);
         m_vertexData.push_back(verticesRef[vertIndex].y);
         m_vertexData.push_back(verticesRef[vertIndex].z);
+        m_vertexAttribBits |= VERTEX_ATTRIB_POSITION_BIT;
 
         if (colors)
         {
             m_vertexData.push_back(colorsRef[vertIndex].x);
             m_vertexData.push_back(colorsRef[vertIndex].y);
             m_vertexData.push_back(colorsRef[vertIndex].z);
+            m_vertexAttribBits |= VERTEX_ATTRIB_COLOR_BIT;
         }
 
         if (uvs)
         {
             m_vertexData.push_back(uvsRef[vertIndex].x);
             m_vertexData.push_back(uvsRef[vertIndex].y);
+            m_vertexAttribBits |= VERTEX_ATTRIB_UV_BIT;
         }
 
         if (normals)
@@ -99,10 +102,11 @@ VertexArray::VertexArray(
             m_vertexData.push_back(normalsRef[vertIndex].x);
             m_vertexData.push_back(normalsRef[vertIndex].y);
             m_vertexData.push_back(normalsRef[vertIndex].z);
+            m_vertexAttribBits |= VERTEX_ATTRIB_NORMAL_BIT;
         }
     }
 
-    CreateVAO(
+    _CreateVAO(
         m_vertexData.data(),
         m_vertexData.size() * sizeof(float),
         indices->data(),
@@ -179,14 +183,15 @@ VertexArray::VertexArray(
 }
 
 VertexArray::VertexArray(
-    unsigned short vertex_attrib_bits,
+    uint8_t vertex_attrib_bits,
     const std::vector<float>& vertex_data,
     const std::vector<GLuint>& indices_data
 ) {
     m_vertexData = std::vector<float>(vertex_data.begin(), vertex_data.end());
     m_indices = std::vector<GLuint>(indices_data.begin(), indices_data.end());
+    m_vertexAttribBits = vertex_attrib_bits;
 
-    CreateVAO(
+    _CreateVAO(
         m_vertexData.data(),
         m_vertexData.size() * sizeof(float),
         m_indices.data(),
@@ -350,7 +355,7 @@ VertexArray::~VertexArray()
     GLCall(glDeleteVertexArrays(1, &m_VAO_ID));
 }
 
-void VertexArray::CreateVAO(const float* vboData, size_t vboSize, const GLuint* eboData, size_t eboSize, GLenum mode)
+void VertexArray::_CreateVAO(const float* vboData, size_t vboSize, const GLuint* eboData, size_t eboSize, GLenum mode)
 {
     if (m_VAO_ID != 0)
     {
@@ -385,6 +390,24 @@ const float* VertexArray::GetData() const
 size_t VertexArray::GetDataLen() const
 {
     return m_vertexData.size();
+}
+
+size_t VertexArray::GetIndicesLen() const
+{
+    return m_indices.size();
+}
+
+uint32_t VertexArray::GetVertexAttribCount() const
+{
+    return static_cast<uint32_t>((m_vertexAttribBits & VERTEX_ATTRIB_POSITION_INDEX) == VERTEX_ATTRIB_POSITION_INDEX)
+         + static_cast<uint32_t>((m_vertexAttribBits & VERTEX_ATTRIB_COLOR_INDEX) == VERTEX_ATTRIB_COLOR_INDEX)
+         + static_cast<uint32_t>((m_vertexAttribBits & VERTEX_ATTRIB_UV_INDEX) == VERTEX_ATTRIB_UV_INDEX)
+         + static_cast<uint32_t>((m_vertexAttribBits & VERTEX_ATTRIB_NORMAL_INDEX) == VERTEX_ATTRIB_NORMAL_INDEX);
+}
+
+uint32_t VertexArray::GetVertexCount() const
+{
+    return GetDataLen() / GetVertexAttribCount();
 }
 
 HNCRSP_NAMESPACE_END

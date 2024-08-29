@@ -39,7 +39,7 @@ void Window::Loop()
     uint32_t sceneOne = g_SceneManager.CreateScene<DefaultScene>();
     uint32_t sceneTwo = g_SceneManager.CreateScene<DefaultSceneTwo>();
     uint32_t spaceScene = g_SceneManager.CreateScene<SpaceScene>();
-    g_SceneManager.SetActiveScene(sceneOne);
+    g_SceneManager.SetActiveScene(sceneTwo);
 
     // ----- Systems -----
     Renderer* renderer = g_ECSManager.GetSystem<Renderer>();

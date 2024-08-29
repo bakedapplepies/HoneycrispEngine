@@ -1,8 +1,6 @@
 #version 460 core
 out vec4 FragColor;
 
-
-
 in VS_OUT {
     vec3 VertColor;
     vec2 TexCoord;

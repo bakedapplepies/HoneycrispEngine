@@ -10,11 +10,11 @@ class Shader
 {
 private:
     GLuint m_shaderID;
-    mutable std::unordered_map<std::string, GLint> m_uniformLocationCache;
+    mutable std::unordered_map<std::string_view, GLint> m_uniformLocationCache;
 
 private:
     std::string _ParseShader(std::string_view path);
-    GLint _GetUniformLocation(const std::string& name) const;
+    GLint _GetUniformLocation(const std::string_view name) const;
 
 public:
     Shader() = default;
@@ -36,17 +36,22 @@ public:
         GLCall(glUseProgram(m_shaderID));
     }
 
-    inline void SetIntUnf(const std::string& name, int value) const
+    inline void SetIntUnf(std::string_view name, int value) const
     {
         GLCall(glProgramUniform1i(m_shaderID, _GetUniformLocation(name), value));
     }
 
-    inline void SetFloatUnf(const std::string& name, float value) const
+    inline void SetUIntUnf(std::string_view name, uint32_t value) const
+    {
+        GLCall(glProgramUniform1ui(m_shaderID, _GetUniformLocation(name), value));
+    }
+
+    inline void SetFloatUnf(std::string_view name, float value) const
     {
         GLCall(glProgramUniform1f(m_shaderID, _GetUniformLocation(name), value));
     }
 
-    inline void SetMat4Unf(const std::string& name, const glm::mat4& matrix) const
+    inline void SetMat4Unf(std::string_view name, const glm::mat4& matrix) const
     {
         GLCall(glProgramUniformMatrix4fv(
             m_shaderID,
@@ -57,7 +62,7 @@ public:
         ));
     }
 
-    inline void SetMat3Unf(const std::string& name, const glm::mat3& matrix) const
+    inline void SetMat3Unf(std::string_view name, const glm::mat3& matrix) const
     {
         GLCall(glProgramUniformMatrix3fv(
             m_shaderID,
@@ -68,7 +73,7 @@ public:
         ));
     }
 
-    inline void SetVec2Unf(const std::string& name, const glm::vec2& vector) const
+    inline void SetVec2Unf(std::string_view name, const glm::vec2& vector) const
     {
         GLCall(glProgramUniform2fv(
             m_shaderID,
@@ -78,7 +83,7 @@ public:
         ));
     }
 
-    inline void SetUVec2Unf(const std::string& name, const glm::uvec2& vector) const
+    inline void SetUVec2Unf(std::string_view name, const glm::uvec2& vector) const
     {
         GLCall(glProgramUniform2uiv(
             m_shaderID,
@@ -88,7 +93,7 @@ public:
         ));
     }
 
-    inline void SetVec3Unf(const std::string& name, const glm::vec3& vector) const
+    inline void SetVec3Unf(std::string_view name, const glm::vec3& vector) const
     {
         GLCall(glProgramUniform3fv(
             m_shaderID,

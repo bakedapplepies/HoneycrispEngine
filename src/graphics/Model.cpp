@@ -154,7 +154,7 @@ void Model::processMesh(
     else
     {
         m_meshesMetaData.emplace_back(
-            m_meshesMetaData.back().mesh_vertex_count + num_vertices,
+            m_meshesMetaData.back().mesh_vertex_offset + num_vertices,
             mesh->mNumFaces * 3,
             mesh->mMaterialIndex - static_cast<uint32_t>(s_isFirstMatNull)
         );
@@ -295,7 +295,7 @@ void Model::loadDeserializedModel(const Serialized::Model* deserialized_model)
     for (unsigned int i = 0; i < deserialized_model->meshes()->size(); i++)
     {
         m_meshesMetaData.emplace_back(
-            deserialized_model->meshes()->Get(i)->mesh_vertex_count(),
+            deserialized_model->meshes()->Get(i)->mesh_vertex_offset(),
             deserialized_model->meshes()->Get(i)->indices_buffer_count(),
             deserialized_model->meshes()->Get(i)->material_index()
         );

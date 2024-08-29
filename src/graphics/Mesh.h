@@ -15,7 +15,6 @@ class Mesh : public Renderable
 private:
     // still has to be here to manange gpu memory
     VertexArray m_VAO;
-    uint32_t m_numVertices;
 
     // scene data
     // glm::vec3 m_relativeOrigin = glm::vec3(0.0f);

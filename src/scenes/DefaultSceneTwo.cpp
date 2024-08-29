@@ -127,6 +127,8 @@ DefaultSceneTwo::DefaultSceneTwo()
     meshMaterial->SetAlbedoMap(g_Texture2DManager.mainTextureMap);
     meshMaterial->SetSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
     meshMaterial->SetShininess(128.0f);
+    HNCRSP_LOG_INFO(mesh->entityUID);
+    HNCRSP_LOG_INFO(meshMaterial->IsOpaque());
 
     backpackModel = CreateStaticRenderObj<Model>(
         FileSystem::Path("resources/models/backpack/backpack.obj"),

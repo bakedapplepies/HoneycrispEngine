@@ -33,3 +33,5 @@ use non-member functions?
 - TODO: Rename interfaces with the prefix I-
 
 - TODO: Grayscale textures are stored in texture arrays as GL_RGBA format - very wasteful
+
+- TODO: Z-prepass
