@@ -123,12 +123,15 @@ DefaultSceneTwo::DefaultSceneTwo()
     );
     mesh->setTransform(Transform(glm::vec3(-8.0f, -6.0f, -20.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
     mesh->setShader(phongWTintShader);
-    std::shared_ptr<Material> meshMaterial = g_ECSManager.GetComponent<DrawData>(mesh->entityUID).materials[0];
+    DrawData meshDrawDataCopy = g_ECSManager.GetComponent<DrawData>(mesh->entityUID);
+    std::shared_ptr<Material> meshMaterial = meshDrawDataCopy.materials[0];
     meshMaterial->SetAlbedoMap(g_Texture2DManager.mainTextureMap);
     meshMaterial->SetSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
     meshMaterial->SetShininess(128.0f);
-    HNCRSP_LOG_INFO(mesh->entityUID);
-    HNCRSP_LOG_INFO(meshMaterial->IsOpaque());
+
+    // TODO: Make it easier for when adding new textures to material, the Renderer would update itself
+    g_ECSManager.RemoveComponent<DrawData>(mesh->entityUID);
+    g_ECSManager.AddComponent<DrawData>(mesh->entityUID, meshDrawDataCopy);
 
     backpackModel = CreateStaticRenderObj<Model>(
         FileSystem::Path("resources/models/backpack/backpack.obj"),

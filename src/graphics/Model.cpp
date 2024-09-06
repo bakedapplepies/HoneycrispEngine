@@ -347,4 +347,24 @@ void Model::virt_AddDrawDataToRenderer(ECS::EntityUID entityUID) const
     g_ECSManager.AddComponent<DrawData>(entityUID, meshData);
 }
 
+Model::Model(Model&& other) noexcept
+{
+    m_VAO = std::move(other.m_VAO);
+    m_meshesMetaData = std::move(other.m_meshesMetaData);
+    m_materials = std::move(other.m_materials);
+    m_shader = other.m_shader;
+    other.m_shader = nullptr;
+}
+
+Model& Model::operator=(Model&& other) noexcept
+{
+    m_VAO = std::move(other.m_VAO);
+    m_meshesMetaData = std::move(other.m_meshesMetaData);
+    m_materials = std::move(other.m_materials);
+    m_shader = other.m_shader;
+    other.m_shader = nullptr;
+
+    return *this;
+}
+
 HNCRSP_NAMESPACE_END

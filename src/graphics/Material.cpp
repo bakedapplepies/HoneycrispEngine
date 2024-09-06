@@ -1,5 +1,6 @@
 #include "Material.h"
 #include "src/managers/Texture2DManager.h"
+#include "src/ecs/ECSManager.h"
 
 
 HNCRSP_NAMESPACE_START

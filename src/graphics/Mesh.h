@@ -13,11 +13,7 @@ HNCRSP_NAMESPACE_START
 class Mesh : public Renderable
 {
 private:
-    // still has to be here to manange gpu memory
     VertexArray m_VAO;
-
-    // scene data
-    // glm::vec3 m_relativeOrigin = glm::vec3(0.0f);
 
 public:
     Mesh(

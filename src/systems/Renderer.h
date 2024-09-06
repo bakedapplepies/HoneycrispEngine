@@ -3,6 +3,7 @@
 #include "src/pch/hncrsp_pch.h"
 #include "src/ecs/System.h"
 #include "src/components/Transform.h"
+#include "src/graphics/Material.h"
 
 #include "src/managers/RenderContext.h"
 #include "src/graphics/core/Shader.h"
@@ -28,7 +29,6 @@ private:
     std::vector< std::vector<GLuint> > m_shaderIDs_Order;  // only used when adding new entities
     mutable std::vector< std::vector<DelayedTransparentObjectDrawData> > m_transparentObjects;
     std::unique_ptr<VertexArray> m_screenQuad;
-    // uint32_t m_offsetToTransparentObjects;
 
     std::unique_ptr<PostProcessingQueue> m_postprocessingQueue;
     std::unique_ptr<DepthMap> m_depthMap;
@@ -46,6 +46,7 @@ public:
     void SwitchCubemap(const Cubemap* cubemap);
 
     GLuint GetColorBufferTextureID() const;
+    void AddTransparentObject(ECS::EntityUID entity_UID);
 
 private:
     void AddEntityUID(ECS::EntityUID entity_UID) override;

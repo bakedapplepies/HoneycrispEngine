@@ -328,6 +328,18 @@ void Renderer::AddEntityUID(ECS::EntityUID entity_UID)
         m_transparentObjects.push_back({});
     }
 
+    AddTransparentObject(entity_UID);
+
+    // Binary-search + insert to optimize shader use
+    GLuint shaderID = 
+        g_ECSManager.GetComponent<DrawData>(entity_UID).materials[0]->GetShader()->GetID();
+    _BinaryInsert_ShaderComparator(
+        p_entityUIDs, m_shaderIDs_Order[m_currentSceneIndex], entity_UID, shaderID
+    );
+}
+
+void Renderer::AddTransparentObject(ECS::EntityUID entity_UID)
+{
     // Add transparent objects to m_transparentObjects
     DrawData& drawData = g_ECSManager.GetComponent<DrawData>(entity_UID);
     uint32_t indexBufferOffset = 0;
@@ -340,13 +352,6 @@ void Renderer::AddEntityUID(ECS::EntityUID entity_UID)
         }
         indexBufferOffset += drawData.meta_data[i].indices_buffer_count;
     }
-
-    // Binary-search + insert to optimize shader use
-    GLuint shaderID = 
-        g_ECSManager.GetComponent<DrawData>(entity_UID).materials[0]->GetShader()->GetID();
-    _BinaryInsert_ShaderComparator(
-        p_entityUIDs, m_shaderIDs_Order[m_currentSceneIndex], entity_UID, shaderID
-    );
 }
 
 void Renderer::SceneChanged(uint32_t target_scene)
@@ -376,6 +381,7 @@ void Renderer::_BinaryInsert_ShaderComparator(
         size_t pos = static_cast<size_t>(comparator > shader_list[0]);
         vec.insert(vec.begin() + pos, value);
         shader_list.insert(shader_list.begin() + pos, comparator);
+        return;
     }
 
     size_t left = 0, right = vec.size() - 1;

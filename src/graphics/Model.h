@@ -20,7 +20,10 @@ private:
 
 public:
     Model(const FileSystem::Path& path, const Shader* shader, bool flip_uv);
-    Model(Model&& other) = default;  // TODO: Proper constructors
+    Model(const Model&) = delete;
+    Model(Model&& other) noexcept;  // TODO: Proper constructors
+    Model& operator=(const Model&) = delete;
+    Model& operator=(Model&& other) noexcept;
     void virt_AddDrawDataToRenderer(ECS::EntityUID entityUID) const override final;
 
 private:  // building model

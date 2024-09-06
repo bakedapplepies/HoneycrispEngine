@@ -178,7 +178,7 @@ void Cubemap::Draw() const
     if (vao_id != m_VAO->GetID())
     {
         GLCall(glActiveTexture(GL_TEXTURE0 + CUBEMAP_TEXTURE_UNIT_INDEX));
-        GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemapTextureID));  // TODO: don't rebind every frame
+        GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemapTextureID));
         g_ShaderManager.cubemapShader->SetIntUnf("u_cubemap", CUBEMAP_TEXTURE_UNIT_INDEX);
 
         vao_id = m_VAO->GetID();

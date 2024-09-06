@@ -1,4 +1,5 @@
 #include "Texture2D.h"
+#include "src/utils/Timer.h"
 #include "src/serialize/ImageSerializer.h"
 
 

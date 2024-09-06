@@ -165,7 +165,7 @@ void main()
     vec3 dirToView = normalize(fragToView);
 
     // Textures
-    vec4 albedoFrag = texture(u_material.albedo, fs_in.TexCoord);
+    vec4 albedoFrag = textureLod(u_material.albedo, fs_in.TexCoord, 0.0);
     vec4 specularFrag = vec4(0.0);
     if ((u_material.whichMaterial & (1 << 4)) == 1 << 4)
     {
@@ -186,7 +186,7 @@ void main()
         result += CalcSpotLight(u_spot_light, fs_in.Normal, dirToView, vec3(albedoFrag), vec3(specularFrag));
 
     // No clamping since using HDR framebuffer
-    result = clamp(result, vec3(0.0), vec3(1.0));
+    // result = clamp(result, vec3(0.0), vec3(1.0));
 
     // result *= shadowFactor;
 
