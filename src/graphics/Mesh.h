@@ -24,7 +24,7 @@ public:
         std::vector<glm::vec2>* uvs
     );
     Mesh(
-        unsigned char vertex_attrib_bits,
+        uint8_t vertex_attrib_bits,
         const std::vector<float>& vertex_data,
         const std::vector<GLuint>& indices_data
     );

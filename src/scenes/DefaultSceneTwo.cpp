@@ -7,15 +7,15 @@ using namespace Honeycrisp;
 
 DefaultSceneTwo::DefaultSceneTwo()
 {
-    const Camera& camera = g_SceneManager.GetCallbackData()->camera;
+    const Camera* camera = g_ECSManager.GetSystem<Renderer>()->GetCamera();
     pointLight = CreateLight<PointLight>(
         glm::vec3(0.0f, 0.0f, 0.0f),  // pos
         glm::vec3(1.0f, 1.0f, 1.0f),  // color
         0.3f, 0.5f, 1.0f              // ambient - diffuse - specular
     );
     spotLight = CreateLight<SpotLight>(
-        camera.position,
-        camera.direction,
+        camera->position,
+        camera->direction,
         glm::vec3(1.0f, 1.0f, 1.0f),
         0.3f, 0.5f, 1.0f
     );
@@ -51,8 +51,8 @@ DefaultSceneTwo::DefaultSceneTwo()
 
     cube = CreateStaticRenderObj<Cube>();
     cubeTransform = &g_ECSManager.GetComponent<Transform>(cube->entityUID);
-    cube->setShader(phongWTintShader);
-    cube->setTransform(Transform(glm::vec3(1.0f, 10.0f ,5.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+    cube->SetShader(phongWTintShader);
+    cube->SetTransform(Transform(glm::vec3(1.0f, 10.0f ,5.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
 
     TextureAtlas& grassAtlas = g_Texture2DManager.GetAtlas(3, 1);
     QuadUV& grassUV = grassAtlas.GetQuadUVs(0, 0);
@@ -121,8 +121,8 @@ DefaultSceneTwo::DefaultSceneTwo()
         &colors,
         &uvs
     );
-    mesh->setTransform(Transform(glm::vec3(-8.0f, -6.0f, -20.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
-    mesh->setShader(phongWTintShader);
+    mesh->SetTransform(Transform(glm::vec3(-8.0f, -6.0f, -20.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+    mesh->SetShader(phongWTintShader);
     DrawData meshDrawDataCopy = g_ECSManager.GetComponent<DrawData>(mesh->entityUID);
     std::shared_ptr<Material> meshMaterial = meshDrawDataCopy.materials[0];
     meshMaterial->SetAlbedoMap(g_Texture2DManager.mainTextureMap);
@@ -138,13 +138,13 @@ DefaultSceneTwo::DefaultSceneTwo()
         phongShader,
         true  // flip uv
     );
-    backpackModel->setTransform(Transform(glm::vec3(2.0f, 2.0f, -18.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(3.0f)));
+    backpackModel->SetTransform(Transform(glm::vec3(2.0f, 2.0f, -18.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(3.0f)));
     // Material* backpackMaterial = backpackModel->getMaterial();
     // backpackMaterial->setShininess(64.0f);
 
     // Author: Eydeet (https://skfb.ly/ouB6N)
     appleModel = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/apple/source/apple.fbx"), phongShader, false);
-    appleModel->setTransform(Transform(
+    appleModel->SetTransform(Transform(
         glm::vec3(10.0f, 2.0f, 17.0f),
         glm::vec3(0.0f, 0.0f, 0.0f),
         glm::vec3(0.3f)
@@ -153,7 +153,7 @@ DefaultSceneTwo::DefaultSceneTwo()
     // appleMaterial->setShininess(32);
 
     // appleModelNormal = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/apple/source/apple.fbx"), normalShader, false);
-    // appleModelNormal->setTransform(Transform(glm::vec3(10.0f, 2.0f, 17.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.3f)));
+    // appleModelNormal->SetTransform(Transform(glm::vec3(10.0f, 2.0f, 17.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.3f)));
     // appleModelNormal->getMaterial()->setShininess(32);
 
     sponza = CreateStaticRenderObj<Model>(

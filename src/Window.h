@@ -13,6 +13,7 @@ class Window
 private:
     GLFWwindow* m_glfwWindow = nullptr;
     CallbackData* m_callbackData = nullptr;
+    Camera m_camera;
 
     glm::mat4 projectionMatrix;
 

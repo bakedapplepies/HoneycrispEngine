@@ -24,7 +24,7 @@ Renderer::Renderer()
         0, 1, 3,
         1, 2, 3
     };
-    m_screenQuad = std::make_unique<VertexArray>(
+    m_screenQuad = VertexArray(
         vertex_attrib_bits,
         vertex_data,
         indices
@@ -34,7 +34,7 @@ Renderer::Renderer()
     m_postprocessingQueue = std::make_unique<PostProcessingQueue>(
         m_callbackData->windowWidth,
         m_callbackData->windowHeight,
-        m_screenQuad.get()
+        const_cast<const VertexArray*>(&m_screenQuad)
     );
 
     g_ShaderManager.SetPostProcessingShader(
@@ -281,7 +281,7 @@ void Renderer::_SortTransparentObjects() const
     ZoneScopedN("Sort Transparent");
     
     // Utilities
-    static glm::vec3& cameraPos = g_SceneManager.GetMutableCallbackData()->camera.position;
+    static const glm::vec3& cameraPos = m_camera->position;
     static std::function<bool(const DelayedTransparentObjectDrawData&, const DelayedTransparentObjectDrawData&)> comp =
         [](const DelayedTransparentObjectDrawData& obj1, const DelayedTransparentObjectDrawData& obj2) {
             glm::vec3& obj1Position = g_ECSManager.GetComponent<Transform>(obj1.entityUID).position;
@@ -296,22 +296,46 @@ void Renderer::_SortTransparentObjects() const
 // TODO: quaternions
 glm::mat4 Renderer::_GetModelMatrix(Transform& transform) const 
 {
+    static const Camera* camera = g_ECSManager.GetSystem<Renderer>()->GetCamera();
+
     glm::mat4 modelMatrix = glm::mat4(1.0f);
 
     modelMatrix = glm::translate(modelMatrix, transform.position);
     
     glm::quat quaternion = glm::quat(transform.eulerAngles);
     glm::mat4 rotationMatrix = glm::toMat4(quaternion);
-    // glm::rotate()
-    modelMatrix *= rotationMatrix;
-    // modelMatrix *= quaternion;
+    if (transform.lookAtCamera)
+    {
+        glm::vec3 vecToCam = glm::normalize(camera->position - transform.position);
+        glm::quat rota = glm::quatLookAtLH(vecToCam, glm::vec3(0.0f, 1.0f, 0.0f));
+        modelMatrix *= glm::mat4_cast(rota);
+    }
+    else
+    {
+        modelMatrix *= rotationMatrix;
+    }
 
     modelMatrix = glm::scale(modelMatrix, transform.scale);
 
     return modelMatrix;
 }
 
-void Renderer::SwitchCubemap(const Cubemap* cubemap)
+void Renderer::SetCamera(Camera* camera)
+{
+    m_camera = camera;
+}
+
+const Camera* Renderer::GetCamera() const
+{
+    return m_camera;
+}
+
+Camera* Renderer::GetCameraMutable()
+{
+    return m_camera;
+}
+
+void Renderer::SetCubemap(const Cubemap* cubemap)
 {
     m_currentCubemap = cubemap;
 }

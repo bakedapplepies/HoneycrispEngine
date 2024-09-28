@@ -42,7 +42,7 @@ public:
     }
 
 private:
-    inline const char* _GetPostfix()
+    inline constexpr const char* _GetPostfix()
     {
         if constexpr(std::is_same_v<T, std::chrono::nanoseconds>)
         {

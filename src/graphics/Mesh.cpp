@@ -22,7 +22,7 @@ Mesh::Mesh(
 ) {}
 
 Mesh::Mesh(
-    unsigned char vertex_attrib_bits,
+    uint8_t vertex_attrib_bits,
     const std::vector<float>& vertex_data,
     const std::vector<GLuint>& indices_data
 ) : m_VAO(vertex_attrib_bits, vertex_data, indices_data)
@@ -31,13 +31,11 @@ Mesh::Mesh(
 Mesh::Mesh(Mesh&& other) noexcept
 {
     m_VAO = std::move(other.m_VAO);
-    // // m_relativeOrigin = std::move(other.m_relativeOrigin);
 }
 
 Mesh& Mesh::operator=(Mesh&& other) noexcept
 {
     m_VAO = std::move(other.m_VAO);
-    // m_relativeOrigin = std::move(other.m_relativeOrigin);
 
     return *this;
 }

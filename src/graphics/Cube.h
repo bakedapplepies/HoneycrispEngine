@@ -11,8 +11,7 @@ HNCRSP_NAMESPACE_START
 class Cube : public Renderable
 {
 private:
-    GLuint m_numVertices;
-    std::unique_ptr<VertexArray> m_VAO;
+    VertexArray m_VAO;
 
 public:
     Cube();

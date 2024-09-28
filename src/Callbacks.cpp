@@ -103,6 +103,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void mouse_callback(GLFWwindow* window, double xpos_double, double ypos_double)
 {
     static CallbackData* callbackData = static_cast<CallbackData*>(glfwGetWindowUserPointer(window));
+    static Camera* camera = g_ECSManager.GetSystem<Renderer>()->GetCameraMutable();
     
     if (!callbackData->showMouse)
     {
@@ -113,7 +114,7 @@ void mouse_callback(GLFWwindow* window, double xpos_double, double ypos_double)
 
         float& yaw = callbackData->yaw;
         float& pitch = callbackData->pitch;
-        glm::vec3& direction = callbackData->camera.direction;
+        glm::vec3& direction = camera->direction;
 
         if (callbackData->firstMouse)
         {

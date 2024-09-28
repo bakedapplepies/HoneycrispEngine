@@ -13,25 +13,25 @@ void SpotLight::ConfigureShader(const Shader* shader) const
 {
     shader->SetFloatUnf("u_spot_light.cutOff", cutOff);
     shader->SetFloatUnf("u_spot_light.outerCutOff", outerCutOff);
-    shader->SetVec3Unf("u_spot_light.ambient", getAmbient());
-    shader->SetVec3Unf("u_spot_light.diffuse", getDiffuse());
-    shader->SetVec3Unf("u_spot_light.specular", getSpecular());
+    shader->SetVec3Unf("u_spot_light.ambient", GetAmbient());
+    shader->SetVec3Unf("u_spot_light.diffuse", GetDiffuse());
+    shader->SetVec3Unf("u_spot_light.specular", GetSpecular());
     shader->SetFloatUnf("u_spot_light.constant", attenuation_constant);
     shader->SetFloatUnf("u_spot_light.linear", attenuation_linear);
     shader->SetFloatUnf("u_spot_light.quadratic", attenuation_quadratic);
 }
 
-glm::vec3 SpotLight::getAmbient() const
+glm::vec3 SpotLight::GetAmbient() const
 {
     return ambient * colorEmit;
 }
 
-glm::vec3 SpotLight::getDiffuse() const
+glm::vec3 SpotLight::GetDiffuse() const
 {
     return diffuse * colorEmit;
 }
 
-glm::vec3 SpotLight::getSpecular() const
+glm::vec3 SpotLight::GetSpecular() const
 {
     return specular * colorEmit;
 }

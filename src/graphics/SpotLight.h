@@ -32,9 +32,9 @@ public:
 
     void ConfigureShader(const Shader* shader) const override final;
 
-    glm::vec3 getAmbient() const;
-    glm::vec3 getDiffuse() const;
-    glm::vec3 getSpecular() const;
+    glm::vec3 GetAmbient() const;
+    glm::vec3 GetDiffuse() const;
+    glm::vec3 GetSpecular() const;
 };
 
 HNCRSP_NAMESPACE_END

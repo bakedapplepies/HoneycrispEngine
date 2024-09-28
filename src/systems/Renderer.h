@@ -22,13 +22,14 @@ struct DrawElementsIndirectCommand;  // end of file
 class Renderer : public ECS::System
 {
 private:
-    const CallbackData* m_callbackData;
+    const CallbackData* m_callbackData = nullptr;
+    Camera* m_camera = nullptr;
     const Cubemap* m_currentCubemap = nullptr;
     uint32_t m_currentSceneIndex;
 
     std::vector< std::vector<GLuint> > m_shaderIDs_Order;  // only used when adding new entities
     mutable std::vector< std::vector<DelayedTransparentObjectDrawData> > m_transparentObjects;
-    std::unique_ptr<VertexArray> m_screenQuad;
+    VertexArray m_screenQuad;
 
     std::unique_ptr<PostProcessingQueue> m_postprocessingQueue;
     std::unique_ptr<DepthMap> m_depthMap;
@@ -43,7 +44,10 @@ public:
     ~Renderer() = default;
 
     void Render() const;
-    void SwitchCubemap(const Cubemap* cubemap);
+    void SetCubemap(const Cubemap* cubemap);
+    void SetCamera(Camera* camera);
+    const Camera* GetCamera() const;
+    Camera* GetCameraMutable();
 
     GLuint GetColorBufferTextureID() const;
     void AddTransparentObject(ECS::EntityUID entity_UID);

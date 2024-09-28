@@ -8,23 +8,26 @@ using namespace Honeycrisp;
 
 DefaultScene::DefaultScene()
 {
-    shader = CreateShader(
+    m_shader = CreateShader(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
         FileSystem::Path("resources/shaders/BlinnPhongTintFragment.glsl")
     );
-    adjustableColorShader = CreateShader(
+    m_adjustableColorShader = CreateShader(
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
         FileSystem::Path("resources/shaders/AdjustableColorFragment.glsl")
     );
-    pointLight = CreateLight<PointLight>(
+    m_pointLight = CreateLight<PointLight>(
         glm::vec3(10.0f, 2.0f, 10.0f),  // pos
         glm::vec3(1.0f, 1.0f, 1.0f),  // color
         0.1f, 0.5f, 1.0f              // ambient - diffuse - specular
     );
 
-    cube = CreateStaticRenderObj<Cube>();
-    cube->setShader(shader);
-    cube->setTransform(Transform(glm::vec3(-1.0f, -3.0f, -1.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+    m_cube = CreateStaticRenderObj<Cube>();
+    m_cube->SetShader(m_shader);
+    m_cube->SetTransform(Transform(glm::vec3(-1.0f, -3.0f, -1.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+
+    m_billboard = CreateStaticRenderObj<Billboard>(3.0f, 1.0f, g_Texture2DManager.mainTextureMap);
+    m_billboard->SetPosition(glm::vec3(0.0f, 4.0f, 3.0f));
 
     std::vector<glm::vec3> vertices = {
         // front
@@ -165,31 +168,31 @@ DefaultScene::DefaultScene()
         20, 22, 23
     };
 
-    customMesh = CreateStaticRenderObj<Mesh>(
+    m_customMesh = CreateStaticRenderObj<Mesh>(
         &vertices,
         &indices,
         &normals,
         &colors,
         nullptr
     );
-    customMesh->setTransform(Transform(
+    m_customMesh->SetTransform(Transform(
         glm::vec3(0.0f, 0.0f, 0.0f),
         glm::vec3(0.0f),
         glm::vec3(1.0f)
     ));
-    customMesh->setShader(adjustableColorShader);
+    m_customMesh->SetShader(m_adjustableColorShader);
 
     SetInitialUniforms();
 }
 
 void DefaultScene::OnUpdate(const float& dt)
 {
-    adjustableColorShader->SetVec3Unf("u_color", glm::vec3(m_color));
+    m_adjustableColorShader->SetVec3Unf("u_color", glm::vec3(m_color));
 }
 
 void DefaultScene::SetInitialUniforms(void)
 {
-    DrawData& meshData = g_ECSManager.GetComponent<DrawData>(customMesh->entityUID);
+    DrawData& meshData = g_ECSManager.GetComponent<DrawData>(m_customMesh->entityUID);
     meshData.materials[0]->SetAlbedoMap(g_Texture2DManager.mainTextureMap);
     meshData.materials[0]->SetSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
 }

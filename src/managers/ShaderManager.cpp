@@ -12,6 +12,10 @@ void ShaderManager::StartUp()
         FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
         FileSystem::Path("resources/shaders/DefaultFragment.glsl")
     );
+    albedoShader = GetShader(
+        FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
+        FileSystem::Path("resources/shaders/PureAlbedoFragment.glsl")
+    );
     cubemapShader = GetShader(
         FileSystem::Path("resources/shaders/CubemapVertex.glsl"),
         FileSystem::Path("resources/shaders/CubemapFragment.glsl")

@@ -157,7 +157,7 @@ void Cubemap::_SetMesh()
         20, 23, 22
     };
 
-    m_VAO = std::make_unique<VertexArray>(
+    m_VAO = VertexArray(
         &verticesPos,
         &indicesData,
         nullptr,
@@ -171,17 +171,17 @@ static GLuint vao_id = -1;
 void Cubemap::Draw() const
 {
     // GLCall(glDepthMask(GL_FALSE));  // TODO: ????
-    m_VAO->Bind();
+    m_VAO.Bind();
     GLCall(glDepthFunc(GL_LEQUAL));
 
     g_ShaderManager.cubemapShader->Use();
-    if (vao_id != m_VAO->GetID())
+    if (vao_id != m_VAO.GetID())
     {
         GLCall(glActiveTexture(GL_TEXTURE0 + CUBEMAP_TEXTURE_UNIT_INDEX));
         GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemapTextureID));
         g_ShaderManager.cubemapShader->SetIntUnf("u_cubemap", CUBEMAP_TEXTURE_UNIT_INDEX);
 
-        vao_id = m_VAO->GetID();
+        vao_id = m_VAO.GetID();
     }
 
     GLCall(glDrawElements(GL_TRIANGLES, m_verticesCount, GL_UNSIGNED_INT, nullptr));

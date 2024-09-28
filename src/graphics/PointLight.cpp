@@ -10,25 +10,25 @@ PointLight::PointLight(const glm::vec3& position, const glm::vec3& color, float 
 void PointLight::ConfigureShader(const Shader* shader) const
 {
     shader->SetVec3Unf("u_point_light.position", position);
-    shader->SetVec3Unf("u_point_light.ambient", getAmbient());
-    shader->SetVec3Unf("u_point_light.diffuse", getDiffuse());
-    shader->SetVec3Unf("u_point_light.specular", getSpecular());
+    shader->SetVec3Unf("u_point_light.ambient", GetAmbient());
+    shader->SetVec3Unf("u_point_light.diffuse", GetDiffuse());
+    shader->SetVec3Unf("u_point_light.specular", GetSpecular());
     shader->SetFloatUnf("u_point_light.constant", attenuation_constant);
     shader->SetFloatUnf("u_point_light.linear", attenuation_linear);
     shader->SetFloatUnf("u_point_light.quadratic", attenuation_quadratic);
 }
 
-glm::vec3 PointLight::getAmbient() const
+glm::vec3 PointLight::GetAmbient() const
 {
     return ambient * colorEmit;
 }
 
-glm::vec3 PointLight::getDiffuse() const
+glm::vec3 PointLight::GetDiffuse() const
 {
     return diffuse * colorEmit;
 }
 
-glm::vec3 PointLight::getSpecular() const
+glm::vec3 PointLight::GetSpecular() const
 {
     return specular * colorEmit;
 }

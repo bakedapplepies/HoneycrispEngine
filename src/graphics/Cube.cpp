@@ -6,7 +6,13 @@
 
 HNCRSP_NAMESPACE_START
 
-Cube::Cube()
+struct A
+{
+    glm::vec3 a;
+};
+
+Cube::Cube() :
+    m_VAO()
 {
     _InitializeAttributeData();
 }
@@ -25,7 +31,7 @@ Cube& Cube::operator=(Cube&& other) noexcept
 
 void Cube::_InitializeAttributeData()
 {
-    std::vector<glm::vec3> verticesPos = std::vector<glm::vec3> {
+    std::vector<glm::vec3> verticesPos = {
         // front
         glm::vec3(-0.5f,  0.5f,  0.5f),
         glm::vec3( 0.5f,  0.5f,  0.5f),
@@ -63,7 +69,7 @@ void Cube::_InitializeAttributeData()
         glm::vec3(-0.5f, -0.5f, -0.5f),
     };
 
-    std::vector<glm::vec3> colors = std::vector<glm::vec3> {
+    std::vector<glm::vec3> colors = {
         glm::vec3(1.0f, 1.0f, 1.0f),
         glm::vec3(1.0f, 1.0f, 1.0f),
         glm::vec3(1.0f, 1.0f, 1.0f),
@@ -95,7 +101,7 @@ void Cube::_InitializeAttributeData()
         glm::vec3(1.0f, 1.0f, 1.0f),
     };
 
-    std::vector<glm::vec3> normals = std::vector<glm::vec3> {
+    std::vector<glm::vec3> normals = {
         // front
         glm::vec3(0.0f,  0.0f,  1.0f), 
         glm::vec3(0.0f,  0.0f,  1.0f), 
@@ -138,7 +144,7 @@ void Cube::_InitializeAttributeData()
     QuadUV& grassTopUVs = grassAtlas.GetQuadUVs(0, 0);
     QuadUV& dirtUVs = grassAtlas.GetQuadUVs(2, 0);
 
-    std::vector<glm::vec2> uvs = std::vector<glm::vec2> {
+    std::vector<glm::vec2> uvs = {
         // top
         grassSideUVs.tl,
         grassSideUVs.tr,
@@ -176,7 +182,7 @@ void Cube::_InitializeAttributeData()
         dirtUVs.bl,
     };
 
-    std::vector<GLuint> indices = std::vector<GLuint> {
+    std::vector<GLuint> indices = {
         // front
         0, 1, 2,
         0, 2, 3,
@@ -202,9 +208,7 @@ void Cube::_InitializeAttributeData()
         20, 22, 23
     };
 
-    m_numVertices = indices.size();
-
-    m_VAO = std::make_unique<VertexArray>(
+    m_VAO = VertexArray(
         &verticesPos,
         &indices,
         &normals,
@@ -216,10 +220,9 @@ void Cube::_InitializeAttributeData()
 void Cube::virt_AddDrawDataToRenderer(ECS::EntityUID entityUID) const
 {
     DrawData drawData;
-    drawData.VAO_id = m_VAO->GetID();
-    drawData.meta_data.emplace_back(0, m_numVertices, 0);
-    // drawData.meta_data.emplace_back(m_VAO->GetVertexCount(), m_VAO->GetIndicesLen(), 0);
-    drawData.materials.push_back(std::make_shared<Material>(g_ShaderManager.basicShader));
+    drawData.VAO_id = m_VAO.GetID();
+    drawData.meta_data.emplace_back(0, m_VAO.GetIndicesLen(), 0);
+    drawData.materials.push_back(std::make_shared<Material>(g_ShaderManager.albedoShader));
 
     drawData.materials[0]->SetAlbedoMap(g_Texture2DManager.mainTextureMap);
     drawData.materials[0]->SetSpecularMap(g_Texture2DManager.mainTextureSpecularMap);

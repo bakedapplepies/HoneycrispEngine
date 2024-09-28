@@ -22,7 +22,6 @@ struct CallbackData
     int windowHeight;
 
     // glm::vec3 cameraDirection = glm::vec3(-1.0f, 0.0f, 0.0f);  // initial camera direction or it would look at origin by default        
-    Camera camera = Camera(glm::vec3(-1.0f, 0.0f, 0.0f));
     glm::vec3 dirLightPos;
 };
 

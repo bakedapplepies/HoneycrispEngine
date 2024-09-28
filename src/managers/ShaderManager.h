@@ -15,6 +15,7 @@ private:
 public:
     // TODO: make these private:
     const Shader* basicShader = nullptr;
+    const Shader* albedoShader = nullptr;
     const Shader* cubemapShader = nullptr;
     const Shader* depthPassShader = nullptr;
     const Shader* depthPassNoAlphaShader = nullptr;

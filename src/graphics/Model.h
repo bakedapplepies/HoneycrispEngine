@@ -13,7 +13,7 @@ class Scene;
 class Model : public Renderable
 {
 private:
-    std::unique_ptr<VertexArray> m_VAO;
+    VertexArray m_VAO;
     std::vector<MeshMetaData> m_meshesMetaData;  // size is also number of meshes
     std::vector< std::shared_ptr<Material> > m_materials;
     const Shader* m_shader;

@@ -10,7 +10,7 @@ class Cubemap
 {
 private:
     GLuint m_cubemapTextureID;
-    std::unique_ptr<VertexArray> m_VAO = nullptr;
+    VertexArray m_VAO;
     GLuint m_verticesCount;
     int32_t m_channels;
 

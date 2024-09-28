@@ -35,21 +35,23 @@ void Window::Loop()
 {
     if (!m_continueProgram) return;
 
+    // ----- Systems -----
+    Renderer* renderer = g_ECSManager.GetSystem<Renderer>();
+    
+    // ----- Setting up Camera -----
+    m_camera = Camera(glm::vec3(-1.0f, 0.0f, 0.0f));
+    m_camera.position += glm::vec3(0, 10, 0);
+    m_camera.direction = glm::vec3(0.0f, 0.0f, -1.0f);
+    renderer->SetCamera(&m_camera);
+
     // ----- Scenes -----
     uint32_t sceneOne = g_SceneManager.CreateScene<DefaultScene>();
     uint32_t sceneTwo = g_SceneManager.CreateScene<DefaultSceneTwo>();
     uint32_t spaceScene = g_SceneManager.CreateScene<SpaceScene>();
     g_SceneManager.SetActiveScene(sceneTwo);
 
-    // ----- Systems -----
-    Renderer* renderer = g_ECSManager.GetSystem<Renderer>();
-
     // ----- Window stuff -----
     float begin = glfwGetTime();
-
-    Camera& camera = m_callbackData->camera;
-    camera.position = camera.position + glm::vec3(0, 10, 0);
-    camera.direction = glm::vec3(0.0f, 0.0f, -1.0f);
 
     // view matrix, proj matrix, time
     UniformBuffer<glm::mat4, glm::mat4, float> uboMatrices(0);  // UBO binding index
@@ -85,7 +87,7 @@ void Window::Loop()
         static float waveSpeed = 1.0f;
         ImGui::SliderFloat("Wave Speed", &waveSpeed, 0.0f, 10.0f);
 
-        ImGui::SliderFloat("Camera Speed", &camera.speed, 2.0f, 20.0f);
+        ImGui::SliderFloat("Camera Speed", &m_camera.speed, 2.0f, 20.0f);
 
         ImGui::SeparatorText("Post-processors:");
         ImGui::Text(
@@ -177,22 +179,22 @@ void Window::Loop()
         ImGui::End();
 
         // Update camera
-        camera.direction = glm::normalize(camera.direction);
+        m_camera.direction = glm::normalize(m_camera.direction);
 
         // ----- Global uniforms -----
         float u_time = begin * waveSpeed;
         uboMatrices.Bind();
         uboMatrices.Update(
-            glm::value_ptr(camera.GetViewMatrix()),
-            glm::value_ptr(camera.GetProjectionMatrix(m_callbackData->windowWidth * 0.8f, m_callbackData->windowHeight)),
+            glm::value_ptr(m_camera.GetViewMatrix()),
+            glm::value_ptr(m_camera.GetProjectionMatrix(m_callbackData->windowWidth * 0.8f, m_callbackData->windowHeight)),
             &u_time
         );
         
         uboOther.Bind();
         uboOther.Update(
-            glm::value_ptr(camera.position),
-            glm::value_ptr(camera.position),
-            glm::value_ptr(camera.direction)
+            glm::value_ptr(m_camera.position),
+            glm::value_ptr(m_camera.position),
+            glm::value_ptr(m_camera.direction)
         );
 
         // ----- Update and Render scenes -----
@@ -213,37 +215,36 @@ void Window::_ProcessInput()
 {
     ZoneScoped;
 
-    Camera& camera = m_callbackData->camera;
     if (glfwGetKey(m_glfwWindow, GLFW_KEY_W) == GLFW_PRESS)
     {
-        camera.ChangePos(glm::normalize(glm::vec3(camera.direction.x, 0.0f, camera.direction.z)) * camera.speed * m_deltaTime);
+        m_camera.ChangePos(glm::normalize(glm::vec3(m_camera.direction.x, 0.0f, m_camera.direction.z)) * m_camera.speed * m_deltaTime);
     }
 
     if (glfwGetKey(m_glfwWindow, GLFW_KEY_S) == GLFW_PRESS)
     {
-        camera.ChangePos(-glm::normalize(glm::vec3(camera.direction.x, 0.0f, camera.direction.z)) * camera.speed * m_deltaTime);
+        m_camera.ChangePos(-glm::normalize(glm::vec3(m_camera.direction.x, 0.0f, m_camera.direction.z)) * m_camera.speed * m_deltaTime);
     }
 
     if (glfwGetKey(m_glfwWindow, GLFW_KEY_A) == GLFW_PRESS)
     {
-        glm::vec3 direction = glm::normalize(glm::cross(camera.direction, camera.cameraUp));
-        camera.ChangePos(-glm::vec3(direction.x, 0.0f, direction.z) * camera.speed * m_deltaTime);
+        glm::vec3 direction = glm::normalize(glm::cross(m_camera.direction, m_camera.cameraUp));
+        m_camera.ChangePos(m_camera.GetLeftVec() * m_camera.speed * m_deltaTime);
     }
 
     if (glfwGetKey(m_glfwWindow, GLFW_KEY_D) == GLFW_PRESS)
     {
-        glm::vec3 direction = glm::normalize(glm::cross(camera.direction, camera.cameraUp));
-        camera.ChangePos(glm::vec3(direction.x, 0.0f, direction.z) * camera.speed * m_deltaTime);
+        glm::vec3 direction = glm::normalize(glm::cross(m_camera.direction, m_camera.cameraUp));
+        m_camera.ChangePos(m_camera.GetRightVec() * m_camera.speed * m_deltaTime);
     }
 
     if (glfwGetKey(m_glfwWindow, GLFW_KEY_SPACE) == GLFW_PRESS)
     {
-        camera.ChangePos(glm::vec3(0.0f, 1.0f, 0.0f) * camera.speed * m_deltaTime);
+        m_camera.ChangePos(glm::vec3(0.0f, 1.0f, 0.0f) * m_camera.speed * m_deltaTime);
     }
 
     if (glfwGetKey(m_glfwWindow, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
     {
-        camera.ChangePos(glm::vec3(0.0f, -1.0f, 0.0f) * camera.speed * m_deltaTime);
+        m_camera.ChangePos(glm::vec3(0.0f, -1.0f, 0.0f) * m_camera.speed * m_deltaTime);
     }
 }
 

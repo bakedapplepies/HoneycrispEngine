@@ -26,6 +26,8 @@ set(SOURCE
     ${CMAKE_SOURCE_DIR}/src/graphics/Mesh.cpp
     ${CMAKE_SOURCE_DIR}/src/graphics/Model.h
     ${CMAKE_SOURCE_DIR}/src/graphics/Model.cpp
+    ${CMAKE_SOURCE_DIR}/src/graphics/Billboard.h
+    ${CMAKE_SOURCE_DIR}/src/graphics/Billboard.cpp
     ${CMAKE_SOURCE_DIR}/src/graphics/Light.h
     ${CMAKE_SOURCE_DIR}/src/graphics/Light.cpp
 )

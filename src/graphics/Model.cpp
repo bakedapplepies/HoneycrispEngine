@@ -60,7 +60,7 @@ Model::Model(const FileSystem::Path& path, const Shader* shader, bool flip_uv)
         | VERTEX_ATTRIB_UV_BIT
         | VERTEX_ATTRIB_NORMAL_BIT;
 
-    m_VAO = std::make_unique<VertexArray>(
+    m_VAO = VertexArray(
         vertex_attrib_bits,
         vertexData,
         indices
@@ -285,7 +285,7 @@ void Model::loadDeserializedModel(const Serialized::Model* deserialized_model)
         deserialized_model->indices()->end()
     );
 
-    m_VAO = std::make_unique<VertexArray>(
+    m_VAO = VertexArray(
         deserialized_model->vertex_attrib_bits(),
         vertex_data,
         indices
@@ -337,7 +337,7 @@ void Model::loadDeserializedModel(const Serialized::Model* deserialized_model)
 void Model::virt_AddDrawDataToRenderer(ECS::EntityUID entityUID) const
 {
     DrawData meshData;
-    meshData.VAO_id = m_VAO->GetID();
+    meshData.VAO_id = m_VAO.GetID();
     meshData.meta_data = std::vector<MeshMetaData>(m_meshesMetaData.begin(), m_meshesMetaData.end());
     meshData.materials = std::vector< std::shared_ptr<Material> >(
         m_materials.begin(),
