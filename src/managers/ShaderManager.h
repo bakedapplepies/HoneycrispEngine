@@ -18,7 +18,6 @@ public:
     const Shader* albedoShader = nullptr;
     const Shader* cubemapShader = nullptr;
     const Shader* depthPassShader = nullptr;
-    const Shader* depthPassNoAlphaShader = nullptr;
 
 public:
     ShaderManager() = default;

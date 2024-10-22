@@ -16,10 +16,10 @@ static_assert(std::chrono::__is_duration<T>() &&
     ), "Type of duration not supported.");
 private:
     std::chrono::time_point<std::chrono::steady_clock> m_begin;
-    std::string_view m_timerName;
+    std::string m_timerName;
 
 public:
-    Timer(std::string_view timer_name = "Timer") :
+    Timer(std::string timer_name = "Timer") :
         m_timerName(timer_name)
     {
         m_begin = std::chrono::steady_clock::now();
@@ -66,5 +66,15 @@ private:
         }
     }
 };
+
+#define HNCRSP_TIMER_MS(x) { \
+    Timer<std::chrono::milliseconds> timer(fmt::format("{}:{}", FileSystem::Path(__FILE__).relative_string(), __LINE__)); \
+    x; \
+}
+
+#define HNCRSP_TIMER_MS_START { \
+    Timer<std::chrono::milliseconds> timer(fmt::format("{}:{}", FileSystem::Path(__FILE__).relative_string(), __LINE__)); \
+
+#define HNCRSP_TIMER_MS_END }
 
 HNCRSP_NAMESPACE_END

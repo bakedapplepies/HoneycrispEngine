@@ -108,6 +108,9 @@
         "CMAKE_CXX_COMPILER": "C:/MinGW-W64/MinGW-W64/bin/clang++.exe",
         "CMAKE_CXX_STANDARD": "20"
     },
+    "cmake.configureArgs": [
+        "--graphviz=dependency_graph.dot"
+    ],
     "clangd.arguments": [
         "--compile-commands-dir=${workspaceFolder}/build/Debug/",
         "--header-insertion=never",

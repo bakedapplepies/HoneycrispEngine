@@ -1,5 +1,6 @@
 #include "Window.h"
 #include "src/utils/TracyProfile.h"
+#include "src/utils/Timer.h"
 #include "src/managers/Texture2DManager.h"
 #include "src/managers/ImGuiManager.h"
 
@@ -57,8 +58,6 @@ void Window::Loop()
     UniformBuffer<glm::mat4, glm::mat4, float> uboMatrices(0);  // UBO binding index
     // viewPos, spotlightPos, spotlightDir
     UniformBuffer<glm::vec3, glm::vec3, glm::vec3> uboOther(1);
-    
-    g_ShaderManager.SetPostProcessingShader(FileSystem::Path("resources/shaders/postprocessing/None.glsl"));
 
     while(!glfwWindowShouldClose(m_glfwWindow))
     {
@@ -84,57 +83,44 @@ void Window::Loop()
         ImGui::Begin("Global settings");
         ImGui::GetCurrentWindow()->FontWindowScale = m_windowHeightScalar;  // scale ui based on window height, might make it decay exponentially
         
-        static float waveSpeed = 1.0f;
-        ImGui::SliderFloat("Wave Speed", &waveSpeed, 0.0f, 10.0f);
-
         ImGui::SliderFloat("Camera Speed", &m_camera.speed, 2.0f, 20.0f);
-
-        ImGui::SeparatorText("Post-processors:");
-        ImGui::Text(
-            "Files that are added in \"resources/shaders/postprocessing/\" during\n"
-            "runtime can be updated using the button below."
-        );
+        
         ImGui::NewLine();
+        ImGui::SeparatorText("Post-processing effects variables");
 
-        static uint32_t current_postprocessor_index = UINT32_MAX;
+        const Shader* postprocessingShader = g_ShaderManager.GetPostProcessingShader();
+        static float     brightness   = 0.0f;
+        static float     contrast     = 0.0f;  // -100.0 - 100.0
+        static float     saturation   = 1.0f;  // -100.0 - 100.0
+        static float     postExposure = 0.0f;
+        static float     temperature  = 0.0f;
+        static float     tint         = 0.0f;
+        static float     cwhite       = 60.0f;
+        static glm::vec3 colorFilter  = glm::vec3(1.0f);  // white
+        
+        if (ImGui::SliderFloat("Brightness", &brightness, 0.0f, 5.0f))
+            postprocessingShader->SetFloatUnf("u_brightness", brightness);
 
-        if (ImGui::Button("Update postprocessing shader list"))
-        {
-            _UpdatePPS();
-        }
+        if (ImGui::SliderFloat("Contrast", &contrast, -100.0f, 100.0f))
+            postprocessingShader->SetFloatUnf("u_contrast", contrast * 0.01f + 1.0f);
 
-        ImGui::NewLine();
-        ImGui::Text("Refresh");
-        if (ImGui::BeginListBox(" "))
-        {
-            for (uint32_t i = 0; i < m_pps.size(); i++)
-            {
-                const bool is_selected = (i == current_postprocessor_index);
-                const char* item = m_pps[i].c_str();
-                if (ImGui::Selectable(item, is_selected))
-                {
-                    g_ShaderManager.SetPostProcessingShader(
-                        FileSystem::Path(fmt::format("resources/shaders/postprocessing/{}.glsl", m_pps[i]))
-                    );
-                    current_postprocessor_index = i;
-                }
-                if (ImGui::IsItemActive() && !ImGui::IsItemHovered())
-                {
-                    int i_next = i + (ImGui::GetMouseDragDelta(0).y < 0.0f ? -1 : 1);
-                    if (i_next >= 0 && i_next < static_cast<int>(m_pps.size()))
-                    {
-                        m_pps[i] = m_pps[i_next];
-                        m_pps[i_next] = item;
-                        ImGui::ResetMouseDragDelta();
-                    }
-                }
-                if (is_selected)
-                {
-                    ImGui::SetItemDefaultFocus();
-                }
-            }
-            ImGui::EndListBox();
-        }
+        if (ImGui::SliderFloat("Saturation", &saturation, 0.0f, 1.0f))
+            postprocessingShader->SetFloatUnf("u_saturation", saturation);
+
+        if (ImGui::DragFloat("Post Exposure", &postExposure))
+            postprocessingShader->SetFloatUnf("u_postExposure", std::powf(2.0f, postExposure));
+
+        if (ImGui::SliderFloat("Temperature", &temperature, 0.0f, 1.0f))
+            postprocessingShader->SetFloatUnf("u_temperature", temperature);
+
+        if (ImGui::SliderFloat("Tint", &tint, 0.0f, 1.0f))
+            postprocessingShader->SetFloatUnf("u_tint", tint);
+
+        if (ImGui::SliderFloat("CWhite", &cwhite, 1.0f, 120.0f))
+            postprocessingShader->SetFloatUnf("u_cwhite", cwhite);
+
+        if (ImGui::ColorPicker4("Color Filter", glm::value_ptr(colorFilter)))
+            postprocessingShader->SetVec3Unf("u_colorFilter", colorFilter);
 
         ImGui::NewLine();
         ImGui::SeparatorText("Statistics");
@@ -182,7 +168,7 @@ void Window::Loop()
         m_camera.direction = glm::normalize(m_camera.direction);
 
         // ----- Global uniforms -----
-        float u_time = begin * waveSpeed;
+        float u_time = begin;
         uboMatrices.Bind();
         uboMatrices.Update(
             glm::value_ptr(m_camera.GetViewMatrix()),

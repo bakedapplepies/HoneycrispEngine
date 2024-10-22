@@ -5,9 +5,25 @@ in VS_OUT {
     vec2 UV;
 } fs_in;
 
+#define ACEScc_MIDGRAY 0.4135884
+
 uniform vec2     u_viewport_size;
 uniform sampler2D u_framebuffer_color_texture;
 uniform sampler2D u_framebuffer_depth_texture;
+
+uniform float u_brightness = 0.0;
+uniform float u_contrast = 0.0;
+uniform float u_saturation = 1.0;
+uniform float u_postExposure = 0.0;
+uniform float u_temperature;
+uniform float u_tint;
+uniform float u_cwhite = 60.0;
+uniform vec3  u_colorFilter = vec3(1.0);
+
+vec3 lerp(vec3 v1, vec3 v2, float interpolator)
+{
+    return (1.0 - interpolator) * v1 + interpolator * v2;
+}
 
 float luminance(vec3 v)
 {
@@ -20,7 +36,7 @@ vec3 change_luminance(vec3 color, float l_out)
     return color * (l_out / l_in);
 }
 
-vec3 extended_reinhard_tmo(vec3 color, float max_white)
+vec3 extended_reinhard(vec3 color, float max_white)
 {
     float l_old = luminance(color);
     float numerator = l_old * (1.0 + (l_old / pow(max_white, 2)));
@@ -29,7 +45,7 @@ vec3 extended_reinhard_tmo(vec3 color, float max_white)
 }
 
 void main()
-{
+{   
     vec3 color = vec3(0.0);
     // vec2 uv = fs_in.UV;
     // vec2 ndc = (uv - 0.5) * 2.0;
@@ -38,9 +54,16 @@ void main()
     // float d = length(ndc - center);
     color = vec3(texture(u_framebuffer_color_texture, fs_in.UV));
 
-    // Extended Reinhard Tone mapping
-    // color = extended_reinhard_tmo(color, 800.0);
+    // Color Correction
+    color *= u_postExposure;
+    color = (color - ACEScc_MIDGRAY) * u_contrast + ACEScc_MIDGRAY;
+    // color = u_contrast * (color - vec3(0.5)) + vec3(0.5) + vec3(u_brightness);
+    color = lerp(luminance(color).xxx, color, u_saturation);
+    color *= u_colorFilter;
 
+    // Extended Reinhard Tone mapping
+    color = extended_reinhard(color, u_cwhite);
+    
     // Gamma Correction
     color = pow(color, vec3(1.0/2.2));
 
