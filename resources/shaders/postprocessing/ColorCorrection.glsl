@@ -12,9 +12,9 @@ uniform sampler2D u_framebuffer_color_texture;
 uniform sampler2D u_framebuffer_depth_texture;
 
 uniform float u_brightness = 0.0;
-uniform float u_contrast = 0.0;
+uniform float u_contrast = 1.0;
 uniform float u_saturation = 1.0;
-uniform float u_postExposure = 0.0;
+uniform float u_postExposure = 1.0;
 uniform float u_temperature;
 uniform float u_tint;
 uniform float u_cwhite = 60.0;
@@ -28,6 +28,21 @@ vec3 lerp(vec3 v1, vec3 v2, float interpolator)
 float luminance(vec3 v)
 {
     return dot(v, vec3(0.2126, 0.7152, 0.0722));
+}
+
+vec3 color_grade_post_exposure(vec3 color)
+{
+    return color * u_postExposure;
+}
+
+vec3 color_grade_contrast(vec3 color)
+{
+    return (color - ACEScc_MIDGRAY) * u_contrast + ACEScc_MIDGRAY;
+}
+
+vec3 color_grade_color_filter(vec3 color)
+{
+    return color * u_colorFilter;
 }
 
 vec3 change_luminance(vec3 color, float l_out)
@@ -47,19 +62,16 @@ vec3 extended_reinhard(vec3 color, float max_white)
 void main()
 {   
     vec3 color = vec3(0.0);
-    // vec2 uv = fs_in.UV;
-    // vec2 ndc = (uv - 0.5) * 2.0;
-    // ndc.x *= u_viewport_size.x / u_viewport_size.y;
-    // vec2 center = vec2(0.0, 0.0);
-    // float d = length(ndc - center);
-    color = vec3(texture(u_framebuffer_color_texture, fs_in.UV));
+    vec2 uv = fs_in.UV;
+    color = vec3(texture(u_framebuffer_color_texture, uv));
 
     // Color Correction
-    color *= u_postExposure;
-    color = (color - ACEScc_MIDGRAY) * u_contrast + ACEScc_MIDGRAY;
+    color = color_grade_post_exposure(color);
+    color = color_grade_contrast(color);
+    color = max(color, vec3(0.0));
     // color = u_contrast * (color - vec3(0.5)) + vec3(0.5) + vec3(u_brightness);
     color = lerp(luminance(color).xxx, color, u_saturation);
-    color *= u_colorFilter;
+    color = color_grade_color_filter(color);
 
     // Extended Reinhard Tone mapping
     color = extended_reinhard(color, u_cwhite);
