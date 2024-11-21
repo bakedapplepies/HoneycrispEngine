@@ -189,7 +189,7 @@ std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Mesh> > SpaceScene::Gene
         
     }
 
-    return CreateStaticRenderObj<Honeycrisp::Mesh>(
+    return CreateRenderObj<Honeycrisp::Mesh>(
         &pos,
         &indices,
         nullptr,

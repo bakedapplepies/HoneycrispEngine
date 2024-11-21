@@ -20,6 +20,7 @@ public:
     std::unique_ptr<Cubemap> cubemap;
 
 private:
+    friend SceneManager;
     std::vector<const Shader*> m_shadersInScene;
     std::vector< std::unique_ptr<Light> > m_lightsInscene;
 
@@ -29,7 +30,7 @@ private:
 
 protected:
     template <typename TRenderable, typename... Args>
-    std::unique_ptr< SceneRenderObj<TRenderable> > CreateStaticRenderObj(Args&&... args)
+    std::unique_ptr< SceneRenderObj<TRenderable> > CreateRenderObj(Args&&... args)
     {
         static_assert(std::is_base_of<Renderable, TRenderable>(), "TRenderable is not base of Renderable.");
 
@@ -74,7 +75,10 @@ protected:
         for (auto& shader : m_shadersInScene)
         {
             newLightRawPtr->ConfigureShader(shader);
-        }
+            shader->SetIntUnf("u_num_dir_light", m_currentDirectionalLights);
+            shader->SetIntUnf("u_num_point_light", m_currentPointLights);
+            shader->SetIntUnf("u_num_spot_light", m_currentSpotLights);  // 2 of these 3 are not used
+        }                                                                // but who cares
 
         return static_cast<TLight*>(newLightRawPtr);
     }
@@ -106,7 +110,6 @@ public:
     virtual void OnImGui(void) {}
 
 private:
-    friend SceneManager;
     void _ReconfigureAllShaders() const;
 };
 

@@ -1,5 +1,6 @@
 #include "ShaderManager.h"
 #include "src/managers/SceneManager.h"
+#include "src/utils/Timer.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -43,6 +44,7 @@ const Shader* ShaderManager::GetShader(
 
     if (m_cachedShaders[hash_string] == nullptr)
     {
+        Timer<std::chrono::milliseconds> timer("Shader creation");
         m_cachedShaders[hash_string] = std::make_unique<Shader>(vertexFile, fragmentFile, geometryFile);
         m_cachedShaders[hash_string]->SetIntUnf("u_framebuffer_depth_texture", DEPTH_BUFFER_TEXTURE_UNIT_INDEX);
         m_cachedShaders[hash_string]->SetIntUnf("u_framebuffer_depth_texture_no_alpha", DEPTH_BUFFER_NO_ALPHA_TEXTURE_UNIT_INDEX);

@@ -36,9 +36,12 @@ const Shader* Scene::CreateShader(
 
 void Scene::_ReconfigureAllShaders() const
 {
-    for (auto& light : m_lightsInscene)
+    for (auto& shader : m_shadersInScene)
     {
-        for (auto& shader : m_shadersInScene)
+        shader->SetIntUnf("u_num_dir_light", m_currentDirectionalLights);
+        shader->SetIntUnf("u_num_point_light", m_currentPointLights);
+        shader->SetIntUnf("u_num_spot_light", m_currentSpotLights);
+        for (auto& light : m_lightsInscene)
         {
             light->ConfigureShader(shader);
         }

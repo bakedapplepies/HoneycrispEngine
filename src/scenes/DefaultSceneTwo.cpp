@@ -13,43 +13,10 @@ DefaultSceneTwo::DefaultSceneTwo()
         glm::vec3(1.0f, 1.0f, 1.0f),  // color
         0.3f, 0.5f, 1.0f              // ambient - diffuse - specular
     );
-    spotLight = CreateLight<SpotLight>(
-        camera->position,
-        camera->direction,
-        glm::vec3(1.0f, 1.0f, 1.0f),
-        0.3f, 0.5f, 1.0f
-    );
 
     InitializeShaders();
 
-    // TODO: Parse shaders
-    // const int maxLength = 512;
-    // char name[maxLength];
-
-    // int uniformCount;
-    // glGetProgramiv(phongShader->GetID(), GL_ACTIVE_UNIFORMS, &uniformCount);
-    // for (int i = 0; i < uniformCount; i++)
-    // {
-    //     GLint size;
-    //     GLenum type;
-    //     glGetActiveUniform(phongShader->GetID(), i, maxLength, NULL, &size, &type, name);
-
-    //     HNCRSP_LOG_INFO(fmt::format("Size: {}, Type: {}\nInfo: {}", size, type, name));
-    // }
-
-    // int attribCount;
-    // glGetProgramiv(phongShader->GetID(), GL_ACTIVE_ATTRIBUTES, &attribCount);
-    // for (int i = 0; i < attribCount; i++)
-    // {
-    //     GLint size;
-    //     GLenum type;
-    //     glGetActiveAttrib(phongShader->GetID(), i, maxLength, NULL, &size, &type, name);
-
-    //     HNCRSP_LOG_INFO(fmt::format("Size: {}, Type: {}\nInfo: {}", size, type, name));
-    // }
-
-
-    cube = CreateStaticRenderObj<Cube>();
+    cube = CreateRenderObj<Cube>();
     cubeTransform = &g_ECSManager.GetComponent<Transform>(cube->entityUID);
     cube->SetShader(phongWTintShader);
     cube->SetTransform(Transform(glm::vec3(1.0f, 10.0f ,5.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
@@ -114,7 +81,7 @@ DefaultSceneTwo::DefaultSceneTwo()
         }
     }
 
-    mesh = CreateStaticRenderObj<Mesh>(
+    mesh = CreateRenderObj<Mesh>(
         &vertices,
         &indices,
         &normals,
@@ -133,7 +100,7 @@ DefaultSceneTwo::DefaultSceneTwo()
     g_ECSManager.RemoveComponent<DrawData>(mesh->entityUID);
     g_ECSManager.AddComponent<DrawData>(mesh->entityUID, meshDrawDataCopy);
 
-    backpackModel = CreateStaticRenderObj<Model>(
+    backpackModel = CreateRenderObj<Model>(
         FileSystem::Path("resources/models/backpack/backpack.obj"),
         phongShader,
         true  // flip uv
@@ -143,7 +110,7 @@ DefaultSceneTwo::DefaultSceneTwo()
     // backpackMaterial->setShininess(64.0f);
 
     // Author: Eydeet (https://skfb.ly/ouB6N)
-    appleModel = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/apple/source/apple.fbx"), phongShader, false);
+    appleModel = CreateRenderObj<Model>(FileSystem::Path("resources/models/apple/source/apple.fbx"), phongShader, false);
     appleModel->SetTransform(Transform(
         glm::vec3(10.0f, 2.0f, 17.0f),
         glm::vec3(0.0f, 0.0f, 0.0f),
@@ -152,16 +119,16 @@ DefaultSceneTwo::DefaultSceneTwo()
     // Material* appleMaterial = appleModel->getMaterial();
     // appleMaterial->setShininess(32);
 
-    // appleModelNormal = CreateStaticRenderObj<Model>(FileSystem::Path("resources/models/apple/source/apple.fbx"), normalShader, false);
+    // appleModelNormal = CreateRenderObj<Model>(FileSystem::Path("resources/models/apple/source/apple.fbx"), normalShader, false);
     // appleModelNormal->SetTransform(Transform(glm::vec3(10.0f, 2.0f, 17.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.3f)));
     // appleModelNormal->getMaterial()->setShininess(32);
 
-    sponza = CreateStaticRenderObj<Model>(
+    sponza = CreateRenderObj<Model>(
         FileSystem::Path("resources/models/sponza2/Sponza.gltf"),
         phongShader,
         false
     );
-    // sponzaNormal = CreateStaticRenderObj<Honeycrisp::Model>(
+    // sponzaNormal = CreateRenderObj<Honeycrisp::Model>(
     //     FileSystem::Path("resources/models/sponza/sponza.obj"),
     //     normalShader,
     //     false

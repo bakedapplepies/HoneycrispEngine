@@ -22,11 +22,11 @@ DefaultScene::DefaultScene()
         0.1f, 0.5f, 1.0f              // ambient - diffuse - specular
     );
 
-    m_cube = CreateStaticRenderObj<Cube>();
+    m_cube = CreateRenderObj<Cube>();
     m_cube->SetShader(m_shader);
     m_cube->SetTransform(Transform(glm::vec3(-1.0f, -3.0f, -1.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
 
-    m_billboard = CreateStaticRenderObj<Billboard>(3.0f, 1.0f, g_Texture2DManager.mainTextureMap);
+    m_billboard = CreateRenderObj<Billboard>(3.0f, 1.0f, g_Texture2DManager.mainTextureMap);
     m_billboard->SetPosition(glm::vec3(0.0f, 4.0f, 3.0f));
 
     std::vector<glm::vec3> vertices = {
@@ -168,7 +168,7 @@ DefaultScene::DefaultScene()
         20, 22, 23
     };
 
-    m_customMesh = CreateStaticRenderObj<Mesh>(
+    m_customMesh = CreateRenderObj<Mesh>(
         &vertices,
         &indices,
         &normals,

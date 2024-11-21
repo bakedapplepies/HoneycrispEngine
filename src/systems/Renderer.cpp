@@ -280,7 +280,7 @@ void Renderer::_SortTransparentObjects() const
 {
     ZoneScopedN("Sort Transparent");
     
-    // Utilities
+    // Comparison function
     static const glm::vec3& cameraPos = m_camera->position;
     static std::function<bool(const DelayedTransparentObjectDrawData&, const DelayedTransparentObjectDrawData&)> comp =
         [](const DelayedTransparentObjectDrawData& obj1, const DelayedTransparentObjectDrawData& obj2) {
