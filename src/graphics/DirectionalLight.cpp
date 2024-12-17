@@ -17,4 +17,19 @@ void DirectionalLight::ConfigureShader(const Shader* shader) const
     shader->SetVec3Unf("u_dir_light.specular", GetSpecular());
 }
 
+glm::vec3 DirectionalLight::GetAmbient() const
+{
+    return ambient * colorEmit;
+}
+
+glm::vec3 DirectionalLight::GetDiffuse() const
+{
+    return diffuse * colorEmit;
+}
+
+glm::vec3 DirectionalLight::GetSpecular() const
+{
+    return specular * colorEmit;
+}
+
 HNCRSP_NAMESPACE_END

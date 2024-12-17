@@ -11,6 +11,7 @@ in VS_OUT {
 layout (std140, binding = 0) uniform Matrices
 {
     mat4 u_view;
+    mat4 u_ortho;
     mat4 u_projection;
     float u_time;
 };

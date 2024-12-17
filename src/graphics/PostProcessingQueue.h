@@ -35,7 +35,7 @@ public:
     void BindInitialFramebuffer();
 
     // Ping pong between framebuffers to apply postprocessing effects.
-    void DrawSequence(const CallbackData* callbackData);
+    void DrawSequence();
 
     GLuint GetCurrentFramebufferColorTexture() const;
 };

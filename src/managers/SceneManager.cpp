@@ -63,4 +63,9 @@ CallbackData* SceneManager::GetMutableCallbackData() const
     return m_callbackData;
 }
 
+const DirectionalLight* SceneManager::GetCurrentDirectionalLight()
+{
+    return m_scenesMap[m_activeSceneIndex]->m_lightContainer.directionalLights[0].get();
+}
+
 HNCRSP_NAMESPACE_END

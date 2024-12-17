@@ -47,10 +47,17 @@ glm::vec3 Camera::GetRightVec() const
 glm::mat4 Camera::GetProjectionMatrix(uint32_t width, uint32_t height) const
 {
     return glm::perspective(
-        glm::radians(45.0f),
+        glm::radians(fov),
         static_cast<float>(width)/static_cast<float>(height),
         nearClippingPlane,
         farClippingPlane
+    );
+}
+
+glm::mat4 Camera::GetOrthoMatrix(float left, float right, float bottom, float top) const
+{
+    return glm::ortho(
+        left, right, bottom, top, nearClippingPlane, farClippingPlane
     );
 }
 

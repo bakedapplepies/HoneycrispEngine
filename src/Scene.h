@@ -13,6 +13,13 @@
 
 HNCRSP_NAMESPACE_START
 
+struct LightContainer
+{
+    std::array<std::unique_ptr<DirectionalLight>, MAX_DIRECTIONAL_LIGHTS> directionalLights;
+    std::array<std::unique_ptr<PointLight>, MAX_POINT_LIGHTS> pointLights;
+    std::array<std::unique_ptr<SpotLight>, MAX_SPOT_LIGHTS> spotLights;
+};
+
 class SceneManager;
 class Scene
 {
@@ -22,7 +29,11 @@ public:
 private:
     friend SceneManager;
     std::vector<const Shader*> m_shadersInScene;
-    std::vector< std::unique_ptr<Light> > m_lightsInscene;
+    LightContainer m_lightContainer = {
+        .directionalLights = {},
+        .pointLights = {},
+        .spotLights = {}
+    };
 
     uint32_t m_currentDirectionalLights = 0;
     uint32_t m_currentPointLights = 0;
@@ -43,12 +54,16 @@ protected:
         static_assert(!std::is_same<Light, TLight>(), "TLight cannot be base Light class.");
         static_assert(std::is_base_of<Light, TLight>(), "TLight is not base of Light.");
 
+        std::unique_ptr<TLight> newLight = std::make_unique<TLight>(std::forward<Args>(args)...);
+        TLight* newLightRawPtr = newLight.get();
+
         if constexpr(std::is_same<TLight, DirectionalLight>())
         {
             if (m_currentDirectionalLights >= MAX_DIRECTIONAL_LIGHTS)
             {
                 HNCRSP_TERMINATE("Max Directional lights already reached.");
             }
+            m_lightContainer.directionalLights[m_currentDirectionalLights] = std::move(newLight);
             m_currentDirectionalLights++;
         }
         else if constexpr(std::is_same<TLight, PointLight>())
@@ -57,6 +72,7 @@ protected:
             {
                 HNCRSP_TERMINATE("Max Point lights already reached.");
             }
+            m_lightContainer.pointLights[m_currentPointLights] = std::move(newLight);
             m_currentPointLights++;
         }
         else if constexpr(std::is_same<TLight, SpotLight>())
@@ -65,12 +81,9 @@ protected:
             {
                 HNCRSP_TERMINATE("Max Spot lights already reached.");
             }
+            m_lightContainer.spotLights[m_currentSpotLights] = std::move(newLight);
             m_currentSpotLights++;
         }
-
-        std::unique_ptr<Light> newLight = std::make_unique<TLight>(std::forward<Args>(args)...);
-        Light* newLightRawPtr = newLight.get();
-        m_lightsInscene.push_back(std::move(newLight));
         
         for (auto& shader : m_shadersInScene)
         {
@@ -80,7 +93,7 @@ protected:
             shader->SetIntUnf("u_num_spot_light", m_currentSpotLights);  // 2 of these 3 are not used
         }                                                                // but who cares
 
-        return static_cast<TLight*>(newLightRawPtr);
+        return newLightRawPtr;
     }
 
     void CreateCubemap(

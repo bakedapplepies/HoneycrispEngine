@@ -43,11 +43,13 @@ extern const uint16_t CUBEMAP_TEXTURE_UNIT_INDEX;
 // ----------
 
 // Scene lights ----------
-
-extern const uint32_t MAX_DIRECTIONAL_LIGHTS;
-extern const uint32_t MAX_POINT_LIGHTS;
-extern const uint32_t MAX_SPOT_LIGHTS;
-
+constexpr uint32_t MAX_DIRECTIONAL_LIGHTS = 1;
+constexpr uint32_t MAX_POINT_LIGHTS = 10;
+constexpr uint32_t MAX_SPOT_LIGHTS = 1;
 // ----------
+
+// Vectors ----------
+extern const glm::vec3 VEC3_UP;
+extern const glm::vec3 VEC3_DOWN;
 
 HNCRSP_NAMESPACE_END

@@ -54,24 +54,28 @@ void Renderer::Render() const
 {
     ZoneScopedN("Render");
 
+    // Depth pass (directional shadow)
     m_depthMap->Bind();
     glEnable(GL_DEPTH_TEST);
     glClear(GL_DEPTH_BUFFER_BIT);
     _RenderDepthPass();
 
+    // Scene pass (no transparent objects)
     m_postprocessingQueue->BindInitialFramebuffer();
     glDisable(GL_BLEND);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     m_depthMap->BindDepthBuffer(DEPTH_BUFFER_TEXTURE_UNIT_INDEX);
-    // m_depthMapNoAlpha->BindDepthBuffer(DEPTH_BUFFER_NO_ALPHA_TEXTURE_UNIT_INDEX);
     _RenderScenePass();
 
+    // Scene pass (transparent objects)
     _SortTransparentObjects();
     glEnable(GL_BLEND);
     _RenderTransparentObjectsPass();
 
     glDisable(GL_DEPTH_TEST);
-    m_postprocessingQueue->DrawSequence(m_callbackData);
+    m_postprocessingQueue->DrawSequence();
+
+    m_axesCrosshair.Render();
 
     // bind default framebuffer and clear to clean up any ImGui stuff from last frame
     GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
@@ -86,8 +90,21 @@ void Renderer::_RenderDepthPass() const
     depthPassShader->Use();
 
     // Configure shader
-    glm::mat4 view_projection_matrix = m_depthPassCamera.GetViewProjectionMatrix(m_callbackData->dirLightPos, glm::vec3(0.0f));
-    depthPassShader->SetMat4Unf("u_depthSpaceMatrix", view_projection_matrix);
+    const DirectionalLight* dirLight = g_SceneManager.GetCurrentDirectionalLight();
+
+    glm::mat4 viewProjectionMatrix;
+    if (dirLight)
+    {
+        m_depthPassCamera.SetDirection(dirLight->direction);
+    }
+    else
+    {
+        m_depthPassCamera.SetDirection(VEC3_DOWN);
+    }
+    HNCRSP_LOG_INFO(m_depthPassCamera.direction);
+
+    viewProjectionMatrix = m_depthPassCamera.GetViewProjectionMatrix(glm::vec3(0.0f, 2.0f, -2.0f));
+    depthPassShader->SetMat4Unf("u_depthSpaceMatrix", viewProjectionMatrix);
 
     for (const ECS::EntityUID& uid : p_entityUIDs)
     {
@@ -145,7 +162,13 @@ void Renderer::_RenderScenePass() const
         }
 
         glm::mat4 model_matrix = _GetModelMatrix(transform);
-        shader->SetMat4Unf("u_depthSpaceMatrix", m_depthPassCamera.GetViewProjectionMatrix(m_callbackData->dirLightPos, glm::vec3(0.0f)));
+
+        // Configure shader
+        const DirectionalLight* dirLight = g_SceneManager.GetCurrentDirectionalLight();
+
+        glm::mat4 viewProjectionMatrix;
+        viewProjectionMatrix = m_depthPassCamera.GetViewProjectionMatrix(glm::vec3(0.0f, 2.0f, -2.0f));
+        shader->SetMat4Unf("u_depthSpaceMatrix", viewProjectionMatrix);
         shader->SetMat3Unf("u_normalMatrix", glm::mat3(glm::transpose(glm::inverse(model_matrix))));
         shader->SetMat4Unf("u_model", model_matrix);
         uint32_t indexBufferOffset = 0;
@@ -164,33 +187,33 @@ void Renderer::_RenderScenePass() const
             normalMap = material->GetNormalMap();
             specularMap = material->GetSpecularMap();
 
-            uint32_t whichShader = 0;
+            uint32_t whichMaterial = 0;
             if (albedoMap)
             {
                 albedoMap->Bind();
-                whichShader |= 1 << 0;
+                whichMaterial |= 1 << 0;
             }
             if (roughnessMap)
             {
                 roughnessMap->Bind();
-                whichShader |= 1 << 1;
+                whichMaterial |= 1 << 1;
             }
             if (aoMap)
             {
                 aoMap->Bind();
-                whichShader |= 1 << 2;
+                whichMaterial |= 1 << 2;
             }
             if (normalMap)
             {
                 albedoMap->Bind();
-                whichShader |= 1 << 3;
+                whichMaterial |= 1 << 3;
             }
             if (specularMap)
             {
                 specularMap->Bind();
-                whichShader |= 1 << 4;
+                whichMaterial |= 1 << 4;
             }
-            shader->SetUIntUnf("u_material.whichShader", whichShader);
+            shader->SetUIntUnf("u_material.whichMaterial", whichMaterial);
 
             // TODO: Send uniform for index into texture array
             GLCall(
@@ -239,23 +262,51 @@ void Renderer::_RenderTransparentObjectsPass() const
         }
 
         glm::mat4 model_matrix = _GetModelMatrix(transform);
-        shader->SetMat4Unf("u_depthSpaceMatrix", m_depthPassCamera.GetViewProjectionMatrix(m_callbackData->dirLightPos, glm::vec3(0.0f)));
+
+        // Configure shader
+        const DirectionalLight* dirLight = g_SceneManager.GetCurrentDirectionalLight();
+
+        glm::mat4 viewProjectionMatrix;
+        viewProjectionMatrix = m_depthPassCamera.GetViewProjectionMatrix(glm::vec3(0.0f, 2.0f, -2.0f));
+        shader->SetMat4Unf("u_depthSpaceMatrix", viewProjectionMatrix);
         shader->SetMat3Unf("u_normalMatrix", glm::mat3(glm::transpose(glm::inverse(model_matrix))));
         shader->SetMat4Unf("u_model", model_matrix);
 
         Material* material = drawData.materials[drawData.meta_data[obj.metaDataIndex].material_index].get();
 
         albedoMap = material->GetAlbedoMap();
-        roughnessMap = material->GetRoughnessMap();
-        aoMap = material->GetAoMap();
-        normalMap = material->GetNormalMap();
-        specularMap = material->GetSpecularMap();
+            roughnessMap = material->GetRoughnessMap();
+            aoMap = material->GetAoMap();
+            normalMap = material->GetNormalMap();
+            specularMap = material->GetSpecularMap();
 
-        if (albedoMap) albedoMap->Bind();
-        if (roughnessMap) roughnessMap->Bind();
-        if (aoMap) aoMap->Bind();
-        if (normalMap) normalMap->Bind();
-        if (specularMap) specularMap->Bind();
+            uint32_t whichMaterial = 0;
+            if (albedoMap)
+            {
+                albedoMap->Bind();
+                whichMaterial |= 1 << 0;
+            }
+            if (roughnessMap)
+            {
+                roughnessMap->Bind();
+                whichMaterial |= 1 << 1;
+            }
+            if (aoMap)
+            {
+                aoMap->Bind();
+                whichMaterial |= 1 << 2;
+            }
+            if (normalMap)
+            {
+                albedoMap->Bind();
+                whichMaterial |= 1 << 3;
+            }
+            if (specularMap)
+            {
+                specularMap->Bind();
+                whichMaterial |= 1 << 4;
+            }
+            shader->SetUIntUnf("u_material.whichMaterial", whichMaterial);
 
         // TODO: Send uniform for index into texture array
         GLCall(
@@ -335,6 +386,11 @@ Camera* Renderer::GetCameraMutable()
     return m_camera;
 }
 
+void Renderer::SetDepthPassCamDistFromMainCam(float dist) const
+{
+    m_depthPassCamera.distOffMainCam = dist;
+}
+
 void Renderer::SetCubemap(const Cubemap* cubemap)
 {
     m_currentCubemap = cubemap;
@@ -386,6 +442,11 @@ void Renderer::SceneChanged(uint32_t target_scene)
 GLuint Renderer::GetColorBufferTextureID() const
 {
     return m_postprocessingQueue->GetCurrentFramebufferColorTexture();
+}
+
+GLuint Renderer::GetDepthBufferTextureID() const
+{
+    return m_depthMap->GetTextureID();
 }
 
 void Renderer::_BinaryInsert_ShaderComparator(

@@ -13,6 +13,11 @@ DefaultSceneTwo::DefaultSceneTwo()
         glm::vec3(1.0f, 1.0f, 1.0f),  // color
         0.3f, 0.5f, 1.0f              // ambient - diffuse - specular
     );
+    dirLight = CreateLight<DirectionalLight>(
+        glm::vec3(0.0f, -1.0f, 0.0),
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        0.3f, 0.5f, 1.0f
+    );
 
     InitializeShaders();
 
@@ -186,14 +191,22 @@ void DefaultSceneTwo::OnImGui(void)
 {
     static CallbackData* callback_data = g_SceneManager.GetMutableCallbackData();
 
-    ImGui::Text("Point light");
+    ImGui::Text("Point light #1");
     if (  ImGui::SliderFloat("position.x", &pointLight->position.x, -50.0f, 50.0f)
         | ImGui::SliderFloat("position.y", &pointLight->position.y, -50.0f, 50.0f)
         | ImGui::SliderFloat("position.z", &pointLight->position.z, -50.0f, 50.0f)
     ) {
-        callback_data->dirLightPos = pointLight->position;
         phongShader->SetVec3Unf("u_point_light.position", pointLight->position);
         phongWTintShader->SetVec3Unf("u_point_light.position", pointLight->position);
+    }
+
+    ImGui::Text("Directional light");
+    if (  ImGui::SliderFloat("direction.x", &dirLight->direction.x, -1.0f, 1.0f)
+        | ImGui::SliderFloat("direction.y", &dirLight->direction.y, -1.0f, 1.0f)
+        | ImGui::SliderFloat("direction.z", &dirLight->direction.z, -1.0f, 1.0f)
+    ) {
+        phongShader->SetVec3Unf("u_dir_light.direction", glm::normalize(dirLight->direction));
+        phongWTintShader->SetVec3Unf("u_dir_light.direction", glm::normalize(dirLight->direction));
     }
 
     ImGui::SliderFloat("u_normal_length", &m_u_normal_length, 0.001f, 1.0f);

@@ -12,6 +12,7 @@
 #include "src/graphics/core/DepthMap.h"
 #include "src/graphics/DepthPassCamera.h"
 #include "src/graphics/PostProcessingQueue.h"
+#include "src/graphics/AxesCrosshair.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -33,7 +34,10 @@ private:
 
     std::unique_ptr<PostProcessingQueue> m_postprocessingQueue;
     std::unique_ptr<DepthMap> m_depthMap;
-    DepthPassCamera m_depthPassCamera;
+    mutable DepthPassCamera m_depthPassCamera;
+
+    // gizmos
+    AxesCrosshair m_axesCrosshair;
 
 public:
     Renderer();
@@ -48,18 +52,23 @@ public:
     void SetCamera(Camera* camera);
     const Camera* GetCamera() const;
     Camera* GetCameraMutable();
+    void SetDepthPassCamDistFromMainCam(float dist) const;
 
     GLuint GetColorBufferTextureID() const;
+    GLuint GetDepthBufferTextureID() const;
     void AddTransparentObject(ECS::EntityUID entity_UID);
 
 private:
+    // ECS functions
     void AddEntityUID(ECS::EntityUID entity_UID) override;
     void SceneChanged(uint32_t target_scene) override;
 
+    // Render Passes
     void _RenderDepthPass() const;
     void _RenderScenePass() const;
     void _RenderTransparentObjectsPass() const;
 
+    // Utility functions
     glm::mat4 _GetModelMatrix(Transform& transform) const;
     void _SortTransparentObjects() const;
     void _GenerateDrawCommands();

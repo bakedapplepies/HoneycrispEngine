@@ -11,7 +11,7 @@ PostProcessingQueue::PostProcessingQueue(int width, int height, const VertexArra
     m_screenQuadVAO = screenQuadVAO;
 }
 
-void PostProcessingQueue::DrawSequence(const CallbackData* callbackData)
+void PostProcessingQueue::DrawSequence()
 {
     ZoneScopedN("Post processing");
     m_screenQuadVAO->Bind();

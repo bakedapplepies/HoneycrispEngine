@@ -77,10 +77,15 @@ float ShadowFactor(vec4 frag_pos_depth_space)
 {
     // perspective divide
     vec3 ndc = frag_pos_depth_space.xyz / frag_pos_depth_space.w;
-    vec2 uv = ndc.xy * 0.5 + 0.5;
+    // vec2 uv = ndc.xy * 0.5 + 0.5;
+    ndc = ndc * 0.5 + 0.5;
 
-    float closestDepth = texture(u_framebuffer_depth_texture, uv).r;
+    float closestDepth = texture(u_framebuffer_depth_texture, ndc.xy).r;
     float currentDepth = ndc.z;
+
+    // TODO: Add bias
+    // if depth-value is bigger than that in the map, it's in the shadow (0.0)
+    // else: return 1.0 to preserve brightness
     float shadow = currentDepth > closestDepth ? 0.0 : 1.0;
 
     return shadow;

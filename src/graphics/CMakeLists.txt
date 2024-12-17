@@ -30,6 +30,8 @@ set(SOURCE
     ${CMAKE_SOURCE_DIR}/src/graphics/Billboard.cpp
     ${CMAKE_SOURCE_DIR}/src/graphics/Light.h
     ${CMAKE_SOURCE_DIR}/src/graphics/Light.cpp
+    ${CMAKE_SOURCE_DIR}/src/graphics/AxesCrosshair.h
+    ${CMAKE_SOURCE_DIR}/src/graphics/AxesCrosshair.cpp
 )
 
 add_library(${CMAKE_PROJECT_NAME}.Graphics ${SOURCE})

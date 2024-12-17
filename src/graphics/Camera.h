@@ -30,14 +30,12 @@ public:
     void ChangePos(const glm::vec3& posOffset);
     void SetDirection(const glm::vec3& direction);
     
-    // Returns a view matrix
     glm::mat4 GetViewMatrix() const;
+    glm::mat4 GetProjectionMatrix(uint32_t width, uint32_t height) const;
+    glm::mat4 GetOrthoMatrix(float left, float right, float bottom, float top) const;
 
     glm::vec3 GetLeftVec() const;
     glm::vec3 GetRightVec() const;
-
-    // Returns a perspective projection matrix
-    glm::mat4 GetProjectionMatrix(uint32_t width, uint32_t height) const;
 };
 
 HNCRSP_NAMESPACE_END

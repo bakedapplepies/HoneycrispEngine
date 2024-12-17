@@ -35,7 +35,7 @@ vec3 color_grade_post_exposure(vec3 color)
     return color * u_postExposure;
 }
 
-vec3 color_grade_contrast(vec3 color)
+vec3 color_grade_contrast(vec3 color)  // actually just a lerp between color & ACEScc_MIDGRAY
 {
     return (color - ACEScc_MIDGRAY) * u_contrast + ACEScc_MIDGRAY;
 }
@@ -64,6 +64,7 @@ void main()
     vec3 color = vec3(0.0);
     vec2 uv = fs_in.UV;
     color = vec3(texture(u_framebuffer_color_texture, uv));
+    float value = texture(u_framebuffer_depth_texture, uv).x;
 
     // Color Correction
     color = color_grade_post_exposure(color);
@@ -78,6 +79,9 @@ void main()
     
     // Gamma Correction
     color = pow(color, vec3(1.0/2.2));
+
+    // value = (value == 1.0) ? 1.0 : 0.0;
+    // FragColor = vec4(vec3(value), 1.0);
 
     FragColor = vec4(color, 1.0);
 }

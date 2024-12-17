@@ -28,14 +28,21 @@ public:
     void StartUp(CallbackData* callbackData);
     void ShutDown();
 
+    // Scene functions
     void ClearAllScenes();
     void SetActiveScene(uint32_t index);
     uint32_t GetCurrentSceneIndex() const;
+
+    // GLFW callback
     const CallbackData* GetCallbackData() const;
     CallbackData* GetMutableCallbackData() const;
 
+    // Update Scenes and their relevant ImGui
     void Update(const float& dt);
     void UpdateImGui();
+
+    // Utilities
+    const DirectionalLight* GetCurrentDirectionalLight();
 
     template <typename TScene>
     HNCRSP_NODISCARD uint32_t CreateScene()

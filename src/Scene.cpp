@@ -26,9 +26,17 @@ const Shader* Scene::CreateShader(
     m_shadersInScene.push_back(g_ShaderManager.GetShader(vertex, fragment, geometry));
 
     // notify all lights in scene to configure this shader
-    for (auto& light : m_lightsInscene)
+    for (uint32_t i = 0; i < m_currentDirectionalLights; i++)
     {
-        light->ConfigureShader(m_shadersInScene.back());
+        m_lightContainer.directionalLights[i]->ConfigureShader(m_shadersInScene.back());
+    }
+    for (uint32_t i = 0; i < m_currentPointLights; i++)
+    {
+        m_lightContainer.pointLights[i]->ConfigureShader(m_shadersInScene.back());
+    }
+    for (uint32_t i = 0; i < m_currentSpotLights; i++)
+    {
+        m_lightContainer.spotLights[i]->ConfigureShader(m_shadersInScene.back());
     }
 
     return m_shadersInScene.back();
@@ -41,9 +49,17 @@ void Scene::_ReconfigureAllShaders() const
         shader->SetIntUnf("u_num_dir_light", m_currentDirectionalLights);
         shader->SetIntUnf("u_num_point_light", m_currentPointLights);
         shader->SetIntUnf("u_num_spot_light", m_currentSpotLights);
-        for (auto& light : m_lightsInscene)
+        for (uint32_t i = 0; i < m_currentDirectionalLights; i++)
         {
-            light->ConfigureShader(shader);
+            m_lightContainer.directionalLights[i]->ConfigureShader(shader);
+        }
+        for (uint32_t i = 0; i < m_currentPointLights; i++)
+        {
+            m_lightContainer.pointLights[i]->ConfigureShader(shader);
+        }
+        for (uint32_t i = 0; i < m_currentSpotLights; i++)
+        {
+            m_lightContainer.spotLights[i]->ConfigureShader(shader);
         }
     }
 }

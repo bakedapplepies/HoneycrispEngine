@@ -13,6 +13,18 @@ std::ostream& operator<<(std::ostream& stream, const glm::vec3& vec3)
     return stream;
 }
 
+std::ostream& operator<<(std::ostream& stream, const glm::mat3& mat3)
+{
+    std::cout << glm::to_string(mat3);
+    return stream;
+}
+
+std::ostream& operator<<(std::ostream& stream, const glm::mat4& mat4)
+{
+    std::cout << glm::to_string(mat4);
+    return stream;
+}
+
 std::ostream& operator<<(std::ostream& stream, const Honeycrisp::FileSystem::Path& path)
 {
     std::cout << path.string() << '\n';

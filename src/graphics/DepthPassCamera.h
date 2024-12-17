@@ -16,6 +16,7 @@ public:
     float nearClippingPlane = 0.1f;
     float farClippingPlane = 50.0f;
     float speed = 6.0f;
+    float distOffMainCam = 200.0f;
 
 public:
     DepthPassCamera() = default;
@@ -25,6 +26,7 @@ public:
     void SetPos(const glm::vec3& new_pos);
     void ChangePos(const glm::vec3& pos_offset);
     void SetDirection(const glm::vec3& direction);
+    glm::vec3 GetDirection() const;
     
     // Returns a view matrix
     glm::mat4 GetViewMatrix(const glm::vec3& light_pos, const glm::vec3& target) const;
@@ -32,7 +34,7 @@ public:
     // Returns an orthographic projection matrix
     glm::mat4 GetProjectionMatrix() const;
 
-    glm::mat4 GetViewProjectionMatrix(const glm::vec3& light_pos, const glm::vec3& target) const;
+    glm::mat4 GetViewProjectionMatrix(const glm::vec3& target) const;
 };
 
 HNCRSP_NAMESPACE_END

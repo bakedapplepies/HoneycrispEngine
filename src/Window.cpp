@@ -54,8 +54,8 @@ void Window::Loop()
     // ----- Window stuff -----
     float begin = glfwGetTime();
 
-    // view matrix, proj matrix, time
-    UniformBuffer<glm::mat4, glm::mat4, float> uboMatrices(0);  // UBO binding index
+    // view matrix, ortho proj matrix, proj matrix, time
+    UniformBuffer<glm::mat4, glm::mat4, glm::mat4, float> uboMatrices(0);  // UBO binding index
     // viewPos, spotlightPos, spotlightDir
     UniformBuffer<glm::vec3, glm::vec3, glm::vec3> uboOther(1);
 
@@ -83,7 +83,17 @@ void Window::Loop()
         ImGui::Begin("Global settings");
         ImGui::GetCurrentWindow()->FontWindowScale = m_windowHeightScalar;  // scale ui based on window height, might make it decay exponentially
         
-        ImGui::SliderFloat("Camera Speed", &m_camera.speed, 2.0f, 20.0f);
+        ImGui::SliderFloat("Camera Speed",
+                            &m_camera.speed,
+                            2.0f, 20.0f);
+
+        static float depthPassCamDistFromMainCam = 50.0f;
+        if (ImGui::SliderFloat("Depth-pass Camera's Distance from Main Camera",
+                            &depthPassCamDistFromMainCam,
+                            1.0f, 100.0f))
+        {
+            renderer->SetDepthPassCamDistFromMainCam(depthPassCamDistFromMainCam);
+        }
         
         ImGui::NewLine();
         ImGui::SeparatorText("Post-processing effects variables");
@@ -156,7 +166,7 @@ void Window::Loop()
 
         GLuint colorBufferTextureID = renderer->GetColorBufferTextureID();
         ImGui::Image(
-            reinterpret_cast<ImTextureID>(renderer->GetColorBufferTextureID()),
+            reinterpret_cast<ImTextureID>(colorBufferTextureID),
             ImGui::GetContentRegionAvail(),
             ImVec2(0.0f, 1.0f),
             ImVec2(1.0f, 0.0f)
@@ -172,6 +182,7 @@ void Window::Loop()
         uboMatrices.Bind();
         uboMatrices.Update(
             glm::value_ptr(m_camera.GetViewMatrix()),
+            glm::value_ptr(m_camera.GetOrthoMatrix(-5.0f, 5.0f, -5.0f, 5.0f)),
             glm::value_ptr(m_camera.GetProjectionMatrix(m_callbackData->windowWidth * 0.8f, m_callbackData->windowHeight)),
             &u_time
         );

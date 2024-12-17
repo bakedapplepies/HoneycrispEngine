@@ -24,16 +24,14 @@ extern constexpr uint8_t COMPUTE_SHADER_BIT     = 0 << 5;
 // ----------
 
 // Texture types ----------
-extern constexpr uint16_t DEPTH_BUFFER_TEXTURE_UNIT_INDEX = 12;
+extern constexpr uint16_t DEPTH_BUFFER_TEXTURE_UNIT_INDEX          = 12;
 extern constexpr uint16_t DEPTH_BUFFER_NO_ALPHA_TEXTURE_UNIT_INDEX = 13;
-extern constexpr uint16_t COLOR_BUFFER_TEXTURE_UNIT_INDEX = 14;
-extern constexpr uint16_t CUBEMAP_TEXTURE_UNIT_INDEX = 15;
+extern constexpr uint16_t COLOR_BUFFER_TEXTURE_UNIT_INDEX          = 14;
+extern constexpr uint16_t CUBEMAP_TEXTURE_UNIT_INDEX               = 15;
 // ----------
 
-// Scene lights ----------
-constexpr uint32_t MAX_DIRECTIONAL_LIGHTS = 1;
-constexpr uint32_t MAX_POINT_LIGHTS       = 10;
-constexpr uint32_t MAX_SPOT_LIGHTS        = 1;
-// ----------
+// Vectors
+extern constexpr glm::vec3 VEC3_UP = glm::vec3(0.0f, 1.0f, 0.0f);
+extern constexpr glm::vec3 VEC3_DOWN = glm::vec3(0.0f, -1.0f, 0.0f);
 
 HNCRSP_NAMESPACE_END

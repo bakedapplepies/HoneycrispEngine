@@ -27,6 +27,7 @@ private:
     std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Model> > sponza;
     std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Model> > sponzaNormal;
     Honeycrisp::PointLight* pointLight;
+    Honeycrisp::DirectionalLight* dirLight;
     Honeycrisp::SpotLight* spotLight;
 
     float m_u_normal_length = 0.7f;

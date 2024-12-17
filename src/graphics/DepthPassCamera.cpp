@@ -22,14 +22,19 @@ void DepthPassCamera::ChangePos(const glm::vec3& pos_offset)
 
 void DepthPassCamera::SetDirection(const glm::vec3& new_direction)
 {
-    direction = new_direction;
+    direction = glm::normalize(new_direction);
+}
+
+glm::vec3 DepthPassCamera::GetDirection() const
+{
+    return direction;
 }
 
 glm::mat4 DepthPassCamera::GetViewMatrix(const glm::vec3& light_pos, const glm::vec3& target) const
 {
     return glm::lookAt(
         light_pos,
-        target,
+        light_pos - direction,
         cameraUp
     );
 }
@@ -46,9 +51,9 @@ glm::mat4 DepthPassCamera::GetProjectionMatrix() const
     );
 }
 
-glm::mat4 DepthPassCamera::GetViewProjectionMatrix(const glm::vec3& light_pos, const glm::vec3& target) const
+glm::mat4 DepthPassCamera::GetViewProjectionMatrix(const glm::vec3& target) const
 {
-    return GetProjectionMatrix() * GetViewMatrix(light_pos, target);
+    return GetProjectionMatrix() * GetViewMatrix(target - direction * distOffMainCam, target);
 }
 
 HNCRSP_NAMESPACE_END

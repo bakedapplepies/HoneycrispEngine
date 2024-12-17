@@ -63,7 +63,7 @@ void DepthMap::Bind() const
 {
     GLCall(glBindFramebuffer(GL_FRAMEBUFFER, m_framebufferID));
 
-    GLCall(  // has to be like this so the scene is rendered to the color buffer properly
+    GLCall(  // has to be like this so the scene is rendered to the depth buffer properly
         glViewport(
             0, 0, m_width, m_height
         ));
@@ -78,6 +78,11 @@ void DepthMap::BindDepthBuffer(const uint16_t texture_unit) const
 {
     GLCall(glActiveTexture(GL_TEXTURE0 + texture_unit));
     GLCall(glBindTexture(GL_TEXTURE_2D, m_depthTexture_ID));
+}
+
+GLuint DepthMap::GetTextureID() const
+{
+    return m_depthTexture_ID;
 }
 
 HNCRSP_NAMESPACE_END

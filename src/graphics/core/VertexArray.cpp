@@ -56,7 +56,7 @@ VertexArray::VertexArray(
     m_indices = std::vector<GLuint>(indices->begin(), indices->end());
     
     size_t vertArrayDataSize = vertices->size() * 3;
-    if (colors) vertArrayDataSize += colors->size();
+    if (colors) vertArrayDataSize += colors->size() * 3;
     if (normals) vertArrayDataSize += normals->size() * 3;
     if (uvs) vertArrayDataSize += uvs->size() * 2;
     m_vertexData.reserve(vertArrayDataSize);
@@ -365,6 +365,9 @@ void VertexArray::_CreateVAO(const float* vboData, size_t vboSize, const GLuint*
     Bind();
     m_vertexBuffer.CreateVBO(vboData, vboSize);
     m_elementBuffer.CreateEBO(eboData, eboSize);
+
+    m_vertexData = std::vector<float>();
+    m_indices = std::vector<GLuint>();
 }
 
 void VertexArray::Bind() const
