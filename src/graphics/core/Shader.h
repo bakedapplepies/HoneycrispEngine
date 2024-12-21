@@ -33,74 +33,74 @@ public:
     
     inline void Use() const
     {
-        GLCall(glUseProgram(m_shaderID));
+        glUseProgram(m_shaderID);
     }
 
     inline void SetIntUnf(std::string_view name, int value) const
     {
-        GLCall(glProgramUniform1i(m_shaderID, _GetUniformLocation(name), value));
+        glProgramUniform1i(m_shaderID, _GetUniformLocation(name), value);
     }
 
     inline void SetUIntUnf(std::string_view name, uint32_t value) const
     {
-        GLCall(glProgramUniform1ui(m_shaderID, _GetUniformLocation(name), value));
+        glProgramUniform1ui(m_shaderID, _GetUniformLocation(name), value);
     }
 
     inline void SetFloatUnf(std::string_view name, float value) const
     {
-        GLCall(glProgramUniform1f(m_shaderID, _GetUniformLocation(name), value));
+        glProgramUniform1f(m_shaderID, _GetUniformLocation(name), value);
     }
 
     inline void SetMat4Unf(std::string_view name, const glm::mat4& matrix) const
     {
-        GLCall(glProgramUniformMatrix4fv(
+        glProgramUniformMatrix4fv(
             m_shaderID,
             _GetUniformLocation(name),
             1,
             GL_FALSE,
             glm::value_ptr(matrix)
-        ));
+        );
     }
 
     inline void SetMat3Unf(std::string_view name, const glm::mat3& matrix) const
     {
-        GLCall(glProgramUniformMatrix3fv(
+        glProgramUniformMatrix3fv(
             m_shaderID,
             _GetUniformLocation(name),
             1,
             GL_FALSE,
             glm::value_ptr(matrix)
-        ));
+        );
     }
 
     inline void SetVec2Unf(std::string_view name, const glm::vec2& vector) const
     {
-        GLCall(glProgramUniform2fv(
+        glProgramUniform2fv(
             m_shaderID,
             _GetUniformLocation(name),
             1,
             glm::value_ptr(vector)
-        ));
+        );
     }
 
     inline void SetUVec2Unf(std::string_view name, const glm::uvec2& vector) const
     {
-        GLCall(glProgramUniform2uiv(
+        glProgramUniform2uiv(
             m_shaderID,
             _GetUniformLocation(name),
             1,
             glm::value_ptr(vector)
-        ));
+        );
     }
 
     inline void SetVec3Unf(std::string_view name, const glm::vec3& vector) const
     {
-        GLCall(glProgramUniform3fv(
+        glProgramUniform3fv(
             m_shaderID,
             _GetUniformLocation(name),
             1,
             glm::value_ptr(vector)
-        ));
+        );
     }
 };
 

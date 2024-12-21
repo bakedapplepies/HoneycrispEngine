@@ -38,7 +38,7 @@ void Texture2DManager::StartUp()
 {
     stbi_set_flip_vertically_on_load(true);
 
-    GLCall(glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_maxTextureUnitsPerStage));
+    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_maxTextureUnitsPerStage);
 
     mainTextureMap = GetTexture2D(
         FileSystem::Path("resources/textures/grass_textures.png"),

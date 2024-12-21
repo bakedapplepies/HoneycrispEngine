@@ -122,28 +122,28 @@ VertexArray::VertexArray(
     unsigned int currentOffset = 0;
 
     // Postions XYZ
-    GLCall(glVertexAttribPointer(
+    glVertexAttribPointer(
         VERTEX_ATTRIB_POSITION_INDEX,
         3,
         GL_FLOAT,
         GL_FALSE,
         numAttribElements * sizeof(float),
         reinterpret_cast<void*>(currentOffset * sizeof(float))
-    ));
+    );
     EnableVertexAttribPosition(true);
     currentOffset += 3;
 
     // Color RGB
     if (colors)
     {
-        GLCall(glVertexAttribPointer(
+        glVertexAttribPointer(
             VERTEX_ATTRIB_COLOR_INDEX,
             3,
             GL_FLOAT,
             GL_FALSE,
             numAttribElements * sizeof(float),
             reinterpret_cast<void*>(currentOffset * sizeof(float))
-        ));
+        );
         EnableVertexAttribColor(true);
         currentOffset += 3;
     }
@@ -152,14 +152,14 @@ VertexArray::VertexArray(
     if (uvs)
     {
         // Texture Coordinates XY
-        GLCall(glVertexAttribPointer(
+        glVertexAttribPointer(
             VERTEX_ATTRIB_UV_INDEX,
             2,
             GL_FLOAT,
             GL_FALSE,
             numAttribElements * sizeof(float),
             reinterpret_cast<void*>(currentOffset * sizeof(float))
-        ));
+        );
         EnableVertexAttribUV(true);
         currentOffset += 2;
     }
@@ -168,14 +168,14 @@ VertexArray::VertexArray(
     if (normals)
     {
         // Normals XYZ (Normalized vectors)
-        GLCall(glVertexAttribPointer(
+        glVertexAttribPointer(
             VERTEX_ATTRIB_NORMAL_INDEX,
             3,
             GL_FLOAT, 
             GL_FALSE,
             numAttribElements * sizeof(float),
             reinterpret_cast<void*>(currentOffset * sizeof(float))
-        ));
+        );
         EnableVertexAttribNormals(true);
         currentOffset += 3;
     }
@@ -212,28 +212,28 @@ VertexArray::VertexArray(
     unsigned int currentOffset = 0;
 
     // Postions XYZ
-    GLCall(glVertexAttribPointer(
+    glVertexAttribPointer(
         VERTEX_ATTRIB_POSITION_INDEX,
         3,
         GL_FLOAT,
         GL_FALSE,
         numAttribElements * sizeof(float),
         reinterpret_cast<void*>(currentOffset * sizeof(float))
-    ));
+    );
     EnableVertexAttribPosition(true);
     currentOffset += 3;
 
     // Color RGB
     if (color)
     {
-        GLCall(glVertexAttribPointer(
+        glVertexAttribPointer(
             VERTEX_ATTRIB_COLOR_INDEX,
             3,
             GL_FLOAT,
             GL_FALSE,
             numAttribElements * sizeof(float),
             reinterpret_cast<void*>(currentOffset * sizeof(float))
-        ));
+        );
         EnableVertexAttribColor(true);
         currentOffset += 3;
     }
@@ -242,14 +242,14 @@ VertexArray::VertexArray(
     if (uv)
     {
         // Texture Coordinates XY
-        GLCall(glVertexAttribPointer(
+        glVertexAttribPointer(
             VERTEX_ATTRIB_UV_INDEX,
             2,
             GL_FLOAT,
             GL_FALSE,
             numAttribElements * sizeof(float),
             reinterpret_cast<void*>(currentOffset * sizeof(float))
-        ));
+        );
         EnableVertexAttribUV(true);
         currentOffset += 2;
     }
@@ -258,14 +258,14 @@ VertexArray::VertexArray(
     if (normal)
     {
         // Normals XYZ (Normalized vectors)
-        GLCall(glVertexAttribPointer(
+        glVertexAttribPointer(
             VERTEX_ATTRIB_NORMAL_INDEX,
             3,
             GL_FLOAT, 
             GL_FALSE,
             numAttribElements * sizeof(float),
             reinterpret_cast<void*>(currentOffset * sizeof(float))
-        ));
+        );
         EnableVertexAttribNormals(true);
         currentOffset += 3;
     }
@@ -277,11 +277,11 @@ void VertexArray::EnableVertexAttribPosition(bool on) const
     Bind();
     if (on)
     {
-        GLCall(glEnableVertexAttribArray(VERTEX_ATTRIB_POSITION_INDEX));
+        glEnableVertexAttribArray(VERTEX_ATTRIB_POSITION_INDEX);
     }
     else
     {
-        GLCall(glDisableVertexAttribArray(VERTEX_ATTRIB_POSITION_INDEX));
+        glDisableVertexAttribArray(VERTEX_ATTRIB_POSITION_INDEX);
     }
 }
 
@@ -290,11 +290,11 @@ void VertexArray::EnableVertexAttribColor(bool on) const
     Bind();
     if (on)
     {
-        GLCall(glEnableVertexAttribArray(VERTEX_ATTRIB_COLOR_INDEX));
+        glEnableVertexAttribArray(VERTEX_ATTRIB_COLOR_INDEX);
     }
     else
     {
-        GLCall(glDisableVertexAttribArray(VERTEX_ATTRIB_COLOR_INDEX));
+        glDisableVertexAttribArray(VERTEX_ATTRIB_COLOR_INDEX);
     }
 }
 
@@ -303,11 +303,11 @@ void VertexArray::EnableVertexAttribUV(bool on) const
     Bind();
     if (on)
     {
-        GLCall(glEnableVertexAttribArray(VERTEX_ATTRIB_UV_INDEX));
+        glEnableVertexAttribArray(VERTEX_ATTRIB_UV_INDEX);
     }
     else
     {
-        GLCall(glDisableVertexAttribArray(VERTEX_ATTRIB_UV_INDEX));
+        glDisableVertexAttribArray(VERTEX_ATTRIB_UV_INDEX);
     }
 }
 
@@ -316,11 +316,11 @@ void VertexArray::EnableVertexAttribNormals(bool on) const
     Bind();
     if (on)
     {
-        GLCall(glEnableVertexAttribArray(VERTEX_ATTRIB_NORMAL_INDEX));
+        glEnableVertexAttribArray(VERTEX_ATTRIB_NORMAL_INDEX);
     }
     else
     {
-        GLCall(glDisableVertexAttribArray(VERTEX_ATTRIB_NORMAL_INDEX));
+        glDisableVertexAttribArray(VERTEX_ATTRIB_NORMAL_INDEX);
     }
 }
 
@@ -352,7 +352,7 @@ VertexArray::~VertexArray()
 {
     HNCRSP_CHECK_RENDER_CONTEXT();
 
-    GLCall(glDeleteVertexArrays(1, &m_VAO_ID));
+    glDeleteVertexArrays(1, &m_VAO_ID);
 }
 
 void VertexArray::_CreateVAO(const float* vboData, size_t vboSize, const GLuint* eboData, size_t eboSize, GLenum mode)
@@ -361,7 +361,7 @@ void VertexArray::_CreateVAO(const float* vboData, size_t vboSize, const GLuint*
     {
         HNCRSP_TERMINATE("VAO already created");
     }
-    GLCall(glGenVertexArrays(1, &m_VAO_ID));
+    glGenVertexArrays(1, &m_VAO_ID);
     Bind();
     m_vertexBuffer.CreateVBO(vboData, vboSize);
     m_elementBuffer.CreateEBO(eboData, eboSize);
@@ -372,12 +372,12 @@ void VertexArray::_CreateVAO(const float* vboData, size_t vboSize, const GLuint*
 
 void VertexArray::Bind() const
 {
-    GLCall(glBindVertexArray(m_VAO_ID));
+    glBindVertexArray(m_VAO_ID);
 }
 
 void VertexArray::Unbind() const
 {
-    GLCall(glBindVertexArray(0));
+    glBindVertexArray(0);
 }
 
 GLuint VertexArray::GetID() const

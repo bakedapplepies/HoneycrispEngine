@@ -7,8 +7,8 @@ HNCRSP_NAMESPACE_START
 
 Cubemap::Cubemap(const std::array<FileSystem::Path, 6>& faces)
 {
-    GLCall(glGenTextures(1, &m_cubemapTextureID));
-    GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemapTextureID));
+    glGenTextures(1, &m_cubemapTextureID);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemapTextureID);
 
     int width, height;
     for (unsigned int i = 0; i < faces.size(); i++)
@@ -47,15 +47,15 @@ Cubemap::Cubemap(const std::array<FileSystem::Path, 6>& faces)
         {
             if (i == 0)
             {
-                GLCall(glTexStorage2D(
+                glTexStorage2D(
                     GL_TEXTURE_CUBE_MAP,
                     1,
                     GL_SRGB8,  // have to be sized
                     width,
                     height
-                ));
+                );
             }
-            GLCall(glTexSubImage2D(
+            glTexSubImage2D(
                 GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
                 0,
                 0, 0,
@@ -63,13 +63,13 @@ Cubemap::Cubemap(const std::array<FileSystem::Path, 6>& faces)
                 format,
                 GL_UNSIGNED_BYTE,
                 data
-            ));
+            );
 
-            GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-            GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-            GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-            GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-            GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE));
+            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
             if (!deserializedImage) stbi_image_free(data);
         }
@@ -89,7 +89,7 @@ Cubemap::~Cubemap()
 {
     HNCRSP_CHECK_RENDER_CONTEXT();
 
-    GLCall(glDeleteTextures(1, &m_cubemapTextureID));
+    glDeleteTextures(1, &m_cubemapTextureID);
 }
 
 void Cubemap::_SetMesh()
@@ -170,23 +170,23 @@ void Cubemap::_SetMesh()
 static GLuint vao_id = -1;
 void Cubemap::Draw() const
 {
-    // GLCall(glDepthMask(GL_FALSE));  // TODO: ????
+    // glDepthMask(GL_FALSE);  // TODO: ????
     m_VAO.Bind();
-    GLCall(glDepthFunc(GL_LEQUAL));
+    glDepthFunc(GL_LEQUAL);
 
     g_ShaderManager.cubemapShader->Use();
     if (vao_id != m_VAO.GetID())
     {
-        GLCall(glActiveTexture(GL_TEXTURE0 + CUBEMAP_TEXTURE_UNIT_INDEX));
-        GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemapTextureID));
+        glActiveTexture(GL_TEXTURE0 + CUBEMAP_TEXTURE_UNIT_INDEX);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemapTextureID);
         g_ShaderManager.cubemapShader->SetIntUnf("u_cubemap", CUBEMAP_TEXTURE_UNIT_INDEX);
 
         vao_id = m_VAO.GetID();
     }
 
-    GLCall(glDrawElements(GL_TRIANGLES, m_verticesCount, GL_UNSIGNED_INT, nullptr));
-    GLCall(glDepthFunc(GL_LESS));
-    // GLCall(glDepthMask(GL_TRUE));
+    glDrawElements(GL_TRIANGLES, m_verticesCount, GL_UNSIGNED_INT, nullptr);
+    glDepthFunc(GL_LESS);
+    // glDepthMask(GL_TRUE);
 }
 
 HNCRSP_NAMESPACE_END

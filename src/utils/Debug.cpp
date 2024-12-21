@@ -4,9 +4,64 @@
 
 HNCRSP_NAMESPACE_START
 
-void GLClearError()
-{
-    while (glGetError() != GL_NO_ERROR);
+void GLAPIENTRY DebugMessageCallback(
+    GLenum source,
+    GLenum type,
+    GLuint id,
+    GLenum severity,
+    [[maybe_unused]] GLsizei length,
+    const GLchar* message,
+    [[maybe_unused]] const void* userParam
+) {
+    // Ignore certain verbose info messages (particularly ones on Nvidia).
+    if (id == 131169 || 
+        id == 131185 || // NV: Buffer will use video memory
+        id == 131218 || 
+        id == 131204 || // Texture cannot be used for texture mapping
+        id == 131222 ||
+        id == 131154 || // NV: pixel transfer is synchronized with 3D rendering
+        id == 0         // gl{Push, Pop}DebugGroup
+    ) { return; }
+
+    std::stringstream debugMessageStream;
+    debugMessageStream << message << '\n';
+
+    switch (source)
+    {
+        case GL_DEBUG_SOURCE_API: debugMessageStream << "Source: API"; break;
+        case GL_DEBUG_SOURCE_WINDOW_SYSTEM: debugMessageStream << "Source: Window Manager"; break;
+        case GL_DEBUG_SOURCE_SHADER_COMPILER: debugMessageStream << "Source: Shader Compiler"; break;
+        case GL_DEBUG_SOURCE_THIRD_PARTY: debugMessageStream << "Source: Third Party"; break;
+        case GL_DEBUG_SOURCE_APPLICATION: debugMessageStream << "Source: Application"; break;
+        case GL_DEBUG_SOURCE_OTHER: debugMessageStream << "Source: Other"; break;
+    }
+
+    debugMessageStream << '\n';
+
+    switch (type)
+    {
+        case GL_DEBUG_TYPE_ERROR: debugMessageStream << "Type: Error"; break;
+        case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: debugMessageStream << "Type: Deprecated Behaviour"; break;
+        case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR: debugMessageStream << "Type: Undefined Behaviour"; break;
+        case GL_DEBUG_TYPE_PORTABILITY: debugMessageStream << "Type: Portability"; break;
+        case GL_DEBUG_TYPE_PERFORMANCE: debugMessageStream << "Type: Performance"; break;
+        case GL_DEBUG_TYPE_MARKER: debugMessageStream << "Type: Marker"; break;
+        case GL_DEBUG_TYPE_PUSH_GROUP: debugMessageStream << "Type: Push Group"; break;
+        case GL_DEBUG_TYPE_POP_GROUP: debugMessageStream << "Type: Pop Group"; break;
+        case GL_DEBUG_TYPE_OTHER: debugMessageStream << "Type: Other"; break;
+    }
+
+    debugMessageStream << '\n';
+
+    switch (severity)
+    {
+        case GL_DEBUG_SEVERITY_HIGH: debugMessageStream << "Severity: high"; break;
+        case GL_DEBUG_SEVERITY_MEDIUM: debugMessageStream << "Severity: medium"; break;
+        case GL_DEBUG_SEVERITY_LOW: debugMessageStream << "Severity: low"; break;
+        case GL_DEBUG_SEVERITY_NOTIFICATION: debugMessageStream << "Severity: notification"; break;
+    }
+
+    HNCRSP_LOG_ERROR(fmt::format("OpenGL Message: {} {}", type, debugMessageStream.str()));
 }
 
 void CheckRenderContext(const char* function, const char* file, unsigned int line)
@@ -16,30 +71,6 @@ void CheckRenderContext(const char* function, const char* file, unsigned int lin
         std::cout << fmt::format("Render context not available at: {} | {}:{}\n", function, file, line);
         assert(false);
     }
-}
-
-bool GLLogCall(const char* function, const char* file, unsigned int line)
-{
-    while (GLenum error = glGetError()) {
-        std::string errorType;
-        switch (error)
-        {
-            case GL_INVALID_ENUM:                  errorType = "INVALID ENUM"; break;
-            case GL_INVALID_VALUE:                 errorType = "INVALID VALUE"; break;
-            case GL_INVALID_OPERATION:             errorType = "INVALID OPERATION"; break;
-            case GL_STACK_OVERFLOW:                errorType = "STACK OVERFLOW"; break;
-            case GL_STACK_UNDERFLOW:               errorType = "STACK UNDERFLOW"; break;
-            case GL_OUT_OF_MEMORY:                 errorType = "OUT OF MEMORY"; break;
-            case GL_INVALID_FRAMEBUFFER_OPERATION: errorType = "INVALID FRAMEBUFFER OPERATION"; break;
-            case GL_CONTEXT_LOST:                  errorType = "CONTEXT LOST"; break;
-            default:                               errorType = "OPENGL ERROR ENUM UNRECOGNIZED"; break;
-        }
-        std::cout << fmt::format("[OPENGL ERROR: {} | {}]\n    At: {}\n    File: {}:{}\n",
-            error, errorType, function, file, line
-        );
-        return false;
-    }
-    return true;
 }
 
 HNCRSP_NAMESPACE_END

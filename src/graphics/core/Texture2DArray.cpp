@@ -12,12 +12,9 @@ Texture2DArray::Texture2DArray(const std::vector<FileSystem::Path>& texturePaths
     GLenum format = GL_RGB;
     int width, height, nrChannels, desiredChannels = 4;
 
-    GLCall(
-        glGenTextures(1, &m_textureID));
-    GLCall(
-        glBindTexture(GL_TEXTURE_2D_ARRAY, m_textureID));
-    GLCall(
-        glTexStorage3D(GL_TEXTURE_2D_ARRAY, mipLevelCount, internal_format, width, height, format));
+    glGenTextures(1, &m_textureID);
+    glBindTexture(GL_TEXTURE_2D_ARRAY, m_textureID);
+    glTexStorage3D(GL_TEXTURE_2D_ARRAY, mipLevelCount, internal_format, width, height, format);
 
     uint8_t* data;
     for (int i = 0; i < texturePaths.size(); i++)
@@ -40,29 +37,23 @@ Texture2DArray::Texture2DArray(const std::vector<FileSystem::Path>& texturePaths
 
         if (data)
         {
-            GLCall(
-                glTexSubImage3D(
-                    GL_TEXTURE_2D_ARRAY,
-                    0,
-                    0, 0,
-                    i,
-                    width, height,
-                    texturePaths.size(),
-                    GL_RGBA,
-                    GL_UNSIGNED_BYTE,
-                    data
-                ));
+            glTexSubImage3D(
+                GL_TEXTURE_2D_ARRAY,
+                0,
+                0, 0,
+                i,
+                width, height,
+                texturePaths.size(),
+                GL_RGBA,
+                GL_UNSIGNED_BYTE,
+                data
+            );
 
-            GLCall(
-                glGenerateMipmap(GL_TEXTURE_2D_ARRAY));
-            GLCall(
-                glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST));
-            GLCall(
-                glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
-            GLCall(
-                glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT));
-            GLCall(
-                glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT));
+            glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
+            glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
         }
         else
         {

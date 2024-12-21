@@ -78,7 +78,7 @@ void Renderer::Render() const
     m_axesCrosshair.Render();
 
     // bind default framebuffer and clear to clean up any ImGui stuff from last frame
-    GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
@@ -101,7 +101,6 @@ void Renderer::_RenderDepthPass() const
     {
         m_depthPassCamera.SetDirection(VEC3_DOWN);
     }
-    HNCRSP_LOG_INFO(m_depthPassCamera.direction);
 
     viewProjectionMatrix = m_depthPassCamera.GetViewProjectionMatrix(glm::vec3(0.0f, 2.0f, -2.0f));
     depthPassShader->SetMat4Unf("u_depthSpaceMatrix", viewProjectionMatrix);
@@ -119,14 +118,12 @@ void Renderer::_RenderDepthPass() const
         {
             glm::mat4 model_matrix = _GetModelMatrix(transform);
             depthPassShader->SetMat4Unf("u_model", model_matrix);
-            GLCall(
-                glDrawElementsBaseVertex(
-                    GL_TRIANGLES,
-                    drawData.meta_data[i].indices_buffer_count, 
-                    GL_UNSIGNED_INT,
-                    reinterpret_cast<void*>(indexBufferOffset * sizeof(float)),
-                    drawData.meta_data[i].mesh_vertex_offset
-                )
+            glDrawElementsBaseVertex(
+                GL_TRIANGLES,
+                drawData.meta_data[i].indices_buffer_count, 
+                GL_UNSIGNED_INT,
+                reinterpret_cast<void*>(indexBufferOffset * sizeof(float)),
+                drawData.meta_data[i].mesh_vertex_offset
             );
             indexBufferOffset += drawData.meta_data[i].indices_buffer_count;
         }
@@ -216,14 +213,12 @@ void Renderer::_RenderScenePass() const
             shader->SetUIntUnf("u_material.whichMaterial", whichMaterial);
 
             // TODO: Send uniform for index into texture array
-            GLCall(
-                glDrawElementsBaseVertex(
-                    GL_TRIANGLES,
-                    drawData.meta_data[i].indices_buffer_count,
-                    GL_UNSIGNED_INT,
-                    reinterpret_cast<void*>(indexBufferOffset * sizeof(float)),
-                    drawData.meta_data[i].mesh_vertex_offset
-                )
+            glDrawElementsBaseVertex(
+                GL_TRIANGLES,
+                drawData.meta_data[i].indices_buffer_count,
+                GL_UNSIGNED_INT,
+                reinterpret_cast<void*>(indexBufferOffset * sizeof(float)),
+                drawData.meta_data[i].mesh_vertex_offset
             );
             indexBufferOffset += drawData.meta_data[i].indices_buffer_count;
 
@@ -309,14 +304,12 @@ void Renderer::_RenderTransparentObjectsPass() const
             shader->SetUIntUnf("u_material.whichMaterial", whichMaterial);
 
         // TODO: Send uniform for index into texture array
-        GLCall(
-            glDrawElementsBaseVertex(
-                GL_TRIANGLES,
-                drawData.meta_data[obj.metaDataIndex].indices_buffer_count,
-                GL_UNSIGNED_INT,
-                reinterpret_cast<void*>(obj.indexBufferOffset * sizeof(float)),
-                drawData.meta_data[obj.metaDataIndex].mesh_vertex_offset
-            )
+        glDrawElementsBaseVertex(
+            GL_TRIANGLES,
+            drawData.meta_data[obj.metaDataIndex].indices_buffer_count,
+            GL_UNSIGNED_INT,
+            reinterpret_cast<void*>(obj.indexBufferOffset * sizeof(float)),
+            drawData.meta_data[obj.metaDataIndex].mesh_vertex_offset
         );
 
         if (albedoMap) albedoMap->Unbind();

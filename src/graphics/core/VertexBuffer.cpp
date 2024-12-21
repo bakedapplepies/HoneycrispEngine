@@ -19,24 +19,24 @@ VertexBuffer& VertexBuffer::operator=(VertexBuffer&& other) noexcept
 
 VertexBuffer::~VertexBuffer()
 {
-    GLCall(glDeleteBuffers(1, &m_VBO_ID));
+    glDeleteBuffers(1, &m_VBO_ID);
 }
 
 void VertexBuffer::CreateVBO(const float* data, size_t dataSize)
 {
-    GLCall(glGenBuffers(1, &m_VBO_ID));
+    glGenBuffers(1, &m_VBO_ID);
     Bind();
-    GLCall(glBufferStorage(GL_ARRAY_BUFFER, dataSize, data, GL_MAP_READ_BIT));
+    glBufferStorage(GL_ARRAY_BUFFER, dataSize, data, GL_MAP_READ_BIT);
 }
 
 void VertexBuffer::Bind() const
 {
-    GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_VBO_ID));
+    glBindBuffer(GL_ARRAY_BUFFER, m_VBO_ID);
 }
 
 void VertexBuffer::Unbind() const
 {
-    GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 HNCRSP_NAMESPACE_END

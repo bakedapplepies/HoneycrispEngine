@@ -40,7 +40,7 @@ void UpdateVertAttribs(int index)
 void main()
 {
     // x-axis
-    vec4 transform_x_axis = u_ortho * X_AXIS;
+    vec4 transform_x_axis = u_ortho * mat4(mat3(u_view)) * X_AXIS;
     gs_out.VertColor = vec3(1.0, 0.0, 0.0);
     gl_Position = vec4(0.0, 0.0, 0.0, 0.0);
     EmitVertex();
@@ -49,7 +49,7 @@ void main()
     EndPrimitive();
 
     // y-axis
-    vec4 transform_y_axis = u_ortho * Y_AXIS;
+    vec4 transform_y_axis = u_ortho * mat4(mat3(u_view)) * Y_AXIS;
     gs_out.VertColor = vec3(0.0, 1.0, 0.0);
     gl_Position = vec4(0.0, 0.0, 0.0, 0.0);
     EmitVertex();
@@ -58,7 +58,7 @@ void main()
     EndPrimitive();
 
     // z-axis
-    vec4 transform_z_axis = u_ortho * Z_AXIS;
+    vec4 transform_z_axis = u_ortho * mat4(mat3(u_view)) * Z_AXIS;
     gs_out.VertColor = vec3(0.0, 0.0, 1.0);
     gl_Position = vec4(0.0, 0.0, 0.0, 0.0);
     EmitVertex();

@@ -30,7 +30,7 @@ void AxesCrosshair::Render() const
 {
     glDisable(GL_DEPTH_TEST);
     m_shader->Use();
-    glDrawElements(GL_POINT, 1, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_POINTS, 1, GL_UNSIGNED_INT, 0);
     glEnable(GL_DEPTH_TEST);
 }
 

@@ -28,17 +28,17 @@ public:
 
         _AddTypeSizes();
 
-        GLCall(glGenBuffers(1, &m_uboID));
-        GLCall(glBindBuffer(GL_UNIFORM_BUFFER, m_uboID));
-        GLCall(glBufferData(GL_UNIFORM_BUFFER, totalByteSize, nullptr, GL_STATIC_DRAW));
-        GLCall(glBindBufferRange(GL_UNIFORM_BUFFER, bindingIndex, m_uboID, 0, totalByteSize));
+        glGenBuffers(1, &m_uboID);
+        glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
+        glBufferData(GL_UNIFORM_BUFFER, totalByteSize, nullptr, GL_STATIC_DRAW);
+        glBindBufferRange(GL_UNIFORM_BUFFER, bindingIndex, m_uboID, 0, totalByteSize);
     }
 
     template <typename... Args>
     void Update(const Args* const... args) const
     {
         static_assert(sizeof...(args) <= sizeof...(Ts), "Invalid number of arguments for UBO.");
-        GLCall(glBindBuffer(GL_UNIFORM_BUFFER, m_uboID));
+        glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
         size_t offset = 0;
         size_t index = 0;
         _Update(index, offset, args...);
@@ -48,14 +48,14 @@ public:
     {
         HNCRSP_CHECK_RENDER_CONTEXT();
 
-        GLCall(glDeleteBuffers(1, &m_uboID));
+        glDeleteBuffers(1, &m_uboID);
     }
 
 private:
     template <typename T, typename... Args>
     inline void _Update(size_t index, size_t offset, const T* const t, const Args* const... args) const
     {
-        GLCall(glBufferSubData(GL_UNIFORM_BUFFER, m_offsets[index], m_sizes[index], t));
+        glBufferSubData(GL_UNIFORM_BUFFER, m_offsets[index], m_sizes[index], t);
         offset += m_sizes[index];
         index++;
         _Update(index, offset, args...);
@@ -64,19 +64,19 @@ private:
     template <typename T>
     inline void _Update(size_t index, size_t offset, const T* const t) const
     {
-        GLCall(glBufferSubData(GL_UNIFORM_BUFFER, m_offsets[index], m_sizes[index], t));
+        glBufferSubData(GL_UNIFORM_BUFFER, m_offsets[index], m_sizes[index], t);
     }
 
 public:
     template <typename T>
     inline void Update(size_t index, const T* const t) const
     {
-        GLCall(glBufferSubData(GL_UNIFORM_BUFFER, m_offsets[index], m_sizes[index], t));
+        glBufferSubData(GL_UNIFORM_BUFFER, m_offsets[index], m_sizes[index], t);
     }
 
     inline void Bind() const
     {
-        GLCall(glBindBuffer(GL_UNIFORM_BUFFER, m_uboID));
+        glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
     }
 
 private:

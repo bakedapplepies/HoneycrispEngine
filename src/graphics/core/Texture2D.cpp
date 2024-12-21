@@ -7,7 +7,7 @@ HNCRSP_NAMESPACE_START
 
 Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureType)
 {
-    GLCall(glGenTextures(1, &m_textureID));
+    glGenTextures(1, &m_textureID);
     m_textureType = textureType;
 
     int width, height;
@@ -53,23 +53,15 @@ Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureTy
             HNCRSP_TERMINATE("Inappropriate number of channels for Texture2D.");
 
         // Generate texture | bind -> buffer -> mipmap -> config
-        GLCall(
-            glBindTexture(GL_TEXTURE_2D, m_textureID));
-        GLCall(  // internalformat has to be sized
-            glTexStorage2D(GL_TEXTURE_2D, static_cast<int>(std::log2f(std::max(width, height))) + 1, GL_SRGB8_ALPHA8, width, height));
-        GLCall(
-            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, format, GL_UNSIGNED_BYTE, data));
+        glBindTexture(GL_TEXTURE_2D, m_textureID);  // internalformat has to be sized
+        glTexStorage2D(GL_TEXTURE_2D, static_cast<int>(std::log2f(std::max(width, height))) + 1, GL_SRGB8_ALPHA8, width, height);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, format, GL_UNSIGNED_BYTE, data);
 
-        GLCall(
-            glGenerateMipmap(GL_TEXTURE_2D));
-        GLCall(
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST));
-        GLCall(
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
-        GLCall(
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
-        GLCall(
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+        glGenerateMipmap(GL_TEXTURE_2D);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
         if (!deserializedImage) stbi_image_free(data);
     }
@@ -106,7 +98,7 @@ Texture2D::~Texture2D()
 {
     HNCRSP_CHECK_RENDER_CONTEXT();
 
-    GLCall(glDeleteTextures(1, &m_textureID));
+    glDeleteTextures(1, &m_textureID);
 }
 
 HNCRSP_NAMESPACE_END

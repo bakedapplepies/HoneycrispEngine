@@ -1,5 +1,6 @@
 #include "RenderContext.h"
 #include "src/Callbacks.h"
+#include "src/utils/Debug.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -43,6 +44,11 @@ HNCRSP_NODISCARD CallbackData* RenderContext::StartUp_GetWindow()
         HNCRSP_TERMINATE("GLAD Initialization failed.");
     }
     HNCRSP_LOG_INFO("OpenGL (Core) ", glGetString(GL_VERSION));
+
+    // Set DebugCallback ----------
+    glDebugMessageCallback(DebugMessageCallback, nullptr);
+    glEnable(GL_DEBUG_OUTPUT);
+    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
     
     // Set Icon ----------
     FileSystem::Path icon("resources/textures/apple.png");

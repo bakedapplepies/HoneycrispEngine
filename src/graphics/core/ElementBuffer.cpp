@@ -19,24 +19,24 @@ ElementBuffer& ElementBuffer::operator=(ElementBuffer&& other) noexcept
 
 ElementBuffer::~ElementBuffer()
 {
-    GLCall(glDeleteBuffers(1, &m_EBO_ID));
+    glDeleteBuffers(1, &m_EBO_ID);
 }
 
 void ElementBuffer::CreateEBO(const GLuint* data, size_t dataSize)
 {
-    GLCall(glGenBuffers(1, &m_EBO_ID));
+    glGenBuffers(1, &m_EBO_ID);
     Bind();
-    GLCall(glBufferStorage(GL_ELEMENT_ARRAY_BUFFER, dataSize, data, GL_MAP_READ_BIT));
+    glBufferStorage(GL_ELEMENT_ARRAY_BUFFER, dataSize, data, GL_MAP_READ_BIT);
 }
 
 void ElementBuffer::Bind() const
 {
-    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO_ID));
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO_ID);
 }
 
 void ElementBuffer::Unbind() const
 {
-    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 HNCRSP_NAMESPACE_END

@@ -30,8 +30,7 @@ void PostProcessingQueue::DrawSequence()
             m_framebufferTwo.BindColorBuffer();
         }
         glClear(GL_COLOR_BUFFER_BIT);
-        GLCall(
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         m_drawToFramebufferOne = !m_drawToFramebufferOne;
     }

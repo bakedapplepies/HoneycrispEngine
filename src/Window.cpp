@@ -70,7 +70,7 @@ void Window::Loop()
         _ProcessInput();
 
         // Set window background color
-        GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
         // ImGui
         ImGui_ImplGlfw_NewFrame();

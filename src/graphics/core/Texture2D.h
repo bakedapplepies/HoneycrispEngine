@@ -30,14 +30,14 @@ public:
 
     inline void Bind() const
     {
-        GLCall(glActiveTexture(GL_TEXTURE0 + GetTextureUnit()));
-        GLCall(glBindTexture(GL_TEXTURE_2D, m_textureID));
+        glActiveTexture(GL_TEXTURE0 + GetTextureUnit());
+        glBindTexture(GL_TEXTURE_2D, m_textureID);
     }
 
     inline void Unbind() const
     {
-        GLCall(glActiveTexture(GL_TEXTURE0 + GetTextureUnit()));
-        GLCall(glBindTexture(GL_TEXTURE_2D, 0));
+        glActiveTexture(GL_TEXTURE0 + GetTextureUnit());
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     void Delete();
