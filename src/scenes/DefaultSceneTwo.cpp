@@ -168,18 +168,18 @@ void DefaultSceneTwo::OnUpdate(const float& dt)
 void DefaultSceneTwo::InitializeShaders(void)
 {
     phongShader = CreateShader(
-        FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
-        FileSystem::Path("resources/shaders/BlinnPhongFragment.glsl")
+        FileSystem::Path("resources/shaders/Default.vert"),
+        FileSystem::Path("resources/shaders/BlinnPhong.frag")
     );
     phongWTintShader = CreateShader(
-        FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
-        FileSystem::Path("resources/shaders/BlinnPhongTintFragment.glsl")
-        // FileSystem::Path("resources/shaders/WaveGeometry.glsl")  // TODO: just to calculate normals, maybe rename file to CalcNormGeometry.glsl
+        FileSystem::Path("resources/shaders/Default.vert"),
+        FileSystem::Path("resources/shaders/BlinnPhongTint.frag")
+        // FileSystem::Path("resources/shaders/Wave.geom")  // TODO: just to calculate normals, maybe rename file to CalcNorm.geom
     );
     // normalShader = CreateShader(
-    //     FileSystem::Path("resources/shaders/NormalVertex.glsl"),
-    //     FileSystem::Path("resources/shaders/YellowFragment.glsl"),
-    //     FileSystem::Path("resources/shaders/NormalGeometry.glsl")
+    //     FileSystem::Path("resources/shaders/Normal.vert"),
+    //     FileSystem::Path("resources/shaders/Yellow.frag"),
+    //     FileSystem::Path("resources/shaders/Normal.geom")
     // );
 }
 

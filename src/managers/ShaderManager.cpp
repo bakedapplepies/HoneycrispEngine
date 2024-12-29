@@ -10,20 +10,20 @@ ShaderManager g_ShaderManager;
 void ShaderManager::StartUp()
 {
     basicShader = GetShader(
-        FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
-        FileSystem::Path("resources/shaders/DefaultFragment.glsl")
+        FileSystem::Path("resources/shaders/Default.vert"),
+        FileSystem::Path("resources/shaders/Default.frag")
     );
     albedoShader = GetShader(
-        FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
-        FileSystem::Path("resources/shaders/PureAlbedoFragment.glsl")
+        FileSystem::Path("resources/shaders/Default.vert"),
+        FileSystem::Path("resources/shaders/PureAlbedo.frag")
     );
     cubemapShader = GetShader(
-        FileSystem::Path("resources/shaders/CubemapVertex.glsl"),
-        FileSystem::Path("resources/shaders/CubemapFragment.glsl")
+        FileSystem::Path("resources/shaders/Cubemap.vert"),
+        FileSystem::Path("resources/shaders/Cubemap.frag")
     );
     depthPassShader = GetShader(
-        FileSystem::Path("resources/shaders/depth_pass/DepthPassVertex.glsl"),
-        FileSystem::Path("resources/shaders/depth_pass/DepthPassFragment.glsl")
+        FileSystem::Path("resources/shaders/depth_pass/DepthPass.vert"),
+        FileSystem::Path("resources/shaders/depth_pass/DepthPass.frag")
     );
 }
 
@@ -58,7 +58,7 @@ void ShaderManager::SetPostProcessingShader(
 ) {
     const CallbackData* callbackData = g_SceneManager.GetCallbackData();
     m_postprocessing_shader = GetShader(
-        FileSystem::Path("resources/shaders/postprocessing/ScreenQuadVertex.glsl"),
+        FileSystem::Path("resources/shaders/postprocessing/ScreenQuad.vert"),
         fragmentFile
     );
     m_postprocessing_shader->SetIntUnf("u_framebuffer_color_texture", COLOR_BUFFER_TEXTURE_UNIT_INDEX);

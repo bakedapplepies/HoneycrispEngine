@@ -30,6 +30,14 @@ namespace ECS
         SystemManager& operator=(SystemManager&&) noexcept = delete;
         ~SystemManager() = default;
 
+        inline void StartUp()
+        {}
+
+        inline void ShutDown()
+        {
+            m_systems.clear();
+        }
+
         template <typename TSystem>
         HNCRSP_NODISCARD TSystem* RegisterSystem(const ComponentBitset& component_bitset)
         {

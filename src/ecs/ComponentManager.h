@@ -35,6 +35,14 @@ namespace ECS
         ComponentManager& operator=(ComponentManager&&) noexcept = delete;
         ~ComponentManager() = default;
 
+        inline void StartUp()
+        {}
+
+        inline void ShutDown()
+        {
+            m_componentArrays.clear();
+        }
+
         template <typename TComponent>
         void RegisterComponent()
         {
@@ -75,7 +83,7 @@ namespace ECS
             return GetComponentArray<TComponent>()->GetData(uid);
         }
 
-        void EntityDestroyed(EntityUID uid)
+        inline void EntityDestroyed(EntityUID uid)
         {
             for (const auto& pair : m_componentArrays)
             {

@@ -22,7 +22,7 @@ if __name__ == "__main__":
     new_path = current_path + "/../resources/shaders/postprocessing"
 
     files = [file for file in listdir(new_path) if isfile(join(new_path, file))]
-    files = [file.replace(".glsl", "") for file in files if file != "ScreenQuadVertex.glsl"]
+    files = [file.replace(".glsl", "") for file in files if file != "ScreenQuad.vert"]
     json_obj = {
         "file_names": files
     }

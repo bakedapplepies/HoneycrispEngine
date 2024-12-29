@@ -9,17 +9,17 @@ using namespace Honeycrisp;
 DefaultScene::DefaultScene()
 {
     m_shader = CreateShader(
-        FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
-        FileSystem::Path("resources/shaders/BlinnPhongTintFragment.glsl")
+        FileSystem::Path("resources/shaders/Default.vert"),
+        FileSystem::Path("resources/shaders/BlinnPhongTint.frag")
     );
     m_adjustableColorShader = CreateShader(
-        FileSystem::Path("resources/shaders/DefaultVertex.glsl"),
-        FileSystem::Path("resources/shaders/AdjustableColorFragment.glsl")
+        FileSystem::Path("resources/shaders/Default.vert"),
+        FileSystem::Path("resources/shaders/AdjustableColor.frag")
     );
     m_pointLight = CreateLight<PointLight>(
         glm::vec3(10.0f, 2.0f, 10.0f),  // pos
-        glm::vec3(1.0f, 1.0f, 1.0f),  // color
-        0.1f, 0.5f, 1.0f              // ambient - diffuse - specular
+        glm::vec3(1.0f, 1.0f, 1.0f),    // color
+        0.1f, 0.5f, 1.0f                // ambient - diffuse - specular
     );
 
     m_cube = CreateRenderObj<Cube>();

@@ -6,13 +6,16 @@ HNCRSP_NAMESPACE_START
 
 namespace ECS
 {
-    EntityManager::EntityManager()
+    void EntityManager::StartUp()
     {
         for (EntityUID uid = 0; uid < MAX_ENTITIES; uid++)
         {
             m_availableEntityUIDs.push(uid);
         }
     }
+
+    void EntityManager::ShutDown()
+    {}
 
     HNCRSP_NODISCARD EntityUID EntityManager::CreateEntity()
     {

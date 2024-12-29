@@ -27,6 +27,9 @@ namespace ECS
         ECSManager& operator=(ECSManager&& other) = delete;
         ~ECSManager() = default;
 
+        void StartUp();
+        void ShutDown();
+
         EntityUID NewEntityUID();
         void DestroyEntity(EntityUID uid);
         void SceneCreated();

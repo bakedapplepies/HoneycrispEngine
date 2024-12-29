@@ -6,6 +6,7 @@ find_package(Git REQUIRED)
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     add_compile_definitions(DEBUG)
+    add_compile_definitions(HNCRSP_DEBUG)
 elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
     add_compile_definitions(NDEBUG)
 endif()

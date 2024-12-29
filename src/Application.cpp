@@ -37,6 +37,7 @@ void Application::Run()  // this is where the main control flow happens
 
     GetExtensions();
 
+    g_ECSManager.StartUp();
     g_ImGuiManager.StartUp();
     g_ShaderManager.StartUp();
     g_Texture2DManager.StartUp();
@@ -51,6 +52,7 @@ void Application::Run()  // this is where the main control flow happens
 
     g_SceneManager.ClearAllScenes();
     g_SceneManager.ShutDown();
+    g_ECSManager.ShutDown();
     g_Texture2DManager.ShutDown();
     g_ShaderManager.ShutDown();
     g_ImGuiManager.ShutDown();

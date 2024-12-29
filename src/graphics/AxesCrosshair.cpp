@@ -20,9 +20,9 @@ AxesCrosshair::AxesCrosshair()
 
     // Get shader
     m_shader = g_ShaderManager.GetShader(
-        FileSystem::Path("resources/shaders/gizmos/AxesCrosshairVertex.glsl"),
-        FileSystem::Path("resources/shaders/gizmos/AxesCrosshairFragment.glsl"),
-        FileSystem::Path("resources/shaders/gizmos/AxesCrosshairGeometry.glsl")
+        FileSystem::Path("resources/shaders/gizmos/AxesCrosshair.vert"),
+        FileSystem::Path("resources/shaders/gizmos/AxesCrosshair.frag"),
+        FileSystem::Path("resources/shaders/gizmos/AxesCrosshair.geom")
     );
 }
 

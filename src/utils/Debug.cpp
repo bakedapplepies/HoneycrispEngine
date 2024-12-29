@@ -4,6 +4,8 @@
 
 HNCRSP_NAMESPACE_START
 
+#ifdef HNCRSP_DEBUG
+
 void GLAPIENTRY DebugMessageCallback(
     GLenum source,
     GLenum type,
@@ -62,6 +64,7 @@ void GLAPIENTRY DebugMessageCallback(
     }
 
     HNCRSP_LOG_ERROR(fmt::format("OpenGL Message: {} {}", type, debugMessageStream.str()));
+    return;
 }
 
 void CheckRenderContext(const char* function, const char* file, unsigned int line)
@@ -72,5 +75,21 @@ void CheckRenderContext(const char* function, const char* file, unsigned int lin
         assert(false);
     }
 }
+
+#else
+
+void GLAPIENTRY DebugMessageCallback(
+    GLenum source,
+    GLenum type,
+    GLuint id,
+    GLenum severity,
+    [[maybe_unused]] GLsizei length,
+    const GLchar* message,
+    [[maybe_unused]] const void* userParam
+) {}
+
+void CheckRenderContext(const char* function, const char* file, unsigned int line) {}
+
+#endif
 
 HNCRSP_NAMESPACE_END

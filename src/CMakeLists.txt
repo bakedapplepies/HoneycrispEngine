@@ -115,7 +115,7 @@ target_link_directories(${CMAKE_PROJECT_NAME}.Serializer    PRIVATE ${LINK_DIREC
 target_link_directories(${CMAKE_PROJECT_NAME}.Scenes        PRIVATE ${LINK_DIRECTORIES})
 # ----------
 # Link Tracy ----------
-if(${CMAKE_BUILD_TYPE} STREQUAL "Release")  # for some reason Tracy raises an error in Debug
+if(${CMAKE_BUILD_TYPE} STREQUAL "Release")  # for some reason Tracy raises an error in Debug mode
     target_link_libraries(${CMAKE_PROJECT_NAME}               PRIVATE Tracy::TracyClient)
     target_link_libraries(${CMAKE_PROJECT_NAME}.Managers      PRIVATE Tracy::TracyClient)
     target_link_libraries(${CMAKE_PROJECT_NAME}.Graphics      PRIVATE Tracy::TracyClient)

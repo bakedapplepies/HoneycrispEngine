@@ -8,6 +8,20 @@ ECS::ECSManager g_ECSManager;
 
 namespace ECS
 {
+    void ECSManager::StartUp()
+    {
+        m_entityManager.StartUp();
+        m_componentManager.StartUp();
+        m_systemManager.StartUp();
+    }
+
+    void ECSManager::ShutDown()
+    {
+        m_entityManager.ShutDown();
+        m_componentManager.ShutDown();
+        m_systemManager.ShutDown();
+    }
+
     HNCRSP_NODISCARD EntityUID ECSManager::NewEntityUID()
     {
         return m_entityManager.CreateEntity();
