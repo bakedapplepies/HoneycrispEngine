@@ -31,7 +31,7 @@ Model::Model(const FileSystem::Path& path, const Shader* shader, bool flip_uv)
     );
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
-        HNCRSP_TERMINATE(fmt::format("ASSIMP: {}", import.GetErrorString()).c_str());
+        HNCRSP_TERMINATE("ASSIMP: {}", import.GetErrorString());
     }
     
     // Process Model ----------
@@ -42,16 +42,14 @@ Model::Model(const FileSystem::Path& path, const Shader* shader, bool flip_uv)
 
     getMaterials(scene, modelDirectory, modelSerializer);
 
-    HNCRSP_LOG_INFO(scene->mNumMaterials);
+    // HNCRSP_INFO(scene->mNumMaterials);
     
     processNode(scene->mRootNode, scene, modelDirectory, modelSerializer, vertexData, indices);
 
-    HNCRSP_LOG_INFO(  // display relative path from project directory
-        fmt::format(
-            "Model load time ~{}: {}s",
-            path.relative_string(),
-            glfwGetTime() - beginTime
-        )
+    HNCRSP_INFO(  // display relative path from project directory
+        "Model load time ~{}: {}s",
+        path.relative_string(),
+        glfwGetTime() - beginTime
     );
 
     // Vertex Array construction ----------

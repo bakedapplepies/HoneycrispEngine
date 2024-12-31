@@ -18,7 +18,7 @@ VertexArray::VertexArray(
 
     if (m_VAO_ID != 0)
     {
-        HNCRSP_LOG_WARN("Mesh already constructed.");
+        HNCRSP_WARN("Mesh already constructed.");
         return;
     }
 
@@ -64,7 +64,7 @@ VertexArray::VertexArray(
     // TODO: Somehow fill this asynchronously
     // perhaps via the GPU?
 
-    // HNCRSP_LOG_INFO(vertices->size());
+    // HNCRSP_INFO(vertices->size());
 // #define MAX_VERTICES_PER_PROCESS 3000
 //     unsigned int num_processes =
 //         static_cast<unsigned int>(1.0 * vertArrayDataSize / MAX_VERTICES_PER_PROCESS + 0.5);

@@ -8,7 +8,7 @@ HNCRSP_NAMESPACE_START
 template <typename T>
 class Timer
 {
-static_assert(std::chrono::__is_duration<T>() && 
+HNCRSP_STATIC_ASSERT(std::chrono::__is_duration<T>() && 
     (  std::is_same_v<T, std::chrono::nanoseconds>
     || std::is_same_v<T, std::chrono::microseconds>
     || std::is_same_v<T, std::chrono::milliseconds>
@@ -28,11 +28,11 @@ public:
     ~Timer()
     {
         auto duration = std::chrono::steady_clock::now() - m_begin;
-        HNCRSP_LOG_INFO(fmt::format("Timer \"{}\": {}{}",
+        HNCRSP_INFO("Timer \"{}\": {}{}",
             m_timerName,
             std::chrono::duration_cast<T>(duration).count(),
             _GetPostfix()
-        ));
+        );
     }
 
     // Return current elapsed time since object initialization

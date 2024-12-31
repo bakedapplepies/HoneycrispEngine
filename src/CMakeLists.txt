@@ -13,8 +13,8 @@ set(SOURCE
     ${CMAKE_SOURCE_DIR}/src/Scene.cpp
     ${CMAKE_SOURCE_DIR}/src/SceneRenderObj.h
     ${CMAKE_SOURCE_DIR}/src/SceneRenderObj.cpp
-    ${CMAKE_SOURCE_DIR}/src/Window.h
-    ${CMAKE_SOURCE_DIR}/src/Window.cpp
+    ${CMAKE_SOURCE_DIR}/src/GameLoop.h
+    ${CMAKE_SOURCE_DIR}/src/GameLoop.cpp
     ${CMAKE_SOURCE_DIR}/src/main.cpp
     ${CMAKE_SOURCE_DIR}/vendor/tracy/public/TracyClient.cpp
 )

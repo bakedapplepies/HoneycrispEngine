@@ -4,7 +4,7 @@
 
 HNCRSP_NAMESPACE_START
 
-#ifdef HNCRSP_DEBUG
+#ifndef HNCRSP_RELEASE
 
 void GLAPIENTRY DebugMessageCallback(
     GLenum source,
@@ -63,7 +63,7 @@ void GLAPIENTRY DebugMessageCallback(
         case GL_DEBUG_SEVERITY_NOTIFICATION: debugMessageStream << "Severity: notification"; break;
     }
 
-    HNCRSP_LOG_ERROR(fmt::format("OpenGL Message: {} {}", type, debugMessageStream.str()));
+    HNCRSP_ERROR("OpenGL Message: {} {}", type, debugMessageStream.str());
     return;
 }
 

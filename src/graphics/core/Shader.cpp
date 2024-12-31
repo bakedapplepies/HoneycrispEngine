@@ -30,9 +30,7 @@ Shader::Shader(
         
         glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
         std::filesystem::path errorPath = std::filesystem::relative(vertexFile.string(), HNCRSP_PROJECT_DIR);
-        HNCRSP_LOG_ERROR(fmt::format("Vertex Shader compilation failed ~{}:\n\t", errorPath.string()), infoLog);
-        // HNCRSP_LOG_ERROR(fmt::format("Vertex Shader compilation failed at {}:\n\t", ), infoLog);
-
+        HNCRSP_ERROR("Vertex Shader compilation failed ~{}:\n\t{}", errorPath.string(), infoLog);
         
         glDeleteShader(vertexShader);
         HNCRSP_TERMINATE("Vertex Shader compilation error.");
@@ -49,8 +47,7 @@ Shader::Shader(
         
         glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
         std::filesystem::path errorPath = std::filesystem::relative(fragmentFile.string(), HNCRSP_PROJECT_DIR);
-        HNCRSP_LOG_ERROR(fmt::format("Fragment Shader compilation failed ~{}:\n\t", errorPath.string()), infoLog);
-
+        HNCRSP_ERROR("Fragment Shader compilation failed ~{}:\n\t{}", errorPath.string(), infoLog);
         
         glDeleteShader(fragmentShader);
         HNCRSP_TERMINATE("Fragment Shader compilation error.");
@@ -68,7 +65,7 @@ Shader::Shader(
         {
             glGetShaderInfoLog(geometryShader, 512, NULL, infoLog);
             std::filesystem::path errorPath = std::filesystem::relative(geometryFile.string(), HNCRSP_PROJECT_DIR);
-            HNCRSP_LOG_ERROR(fmt::format("Geometry Shader compilation failed ~{}:\n\t", errorPath.string()), infoLog);
+            HNCRSP_ERROR("Geometry Shader compilation failed ~{}:\n\t{}", errorPath.string(), infoLog);
 
             glDeleteShader(fragmentShader);
             HNCRSP_TERMINATE("Geometry Shader compilation error.");
@@ -88,13 +85,13 @@ Shader::Shader(
     {
         
         glGetProgramInfoLog(m_shaderID, 512, NULL, infoLog);
-        HNCRSP_LOG_ERROR("Shader Program Linking failed:\n\t", infoLog);
+        HNCRSP_ERROR("Shader Program Linking failed:\n\t", infoLog);
 
         
         glDeleteProgram(m_shaderID);
         m_shaderID = 0;
 
-        HNCRSP_LOG_ERROR(fmt::format("Shader in program:\n\t{}\n\t{}\n\t{}", vertexFile.string(), fragmentFile.string(), geometryFile.string()));
+        HNCRSP_ERROR("Shader in program:\n\t{}\n\t{}\n\t{}", vertexFile.string(), fragmentFile.string(), geometryFile.string());
 
         HNCRSP_TERMINATE("Shader linking error.");
     }
@@ -105,12 +102,12 @@ Shader::Shader(
     if (!success)
     {
         glGetProgramInfoLog(m_shaderID, 512, NULL, infoLog);
-        HNCRSP_LOG_ERROR("Shader Program Validation failed:\n\t", infoLog);
+        HNCRSP_FATAL("Shader Program Validation failed:\n\t", infoLog);
 
         glDeleteProgram(m_shaderID);
         m_shaderID = 0;
 
-        HNCRSP_LOG_ERROR(fmt::format("Shader in program:\n\t{}\n\t{}\n\t{}", vertexFile.string(), fragmentFile.string(), geometryFile.string()));
+        HNCRSP_FATAL("Shader in program:\n\t{}\n\t{}\n\t{}", vertexFile.string(), fragmentFile.string(), geometryFile.string());
 
         HNCRSP_TERMINATE("Shader validation error.");
     }
@@ -119,7 +116,7 @@ Shader::Shader(
     glDeleteShader(fragmentShader);
     glDeleteShader(geometryShader);
 
-    HNCRSP_LOG_INFO(fmt::format("{}\n{}\n{}\n\t{}", vertexFile.string(), fragmentFile.string(), geometryFile.string(), m_shaderID));
+    HNCRSP_INFO("{}\n{}\n{}\n\t{}", vertexFile.string(), fragmentFile.string(), geometryFile.string(), m_shaderID);
 }
 
 std::string Shader::_ParseShader(std::string_view path)
@@ -156,7 +153,7 @@ GLint Shader::_GetUniformLocation(const std::string_view name) const
         return m_uniformLocationCache[name];
     }
     GLint location = glGetUniformLocation(m_shaderID, name.data());
-    if (location == -1) HNCRSP_LOG_INFO(name, "\t", m_shaderID);
+    if (location == -1) HNCRSP_INFO("{}\t{}", name, m_shaderID);
     m_uniformLocationCache[name] = location;
     return location;
 }

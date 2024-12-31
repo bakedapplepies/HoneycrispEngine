@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.26.0)
 project(${CMAKE_PROJECT_NAME} CXX C)
 
 set(SOURCE
-    ${CMAKE_SOURCE_DIR}/src/managers/GLFWContext.h
-    ${CMAKE_SOURCE_DIR}/src/managers/GLFWContext.cpp
+    ${CMAKE_SOURCE_DIR}/src/managers/WindowHandler.h
+    ${CMAKE_SOURCE_DIR}/src/managers/WindowHandler.cpp
     ${CMAKE_SOURCE_DIR}/src/managers/RenderContext.h
     ${CMAKE_SOURCE_DIR}/src/managers/RenderContext.cpp
     ${CMAKE_SOURCE_DIR}/src/managers/SceneManager.h

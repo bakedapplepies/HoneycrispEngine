@@ -43,7 +43,7 @@ protected:
     template <typename TRenderable, typename... Args>
     std::unique_ptr< SceneRenderObj<TRenderable> > CreateRenderObj(Args&&... args)
     {
-        static_assert(std::is_base_of<Renderable, TRenderable>(), "TRenderable is not base of Renderable.");
+        HNCRSP_STATIC_ASSERT(std::is_base_of<Renderable, TRenderable>(), "TRenderable is not base of Renderable.");
 
         return std::make_unique< SceneRenderObj<TRenderable> >(std::forward<Args>(args)...);
     }
@@ -51,8 +51,8 @@ protected:
     template <typename TLight, typename... Args>
     TLight* CreateLight(Args&&... args)
     {
-        static_assert(!std::is_same<Light, TLight>(), "TLight cannot be base Light class.");
-        static_assert(std::is_base_of<Light, TLight>(), "TLight is not base of Light.");
+        HNCRSP_STATIC_ASSERT(!std::is_same<Light, TLight>(), "TLight cannot be base Light class.");
+        HNCRSP_STATIC_ASSERT(std::is_base_of<Light, TLight>(), "TLight is not base of Light.");
 
         std::unique_ptr<TLight> newLight = std::make_unique<TLight>(std::forward<Args>(args)...);
         TLight* newLightRawPtr = newLight.get();

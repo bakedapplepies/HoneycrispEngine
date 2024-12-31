@@ -48,7 +48,7 @@ std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Mesh> > SpaceScene::Gene
     indices.reserve(pow(resolution - 1, 2) * 6 * 6);  // sub-faces per face * indices per quad * 6 sides
 
     glm::vec3 offset_to_origin = glm::vec3(static_cast<float>(resolution - 1) / 2.0f);
-    // HNCRSP_LOG_INFO(offset_to_origin);
+    // // HNCRSP_INFO(offset_to_origin);
     // glm::vec3 offset_to_origin = glm::vec3(0.0f);
 
     std::random_device rd;

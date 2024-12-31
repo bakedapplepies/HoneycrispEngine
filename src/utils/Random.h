@@ -8,7 +8,7 @@ HNCRSP_NAMESPACE_START
 template <typename T = float>
 class RandomClass
 {
-static_assert(std::is_floating_point_v<T>, "Type T of Random class is not an floating-point type.");
+HNCRSP_STATIC_ASSERT(std::is_floating_point_v<T>, "Type T of Random class is not an floating-point type.");
 private:
     static std::random_device m_rd;
     static std::mt19937 m_mt;

@@ -1,7 +1,8 @@
 #include "Renderer.h"
-#include "src/utils/TracyProfile.h"
-#include "src/managers/SceneManager.h"
 #include "src/ecs/ECSManager.h"
+#include "src/managers/SceneManager.h"
+#include "src/managers/WindowHandler.h"
+#include "src/utils/TracyProfile.h"
 #include "src/components/DrawData.h"
 
 
@@ -30,22 +31,22 @@ Renderer::Renderer()
         indices
     );
 
-    m_callbackData = g_SceneManager.GetCallbackData();
+    CallbackData* callbackData = GetCallbackData();
     m_postprocessingQueue = std::make_unique<PostProcessingQueue>(
-        m_callbackData->windowWidth,
-        m_callbackData->windowHeight,
+        callbackData->windowWidth,
+        callbackData->windowHeight,
         const_cast<const VertexArray*>(&m_screenQuad)
     );
 
     g_ShaderManager.SetPostProcessingShader(
-        FileSystem::Path("resources/shaders/postprocessing/ColorCorrection.glsl")
+        FileSystem::Path("resources/shaders/postprocessing/ColorCorrection.frag")
     );
     m_postprocessingQueue->AddPostprocessingPass(g_ShaderManager.GetPostProcessingShader());
 
     // Setting up depth maps ----------
     m_depthMap = std::make_unique<DepthMap>(  // directional shadows
-        m_callbackData->windowWidth,
-        m_callbackData->windowHeight
+        callbackData->windowWidth,
+        callbackData->windowHeight
     );
 }
 

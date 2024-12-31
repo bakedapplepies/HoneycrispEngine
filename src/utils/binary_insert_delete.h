@@ -14,7 +14,7 @@ HNCRSP_NAMESPACE_START
 //     const T& value,
 //     size_t comparator
 // ) {
-//     static_assert(std::is_arithmetic_v<T>, "T is not a number.");
+//     HNCRSP_STATIC_ASSERT(std::is_arithmetic_v<T>, "T is not a number.");
 
 //     if (vec.size() == 0)
 //     {
@@ -53,7 +53,7 @@ HNCRSP_NAMESPACE_START
 //     std::vector<GLuint>& shader_list,
 //     T value
 // ) {
-//     static_assert(std::is_arithmetic_v<T>, "T is not a number.");
+//     HNCRSP_STATIC_ASSERT(std::is_arithmetic_v<T>, "T is not a number.");
 
 //     if (vec.size() == 0)
 //     {

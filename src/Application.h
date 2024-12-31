@@ -5,8 +5,10 @@
 
 HNCRSP_NAMESPACE_START
 
-void Application_RegisterComponents();
-void Application_RegisterSystems();
+// TODO: maybe move these somewhere else
+extern void Application_RegisterComponents();
+extern void Application_RegisterSystems();
+extern void Application_RegisterScenes();
 
 namespace Application
 {

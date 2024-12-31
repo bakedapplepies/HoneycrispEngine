@@ -1,9 +1,7 @@
 #pragma once
 
-#include "utils.h"
 
-
-#ifdef HNCRSP_DEBUG
+#ifndef HNCRSP_RELEASE
     #define HNCRSP_CHECK_RENDER_CONTEXT() CheckRenderContext(__FUNCTION__, __FILE__, __LINE__)
 #else
     #define HNCRSP_CHECK_RENDER_CONTEXT()

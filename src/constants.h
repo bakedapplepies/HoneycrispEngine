@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src/utils/utils.h"
+#include <glm/glm.hpp>
 
 
 HNCRSP_NAMESPACE_START
@@ -27,7 +27,7 @@ extern const uint8_t COMPUTE_SHADER_BIT;
 
 // Texture types ----------
 // Also acts as Texture Units (so it has to be non 'enum class')
-enum ETextureType : int8_t
+enum class ETextureType : int8_t
 {
     NONE = -1,
     ALBEDO,

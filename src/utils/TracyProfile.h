@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef HNCRSP_DEBUG
+#ifndef HNCRSP_RELEASE
     #undef TRACY_ENABLE
 #endif
 

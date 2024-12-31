@@ -1,5 +1,6 @@
 #include "DefaultSceneTwo.h"
 #include "src/scenes/DefaultSceneTwo.h"
+#include "src/managers/WindowHandler.h"  // TODO: Not up to the game dev to put this here
 #include "src/managers/SceneManager.h"
 
 
@@ -189,7 +190,7 @@ void DefaultSceneTwo::SetInitialUniforms(void)
 
 void DefaultSceneTwo::OnImGui(void)
 {
-    static CallbackData* callback_data = g_SceneManager.GetMutableCallbackData();
+    static CallbackData* callback_data = GetCallbackData();
 
     ImGui::Text("Point light #1");
     if (  ImGui::SliderFloat("position.x", &pointLight->position.x, -50.0f, 50.0f)

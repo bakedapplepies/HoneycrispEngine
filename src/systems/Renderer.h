@@ -23,7 +23,6 @@ struct DrawElementsIndirectCommand;  // end of file
 class Renderer : public ECS::System
 {
 private:
-    const CallbackData* m_callbackData = nullptr;
     Camera* m_camera = nullptr;
     const Cubemap* m_currentCubemap = nullptr;
     uint32_t m_currentSceneIndex;

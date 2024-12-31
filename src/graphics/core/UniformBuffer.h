@@ -21,7 +21,7 @@ public:
         if (takenBindingIndices[bindingIndex])
         {
             // Technically an error, but doesn't crash OpenGL
-            HNCRSP_LOG_ERROR("Binding index already taken.");
+            HNCRSP_ERROR("Binding index already taken.");
             return;
         }
         takenBindingIndices[bindingIndex] = true;
@@ -37,7 +37,7 @@ public:
     template <typename... Args>
     void Update(const Args* const... args) const
     {
-        static_assert(sizeof...(args) <= sizeof...(Ts), "Invalid number of arguments for UBO.");
+        HNCRSP_STATIC_ASSERT(sizeof...(args) <= sizeof...(Ts), "Invalid number of arguments for UBO.");
         glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
         size_t offset = 0;
         size_t index = 0;

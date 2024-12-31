@@ -1,5 +1,6 @@
 #include "Callbacks.h"
 #include "src/managers/RenderContext.h"
+#include "src/managers/WindowHandler.h"
 #include "src/managers/SceneManager.h"
 #include "src/utils/Logging.h"
 
@@ -24,8 +25,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 void error_callback(int error, const char* msg)
 {
     if (error == GLFW_NOT_INITIALIZED) return;  // for checking if opengl is there to properly delete resources
-    std::string errorMsg = fmt::format("({}): {}", error, msg);
-    HNCRSP_LOG_ERROR(errorMsg);
+
+    HNCRSP_ERROR("({}): {}", error, msg);
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -60,7 +61,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
                     glfwSwapInterval(0);
                     callbackData->capFPS = false;
                 }
-                HNCRSP_LOG_INFO("Toggle frame swap interval: ", callbackData->capFPS);
+                HNCRSP_INFO("Toggle frame swap interval: {}", callbackData->capFPS);
                 break;
 
             // Toggle cursor

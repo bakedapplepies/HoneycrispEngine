@@ -75,7 +75,7 @@ namespace ECS
         template <typename TSystem>
         void RegisterSystem(const ComponentBitset& component_bitset)
         {
-            static_assert(std::is_base_of_v<System, TSystem>, "TSystem is not a base of 'System'.");
+            HNCRSP_STATIC_ASSERT(std::is_base_of_v<System, TSystem>, "TSystem is not a base of 'System'.");
 
             TSystem* system = m_systemManager.RegisterSystem<TSystem>(component_bitset);
         }
@@ -83,7 +83,7 @@ namespace ECS
         template <typename TSystem>
         HNCRSP_NODISCARD TSystem* GetSystem()
         {
-            static_assert(std::is_base_of_v<System, TSystem>, "TSystem is not a base of 'System'.");
+            HNCRSP_STATIC_ASSERT(std::is_base_of_v<System, TSystem>, "TSystem is not a base of 'System'.");
 
             return m_systemManager.GetSystem<TSystem>();
         }

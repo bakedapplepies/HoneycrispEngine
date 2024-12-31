@@ -1,61 +1,25 @@
 #include "RenderContext.h"
-#include "src/Callbacks.h"
 #include "src/utils/Debug.h"
+#include "src/managers/WindowHandler.h"
 
 
 HNCRSP_NAMESPACE_START
 
-HNCRSP_NODISCARD CallbackData* RenderContext::StartUp_GetWindow()
+void RenderContext::StartUp()
 {
-    // Create and assign OpenGL window context ----------
-    const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-    m_callbackData.windowWidth = mode->width * 0.75f;
-    m_callbackData.windowHeight = mode->height * 0.75f;
-    HNCRSP_LOG_INFO(fmt::format("Resolution: {}x{}", m_callbackData.windowWidth, m_callbackData.windowHeight));
-    GLFWwindow* glfwWindow = glfwCreateWindow(
-        m_callbackData.windowWidth,
-        m_callbackData.windowHeight,
-        "Honeycrisp",
-        nullptr,
-        nullptr
-    );
-    glfwSetWindowPos(glfwWindow, 0, 80);
-
-    if (glfwWindow == nullptr)
-    {
-        HNCRSP_TERMINATE("GLFW Window Initialization failed.");
-    }
-    glfwMakeContextCurrent(glfwWindow);
-    glfwSwapInterval(0);  // vsync
-    glfwWindowHint(GLFW_SAMPLES, 4);
-
-    // Callbacks ----------
-    glfwSetErrorCallback(error_callback);
-    glfwSetCursorPosCallback(glfwWindow, mouse_callback);
-    glfwSetFramebufferSizeCallback(glfwWindow, framebuffer_size_callback);
-    glfwSetKeyCallback(glfwWindow, key_callback);
-
-    glfwSetWindowUserPointer(glfwWindow, &m_callbackData);
-    glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  // disable cursor
+    CallbackData* callbackData = GetCallbackData();
 
     /* Initialize GLAD -> Only call OpenGL functions after this */
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         HNCRSP_TERMINATE("GLAD Initialization failed.");
     }
-    HNCRSP_LOG_INFO("OpenGL (Core) ", glGetString(GL_VERSION));
+    HNCRSP_INFO("OpenGL (Core) ", reinterpret_cast<const char*>(glGetString(GL_VERSION)));
 
     // Set DebugCallback ----------
     glDebugMessageCallback(DebugMessageCallback, nullptr);
     glEnable(GL_DEBUG_OUTPUT);
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-    
-    // Set Icon ----------
-    FileSystem::Path icon("resources/textures/apple.png");
-    GLFWimage image[1];
-    image[0].pixels = stbi_load(icon.string().c_str(), &image[0].width, &image[0].height, nullptr, 4);
-    glfwSetWindowIcon(glfwWindow, 1, image);
-    stbi_image_free(image->pixels);
 
     /* Depth, Stencil, Blending, Gamma correction */
     // cull faces
@@ -77,9 +41,7 @@ HNCRSP_NODISCARD CallbackData* RenderContext::StartUp_GetWindow()
     // gamma correction
     // glEnable(GL_FRAMEBUFFER_SRGB);
 
-    glViewport(0, 0, static_cast<unsigned int>(m_callbackData.windowWidth * 0.8f), m_callbackData.windowHeight);
-
-    return &m_callbackData;
+    glViewport(0, 0, static_cast<unsigned int>(callbackData->windowWidth * 0.8f), callbackData->windowHeight);
 }
 
 HNCRSP_NAMESPACE_END

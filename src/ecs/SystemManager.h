@@ -41,7 +41,7 @@ namespace ECS
         template <typename TSystem>
         HNCRSP_NODISCARD TSystem* RegisterSystem(const ComponentBitset& component_bitset)
         {
-            static_assert(std::is_base_of_v<System, TSystem>, "TSystem is not a base of 'System'.");
+            HNCRSP_STATIC_ASSERT(std::is_base_of_v<System, TSystem>, "TSystem is not a base of 'System'.");
 
             const char* system_name = typeid(TSystem).name();
             if (m_systems.find(system_name) != m_systems.end())
@@ -58,7 +58,7 @@ namespace ECS
         template <typename TSystem>
         HNCRSP_NODISCARD TSystem* const GetSystem()
         {
-            static_assert(std::is_base_of_v<System, TSystem>, "TSystem is not a base of 'System'.");
+            HNCRSP_STATIC_ASSERT(std::is_base_of_v<System, TSystem>, "TSystem is not a base of 'System'.");
 
             const char* system_name = typeid(TSystem).name();
             if (m_systems.find(system_name) == m_systems.end())

@@ -15,7 +15,6 @@ private:
     uint32_t m_nextSceneIndex = 0;
     uint32_t m_activeSceneIndex = 0;
     std::unordered_map< uint32_t, std::unique_ptr<Scene> > m_scenesMap;
-    CallbackData* m_callbackData;  // TODO: Temporary placement
 
 public:
     SceneManager() = default;
@@ -25,17 +24,13 @@ public:
     SceneManager& operator=(SceneManager&&) = delete;
     ~SceneManager() = default;
 
-    void StartUp(CallbackData* callbackData);
+    void StartUp();
     void ShutDown();
 
     // Scene functions
     void ClearAllScenes();
     void SetActiveScene(uint32_t index);
     uint32_t GetCurrentSceneIndex() const;
-
-    // GLFW callback
-    const CallbackData* GetCallbackData() const;
-    CallbackData* GetMutableCallbackData() const;
 
     // Update Scenes and their relevant ImGui
     void Update(const float& dt);
@@ -47,7 +42,7 @@ public:
     template <typename TScene>
     HNCRSP_NODISCARD uint32_t CreateScene()
     {
-        static_assert(std::is_base_of<Scene, TScene>(), "SceneManager::CreateScene didn't receive object derived from Scene.");
+        HNCRSP_STATIC_ASSERT(std::is_base_of<Scene, TScene>(), "SceneManager::CreateScene didn't receive object derived from Scene.");
 
         g_ECSManager.SceneCreated();  // This goes first so the function below can work
         g_ECSManager.SceneChanged(m_activeSceneIndex, m_nextSceneIndex);  // Replaces the entity list in the scene

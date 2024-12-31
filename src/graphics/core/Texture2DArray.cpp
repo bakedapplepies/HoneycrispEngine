@@ -57,8 +57,8 @@ Texture2DArray::Texture2DArray(const std::vector<FileSystem::Path>& texturePaths
         }
         else
         {
-            HNCRSP_LOG_ERROR(fmt::format("Texture failed to load: {}.", stbi_failure_reason()));
-            HNCRSP_LOG_INFO(fmt::format("Texture path: {}", texturePaths[i].string()));
+            HNCRSP_FATAL("Texture failed to load: {}.", stbi_failure_reason());
+            HNCRSP_FATAL("Texture path: {}", texturePaths[i].string());
             stbi_image_free(data);
             HNCRSP_TERMINATE("Cubemap textures failed to load.");
         }

@@ -17,7 +17,7 @@ public:
     template <typename... Args>
     SceneRenderObj(Args&&... args) : T(std::forward<Args>(args)...)
     {
-        static_assert(std::is_base_of<Renderable, T>());
+        HNCRSP_STATIC_ASSERT(std::is_base_of<Renderable, T>());
         entityUID = g_ECSManager.NewEntityUID();
 
         // default object position is at origin

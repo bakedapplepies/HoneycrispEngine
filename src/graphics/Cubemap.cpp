@@ -75,8 +75,8 @@ Cubemap::Cubemap(const std::array<FileSystem::Path, 6>& faces)
         }
         else
         {
-            HNCRSP_LOG_ERROR(fmt::format("Texture failed to load: {}.", stbi_failure_reason()));
-            HNCRSP_LOG_INFO(fmt::format("Texture path: {}", faces[i].string()));
+            HNCRSP_FATAL("Texture failed to load: {}.", stbi_failure_reason());
+            HNCRSP_FATAL("Texture path: {}", faces[i].string());
             stbi_image_free(data);
             HNCRSP_TERMINATE("Cubemap textures failed to load.");
         }

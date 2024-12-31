@@ -3,9 +3,8 @@
 
 using namespace Honeycrisp;
 
-int main()
+int main(void)
 {
-    HNCRSP_LOG_INFO(std::this_thread::get_id());
     Application::Run();
 
     return 0;

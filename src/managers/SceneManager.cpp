@@ -5,10 +5,9 @@ HNCRSP_NAMESPACE_START
 
 SceneManager g_SceneManager;
 
-void SceneManager::StartUp(
-    CallbackData* callbackData
-) {
-    m_callbackData = callbackData;
+void SceneManager::StartUp()
+{
+    // m_callbackData = callbackData;
 }
 
 void SceneManager::ShutDown()
@@ -36,7 +35,7 @@ void SceneManager::SetActiveScene(uint32_t index)
 {
     if (!m_scenesMap[index])
     {
-        HNCRSP_LOG_ERROR(fmt::format("Scene index [{}] not found.", index));
+        HNCRSP_ERROR("Scene index [{}] not found.", index);
         return;
     }
 
@@ -51,16 +50,6 @@ void SceneManager::SetActiveScene(uint32_t index)
 uint32_t SceneManager::GetCurrentSceneIndex() const
 {
     return m_activeSceneIndex;
-}
-
-const CallbackData* SceneManager::GetCallbackData() const
-{
-    return m_callbackData;
-}
-
-CallbackData* SceneManager::GetMutableCallbackData() const
-{
-    return m_callbackData;
 }
 
 const DirectionalLight* SceneManager::GetCurrentDirectionalLight()

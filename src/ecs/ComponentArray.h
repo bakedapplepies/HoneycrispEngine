@@ -35,7 +35,7 @@ namespace ECS
         void InsertData(EntityUID uid, const TComponent& componentData)
         {
             if (m_entityUIDToIndexMap.find(uid) != m_entityUIDToIndexMap.end())
-                HNCRSP_TERMINATE(fmt::format("{} already added to entity.", typeid(TComponent).name()).c_str());
+                HNCRSP_TERMINATE("{} already added to entity.", typeid(TComponent).name());
 
             size_t newIndex = m_nextFinalIndex;
             m_entityUIDToIndexMap[uid] = newIndex;
@@ -47,7 +47,7 @@ namespace ECS
         void RemoveData(EntityUID uid)
         {
             if (m_entityUIDToIndexMap.find(uid) == m_entityUIDToIndexMap.end())
-                HNCRSP_TERMINATE(fmt::format("{} not yet added to entity.", typeid(TComponent).name()).c_str());
+                HNCRSP_TERMINATE("{} not yet added to entity.", typeid(TComponent).name());
 
             size_t indexOfRemoveData = m_entityUIDToIndexMap[uid];
             EntityUID lastEntityUID = m_indexToEntityUIDMap[m_nextFinalIndex - 1];
@@ -65,7 +65,7 @@ namespace ECS
         TComponent& GetData(EntityUID uid)
         {
             if (m_entityUIDToIndexMap.find(uid) == m_entityUIDToIndexMap.end())
-                HNCRSP_TERMINATE(fmt::format("{} not yet added to entity {}.", typeid(TComponent).name(), uid).c_str());
+                HNCRSP_TERMINATE("{} not yet added to entity {}.", typeid(TComponent).name(), uid);
 
             return m_componentArray[m_entityUIDToIndexMap[uid]];
         }

@@ -4,10 +4,7 @@ project(${CMAKE_PROJECT_NAME} CXX C)
 set(SOURCE
     ${CMAKE_SOURCE_DIR}/src/utils/Debug.h
     ${CMAKE_SOURCE_DIR}/src/utils/Debug.cpp
-    ${CMAKE_SOURCE_DIR}/src/utils/utils.h
-    ${CMAKE_SOURCE_DIR}/src/utils/utils.cpp
     ${CMAKE_SOURCE_DIR}/src/utils/Terminate.h
-    ${CMAKE_SOURCE_DIR}/src/utils/Terminate.cpp
     ${CMAKE_SOURCE_DIR}/src/utils/Assert.h
     ${CMAKE_SOURCE_DIR}/src/utils/Assert.cpp
     ${CMAKE_SOURCE_DIR}/src/utils/Logging.h

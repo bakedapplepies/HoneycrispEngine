@@ -1,5 +1,6 @@
 #include "ShaderManager.h"
 #include "src/managers/SceneManager.h"
+#include "src/managers/WindowHandler.h"
 #include "src/utils/Timer.h"
 
 
@@ -56,7 +57,7 @@ const Shader* ShaderManager::GetShader(
 void ShaderManager::SetPostProcessingShader(
     const FileSystem::Path& fragmentFile  
 ) {
-    const CallbackData* callbackData = g_SceneManager.GetCallbackData();
+    static const CallbackData* callbackData = GetCallbackData();
     m_postprocessing_shader = GetShader(
         FileSystem::Path("resources/shaders/postprocessing/ScreenQuad.vert"),
         fragmentFile
