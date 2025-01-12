@@ -1,7 +1,6 @@
 #include "SystemManager.h"
 #include "api/ecs/ECSManager.h"
-#include "src/managers/SceneManager.h"
-
+#include "api/managers/SceneManager.h"
 
 HNCRSP_NAMESPACE_START
 

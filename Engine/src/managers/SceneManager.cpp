@@ -1,7 +1,6 @@
-#include "SceneManager.h"
+#include "api/managers/SceneManager.h"
 #include "api/systems/Renderer.h"
 #include "api/core/Random.h"
-
 
 HNCRSP_NAMESPACE_START
 
@@ -30,6 +29,10 @@ void SceneManager::ShutDown(uint64_t key)
     }
     m_scenesMap.clear();
 }
+
+SceneManager::SceneManager()
+    : m_activeSceneIndex(0), m_nextSceneIndex(0)
+{}
 
 void SceneManager::_Update(const float& dt)
 {

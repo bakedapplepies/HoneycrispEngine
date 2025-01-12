@@ -1,6 +1,5 @@
 #include "api/graphics/Camera.h"
 
-
 HNCRSP_NAMESPACE_START
 
 Camera::Camera(const glm::vec3& initialPos)

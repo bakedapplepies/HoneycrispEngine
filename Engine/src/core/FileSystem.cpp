@@ -1,6 +1,5 @@
 #include "api/core/FileSystem.h"
 
-
 HNCRSP_NAMESPACE_START
 
 FileSystem::Path::Path(std::string_view path)

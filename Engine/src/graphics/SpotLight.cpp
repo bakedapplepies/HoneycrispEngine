@@ -1,13 +1,11 @@
 #include "api/graphics/SpotLight.h"
 
-
 HNCRSP_NAMESPACE_START
 
 SpotLight::SpotLight(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& color,
     float ambient, float diffuse, float specular
 ) : ILight(color), position(position), direction(direction), ambient(ambient), diffuse(diffuse), specular(specular)
-{
-}
+{}
 
 void SpotLight::ConfigureShader(const Shader* shader) const
 {

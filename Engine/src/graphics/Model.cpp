@@ -3,7 +3,6 @@
 #include "api/ecs/ECSManager.h"
 #include "src/serialize/schemas/model_generated.h"
 
-
 HNCRSP_NAMESPACE_START
 
 static bool s_isFirstMatNull = false;

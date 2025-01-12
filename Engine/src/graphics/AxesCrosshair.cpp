@@ -1,7 +1,6 @@
 #include "api/graphics/AxesCrosshair.h"
 #include "api/managers/ShaderManager.h"
 
-
 HNCRSP_NAMESPACE_START
 
 AxesCrosshair::AxesCrosshair()

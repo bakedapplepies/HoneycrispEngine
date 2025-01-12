@@ -1,6 +1,5 @@
 #include "api/graphics/core/Shader.h"
 
-
 HNCRSP_NAMESPACE_START
 
 Shader::Shader(

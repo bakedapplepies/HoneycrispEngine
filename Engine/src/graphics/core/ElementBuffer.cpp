@@ -1,6 +1,5 @@
 #include "api/graphics/core/ElementBuffer.h"
 
-
 HNCRSP_NAMESPACE_START
 
 ElementBuffer::ElementBuffer(ElementBuffer&& other) noexcept

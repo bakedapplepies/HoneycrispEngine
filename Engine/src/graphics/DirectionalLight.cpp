@@ -1,6 +1,5 @@
 #include "api/graphics/DirectionalLight.h"
 
-
 HNCRSP_NAMESPACE_START
 
 DirectionalLight::DirectionalLight(const glm::vec3& direction, const glm::vec3& color,

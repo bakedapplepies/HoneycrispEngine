@@ -6,6 +6,7 @@ set(SOURCE
     ${CMAKE_SOURCE_DIR}/Engine/src/core/Debug.cpp
     ${CMAKE_SOURCE_DIR}/Engine/src/core/Logging.cpp
     ${CMAKE_SOURCE_DIR}/Engine/src/core/FileSystem.cpp
+    ${CMAKE_SOURCE_DIR}/Engine/src/core/Utils.cpp
 )
 
 add_library(${CMAKE_PROJECT_NAME}.Engine.Core ${SOURCE})

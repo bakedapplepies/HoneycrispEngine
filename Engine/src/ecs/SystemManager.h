@@ -2,8 +2,6 @@
 
 #include "api/pch/hncrsp_pch.h"
 #include "System.h"
-#include "api/core/binary_insert_delete.h"
-
 
 HNCRSP_NAMESPACE_START
 

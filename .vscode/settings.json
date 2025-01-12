@@ -111,13 +111,14 @@
     "cmake.configureArgs": [
         "--graphviz=dependency_graph.dot"
     ],
+    "clangd.path": "C:/clangd/bin/clangd.exe",
     "clangd.arguments": [
         "--compile-commands-dir=${workspaceFolder}/build/Debug/",
         "--header-insertion=never",
-        "--query-driver=C:/MinGW-W64/MinGW-W64/bin/clang++.exe"
+        "--query-driver=C:/MinGW-W64/MinGW-W64/bin/clang++.exe",
     ],
     "C_Cpp.intelliSenseEngine": "disabled",
     "cmake.debugConfig": {
-        "cwd": "${workspaceFolder}/build/Debug/src"
+        "cwd": "${workspaceFolder}/build/Debug"
     }
 }

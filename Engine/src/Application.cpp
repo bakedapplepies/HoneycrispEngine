@@ -6,10 +6,9 @@
 #include "api/managers/ImGuiManager.h"
 #include "api/managers/Texture2DManager.h"
 #include "api/managers/ShaderManager.h"
-#include "src/managers/SceneManager.h"
-#include "src/Callbacks.h"
+#include "api/managers/SceneManager.h"
 #include "src/GameLoop.h"
-#include "Client/src/GameEntry.h"
+#include "api/game/GameEntry.h"
 #include "api/ecs/ECSManager.h"
 
 // Components

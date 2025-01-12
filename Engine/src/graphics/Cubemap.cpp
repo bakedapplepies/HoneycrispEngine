@@ -2,7 +2,6 @@
 #include "api/managers/ShaderManager.h"
 #include "src/serialize/ImageSerializer.h"
 
-
 HNCRSP_NAMESPACE_START
 
 Cubemap::Cubemap(const std::array<FileSystem::Path, 6>& faces)

@@ -4,7 +4,6 @@
 #include "api/components/DrawData.h"
 #include "api/components/Transform.h"
 
-
 HNCRSP_NAMESPACE_START
 
 Billboard::Billboard(uint32_t width, uint32_t height, const Texture2D* texture)

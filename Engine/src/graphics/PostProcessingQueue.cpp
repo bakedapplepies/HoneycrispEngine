@@ -1,7 +1,6 @@
 #include "PostProcessingQueue.h"
 #include "api/core/TracyProfile.h"
 
-
 HNCRSP_NAMESPACE_START
 
 PostProcessingQueue::PostProcessingQueue(int width, int height, const VertexArray* screenQuadVAO) :

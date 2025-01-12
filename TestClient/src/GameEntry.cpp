@@ -1,4 +1,4 @@
-#include "GameEntry.h"
+#include "api/game/GameEntry.h"
 #include "scenes/DefaultSceneTwo.h"
 
 

@@ -15,8 +15,6 @@ void GLAPIENTRY DebugMessageCallback(
     const GLchar* message,
     [[maybe_unused]] const void* userParam
 ) {
-    using namespace Honeycrisp;
-    HNCRSP_INFO("Im here");
     // Ignore certain verbose info messages (particularly ones on Nvidia).
     if (id == 131169 || 
         id == 131185 || // NV: Buffer will use video memory

@@ -1,7 +1,6 @@
 #include "EntityManager.h"
 #include <cassert>
 
-
 HNCRSP_NAMESPACE_START
 
 namespace ECS

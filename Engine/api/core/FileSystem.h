@@ -3,7 +3,6 @@
 #include <filesystem>
 #include "api/core/Defines.h"
 
-
 HNCRSP_NAMESPACE_START
 
 namespace FileSystem

@@ -2,7 +2,6 @@
 
 #include "api/pch/hncrsp_pch.h"
 
-
 HNCRSP_NAMESPACE_START
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);

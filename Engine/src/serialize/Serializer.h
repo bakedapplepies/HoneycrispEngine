@@ -3,7 +3,6 @@
 #include "api/pch/hncrsp_pch.h"
 #include "vendor/flatbuffers/flatbuffers.h"
 
-
 HNCRSP_NAMESPACE_START
 
 template <typename T>

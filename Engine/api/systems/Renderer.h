@@ -3,18 +3,13 @@
 #include "api/pch/hncrsp_pch.h"
 #include "src/ecs/System.h"
 #include "api/components/Transform.h"
-#include "api/graphics/Material.h"
 
-#include "src/RenderContext.h"
 #include "src/GameLoop.h"
-#include "api/graphics/core/Shader.h"
 #include "api/graphics/Cubemap.h"
-#include "api/graphics/core/Framebuffer.h"
 #include "api/graphics/core/DepthMap.h"
 #include "api/graphics/DepthPassCamera.h"
 #include "src/graphics/PostProcessingQueue.h"
 #include "api/graphics/AxesCrosshair.h"
-
 
 HNCRSP_NAMESPACE_START
 

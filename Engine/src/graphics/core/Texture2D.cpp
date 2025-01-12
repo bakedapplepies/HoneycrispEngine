@@ -2,7 +2,6 @@
 #include "api/core/Timer.h"
 #include "src/serialize/ImageSerializer.h"
 
-
 HNCRSP_NAMESPACE_START
 
 Texture2D::Texture2D(const FileSystem::Path& texturePath, ETextureType textureType)

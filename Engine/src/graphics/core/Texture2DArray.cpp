@@ -1,7 +1,6 @@
 #include "api/graphics/core/Texture2DArray.h"
 #include "src/serialize/ImageSerializer.h"
 
-
 HNCRSP_NAMESPACE_START
 
 Texture2DArray::Texture2DArray(const std::vector<FileSystem::Path>& texturePaths)

@@ -2,7 +2,6 @@
 
 #include "api/pch/hncrsp_pch.h"
 
-
 HNCRSP_NAMESPACE_START
 
 // also works with T types that support overloaded operations (<, >)

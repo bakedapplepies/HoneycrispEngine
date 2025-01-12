@@ -3,7 +3,6 @@
 #include "api/pch/hncrsp_pch.h"
 #include "api/graphics/ILight.h"
 
-
 HNCRSP_NAMESPACE_START
 
 class DirectionalLight : public ILight

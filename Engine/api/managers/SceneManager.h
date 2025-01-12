@@ -1,10 +1,7 @@
 #pragma once
 
-#include "api/managers/ShaderManager.h"
 #include "api/ecs/ECSManager.h"
-#include "api/graphics/Camera.h"
 #include "api/scene/Scene.h"
-
 
 HNCRSP_NAMESPACE_START
 
@@ -13,12 +10,12 @@ class ImGuiManager;
 class SceneManager
 {
 private:
-    uint32_t m_nextSceneIndex = 0;
-    uint32_t m_activeSceneIndex = 0;
+    uint32_t m_nextSceneIndex;
+    uint32_t m_activeSceneIndex;
     std::unordered_map< uint32_t, std::unique_ptr<Scene> > m_scenesMap;
 
 public:
-    SceneManager() = default;
+    SceneManager();
     SceneManager(const SceneManager&) = delete;
     SceneManager& operator=(const SceneManager&) = delete;
     SceneManager(SceneManager&&) = delete;

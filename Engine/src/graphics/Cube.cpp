@@ -1,7 +1,7 @@
 #include "api/graphics/Cube.h"
 #include "api/managers/Texture2DManager.h"
 #include "api/managers/ShaderManager.h"
-#include "src/managers/SceneManager.h"
+#include "api/managers/SceneManager.h"
 
 
 HNCRSP_NAMESPACE_START

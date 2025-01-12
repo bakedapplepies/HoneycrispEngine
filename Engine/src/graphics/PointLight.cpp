@@ -1,6 +1,5 @@
 #include "api/graphics/PointLight.h"
 
-
 HNCRSP_NAMESPACE_START
 
 PointLight::PointLight(const glm::vec3& position, const glm::vec3& color, float ambient, float diffuse, float specular) :

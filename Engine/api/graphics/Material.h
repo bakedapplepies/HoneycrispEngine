@@ -4,7 +4,6 @@
 #include "api/graphics/core/Texture2D.h"
 #include "api/graphics/core/Shader.h"
 
-
 HNCRSP_NAMESPACE_START
 
 class Material

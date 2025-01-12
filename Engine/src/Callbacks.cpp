@@ -1,7 +1,7 @@
 #include "Callbacks.h"
 #include "src/RenderContext.h"
 #include "src/WindowHandler.h"
-#include "src/managers/SceneManager.h"
+#include "api/managers/SceneManager.h"
 #include "api/systems/Renderer.h"
 
 

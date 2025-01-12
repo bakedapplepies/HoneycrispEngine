@@ -1,6 +1,5 @@
 #include "ModelSerializer.h"
 
-
 HNCRSP_NAMESPACE_START
 
 ModelSerializer::ModelSerializer()

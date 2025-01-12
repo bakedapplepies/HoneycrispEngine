@@ -5,7 +5,6 @@
 #include "api/graphics/core/VertexArray.h"
 #include "api/graphics/core/Texture2D.h"
 
-
 HNCRSP_NAMESPACE_START
 
 class Billboard : public Renderable

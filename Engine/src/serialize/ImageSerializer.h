@@ -4,7 +4,6 @@
 #include "src/serialize/Serializer.h"
 #include "src/serialize/schemas/image_generated.h"
 
-
 HNCRSP_NAMESPACE_START
 
 class ImageSerializer : public Serializer<Serialized::Image>

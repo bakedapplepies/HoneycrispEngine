@@ -2,7 +2,6 @@
 #include "api/core/Debug.h"
 #include "src/WindowHandler.h"
 
-
 HNCRSP_NAMESPACE_START
 
 void RenderContext::Initialize()

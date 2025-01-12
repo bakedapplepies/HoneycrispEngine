@@ -3,7 +3,6 @@
 #include "api/pch/hncrsp_pch.h"
 #include "ComponentArray.h"
 
-
 HNCRSP_NAMESPACE_START
 
 namespace ECS

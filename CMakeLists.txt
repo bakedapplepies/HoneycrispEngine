@@ -60,12 +60,12 @@ set(COMPILE_OPTIONS
 # Subdirectories
 add_subdirectory(vendor)
 add_subdirectory(Engine/src)
-add_subdirectory(Client/src)
+add_subdirectory(TestClient/src)
 
 # TODO: some libraries are Windows-specific
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_PROJECT_NAME}.Engine.Source
-    ${CMAKE_PROJECT_NAME}.Client
+    ${CMAKE_PROJECT_NAME}.TestClient
     GLAD
     IMGUI
     STB_IMAGE
@@ -85,7 +85,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
 target_compile_options(${CMAKE_PROJECT_NAME}.Engine.Source PRIVATE
     ${COMPILE_OPTIONS}    
 )
-target_compile_options(${CMAKE_PROJECT_NAME}.Client PRIVATE
+target_compile_options(${CMAKE_PROJECT_NAME}.TestClient PRIVATE
     ${COMPILE_OPTIONS}    
 )
 
@@ -104,8 +104,8 @@ target_include_directories(${CMAKE_PROJECT_NAME}.Engine.ECSSystems    PRIVATE ${
 target_include_directories(${CMAKE_PROJECT_NAME}.Engine.Components    PRIVATE ${INCLUDE_DIRECTORIES})
 target_include_directories(${CMAKE_PROJECT_NAME}.Engine.Serializer    PRIVATE ${INCLUDE_DIRECTORIES})
 target_include_directories(${CMAKE_PROJECT_NAME}.Engine.Core          PRIVATE ${INCLUDE_DIRECTORIES})
-target_include_directories(${CMAKE_PROJECT_NAME}.Client               PRIVATE ${INCLUDE_DIRECTORIES})
-target_include_directories(${CMAKE_PROJECT_NAME}.Client.Scenes        PRIVATE ${INCLUDE_DIRECTORIES})
+target_include_directories(${CMAKE_PROJECT_NAME}.TestClient               PRIVATE ${INCLUDE_DIRECTORIES})
+target_include_directories(${CMAKE_PROJECT_NAME}.TestClient.Scenes        PRIVATE ${INCLUDE_DIRECTORIES})
 
 target_precompile_headers(${CMAKE_PROJECT_NAME}.Engine.Source        PRIVATE ${PCH})
 target_precompile_headers(${CMAKE_PROJECT_NAME}.Engine.Managers      REUSE_FROM ${CMAKE_PROJECT_NAME}.Engine.Source)
@@ -116,8 +116,8 @@ target_precompile_headers(${CMAKE_PROJECT_NAME}.Engine.ECSSystems    REUSE_FROM 
 target_precompile_headers(${CMAKE_PROJECT_NAME}.Engine.Components    REUSE_FROM ${CMAKE_PROJECT_NAME}.Engine.Source)
 target_precompile_headers(${CMAKE_PROJECT_NAME}.Engine.Serializer    REUSE_FROM ${CMAKE_PROJECT_NAME}.Engine.Source)
 target_precompile_headers(${CMAKE_PROJECT_NAME}.Engine.Core          REUSE_FROM ${CMAKE_PROJECT_NAME}.Engine.Source)
-target_precompile_headers(${CMAKE_PROJECT_NAME}.Client               REUSE_FROM ${CMAKE_PROJECT_NAME}.Engine.Source)
-target_precompile_headers(${CMAKE_PROJECT_NAME}.Client.Scenes        REUSE_FROM ${CMAKE_PROJECT_NAME}.Engine.Source)
+target_precompile_headers(${CMAKE_PROJECT_NAME}.TestClient               REUSE_FROM ${CMAKE_PROJECT_NAME}.Engine.Source)
+target_precompile_headers(${CMAKE_PROJECT_NAME}.TestClient.Scenes        REUSE_FROM ${CMAKE_PROJECT_NAME}.Engine.Source)
 
 target_link_directories(${CMAKE_PROJECT_NAME}                      PRIVATE ${LINK_DIRECTORIES})
 target_link_directories(${CMAKE_PROJECT_NAME}.Engine.Source        PRIVATE ${LINK_DIRECTORIES})
@@ -129,8 +129,8 @@ target_link_directories(${CMAKE_PROJECT_NAME}.Engine.ECSSystems    PRIVATE ${LIN
 target_link_directories(${CMAKE_PROJECT_NAME}.Engine.Components    PRIVATE ${LINK_DIRECTORIES})
 target_link_directories(${CMAKE_PROJECT_NAME}.Engine.Serializer    PRIVATE ${LINK_DIRECTORIES})
 target_link_directories(${CMAKE_PROJECT_NAME}.Engine.Core          PRIVATE ${LINK_DIRECTORIES})
-target_link_directories(${CMAKE_PROJECT_NAME}.Client               PRIVATE ${LINK_DIRECTORIES})
-target_link_directories(${CMAKE_PROJECT_NAME}.Client.Scenes        PRIVATE ${LINK_DIRECTORIES})
+target_link_directories(${CMAKE_PROJECT_NAME}.TestClient           PRIVATE ${LINK_DIRECTORIES})
+target_link_directories(${CMAKE_PROJECT_NAME}.TestClient.Scenes    PRIVATE ${LINK_DIRECTORIES})
 
 set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES VERIFY_INTERFACE_HEADER_SETS true)
 if(${CMAKE_BUILD_TYPE} STREQUAL "Release")  # for some reason Tracy raises an error in Debug mode

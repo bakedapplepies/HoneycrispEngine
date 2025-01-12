@@ -2,7 +2,6 @@
 
 #include "api/pch/hncrsp_pch.h"
 
-
 extern std::ostream& operator<<(std::ostream& stream, const glm::vec2& vec2);
 extern std::ostream& operator<<(std::ostream& stream, const glm::vec3& vec3);
 extern std::ostream& operator<<(std::ostream& stream, const glm::mat3& mat3);

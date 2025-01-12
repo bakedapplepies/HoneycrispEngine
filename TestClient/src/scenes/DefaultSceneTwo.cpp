@@ -1,6 +1,8 @@
 #include "DefaultSceneTwo.h"
-#include "src/WindowHandler.h"  // TODO: Not up to the game dev to put this here
+#include "api/core/Utils.h"
 #include "api/systems/Renderer.h"
+#include "api/graphics/TextureAtlas.h"
+#include "api/managers/Texture2DManager.h"
 
 
 using namespace Honeycrisp;
@@ -191,6 +193,8 @@ void DefaultSceneTwo::SetInitialUniforms(void)
 void DefaultSceneTwo::OnImGui(void)
 {
     static CallbackData* callback_data = GetCallbackData();
+
+    glfwTerminate();
 
     ImGui::Text("Point light #1");
     if (   ImGui::SliderFloat("position.x", &pointLight->position.x, -50.0f, 50.0f)

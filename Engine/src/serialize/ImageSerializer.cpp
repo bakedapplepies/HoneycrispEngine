@@ -1,6 +1,5 @@
 #include "ImageSerializer.h"
 
-
 HNCRSP_NAMESPACE_START
 
 void ImageSerializer::AddImage(

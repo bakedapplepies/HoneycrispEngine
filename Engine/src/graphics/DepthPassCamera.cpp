@@ -1,6 +1,5 @@
 #include "api/graphics/DepthPassCamera.h"
 
-
 HNCRSP_NAMESPACE_START
 
 DepthPassCamera::DepthPassCamera(const glm::vec3& initial_pos)

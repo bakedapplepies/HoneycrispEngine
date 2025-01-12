@@ -2,7 +2,6 @@
 
 #include "api/pch/hncrsp_pch.h"
 
-
 HNCRSP_NAMESPACE_START
 
 // TODO: maybe add shader types from constants.h

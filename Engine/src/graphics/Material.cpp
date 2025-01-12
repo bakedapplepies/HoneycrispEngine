@@ -1,7 +1,6 @@
 #include "api/graphics/Material.h"
 #include "api/managers/Texture2DManager.h"
 
-
 HNCRSP_NAMESPACE_START
 
 Material::Material(const Shader* shader)

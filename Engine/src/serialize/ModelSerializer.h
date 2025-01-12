@@ -5,7 +5,6 @@
 #include "src/serialize/schemas/model_generated.h"
 #include "api/components/DrawData.h"
 
-
 HNCRSP_NAMESPACE_START
 
 class ModelSerializer : public Serializer<Serialized::Model>

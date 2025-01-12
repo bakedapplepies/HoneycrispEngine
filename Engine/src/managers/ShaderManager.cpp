@@ -1,5 +1,5 @@
 #include "api/managers/ShaderManager.h"
-#include "src/managers/SceneManager.h"
+#include "api/managers/SceneManager.h"
 #include "src/WindowHandler.h"
 #include "api/core/Timer.h"
 #include "api/core/Random.h"

@@ -1,7 +1,6 @@
 #include "WindowHandler.h"
 #include "src/Callbacks.h"
 
-
 HNCRSP_NAMESPACE_START
 
 void WindowHandler::StartUp()
@@ -66,11 +65,6 @@ void WindowHandler::StartUp()
 void WindowHandler::ShutDown()
 {
     glfwTerminate();
-}
-
-CallbackData* GetCallbackData()
-{
-    return static_cast<CallbackData*>(glfwGetWindowUserPointer(glfwGetCurrentContext()));
 }
 
 HNCRSP_NAMESPACE_END

@@ -2,7 +2,6 @@
 
 #include "api/ecs/ECSManager.h"
 
-
 HNCRSP_NAMESPACE_START
 
 // TODO: maybe move these somewhere else

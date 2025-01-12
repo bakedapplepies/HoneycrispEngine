@@ -5,7 +5,6 @@
 #include "api/scene/Renderable.h"
 #include "api/graphics/core/VertexArray.h"
 
-
 HNCRSP_NAMESPACE_START
 
 class Cube : public Renderable

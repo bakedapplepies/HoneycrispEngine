@@ -1,6 +1,5 @@
 #include "api/graphics/core/VertexBuffer.h"
 
-
 HNCRSP_NAMESPACE_START
 
 VertexBuffer::VertexBuffer(VertexBuffer&& other) noexcept

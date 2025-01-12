@@ -1,6 +1,5 @@
 #include "api/core/constants.h"
 
-
 HNCRSP_NAMESPACE_START
 
 // Vertex Array-related constants ----------

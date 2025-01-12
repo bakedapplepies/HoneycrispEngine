@@ -5,7 +5,6 @@
 #include "api/graphics/Material.h"
 #include "src/serialize/schemas/model_generated.h"
 
-
 HNCRSP_NAMESPACE_START
 
 struct MeshMetaData;

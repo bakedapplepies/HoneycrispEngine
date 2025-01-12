@@ -1,8 +1,8 @@
 #pragma once
 
 #include "api/pch/hncrsp_pch.h"
-#include "src/managers/SceneManager.h"
-#include "src/RenderContext.h"
+#include "api/managers/SceneManager.h"
+#include "api/graphics/Camera.h"
 
 
 HNCRSP_NAMESPACE_START

@@ -4,7 +4,6 @@
 #include "api/graphics/core/VertexArray.h"
 #include "api/graphics/core/Shader.h"
 
-
 HNCRSP_NAMESPACE_START
 
 class AxesCrosshair

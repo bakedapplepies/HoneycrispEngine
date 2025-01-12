@@ -6,7 +6,6 @@
 #include "src/ecs/ComponentManager.h"
 #include "src/ecs/SystemManager.h"
 
-
 HNCRSP_NAMESPACE_START
 
 class SceneManager;

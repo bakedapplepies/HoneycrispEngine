@@ -1,6 +1,5 @@
 #include "api/core/Logging.h"
 
-
 std::ostream& operator<<(std::ostream& stream, const glm::vec2& vec2)
 {
     std::cout << glm::to_string(vec2);

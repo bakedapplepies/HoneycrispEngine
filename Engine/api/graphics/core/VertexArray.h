@@ -5,7 +5,6 @@
 #include "VertexBuffer.h"
 #include "ElementBuffer.h"
 
-
 HNCRSP_NAMESPACE_START
 
 class VertexArray

@@ -5,7 +5,6 @@
 #include "api/components/Transform.h"
 #include "api/scene/Renderable.h"
 
-
 HNCRSP_NAMESPACE_START
 
 template <class T>

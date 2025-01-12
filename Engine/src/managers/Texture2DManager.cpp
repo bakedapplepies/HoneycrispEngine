@@ -2,7 +2,6 @@
 #include "api/core/Logging.h"
 #include "api/core/Random.h"
 
-
 HNCRSP_NAMESPACE_START
 
 Texture2DManager g_Texture2DManager;

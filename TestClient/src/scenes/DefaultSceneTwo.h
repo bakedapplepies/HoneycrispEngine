@@ -8,10 +8,6 @@
 #include "api/graphics/Cube.h"
 #include "api/graphics/Mesh.h"
 #include "api/graphics/Model.h"
-#include "api/graphics/Cubemap.h"
-#include "api/managers/ShaderManager.h"
-#include "api/managers/Texture2DManager.h"
-
 
 class DefaultSceneTwo : public Honeycrisp::Scene
 {

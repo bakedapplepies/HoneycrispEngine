@@ -1,7 +1,6 @@
 #pragma once
 
 #include "api/pch/hncrsp_pch.h"
-#include "api/managers/ShaderManager.h"
 
 #include "api/scene/Renderable.h"
 #include "api/scene/SceneRenderObj.h"
@@ -9,7 +8,6 @@
 #include "api/graphics/DirectionalLight.h"
 #include "api/graphics/PointLight.h"
 #include "api/graphics/SpotLight.h"
-
 
 HNCRSP_NAMESPACE_START
 

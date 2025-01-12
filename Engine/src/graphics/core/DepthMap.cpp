@@ -1,6 +1,5 @@
 #include "api/graphics/core/DepthMap.h"
 
-
 HNCRSP_NAMESPACE_START
 
 DepthMap::DepthMap(int width, int height)

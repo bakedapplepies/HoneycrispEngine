@@ -1,6 +1,5 @@
 #include "api/graphics/core/VertexArray.h"
 
-
 HNCRSP_NAMESPACE_START
 
 VertexArray::VertexArray(

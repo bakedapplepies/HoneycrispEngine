@@ -3,7 +3,6 @@
 #include "api/ecs/ECSManager.h"
 #include "api/managers/ShaderManager.h"
 
-
 HNCRSP_NAMESPACE_START
 
 Mesh::Mesh(

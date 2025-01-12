@@ -2,7 +2,6 @@
 #include "api/core/TracyProfile.h"
 #include "api/core/Random.h"
 
-
 HNCRSP_NAMESPACE_START
 
 ECS::ECSManager g_ECSManager;

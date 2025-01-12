@@ -4,7 +4,6 @@
 #include "api/core/Assert.h"
 #include "api/core/FileSystem.h"
 
-
 #define HNCRSP_TERMINATE(...) Honeycrisp::__Terminate(FileSystem::Path(__FILE__), __LINE__, __VA_ARGS__);
 
 HNCRSP_NAMESPACE_START

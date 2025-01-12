@@ -5,7 +5,6 @@
 #include "src/serialize/ModelSerializer.h"
 #include "api/components/DrawData.h"
 
-
 HNCRSP_NAMESPACE_START
 
 class Scene;

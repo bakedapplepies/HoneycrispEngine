@@ -1,12 +1,8 @@
 #pragma once
 
 #include "api/pch/hncrsp_pch.h"
-#include "api/components/Transform.h"
 #include "api/graphics/core/VertexArray.h"
-#include "api/graphics/core/Texture2D.h"
-#include "api/graphics/Material.h"
 #include "api/scene/Renderable.h"
-
 
 HNCRSP_NAMESPACE_START
 

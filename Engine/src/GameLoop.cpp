@@ -6,7 +6,6 @@
 #include "api/core/Timer.h"
 #include "api/graphics/core/UniformBuffer.h"
 
-
 HNCRSP_NAMESPACE_START
 
 GameLoop::GameLoop()

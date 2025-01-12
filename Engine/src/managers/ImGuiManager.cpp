@@ -1,6 +1,6 @@
 #include "api/managers/ImGuiManager.h"
 #include "api/ecs/ECSManager.h"
-#include "src/managers/SceneManager.h"
+#include "api/managers/SceneManager.h"
 #include "src/WindowHandler.h"
 #include "api/managers/ShaderManager.h"
 #include "api/core/Random.h"

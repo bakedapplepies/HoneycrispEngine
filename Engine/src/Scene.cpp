@@ -1,5 +1,5 @@
 #include "api/scene/Scene.h"
-
+#include "api/managers/ShaderManager.h"
 
 HNCRSP_NAMESPACE_START
 

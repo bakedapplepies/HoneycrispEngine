@@ -1,6 +1,7 @@
 #include "api/systems/Renderer.h"
 #include "api/ecs/ECSManager.h"
-#include "src/managers/SceneManager.h"
+#include "api/managers/SceneManager.h"
+#include "api/managers/ShaderManager.h"
 #include "src/WindowHandler.h"
 #include "api/core/TracyProfile.h"
 #include "api/components/DrawData.h"
