@@ -1,10 +1,10 @@
-Language: Cpp
-DerivePointerAlignment: false
-PointerAlignment: Right
-AlignAfterOpenBracket: BlockIndent
-AlignEscapedNewlines: LeftWithLastLine
-AlignTrailingComments:
-  Kind: Always
-  OverEmptyLines: 2
-AllowAllParametersOfDeclarationOnNextLine: true
-AllowShortBlocksOnASingleLine: Empty
+# Language: Cpp
+# DerivePointerAlignment: false
+# PointerAlignment: Right
+# AlignAfterOpenBracket: BlockIndent
+# AlignEscapedNewlines: LeftWithLastLine
+# AlignTrailingComments:
+#   Kind: Always
+#   OverEmptyLines: 2
+# AllowAllParametersOfDeclarationOnNextLine: true
+# AllowShortBlocksOnASingleLine: Empty
