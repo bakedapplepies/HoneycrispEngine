@@ -1,7 +1,7 @@
 #pragma once
 
 #include "api/pch/hncrsp_pch.h"
-#include "vendor/flatbuffers/flatbuffers.h"
+#include "flatbuffers/flatbuffers.h"
 
 HNCRSP_NAMESPACE_START
 

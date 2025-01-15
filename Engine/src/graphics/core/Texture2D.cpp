@@ -1,6 +1,6 @@
 #include "api/graphics/core/Texture2D.h"
 #include "api/core/Timer.h"
-#include "src/serialize/ImageSerializer.h"
+#include "api/serialization/ImageSerializer.h"
 
 HNCRSP_NAMESPACE_START
 

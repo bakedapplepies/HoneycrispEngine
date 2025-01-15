@@ -2,7 +2,7 @@
 
 #include "api/pch/hncrsp_pch.h"
 #include "api/scene/Renderable.h"
-#include "src/serialize/ModelSerializer.h"
+#include "api/serialization/ModelSerializer.h"
 #include "api/components/DrawData.h"
 
 HNCRSP_NAMESPACE_START

@@ -19,7 +19,7 @@ add_subdirectory(core)
 add_subdirectory(ecs)
 add_subdirectory(components)
 add_subdirectory(systems)
-add_subdirectory(serialize)
+add_subdirectory(serialization)
 
 target_link_libraries(${CMAKE_PROJECT_NAME}.Engine.Source PUBLIC
     ${CMAKE_PROJECT_NAME}.Engine.Managers
@@ -29,5 +29,5 @@ target_link_libraries(${CMAKE_PROJECT_NAME}.Engine.Source PUBLIC
     ${CMAKE_PROJECT_NAME}.Engine.ECS
     ${CMAKE_PROJECT_NAME}.Engine.Components
     ${CMAKE_PROJECT_NAME}.Engine.ECSSystems
-    ${CMAKE_PROJECT_NAME}.Engine.Serializer
+    ${CMAKE_PROJECT_NAME}.Engine.Serialization
 )

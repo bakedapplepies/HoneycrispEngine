@@ -4,6 +4,7 @@
 #include "src/WindowHandler.h"
 #include "api/managers/ShaderManager.h"
 #include "api/core/Random.h"
+#include "api/core/Timer.h"
 
 
 HNCRSP_NAMESPACE_START
@@ -118,6 +119,7 @@ void ImGuiManager::Update()
 
 void ImGuiManager::_NewFrame()
 {
+    // Timer<std::chrono::milliseconds> timer("ImGui new frame");
     ImGui_ImplGlfw_NewFrame();
     ImGui_ImplOpenGL3_NewFrame(); 
     ImGui::NewFrame();

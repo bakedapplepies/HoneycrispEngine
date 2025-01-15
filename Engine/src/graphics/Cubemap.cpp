@@ -1,6 +1,6 @@
 #include "api/graphics/Cubemap.h"
 #include "api/managers/ShaderManager.h"
-#include "src/serialize/ImageSerializer.h"
+#include "api/serialization/ImageSerializer.h"
 
 HNCRSP_NAMESPACE_START
 

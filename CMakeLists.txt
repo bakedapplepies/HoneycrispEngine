@@ -24,6 +24,7 @@ add_compile_definitions(
 set(INCLUDE_DIRECTORIES
     ${CMAKE_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/Engine
+    ${CMAKE_SOURCE_DIR}/Engine/include
     ${CMAKE_SOURCE_DIR}/vendor
     ${CMAKE_SOURCE_DIR}/vendor/glfw/include
     ${CMAKE_SOURCE_DIR}/vendor/glm
@@ -40,10 +41,13 @@ set(LINK_DIRECTORIES
     ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/vendor/assimp/contrib/zlib
 )
 set(PCH
-    ${CMAKE_SOURCE_DIR}/Engine/api/pch/hncrsp_pch.h
+    ${CMAKE_SOURCE_DIR}/Engine/include/api/pch/hncrsp_pch.h
+)
+set(DEFINES
+    HNCRSP_ENGINE
 )
 
-add_executable(${CMAKE_PROJECT_NAME} ${CMAKE_SOURCE_DIR}/Engine/src/main.cpp)
+add_library(${CMAKE_PROJECT_NAME} ${CMAKE_SOURCE_DIR}/Engine/src/main.cpp)
 
 # -ffile-prefix-map=${CMAKE_SOURCE_DIR}=. messes up the debugger
 set(COMPILE_OPTIONS
@@ -65,7 +69,6 @@ add_subdirectory(TestClient/src)
 # TODO: some libraries are Windows-specific
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_PROJECT_NAME}.Engine.Source
-    ${CMAKE_PROJECT_NAME}.TestClient
     GLAD
     IMGUI
     STB_IMAGE
@@ -85,9 +88,6 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
 target_compile_options(${CMAKE_PROJECT_NAME}.Engine.Source PRIVATE
     ${COMPILE_OPTIONS}    
 )
-target_compile_options(${CMAKE_PROJECT_NAME}.TestClient PRIVATE
-    ${COMPILE_OPTIONS}    
-)
 
 # Set macro as git commit id
 execute_process(
@@ -102,10 +102,8 @@ target_include_directories(${CMAKE_PROJECT_NAME}.Engine.Graphics.Core PRIVATE ${
 target_include_directories(${CMAKE_PROJECT_NAME}.Engine.ECS           PRIVATE ${INCLUDE_DIRECTORIES})
 target_include_directories(${CMAKE_PROJECT_NAME}.Engine.ECSSystems    PRIVATE ${INCLUDE_DIRECTORIES})
 target_include_directories(${CMAKE_PROJECT_NAME}.Engine.Components    PRIVATE ${INCLUDE_DIRECTORIES})
-target_include_directories(${CMAKE_PROJECT_NAME}.Engine.Serializer    PRIVATE ${INCLUDE_DIRECTORIES})
+target_include_directories(${CMAKE_PROJECT_NAME}.Engine.Serialization PRIVATE ${INCLUDE_DIRECTORIES})
 target_include_directories(${CMAKE_PROJECT_NAME}.Engine.Core          PRIVATE ${INCLUDE_DIRECTORIES})
-target_include_directories(${CMAKE_PROJECT_NAME}.TestClient               PRIVATE ${INCLUDE_DIRECTORIES})
-target_include_directories(${CMAKE_PROJECT_NAME}.TestClient.Scenes        PRIVATE ${INCLUDE_DIRECTORIES})
 
 target_precompile_headers(${CMAKE_PROJECT_NAME}.Engine.Source        PRIVATE ${PCH})
 target_precompile_headers(${CMAKE_PROJECT_NAME}.Engine.Managers      REUSE_FROM ${CMAKE_PROJECT_NAME}.Engine.Source)
@@ -114,10 +112,19 @@ target_precompile_headers(${CMAKE_PROJECT_NAME}.Engine.Graphics.Core REUSE_FROM 
 target_precompile_headers(${CMAKE_PROJECT_NAME}.Engine.ECS           REUSE_FROM ${CMAKE_PROJECT_NAME}.Engine.Source)
 target_precompile_headers(${CMAKE_PROJECT_NAME}.Engine.ECSSystems    REUSE_FROM ${CMAKE_PROJECT_NAME}.Engine.Source)
 target_precompile_headers(${CMAKE_PROJECT_NAME}.Engine.Components    REUSE_FROM ${CMAKE_PROJECT_NAME}.Engine.Source)
-target_precompile_headers(${CMAKE_PROJECT_NAME}.Engine.Serializer    REUSE_FROM ${CMAKE_PROJECT_NAME}.Engine.Source)
+target_precompile_headers(${CMAKE_PROJECT_NAME}.Engine.Serialization REUSE_FROM ${CMAKE_PROJECT_NAME}.Engine.Source)
 target_precompile_headers(${CMAKE_PROJECT_NAME}.Engine.Core          REUSE_FROM ${CMAKE_PROJECT_NAME}.Engine.Source)
-target_precompile_headers(${CMAKE_PROJECT_NAME}.TestClient               REUSE_FROM ${CMAKE_PROJECT_NAME}.Engine.Source)
-target_precompile_headers(${CMAKE_PROJECT_NAME}.TestClient.Scenes        REUSE_FROM ${CMAKE_PROJECT_NAME}.Engine.Source)
+
+target_compile_definitions(${CMAKE_PROJECT_NAME}                      PRIVATE ${DEFINES})
+target_compile_definitions(${CMAKE_PROJECT_NAME}.Engine.Source        PRIVATE ${DEFINES})
+target_compile_definitions(${CMAKE_PROJECT_NAME}.Engine.Managers      PRIVATE ${DEFINES})
+target_compile_definitions(${CMAKE_PROJECT_NAME}.Engine.Graphics      PRIVATE ${DEFINES})
+target_compile_definitions(${CMAKE_PROJECT_NAME}.Engine.Graphics.Core PRIVATE ${DEFINES})
+target_compile_definitions(${CMAKE_PROJECT_NAME}.Engine.ECS           PRIVATE ${DEFINES})
+target_compile_definitions(${CMAKE_PROJECT_NAME}.Engine.ECSSystems    PRIVATE ${DEFINES})
+target_compile_definitions(${CMAKE_PROJECT_NAME}.Engine.Components    PRIVATE ${DEFINES})
+target_compile_definitions(${CMAKE_PROJECT_NAME}.Engine.Serialization PRIVATE ${DEFINES})
+target_compile_definitions(${CMAKE_PROJECT_NAME}.Engine.Core          PRIVATE ${DEFINES})
 
 target_link_directories(${CMAKE_PROJECT_NAME}                      PRIVATE ${LINK_DIRECTORIES})
 target_link_directories(${CMAKE_PROJECT_NAME}.Engine.Source        PRIVATE ${LINK_DIRECTORIES})
@@ -127,10 +134,8 @@ target_link_directories(${CMAKE_PROJECT_NAME}.Engine.Graphics.Core PRIVATE ${LIN
 target_link_directories(${CMAKE_PROJECT_NAME}.Engine.ECS           PRIVATE ${LINK_DIRECTORIES})
 target_link_directories(${CMAKE_PROJECT_NAME}.Engine.ECSSystems    PRIVATE ${LINK_DIRECTORIES})
 target_link_directories(${CMAKE_PROJECT_NAME}.Engine.Components    PRIVATE ${LINK_DIRECTORIES})
-target_link_directories(${CMAKE_PROJECT_NAME}.Engine.Serializer    PRIVATE ${LINK_DIRECTORIES})
+target_link_directories(${CMAKE_PROJECT_NAME}.Engine.Serialization PRIVATE ${LINK_DIRECTORIES})
 target_link_directories(${CMAKE_PROJECT_NAME}.Engine.Core          PRIVATE ${LINK_DIRECTORIES})
-target_link_directories(${CMAKE_PROJECT_NAME}.TestClient           PRIVATE ${LINK_DIRECTORIES})
-target_link_directories(${CMAKE_PROJECT_NAME}.TestClient.Scenes    PRIVATE ${LINK_DIRECTORIES})
 
 set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES VERIFY_INTERFACE_HEADER_SETS true)
 if(${CMAKE_BUILD_TYPE} STREQUAL "Release")  # for some reason Tracy raises an error in Debug mode

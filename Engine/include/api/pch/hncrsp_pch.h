@@ -1,8 +1,11 @@
 #pragma once
 
 // OPENGL SETUP ----------
+#define ENABLE_GLFW 1
+#if defined(HNCRSP_ENGINE) || defined(ENABLE_GLFW)
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#endif
 
 // 3RD-PARTY LIBRARIES ----------
 #include <stb/stb_image.h>
@@ -57,10 +60,10 @@
 #include <ctime>
 
 // COMMON HEADERS ----------
+#include "api/core/FileSystem.h"
 #include "api/core/Defines.h"
 #include "api/core/Debug.h"
 #include "api/core/Assert.h"
 #include "api/core/Terminate.h"
 #include "api/core/Logging.h"
-#include "api/core/FileSystem.h"
 #include "api/core/constants.h"

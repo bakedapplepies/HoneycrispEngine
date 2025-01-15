@@ -1,8 +1,8 @@
 #pragma once
 
 #include "api/pch/hncrsp_pch.h"
-#include "src/serialize/Serializer.h"
-#include "src/serialize/schemas/model_generated.h"
+#include "api/serialization/Serializer.h"
+#include "api/serialization/schemas/model_generated.h"
 #include "api/components/DrawData.h"
 
 HNCRSP_NAMESPACE_START

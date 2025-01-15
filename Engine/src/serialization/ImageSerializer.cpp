@@ -1,4 +1,4 @@
-#include "ImageSerializer.h"
+#include "api/serialization/ImageSerializer.h"
 
 HNCRSP_NAMESPACE_START
 

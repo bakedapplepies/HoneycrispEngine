@@ -1,6 +1,6 @@
 #pragma once
 
-#include "api/ecs/ECSManager.h"
+#include "api/core/Defines.h"
 
 HNCRSP_NAMESPACE_START
 

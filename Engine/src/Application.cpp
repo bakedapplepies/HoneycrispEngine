@@ -16,6 +16,7 @@
 #include "api/components/DrawData.h"
 
 // ECS Systems
+#include "api/ecs/ECSManager.h"
 #include "api/systems/Renderer.h"
 
 

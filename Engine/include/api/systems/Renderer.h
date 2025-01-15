@@ -1,14 +1,14 @@
 #pragma once
 
 #include "api/pch/hncrsp_pch.h"
-#include "src/ecs/System.h"
+#include "api/ecs/System.h"
 #include "api/components/Transform.h"
 
-#include "src/GameLoop.h"
+#include "api/graphics/Camera.h"
 #include "api/graphics/Cubemap.h"
 #include "api/graphics/core/DepthMap.h"
 #include "api/graphics/DepthPassCamera.h"
-#include "src/graphics/PostProcessingQueue.h"
+#include "api/graphics/PostProcessingQueue.h"
 #include "api/graphics/AxesCrosshair.h"
 
 HNCRSP_NAMESPACE_START
@@ -16,6 +16,7 @@ HNCRSP_NAMESPACE_START
 struct DelayedTransparentObjectDrawData;  // end of file
 struct DrawElementsIndirectCommand;  // end of file
 
+class GameLoop;
 class Renderer : public ECS::System
 {
 friend GameLoop;

@@ -1,7 +1,7 @@
 #include "api/graphics/Model.h"
 #include "api/managers/Texture2DManager.h"
 #include "api/ecs/ECSManager.h"
-#include "src/serialize/schemas/model_generated.h"
+#include "api/serialization/schemas/model_generated.h"
 
 HNCRSP_NAMESPACE_START
 

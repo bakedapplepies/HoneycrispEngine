@@ -1,3 +1,10 @@
 {
-    "cmake.sourceDirectory": "D:/JohnB/Dev/CPP/HoneycrispEngine"
+    "cmake.sourceDirectory": "D:/JohnB/Dev/CPP/HoneycrispEngine",
+    "clangd.path": "C:/clangd/bin/clangd.exe",
+    "clangd.arguments": [
+        "--compile-commands-dir=${workspaceFolder}/../build/Debug/",
+        "--header-insertion=never",
+        "--query-driver=C:/MinGW-W64/MinGW-W64/bin/clang++.exe",
+    ],
+    "C_Cpp.intelliSenseEngine": "disabled",
 }

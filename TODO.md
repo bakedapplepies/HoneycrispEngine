@@ -1,5 +1,6 @@
 # TODO List
 
+- TODO: engine-private library functions are called freely from scenes (prevent this)
 - TODO: mipmaps aren't generating (sponza cloths)
 - TODO: vcpkg
 - TODO: try building dll (HNCRSP_API)
@@ -15,22 +16,16 @@
 - TODO: Look into glNamed... functions
 - TODO: cache texture (ktx)
 - TODO: SPIR-V
-- TODO: .clangd format feature seems useful
-- TODO: Ticking bomb-style error (doesn't crash program, but will crash if you use the erroneous data)
 - TODO: Automatic handling of nullptrs that doesn't use weakptrs (somehow)
 - TODO: Relative world positions to parents
 
 - TODO: After we're done with models and Renderer architecture, we'll move on to lighting stuff and integrate
 that with shaders in scene to process light automatically and easier.
 
-- TODO: Assertions of manager state during related methods execution
-
 - TODO: OpenGL Disable-type functions don't have to be coupled to their private members, maybe
 use non-member functions?
 
 - TODO: Anti-aliasing on the framebuffer, resolve using glBlitFramebuffer
-
-- TODO: Sort draw objects by distance to camera for blending
 
 - TODO: Asset Manager to manage resource lifetime (like Images) and stuff like that
 

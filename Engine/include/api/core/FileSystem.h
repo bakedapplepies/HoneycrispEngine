@@ -1,6 +1,7 @@
 #pragma once
 
 #include <filesystem>
+#include <string>
 #include "api/core/Defines.h"
 
 HNCRSP_NAMESPACE_START

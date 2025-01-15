@@ -1,10 +1,10 @@
 #pragma once
 
 #include "api/pch/hncrsp_pch.h"
-#include "src/ecs/ComponentCounter.h"
-#include "src/ecs/EntityManager.h"
-#include "src/ecs/ComponentManager.h"
-#include "src/ecs/SystemManager.h"
+#include "api/ecs/ComponentCounter.h"
+#include "api/ecs/EntityManager.h"
+#include "api/ecs/ComponentManager.h"
+#include "api/ecs/SystemManager.h"
 
 HNCRSP_NAMESPACE_START
 

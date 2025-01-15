@@ -2,7 +2,6 @@
 
 #include "api/managers/SceneManager.h"
 
-
 namespace Honeycrisp
 {
     class Scene;

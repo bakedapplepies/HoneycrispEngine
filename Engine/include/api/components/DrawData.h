@@ -3,7 +3,7 @@
 #include "api/pch/hncrsp_pch.h"
 #include "api/graphics/core/VertexArray.h"
 #include "api/graphics/Material.h"
-#include "src/serialize/schemas/model_generated.h"
+#include "api/serialization/schemas/model_generated.h"
 
 HNCRSP_NAMESPACE_START
 

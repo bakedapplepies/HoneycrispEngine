@@ -1,4 +1,4 @@
-#include "ModelSerializer.h"
+#include "api/serialization/ModelSerializer.h"
 
 HNCRSP_NAMESPACE_START
 

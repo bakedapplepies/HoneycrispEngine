@@ -1,5 +1,5 @@
 #include "api/graphics/core/Texture2DArray.h"
-#include "src/serialize/ImageSerializer.h"
+#include "api/serialization/ImageSerializer.h"
 
 HNCRSP_NAMESPACE_START
 

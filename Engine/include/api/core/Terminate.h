@@ -1,8 +1,6 @@
 #pragma once
 
-#include "api/core/Defines.h"
-#include "api/core/Assert.h"
-#include "api/core/FileSystem.h"
+#include "api/pch/hncrsp_pch.h"
 
 #define HNCRSP_TERMINATE(...) Honeycrisp::__Terminate(FileSystem::Path(__FILE__), __LINE__, __VA_ARGS__);
 

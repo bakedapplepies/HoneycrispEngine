@@ -187,14 +187,11 @@ void DefaultSceneTwo::InitializeShaders(void)
 }
 
 void DefaultSceneTwo::SetInitialUniforms(void)
-{
-}
+{}
 
 void DefaultSceneTwo::OnImGui(void)
 {
     static CallbackData* callback_data = GetCallbackData();
-
-    glfwTerminate();
 
     ImGui::Text("Point light #1");
     if (   ImGui::SliderFloat("position.x", &pointLight->position.x, -50.0f, 50.0f)
