@@ -26,7 +26,7 @@ public:
     void virt_AddDrawDataToRenderer(ECS::EntityUID entityUID) const override final;
 
 private:  // building model
-    void processNode(
+    void _ProcessNode(
         aiNode* node,
         const aiScene*,
         const FileSystem::Path& modelDirectory,
@@ -34,7 +34,7 @@ private:  // building model
         std::vector<float>& vertexData,
         std::vector<GLuint>& indices
     );
-    void processMesh(
+    void _ProcessMesh(
         aiMesh* node,
         const aiScene*,
         const FileSystem::Path& modelDirectory,
@@ -42,16 +42,16 @@ private:  // building model
         std::vector<float>& vertexData,
         std::vector<GLuint>& indices
     );
-    void getMaterials(
+    void _GetMaterials(
         const aiScene* scene,
         const FileSystem::Path& modelDirectory,
         ModelSerializer& modelSerializer
     );
-    const Texture2D* getMaterialTexture(
+    const Texture2D* _GetMaterialTexture(
         std::string_view texturePath,
         aiTextureType assimp_texture_type
     );
-    void loadDeserializedModel(const Serialized::Model* deserialized_model);
+    void _LoadDeserializedModel(const Serialized::Model* deserialized_model);
 };
 
 HNCRSP_NAMESPACE_END

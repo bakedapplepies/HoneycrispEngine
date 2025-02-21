@@ -15,8 +15,10 @@ DepthMap::DepthMap(int width, int height)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
     // Attach depth buffer
     glFramebufferTexture2D(
@@ -26,14 +28,16 @@ DepthMap::DepthMap(int width, int height)
         m_depthTexture_ID,
         0
     );
-    glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
+    glDrawBuffer(GL_NONE);  // No color data
 
     // Check validity ----------
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     {
         HNCRSP_TERMINATE("Framebuffer incomplete.");
     }
+
+    BindDepthTexture(DEPTH_BUFFER_TEXTURE_UNIT_INDEX);
 }
 
 DepthMap::~DepthMap()
@@ -60,7 +64,7 @@ void DepthMap::Unbind() const
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void DepthMap::BindDepthBuffer(const uint16_t texture_unit) const
+void DepthMap::BindDepthTexture(const uint16_t texture_unit) const
 {
     glActiveTexture(GL_TEXTURE0 + texture_unit);
     glBindTexture(GL_TEXTURE_2D, m_depthTexture_ID);

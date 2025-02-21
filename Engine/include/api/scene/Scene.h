@@ -103,11 +103,21 @@ protected:
         const FileSystem::Path& front,
         const FileSystem::Path& back
     );
+    
+    // To be used in scene files, not g_ShaderManager.GetShader()
     const Shader* CreateShader(
         const FileSystem::Path& vertex,
         const FileSystem::Path& fragment,
         const FileSystem::Path& geometry = FileSystem::Path("")
     );
+
+    void UpdateLight(const ILight* light) const
+    {
+        for (const Shader* shader : m_shadersInScene)
+        {
+            light->ConfigureShader(shader);
+        }
+    }
 
 public:
     Scene(const char* scene_name);

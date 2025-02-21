@@ -6,13 +6,7 @@
 
 HNCRSP_NAMESPACE_START
 
-struct A
-{
-    glm::vec3 a;
-};
-
-Cube::Cube() :
-    m_VAO()
+Cube::Cube()
 {
     _InitializeAttributeData();
 }
@@ -221,8 +215,12 @@ void Cube::virt_AddDrawDataToRenderer(ECS::EntityUID entityUID) const
 {
     DrawData drawData;
     drawData.VAO_id = m_VAO.GetID();
-    drawData.meta_data.emplace_back(0, m_VAO.GetIndicesLen(), 0);
-    drawData.materials.push_back(std::make_shared<Material>(g_ShaderManager.albedoShader));
+    drawData.meta_data.emplace_back(MeshMetaData {
+        .mesh_vertex_offset = 0,
+        .indices_buffer_count = static_cast<GLuint>(m_VAO.GetIndicesLen()),
+        .material_index = 0
+    });
+    drawData.materials.push_back(CreateMaterial(g_ShaderManager.albedoShader));
 
     drawData.materials[0]->SetAlbedoMap(g_Texture2DManager.mainTextureMap);
     drawData.materials[0]->SetSpecularMap(g_Texture2DManager.mainTextureSpecularMap);

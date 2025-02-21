@@ -9,6 +9,8 @@
 
 HNCRSP_NAMESPACE_START
 
+#define DEPTH_CAMERA_RESOLUTION depthCameraResolution
+
 Renderer::Renderer()
 {
     // Creating Screen Quad ----------
@@ -39,6 +41,7 @@ Renderer::Renderer()
         const_cast<const VertexArray*>(&m_screenQuad)
     );
 
+    // Only one post-processing shader for now
     g_ShaderManager.SetPostProcessingShader(
         FileSystem::Path("resources/shaders/postprocessing/ColorCorrection.frag")
     );
@@ -57,27 +60,31 @@ void Renderer::_Render() const
     ZoneScopedN("Render");
 
     // Depth pass (directional shadow)
-    m_depthMap->Bind();
     glEnable(GL_DEPTH_TEST);
+    m_depthMap->Bind();
     glClear(GL_DEPTH_BUFFER_BIT);
+    // glCullFace(GL_FRONT);
     _RenderDepthPass();
+    // glCullFace(GL_BACK);
 
     // Scene pass (no transparent objects)
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     m_postprocessingQueue->BindInitialFramebuffer();
     glDisable(GL_BLEND);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    m_depthMap->BindDepthBuffer(DEPTH_BUFFER_TEXTURE_UNIT_INDEX);
+    m_depthMap->BindDepthTexture(DEPTH_BUFFER_TEXTURE_UNIT_INDEX);
     _RenderScenePass();
-
+    
     // Scene pass (transparent objects)
     _SortTransparentObjects();
     glEnable(GL_BLEND);
     _RenderTransparentObjectsPass();
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     glDisable(GL_DEPTH_TEST);
     m_postprocessingQueue->DrawSequence();
 
-    m_axesCrosshair.Render();
+    // m_axesCrosshair.Render();
 
     // bind default framebuffer and clear to clean up any ImGui stuff from last frame
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -104,14 +111,17 @@ void Renderer::_RenderDepthPass() const
         m_depthPassCamera.SetDirection(VEC3_DOWN);
     }
 
-    viewProjectionMatrix = m_depthPassCamera.GetViewProjectionMatrix(glm::vec3(0.0f, 2.0f, -2.0f));
+    // HNCRSP_INFO("{}", dirLight->direction);
+    glm::vec3 targetDir = glm::vec3(m_camera->direction.x, 0.0f, m_camera->direction.z);
+    glm::vec3 targetPos = m_camera->direction * 10.0f;
+    viewProjectionMatrix = m_depthPassCamera.GetViewProjectionMatrix(targetPos, DEPTH_CAMERA_RESOLUTION);
     depthPassShader->SetMat4Unf("u_depthSpaceMatrix", viewProjectionMatrix);
 
     for (const ECS::EntityUID& uid : p_entityUIDs)
     {
         // Get Data
-        DrawData& drawData = g_ECSManager.GetComponent<DrawData>(uid);
-        Transform& transform = g_ECSManager.GetComponent<Transform>(uid);
+        const DrawData& drawData = g_ECSManager.GetComponent<DrawData>(uid);
+        const Transform& transform = g_ECSManager.GetComponent<Transform>(uid);
 
         // Draw
         glBindVertexArray(drawData.VAO_id);
@@ -148,10 +158,10 @@ void Renderer::_RenderScenePass() const
     const Texture2D* specularMap = nullptr;
     for (const ECS::EntityUID& uid : p_entityUIDs)
     {
-        DrawData& drawData = g_ECSManager.GetComponent<DrawData>(uid);
+        const DrawData& drawData = g_ECSManager.GetComponent<DrawData>(uid);
         const Shader* shader = drawData.materials[0]->GetShader();
 
-        Transform& transform = g_ECSManager.GetComponent<Transform>(uid);
+        const Transform& transform = g_ECSManager.GetComponent<Transform>(uid);
         glBindVertexArray(drawData.VAO_id);
 
         if (shaderID != shader->GetID())
@@ -166,8 +176,9 @@ void Renderer::_RenderScenePass() const
         const DirectionalLight* dirLight = g_SceneManager.GetCurrentDirectionalLight();
 
         glm::mat4 viewProjectionMatrix;
-        viewProjectionMatrix = m_depthPassCamera.GetViewProjectionMatrix(glm::vec3(0.0f, 2.0f, -2.0f));
-        shader->SetMat4Unf("u_depthSpaceMatrix", viewProjectionMatrix);
+        glm::vec3 targetDir = glm::vec3(m_camera->direction.x, 0.0f, m_camera->direction.z);
+        glm::vec3 targetPos = m_camera->direction * 10.0f;
+        viewProjectionMatrix = m_depthPassCamera.GetViewProjectionMatrix(targetPos, DEPTH_CAMERA_RESOLUTION);        shader->SetMat4Unf("u_depthSpaceMatrix", viewProjectionMatrix);
         shader->SetMat3Unf("u_normalMatrix", glm::mat3(glm::transpose(glm::inverse(model_matrix))));
         shader->SetMat4Unf("u_model", model_matrix);
         uint32_t indexBufferOffset = 0;
@@ -204,7 +215,7 @@ void Renderer::_RenderScenePass() const
             }
             if (normalMap)
             {
-                albedoMap->Bind();
+                normalMap->Bind();
                 whichMaterial |= 1 << 3;
             }
             if (specularMap)
@@ -246,10 +257,10 @@ void Renderer::_RenderTransparentObjectsPass() const
     const Texture2D* specularMap = nullptr;
     for (const DelayedTransparentObjectDrawData& obj : m_transparentObjects[m_currentSceneIndex])
     {
-        DrawData& drawData = g_ECSManager.GetComponent<DrawData>(obj.entityUID);
+        const DrawData& drawData = g_ECSManager.GetComponent<DrawData>(obj.entityUID);
         const Shader* shader = drawData.materials[0]->GetShader();
 
-        Transform& transform = g_ECSManager.GetComponent<Transform>(obj.entityUID);
+        const Transform& transform = g_ECSManager.GetComponent<Transform>(obj.entityUID);
         glBindVertexArray(drawData.VAO_id);
 
         if (shaderID != shader->GetID())
@@ -264,8 +275,9 @@ void Renderer::_RenderTransparentObjectsPass() const
         const DirectionalLight* dirLight = g_SceneManager.GetCurrentDirectionalLight();
 
         glm::mat4 viewProjectionMatrix;
-        viewProjectionMatrix = m_depthPassCamera.GetViewProjectionMatrix(glm::vec3(0.0f, 2.0f, -2.0f));
-        shader->SetMat4Unf("u_depthSpaceMatrix", viewProjectionMatrix);
+        glm::vec3 targetDir = glm::vec3(m_camera->direction.x, 0.0f, m_camera->direction.z);
+        glm::vec3 targetPos = m_camera->direction * 10.0f;
+        viewProjectionMatrix = m_depthPassCamera.GetViewProjectionMatrix(targetPos, DEPTH_CAMERA_RESOLUTION);        shader->SetMat4Unf("u_depthSpaceMatrix", viewProjectionMatrix);
         shader->SetMat3Unf("u_normalMatrix", glm::mat3(glm::transpose(glm::inverse(model_matrix))));
         shader->SetMat4Unf("u_model", model_matrix);
 
@@ -295,7 +307,7 @@ void Renderer::_RenderTransparentObjectsPass() const
             }
             if (normalMap)
             {
-                albedoMap->Bind();
+                normalMap->Bind();
                 whichMaterial |= 1 << 3;
             }
             if (specularMap)
@@ -340,7 +352,7 @@ void Renderer::_SortTransparentObjects() const
 }
 
 // TODO: quaternions
-glm::mat4 Renderer::_GetModelMatrix(Transform& transform) const 
+glm::mat4 Renderer::_GetModelMatrix(const Transform& transform) const 
 {
     static const Camera* camera = g_ECSManager.GetSystem<Renderer>()->GetCamera();
 

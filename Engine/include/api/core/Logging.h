@@ -115,7 +115,7 @@ static void __Log(
 ) {
     fmt::print("[{} ~{}:{}] {}\n",
         LOG_LEVELS[static_cast<uint32_t>(log_level)],
-        file.relative_string(),
+        file.engine_relative_string(),
         line,
         fmt::format(format_str, std::forward<Args>(args)...)
     );

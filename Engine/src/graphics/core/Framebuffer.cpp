@@ -66,7 +66,7 @@ void Framebuffer::Unbind() const
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void Framebuffer::BindColorBuffer() const
+void Framebuffer::BindColorTexture() const
 {
     glActiveTexture(GL_TEXTURE0 + COLOR_BUFFER_TEXTURE_UNIT_INDEX);
     glBindTexture(GL_TEXTURE_2D, m_colorBufferTexture_ID);

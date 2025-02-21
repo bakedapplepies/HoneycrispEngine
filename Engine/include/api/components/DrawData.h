@@ -13,7 +13,7 @@ struct MeshMetaData;
 struct DrawData
 {
     GLuint VAO_id;
-    std::vector< std::shared_ptr<Material> > materials;  // TODO: Maybe remove shaders out of materials
+    std::vector< std::shared_ptr<Material> > materials;
     std::vector<MeshMetaData> meta_data;
 };
 

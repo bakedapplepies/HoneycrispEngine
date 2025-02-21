@@ -30,12 +30,6 @@ public:
     Mesh& operator=(Mesh&& other) noexcept;
     virtual ~Mesh() = default;
 
-    void EnableVertexAttribPosition(bool on) const;
-    void EnableVertexAttribColor(bool on) const;
-    void EnableVertexAttribUV(bool on) const;
-    void EnableVertexAttribNormals(bool on) const;
-    // const VertexArray* GetVAO() const;
-
     void virt_AddDrawDataToRenderer(ECS::EntityUID entityUID) const override final;
 };
 

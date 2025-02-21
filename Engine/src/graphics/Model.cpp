@@ -13,7 +13,7 @@ Model::Model(const FileSystem::Path& path, const Shader* shader, bool flip_uv)
     ModelSerializer modelSerializer;
     if (const Serialized::Model* deserialized_model = modelSerializer.GetDeserializedObject(path))
     {
-        loadDeserializedModel(deserialized_model);
+        _LoadDeserializedModel(deserialized_model);
         return;
     }
 
@@ -38,11 +38,11 @@ Model::Model(const FileSystem::Path& path, const Shader* shader, bool flip_uv)
     std::vector<float> vertexData;
     std::vector<GLuint> indices;
 
-    getMaterials(scene, modelDirectory, modelSerializer);
+    _GetMaterials(scene, modelDirectory, modelSerializer);
 
     // HNCRSP_INFO(scene->mNumMaterials);
     
-    processNode(scene->mRootNode, scene, modelDirectory, modelSerializer, vertexData, indices);
+    _ProcessNode(scene->mRootNode, scene, modelDirectory, modelSerializer, vertexData, indices);
 
     HNCRSP_INFO(  // display relative path from project directory
         "Model load time ~{}: {}s",
@@ -77,7 +77,7 @@ Model::Model(const FileSystem::Path& path, const Shader* shader, bool flip_uv)
     s_isFirstMatNull = false;  // for next model
 }
 
-void Model::processNode(
+void Model::_ProcessNode(
     aiNode* node,
     const aiScene* scene,
     const FileSystem::Path& modelDirectory,
@@ -88,15 +88,15 @@ void Model::processNode(
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        processMesh(mesh, scene, modelDirectory, modelSerializer, vertexData, indices);
+        _ProcessMesh(mesh, scene, modelDirectory, modelSerializer, vertexData, indices);
     }
     for (unsigned int i = 0; i < node->mNumChildren; i++)
     {
-        processNode(node->mChildren[i], scene, modelDirectory, modelSerializer, vertexData, indices);
+        _ProcessNode(node->mChildren[i], scene, modelDirectory, modelSerializer, vertexData, indices);
     }
 }
 
-void Model::processMesh(
+void Model::_ProcessMesh(
     aiMesh* mesh,
     const aiScene* scene,
     const FileSystem::Path& modelDirectory,
@@ -158,7 +158,7 @@ void Model::processMesh(
     num_vertices = mesh->mNumVertices;
 }
 
-void Model::getMaterials(
+void Model::_GetMaterials(
     const aiScene* scene,
     const FileSystem::Path& modelDirectory,
     ModelSerializer& modelSerializer
@@ -177,7 +177,7 @@ void Model::getMaterials(
             }
         }
         
-        m_materials.push_back(std::make_shared<Material>(m_shader));
+        m_materials.push_back(CreateMaterial(m_shader));
         std::shared_ptr<Material>& currentMat = m_materials.back();
 
         aiString textureFilename;
@@ -235,7 +235,7 @@ void Model::getMaterials(
     }
 }
 
-const Texture2D* Model::getMaterialTexture(
+const Texture2D* Model::_GetMaterialTexture(
     std::string_view texturePath,
     aiTextureType assimp_texture_type
 ) {
@@ -270,7 +270,7 @@ const Texture2D* Model::getMaterialTexture(
     return g_Texture2DManager.GetTexture2D(FileSystem::Path(texturePath), textureType);
 }
 
-void Model::loadDeserializedModel(const Serialized::Model* deserialized_model)
+void Model::_LoadDeserializedModel(const Serialized::Model* deserialized_model)
 {
     std::vector<float> vertex_data = std::vector<float>(
         deserialized_model->vertex_data()->begin(),
@@ -309,7 +309,7 @@ void Model::loadDeserializedModel(const Serialized::Model* deserialized_model)
         std::string_view normal = material->normal_path()->string_view();
         std::string_view specular = material->specular_path()->string_view();
 
-        m_materials.push_back(std::make_shared<Material>(m_shader));
+        m_materials.push_back(CreateMaterial(m_shader));
         std::shared_ptr<Material>& currentMat = m_materials.back();
 
         if (albedo != "") currentMat->SetAlbedoMap(

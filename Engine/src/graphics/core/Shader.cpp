@@ -90,7 +90,7 @@ Shader::Shader(
         glDeleteProgram(m_shaderID);
         m_shaderID = 0;
 
-        HNCRSP_ERROR("Shader in program:\n\t{}\n\t{}\n\t{}", vertexFile.string(), fragmentFile.string(), geometryFile.string());
+        HNCRSP_ERROR("Shader in program:\n\t{}\n\t{}\n\t{}", vertexFile.file_name(), fragmentFile.file_name(), geometryFile.file_name());
 
         HNCRSP_TERMINATE("Shader linking error.");
     }
@@ -115,7 +115,7 @@ Shader::Shader(
     glDeleteShader(fragmentShader);
     glDeleteShader(geometryShader);
 
-    HNCRSP_INFO("{}\n{}\n{}\n\t{}", vertexFile.string(), fragmentFile.string(), geometryFile.string(), m_shaderID);
+    HNCRSP_INFO("\n\t{}\n\t{}\n\t{}\n\t{}", vertexFile.file_name(), fragmentFile.file_name(), geometryFile.file_name(), m_shaderID);
 }
 
 std::string Shader::_ParseShader(std::string_view path)

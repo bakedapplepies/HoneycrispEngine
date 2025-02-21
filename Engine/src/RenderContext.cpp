@@ -25,9 +25,11 @@ void RenderContext::Initialize()
 
     // Set DebugCallback ----------
     HNCRSP_INFO("{}", (void*)Honeycrisp::DebugMessageCallback);
-    glDebugMessageCallback(Honeycrisp::DebugMessageCallback, nullptr);
     glEnable(GL_DEBUG_OUTPUT);
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+    glDebugMessageCallback(Honeycrisp::DebugMessageCallback, nullptr);
+    void* func;
+    glGetPointerv(GL_DEBUG_CALLBACK_FUNCTION, &func);
 
     /* Depth, Stencil, Blending, Gamma correction */
     // cull faces

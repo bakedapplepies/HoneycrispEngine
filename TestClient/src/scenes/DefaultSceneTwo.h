@@ -9,6 +9,9 @@
 #include "api/graphics/Mesh.h"
 #include "api/graphics/Model.h"
 
+template <typename T>
+using RenderObj = std::unique_ptr<Honeycrisp::SceneRenderObj<T>>;
+
 class DefaultSceneTwo : public Honeycrisp::Scene
 {
 private:
@@ -16,13 +19,13 @@ private:
     const Honeycrisp::Shader* phongShader;
     const Honeycrisp::Shader* phongWTintShader;
     const Honeycrisp::Shader* normalShader;
-    std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Cube> > cube;
-    std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Mesh> > mesh;
-    std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Model> > backpackModel;
-    std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Model> > appleModel;
-    std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Model> > appleModelNormal;
-    std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Model> > sponza;
-    std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Model> > sponzaNormal;
+    RenderObj<Honeycrisp::Cube> cube;
+    RenderObj<Honeycrisp::Mesh> mesh;
+    RenderObj<Honeycrisp::Model> backpackModel;
+    RenderObj<Honeycrisp::Model> appleModel;
+    RenderObj<Honeycrisp::Model> appleModelNormal;
+    RenderObj<Honeycrisp::Model> sponza;
+    RenderObj<Honeycrisp::Model> sponzaNormal;
     Honeycrisp::PointLight* pointLight;
     Honeycrisp::DirectionalLight* dirLight;
     Honeycrisp::SpotLight* spotLight;

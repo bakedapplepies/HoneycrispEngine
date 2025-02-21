@@ -1,10 +1,10 @@
 # TODO List
 
 - TODO: engine-private library functions are called freely from scenes (prevent this)
+- TODO: manage publicity of api functions
 - TODO: mipmaps aren't generating (sponza cloths)
 - TODO: vcpkg
 - TODO: try building dll (HNCRSP_API)
-- TODO: manage publicity of api functions
 - TODO: batch/instance rendering; prioritize instancing
 - TODO: ShaderConfig object to pass into draw calls?
 - TODO: LOD (tesselation shader, mesh shader; latter is quite hard)

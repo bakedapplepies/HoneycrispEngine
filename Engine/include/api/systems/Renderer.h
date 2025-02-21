@@ -32,9 +32,13 @@ private:
     std::unique_ptr<PostProcessingQueue> m_postprocessingQueue;
     std::unique_ptr<DepthMap> m_depthMap;
     mutable DepthPassCamera m_depthPassCamera;
-
+    
     // gizmos
     AxesCrosshair m_axesCrosshair;
+    
+    public:
+    glm::vec3 directionalLightDir = VEC3_DOWN;
+    float depthCameraResolution = 2.0f;
 
 public:
     Renderer();
@@ -66,7 +70,7 @@ private:
     void _Render() const;
 
     // Utility functions
-    glm::mat4 _GetModelMatrix(Transform& transform) const;
+    glm::mat4 _GetModelMatrix(const Transform& transform) const;
     void _SortTransparentObjects() const;
     void _GenerateDrawCommands();
     void _BinaryInsert_ShaderComparator(

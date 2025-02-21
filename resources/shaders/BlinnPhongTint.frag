@@ -1,4 +1,4 @@
-#version 460 core 
+#version 450 core 
 out vec4 FragColor;
 
 
@@ -76,13 +76,20 @@ uniform Material u_material;
 
 float ShadowFactor(vec4 frag_pos_depth_space)
 {
-    // perspective divide
     vec3 ndc = frag_pos_depth_space.xyz / frag_pos_depth_space.w;
-    vec2 uv = ndc.xy * 0.5 + 0.5;
+    if (ndc.z > 1.0)
+        return 0.0;
+    // vec2 uv = ndc.xy * 0.5 + 0.5;
+    ndc = ndc * 0.5 + 0.5;
 
-    float closestDepth = texture(u_framebuffer_depth_texture, uv).r;
+    float closestDepth = texture(u_framebuffer_depth_texture, ndc.xy).r;
     float currentDepth = ndc.z;
-    float shadow = currentDepth > closestDepth ? 0.0 : 1.0;
+
+    float bias = max(0.01 * (1.0 - dot(fs_in.Normal, u_dir_light.direction)), 0.005);  
+    // float bias = 0.005;
+    // if depth-value is bigger than that in the map, it's in the shadow (0.0)
+    // else: return 1.0 to preserve brightness
+    float shadow = currentDepth - bias > closestDepth ? 0.0 : 1.0;
 
     return shadow;
 }
@@ -98,7 +105,7 @@ vec3 CalcDirLight(DirLight dir_light, vec3 normal, vec3 dir_to_view, float shado
     float specularCoef = pow(max(dot(reflectDir, dir_to_view), 0.0), u_material.shininess);
     vec3 specular = dir_light.specular * specularCoef * specular_frag;
 
-    return ambient + diffuse + specular;
+    return ambient * min(1.0, shadow_factor * 0.5) + (diffuse + specular) * shadow_factor;
 }
 
 vec3 CalcPointLight(PointLight point_light, vec3 normal, vec3 dir_to_view, vec3 albedo_frag, vec3 specular_frag)

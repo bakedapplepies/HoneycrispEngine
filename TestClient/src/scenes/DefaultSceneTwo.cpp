@@ -3,6 +3,7 @@
 #include "api/systems/Renderer.h"
 #include "api/graphics/TextureAtlas.h"
 #include "api/managers/Texture2DManager.h"
+#include "api/managers/ShaderManager.h"
 
 
 using namespace Honeycrisp;
@@ -16,11 +17,11 @@ DefaultSceneTwo::DefaultSceneTwo(const char* scene_name)
         glm::vec3(1.0f, 1.0f, 1.0f),  // color
         0.3f, 0.5f, 1.0f              // ambient - diffuse - specular
     );
-    dirLight = CreateLight<DirectionalLight>(
-        glm::vec3(0.0f, -1.0f, 0.0),
-        glm::vec3(1.0f, 1.0f, 1.0f),
-        0.3f, 0.5f, 1.0f
-    );
+    // dirLight = CreateLight<DirectionalLight>(
+    //     glm::vec3(0.0f, -1.0f, 0.0),
+    //     glm::vec3(1.0f, 1.0f, 1.0f),
+    //     0.05f, 0.5f, 1.0f
+    // );
 
     InitializeShaders();
 
@@ -98,7 +99,7 @@ DefaultSceneTwo::DefaultSceneTwo(const char* scene_name)
     );
     mesh->SetTransform(Transform(glm::vec3(-8.0f, -6.0f, -20.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
     mesh->SetShader(phongWTintShader);
-    DrawData meshDrawDataCopy = g_ECSManager.GetComponent<DrawData>(mesh->entityUID);
+    DrawData& meshDrawDataCopy = g_ECSManager.GetComponent<DrawData>(mesh->entityUID);
     std::shared_ptr<Material> meshMaterial = meshDrawDataCopy.materials[0];
     meshMaterial->SetAlbedoMap(g_Texture2DManager.mainTextureMap);
     meshMaterial->SetSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
@@ -165,6 +166,7 @@ void DefaultSceneTwo::OnUpdate(const float& dt)
     // normalShader->setFloatUnf("u_normal_length", m_u_normal_length);
 
     cubeTransform->eulerAngles += glm::vec3(1.0f, 1.0f, 0.0f) * dt;
+    pointLight->position = cubeTransform->position;
     // cubeTransform->position = glm::vec3(0.0f, sinf(glfwGetTime()) * 7.0f, 0.0f);
 }
 
@@ -192,24 +194,37 @@ void DefaultSceneTwo::SetInitialUniforms(void)
 void DefaultSceneTwo::OnImGui(void)
 {
     static CallbackData* callback_data = GetCallbackData();
+    static Renderer* renderer = g_ECSManager.GetSystem<Renderer>();
 
-    ImGui::Text("Point light #1");
-    if (   ImGui::SliderFloat("position.x", &pointLight->position.x, -50.0f, 50.0f)
-        || ImGui::SliderFloat("position.y", &pointLight->position.y, -50.0f, 50.0f)
-        || ImGui::SliderFloat("position.z", &pointLight->position.z, -50.0f, 50.0f)
-    ) {
-        phongShader->SetVec3Unf("u_point_light.position", pointLight->position);
-        phongWTintShader->SetVec3Unf("u_point_light.position", pointLight->position);
+    // ImGui::Text("Point light #1");
+    // if (   ImGui::SliderFloat("position.x", &pointLight->position.x, -50.0f, 50.0f)
+    //     || ImGui::SliderFloat("position.y", &pointLight->position.y, -50.0f, 50.0f)
+    //     || ImGui::SliderFloat("position.z", &pointLight->position.z, -50.0f, 50.0f)
+    // ) {
+    //     phongShader->SetVec3Unf("u_point_light.position", pointLight->position);
+    //     phongWTintShader->SetVec3Unf("u_point_light.position", pointLight->position);
+    // }
+
+    // ImGui::Text("Directional light");
+    // if (ImGui::SliderFloat("direction.x", &dirLight->direction.x, -1.0f, 1.0f)
+    //  || ImGui::SliderFloat("direction.y", &dirLight->direction.y, -1.0f, 1.0f)
+    //  || ImGui::SliderFloat("direction.z", &dirLight->direction.z, -1.0f, 1.0f)
+    // ) {
+    //     phongShader->SetVec3Unf("u_dir_light.direction", glm::normalize(dirLight->direction));
+    //     phongWTintShader->SetVec3Unf("u_dir_light.direction", glm::normalize(dirLight->direction));
+
+    //     renderer->directionalLightDir = glm::normalize(dirLight->direction);
+    // }
+
+    ImGui::Text("Cube position");
+    if (ImGui::SliderFloat("cubePos.x", &cubeTransform->position.x, -10.0f, 10.0f)
+     || ImGui::SliderFloat("cubePos.y", &cubeTransform->position.y, -10.0f, 10.0f)
+     || ImGui::SliderFloat("cubePos.z", &cubeTransform->position.z, -10.0f, 10.0f))
+    {
+        UpdateLight(pointLight);
     }
 
-    ImGui::Text("Directional light");
-    if (   ImGui::SliderFloat("direction.x", &dirLight->direction.x, -1.0f, 1.0f)
-        || ImGui::SliderFloat("direction.y", &dirLight->direction.y, -1.0f, 1.0f)
-        || ImGui::SliderFloat("direction.z", &dirLight->direction.z, -1.0f, 1.0f)
-    ) {
-        phongShader->SetVec3Unf("u_dir_light.direction", glm::normalize(dirLight->direction));
-        phongWTintShader->SetVec3Unf("u_dir_light.direction", glm::normalize(dirLight->direction));
-    }
+    ImGui::SliderFloat("Depth Camera Resolution", &renderer->depthCameraResolution, 1.0f, 2.0f);
 
     ImGui::SliderFloat("u_normal_length", &m_u_normal_length, 0.001f, 1.0f);
 }

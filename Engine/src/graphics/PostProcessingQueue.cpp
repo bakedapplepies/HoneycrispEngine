@@ -21,12 +21,12 @@ void PostProcessingQueue::DrawSequence()
         if (!m_drawToFramebufferOne)
         {
             m_framebufferTwo.Bind();
-            m_framebufferOne.BindColorBuffer();
+            m_framebufferOne.BindColorTexture();
         }
         else
         {
             m_framebufferOne.Bind();
-            m_framebufferTwo.BindColorBuffer();
+            m_framebufferTwo.BindColorTexture();
         }
         glClear(GL_COLOR_BUFFER_BIT);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

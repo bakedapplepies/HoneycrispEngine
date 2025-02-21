@@ -16,8 +16,8 @@ private:
     uint8_t m_vertexAttribBits = 0;
 
     // mesh data
-    std::vector<float> m_vertexData;
-    std::vector<GLuint> m_indices;
+    uint32_t m_verticesCount;
+    GLuint m_indicesCount;
     
 private:
     void _CreateVAO(const float* vboData, size_t vboSize, const GLuint* eboData, size_t eboSize, GLenum mode);
@@ -45,8 +45,6 @@ public:
     void Bind() const;
     void Unbind() const;
     GLuint GetID() const;
-    const float* GetData() const;
-    size_t GetDataLen() const;
     size_t GetIndicesLen() const;
     uint32_t GetVertexAttribCount() const;
     uint32_t GetVertexCount() const;

@@ -42,13 +42,12 @@ void Mesh::virt_AddDrawDataToRenderer(ECS::EntityUID entityUID) const
 {
     DrawData drawData;
     drawData.VAO_id = m_VAO.GetID();
-    drawData.materials.push_back(std::make_shared<Material>(g_ShaderManager.basicShader));
-
-    MeshMetaData meshMetaData;
-    meshMetaData.mesh_vertex_offset = 0;
-    meshMetaData.indices_buffer_count = m_VAO.GetIndicesLen();
-    meshMetaData.material_index = 0;
-    drawData.meta_data.push_back(meshMetaData);
+    drawData.materials.push_back(CreateMaterial(g_ShaderManager.basicShader));
+    drawData.meta_data.push_back(MeshMetaData {
+        .mesh_vertex_offset = 0,
+        .indices_buffer_count = static_cast<GLuint>(m_VAO.GetIndicesLen()),
+        .material_index = 0
+    });
 
     g_ECSManager.AddComponent<DrawData>(entityUID, drawData);
 }

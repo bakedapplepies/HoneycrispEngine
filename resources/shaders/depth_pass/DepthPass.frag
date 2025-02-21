@@ -1,7 +1,7 @@
-#version 460 core
+#version 450 core
 
 void main()
 {
-    gl_FragDepth = gl_FragCoord.z;
+    // gl_FragDepth = gl_FragCoord.z;
     // This is what is done behind the scenes by OpenGL.
 }

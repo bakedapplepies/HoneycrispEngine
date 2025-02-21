@@ -9,6 +9,9 @@ VertexArray::VertexArray(
     const std::vector<glm::vec3>* colors,
     const std::vector<glm::vec2>* uvs
 ) {
+    std::vector<float> vertexData;
+    std::vector<GLuint> indexData;
+
     // Preliminary checks
     if (vertices == nullptr || indices == nullptr)
     {
@@ -52,13 +55,13 @@ VertexArray::VertexArray(
         }
     }
 
-    m_indices = std::vector<GLuint>(indices->begin(), indices->end());
+    indexData = std::vector<GLuint>(indices->begin(), indices->end());
     
     size_t vertArrayDataSize = vertices->size() * 3;
     if (colors) vertArrayDataSize += colors->size() * 3;
     if (normals) vertArrayDataSize += normals->size() * 3;
     if (uvs) vertArrayDataSize += uvs->size() * 2;
-    m_vertexData.reserve(vertArrayDataSize);
+    vertexData.reserve(vertArrayDataSize);
     
     // TODO: Somehow fill this asynchronously
     // perhaps via the GPU?
@@ -76,38 +79,38 @@ VertexArray::VertexArray(
 
     for (size_t vertIndex = 0; vertIndex < vertices->size(); vertIndex++)
     {
-        m_vertexData.push_back(verticesRef[vertIndex].x);
-        m_vertexData.push_back(verticesRef[vertIndex].y);
-        m_vertexData.push_back(verticesRef[vertIndex].z);
+        vertexData.push_back(verticesRef[vertIndex].x);
+        vertexData.push_back(verticesRef[vertIndex].y);
+        vertexData.push_back(verticesRef[vertIndex].z);
         m_vertexAttribBits |= VERTEX_ATTRIB_POSITION_BIT;
 
         if (colors)
         {
-            m_vertexData.push_back(colorsRef[vertIndex].x);
-            m_vertexData.push_back(colorsRef[vertIndex].y);
-            m_vertexData.push_back(colorsRef[vertIndex].z);
+            vertexData.push_back(colorsRef[vertIndex].x);
+            vertexData.push_back(colorsRef[vertIndex].y);
+            vertexData.push_back(colorsRef[vertIndex].z);
             m_vertexAttribBits |= VERTEX_ATTRIB_COLOR_BIT;
         }
 
         if (uvs)
         {
-            m_vertexData.push_back(uvsRef[vertIndex].x);
-            m_vertexData.push_back(uvsRef[vertIndex].y);
+            vertexData.push_back(uvsRef[vertIndex].x);
+            vertexData.push_back(uvsRef[vertIndex].y);
             m_vertexAttribBits |= VERTEX_ATTRIB_UV_BIT;
         }
 
         if (normals)
         {
-            m_vertexData.push_back(normalsRef[vertIndex].x);
-            m_vertexData.push_back(normalsRef[vertIndex].y);
-            m_vertexData.push_back(normalsRef[vertIndex].z);
+            vertexData.push_back(normalsRef[vertIndex].x);
+            vertexData.push_back(normalsRef[vertIndex].y);
+            vertexData.push_back(normalsRef[vertIndex].z);
             m_vertexAttribBits |= VERTEX_ATTRIB_NORMAL_BIT;
         }
     }
 
     _CreateVAO(
-        m_vertexData.data(),
-        m_vertexData.size() * sizeof(float),
+        vertexData.data(),
+        vertexData.size() * sizeof(float),
         indices->data(),
         indices->size() * sizeof(GLuint), 
         GL_STATIC_DRAW
@@ -186,15 +189,15 @@ VertexArray::VertexArray(
     const std::vector<float>& vertex_data,
     const std::vector<GLuint>& indices_data
 ) {
-    m_vertexData = std::vector<float>(vertex_data.begin(), vertex_data.end());
-    m_indices = std::vector<GLuint>(indices_data.begin(), indices_data.end());
+    std::vector<float> vertexData = std::vector<float>(vertex_data.begin(), vertex_data.end());
+    std::vector<GLuint> indexData = std::vector<GLuint>(indices_data.begin(), indices_data.end());
     m_vertexAttribBits = vertex_attrib_bits;
 
     _CreateVAO(
-        m_vertexData.data(),
-        m_vertexData.size() * sizeof(float),
-        m_indices.data(),
-        m_indices.size() * sizeof(GLuint),
+        vertexData.data(),
+        vertexData.size() * sizeof(float),
+        indexData.data(),
+        indexData.size() * sizeof(GLuint),
         GL_STATIC_DRAW
     );
 
@@ -330,8 +333,10 @@ VertexArray::VertexArray(VertexArray&& other) noexcept
     m_vertexBuffer = std::move(other.m_vertexBuffer);
     m_elementBuffer = std::move(other.m_elementBuffer);
 
-    m_vertexData = std::move(other.m_vertexData);
-    m_indices = std::move(other.m_indices);
+    m_verticesCount = other.m_verticesCount;
+    m_indicesCount = other.m_indicesCount;
+    other.m_verticesCount = 0;
+    other.m_indicesCount = 0;
 }
 
 VertexArray& VertexArray::operator=(VertexArray&& other) noexcept
@@ -341,8 +346,10 @@ VertexArray& VertexArray::operator=(VertexArray&& other) noexcept
     m_vertexBuffer = std::move(other.m_vertexBuffer);
     m_elementBuffer = std::move(other.m_elementBuffer);
 
-    m_vertexData = std::move(other.m_vertexData);
-    m_indices = std::move(other.m_indices);
+    m_verticesCount = other.m_verticesCount;
+    m_indicesCount = other.m_indicesCount;
+    other.m_verticesCount = 0;
+    other.m_indicesCount = 0;
 
     return *this;
 }
@@ -365,8 +372,8 @@ void VertexArray::_CreateVAO(const float* vboData, size_t vboSize, const GLuint*
     m_vertexBuffer.CreateVBO(vboData, vboSize);
     m_elementBuffer.CreateEBO(eboData, eboSize);
 
-    m_vertexData = std::vector<float>();
-    m_indices = std::vector<GLuint>();
+    m_verticesCount = vboSize / GetVertexAttribCount();
+    m_indicesCount = eboSize;
 }
 
 void VertexArray::Bind() const
@@ -384,19 +391,9 @@ GLuint VertexArray::GetID() const
     return m_VAO_ID;
 }
 
-const float* VertexArray::GetData() const
-{
-    return m_vertexData.data();
-}
-
-size_t VertexArray::GetDataLen() const
-{
-    return m_vertexData.size();
-}
-
 size_t VertexArray::GetIndicesLen() const
 {
-    return m_indices.size();
+    return m_indicesCount;
 }
 
 uint32_t VertexArray::GetVertexAttribCount() const
@@ -409,7 +406,7 @@ uint32_t VertexArray::GetVertexAttribCount() const
 
 uint32_t VertexArray::GetVertexCount() const
 {
-    return GetDataLen() / GetVertexAttribCount();
+    return m_verticesCount;
 }
 
 HNCRSP_NAMESPACE_END

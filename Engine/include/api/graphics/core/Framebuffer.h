@@ -19,7 +19,7 @@ public:
 
     void Bind() const;
     void Unbind() const;
-    void BindColorBuffer() const;
+    void BindColorTexture() const;
 
     GLuint GetColorTextureID() const;
 };

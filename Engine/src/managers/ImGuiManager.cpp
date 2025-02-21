@@ -114,6 +114,16 @@ void ImGuiManager::Update()
 
     ImGui::End();
 
+    ImGui::Begin("Depth Map");
+    GLuint depthBufferTextureID = m_renderer->GetDepthBufferTextureID();
+    ImGui::Image(
+        reinterpret_cast<ImTextureID>(depthBufferTextureID),
+        ImGui::GetContentRegionAvail(),
+        ImVec2(0.0f, 1.0f),
+        ImVec2(1.0f, 0.0f)
+    );
+    ImGui::End();
+
     _Render();
 }
 

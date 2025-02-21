@@ -31,26 +31,26 @@ glm::mat4 DepthPassCamera::GetViewMatrix(const glm::vec3& light_pos, const glm::
 {
     return glm::lookAt(
         light_pos,
-        light_pos - direction,
+        light_pos + direction,
         cameraUp
     );
 }
 
-glm::mat4 DepthPassCamera::GetProjectionMatrix() const
+glm::mat4 DepthPassCamera::GetProjectionMatrix(float resolution) const
 {
     return glm::ortho(
-        -10.0f,  // left
-         10.0f,  // right
-        -10.0f,  // bottom
-         10.0f,  // top,
+        -10.0f * resolution,  // left
+         10.0f * resolution,  // right
+        -10.0f * resolution,  // bottom
+         10.0f * resolution,  // top,
         nearClippingPlane,
         farClippingPlane
     );
 }
 
-glm::mat4 DepthPassCamera::GetViewProjectionMatrix(const glm::vec3& target) const
+glm::mat4 DepthPassCamera::GetViewProjectionMatrix(const glm::vec3& target, float resolution) const
 {
-    return GetProjectionMatrix() * GetViewMatrix(target - direction * distOffMainCam, target);
+    return GetProjectionMatrix(resolution) * GetViewMatrix(target - direction * distOffMainCam, target);
 }
 
 HNCRSP_NAMESPACE_END

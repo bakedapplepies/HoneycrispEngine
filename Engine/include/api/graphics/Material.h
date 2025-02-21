@@ -82,10 +82,11 @@ public:
     {
         return m_isOpaque;
     }
-    
 
 private:
     void _UpdateTextureUniforms() const;  // TODO: Currently unused
 };
+
+HNCRSP_NODISCARD std::shared_ptr<Material> CreateMaterial(const Shader* shader);
 
 HNCRSP_NAMESPACE_END

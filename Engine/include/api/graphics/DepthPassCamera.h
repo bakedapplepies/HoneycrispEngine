@@ -13,9 +13,9 @@ public:
 
     float fov = 45.0f;
     float nearClippingPlane = 0.1f;
-    float farClippingPlane = 50.0f;
+    float farClippingPlane = 300.0f;
     float speed = 6.0f;
-    float distOffMainCam = 200.0f;
+    float distOffMainCam = 150.0f;
 
 public:
     DepthPassCamera() = default;
@@ -31,9 +31,9 @@ public:
     glm::mat4 GetViewMatrix(const glm::vec3& light_pos, const glm::vec3& target) const;
 
     // Returns an orthographic projection matrix
-    glm::mat4 GetProjectionMatrix() const;
+    glm::mat4 GetProjectionMatrix(float resolution) const;
 
-    glm::mat4 GetViewProjectionMatrix(const glm::vec3& target) const;
+    glm::mat4 GetViewProjectionMatrix(const glm::vec3& target, float resolution) const;
 };
 
 HNCRSP_NAMESPACE_END

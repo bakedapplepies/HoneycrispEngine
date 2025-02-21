@@ -69,6 +69,7 @@ uint32_t SceneManager::GetCurrentSceneIndex() const
 const DirectionalLight* SceneManager::GetCurrentDirectionalLight()
 {
     return m_scenesMap[m_activeSceneIndex]->m_lightContainer.directionalLights[0].get();
+    // The [0] is because there's only 1 directional light maximum
 }
 
 HNCRSP_NAMESPACE_END

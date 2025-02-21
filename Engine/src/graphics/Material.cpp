@@ -156,4 +156,9 @@ void Material::_UpdateTextureUniforms() const
     m_shader->SetIntUnf("u_material.specular", static_cast<int>(ETextureType::SPECULAR));
 }
 
+std::shared_ptr<Material> CreateMaterial(const Shader* shader)
+{
+    return std::make_shared<Material>(shader);
+}
+
 HNCRSP_NAMESPACE_END

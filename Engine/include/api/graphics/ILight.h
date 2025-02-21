@@ -22,7 +22,7 @@ public:
 
 protected:
     friend Scene;
-    virtual void ConfigureShader(const Shader* shaders) const = 0;
+    virtual void ConfigureShader(const Shader* shader) const = 0;
 };
 
 HNCRSP_NAMESPACE_END

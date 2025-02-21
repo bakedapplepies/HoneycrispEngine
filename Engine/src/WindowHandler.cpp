@@ -17,10 +17,11 @@ void WindowHandler::StartUp()
     }
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-    // glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+    glfwWindowHint(GLFW_CONTEXT_DEBUG, GL_TRUE);
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 
     // Create and assign OpenGL window context ----------
     const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -41,7 +42,7 @@ void WindowHandler::StartUp()
     glfwMakeContextCurrent(glfwWindow);
     glfwSetWindowPos(glfwWindow, 0, 80);
     glfwSwapInterval(0);  // vsync
-    glfwWindowHint(GLFW_SAMPLES, 4);
+    // glfwWindowHint(GLFW_SAMPLES, 4);
 
     // Callbacks ----------
     glfwSetErrorCallback(error_callback);

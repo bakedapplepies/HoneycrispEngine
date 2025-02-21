@@ -21,7 +21,7 @@ public:
 
     void Bind() const;
     void Unbind() const;
-    void BindDepthBuffer(const uint16_t texture_unit) const;
+    void BindDepthTexture(const uint16_t texture_unit) const;
     GLuint GetTextureID() const;
 };
 
