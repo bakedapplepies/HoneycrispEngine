@@ -190,7 +190,9 @@ std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Mesh> > SpaceScene::Gene
         
     }
 
+    Material sphereMaterial(g_ShaderManager.basicShader);
     return CreateRenderObj<Honeycrisp::Mesh>(
+        sphereMaterial,
         &pos,
         &indices,
         nullptr,

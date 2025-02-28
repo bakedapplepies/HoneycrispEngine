@@ -120,5 +120,6 @@
     "C_Cpp.intelliSenseEngine": "disabled",
     "cmake.debugConfig": {
         "cwd": "${workspaceFolder}/build/Debug"
-    }
+    },
+    "liveServer.settings.port": 5501
 }

@@ -1,40 +1,20 @@
 #include "api/components/Transform.h"
 
-Transform::Transform(const Transform& other)
-{
-    position = other.position;
-    eulerAngles = other.eulerAngles;
-    scale = other.scale;
-}
-Transform& Transform::operator=(const Transform& other)
-{
-    position = other.position;
-    eulerAngles = other.eulerAngles;
-    scale = other.scale;
+HNCRSP_NAMESPACE_START
 
-    return *this;
+void translate(Transform* transform, const glm::vec3& vec)
+{
+    transform->position += vec;
 }
 
-Transform::Transform(Transform&& other) noexcept
+void scale(Transform* transform, float multiplier)
 {
-    position = std::move(other.position);
-    eulerAngles = std::move(other.eulerAngles);
-    scale = std::move(other.scale);
-
-    other.position = glm::vec3(0.0f);
-    other.eulerAngles = glm::vec3(0.0f);
-    other.scale = glm::vec3(0.0f);
+    transform->scale *= multiplier;
 }
 
-Transform& Transform::operator=(Transform&& other) noexcept
+void rotate(Transform* transform, const glm::vec3& rXYZ)
 {
-    position = std::move(other.position);
-    eulerAngles = std::move(other.eulerAngles);
-    scale = std::move(other.scale);
-
-    other.position = glm::vec3(0.0f);
-    other.eulerAngles = glm::vec3(0.0f);
-    other.scale = glm::vec3(0.0f);
-    
-    return *this;
+    transform->eulerAngles += rXYZ;
 }
+
+HNCRSP_NAMESPACE_END

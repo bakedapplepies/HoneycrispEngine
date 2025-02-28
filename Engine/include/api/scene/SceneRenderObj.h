@@ -3,7 +3,7 @@
 #include "api/pch/hncrsp_pch.h"
 #include "api/ecs/ECSManager.h"
 #include "api/components/Transform.h"
-#include "api/scene/Renderable.h"
+#include "api/scene/IRenderable.h"
 
 HNCRSP_NAMESPACE_START
 
@@ -15,15 +15,19 @@ public:
 
 public:
     template <typename... Args>
-    SceneRenderObj(Args&&... args) : T(std::forward<Args>(args)...)
+    SceneRenderObj(const Material& material, Args&&... args) : T(std::forward<Args>(args)...)
     {
-        HNCRSP_STATIC_ASSERT(std::is_base_of<Renderable, T>());
         entityUID = g_ECSManager.NewEntity();
 
         // default object position is at origin
-        g_ECSManager.AddComponent<Transform>(entityUID, {});
+        g_ECSManager.AddComponent<Transform>(entityUID, Transform {
+            .position = glm::vec3(0.0f, 0.0f, 0.0f),
+            .eulerAngles = glm::vec3(0.0f, 0.0f, 0.0f),
+            .scale = glm::vec3(1.0f),
+            .lookAtCamera = false
+        });
 
-        this->virt_AddDrawDataToRenderer(entityUID);
+        this->virt_AddDrawDataToRenderer(entityUID, material);
     }
 
     ~SceneRenderObj()
@@ -34,7 +38,7 @@ public:
     inline void SetShader(const Shader* newShader) const
     {
         DrawData& thisDrawData = g_ECSManager.GetComponent<DrawData>(entityUID);
-        thisDrawData.materials[0]->SetShader(newShader);
+        thisDrawData.materials[0].SetShader(newShader);
     }
 
     inline void SetTransform(const Transform& newTransform) const

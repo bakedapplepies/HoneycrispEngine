@@ -6,6 +6,7 @@
 
 #include "api/graphics/Camera.h"
 #include "api/graphics/Cubemap.h"
+#include "api/graphics/Material.h"
 #include "api/graphics/core/DepthMap.h"
 #include "api/graphics/DepthPassCamera.h"
 #include "api/graphics/PostProcessingQueue.h"
@@ -60,8 +61,8 @@ public:
 
 private:
     // ECS functions
-    void AddEntityUID(ECS::EntityUID entity_UID) override;
-    void SceneChanged(uint32_t target_scene) override;
+    void AddEntityUID(ECS::EntityUID entity_UID) override final;
+    void SceneChanged(uint32_t target_scene) override final;
 
     // Render Passes
     void _RenderDepthPass() const;

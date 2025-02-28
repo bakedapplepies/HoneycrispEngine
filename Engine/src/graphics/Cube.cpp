@@ -211,7 +211,7 @@ void Cube::_InitializeAttributeData()
     );
 }
 
-void Cube::virt_AddDrawDataToRenderer(ECS::EntityUID entityUID) const
+void Cube::virt_AddDrawDataToRenderer(ECS::EntityUID entityUID, const Material& material) const
 {
     DrawData drawData;
     drawData.VAO_id = m_VAO.GetID();
@@ -220,10 +220,7 @@ void Cube::virt_AddDrawDataToRenderer(ECS::EntityUID entityUID) const
         .indices_buffer_count = static_cast<GLuint>(m_VAO.GetIndicesLen()),
         .material_index = 0
     });
-    drawData.materials.push_back(CreateMaterial(g_ShaderManager.albedoShader));
-
-    drawData.materials[0]->SetAlbedoMap(g_Texture2DManager.mainTextureMap);
-    drawData.materials[0]->SetSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
+    drawData.materials.push_back(material);
 
     g_ECSManager.AddComponent<DrawData>(entityUID, drawData);
 }

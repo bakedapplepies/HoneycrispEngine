@@ -15,6 +15,8 @@
 
 #if __cplusplus >= 201703L
     #define HNCRSP_NODISCARD [[nodiscard]]
+    #define HNCRSP_MAYBE_UNUSED [[maybe_unused]]
 #else
     #define HNCRSP_NODISCARD
+    #define HNCRSP_MAYBE_UNUSED
 #endif

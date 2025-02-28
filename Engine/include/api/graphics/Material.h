@@ -3,6 +3,7 @@
 #include "api/pch/hncrsp_pch.h"
 #include "api/graphics/core/Texture2D.h"
 #include "api/graphics/core/Shader.h"
+#include "api/ecs/ECSTypes.h"
 
 HNCRSP_NAMESPACE_START
 
@@ -11,6 +12,7 @@ class Material
 private:
     const Shader* m_shader = nullptr;
 
+    // const glm::vec3  m_tint = glm::vec3(1.0f, 1.0f, 1.0f);
     const Texture2D* m_albedo = nullptr;
     const Texture2D* m_roughness = nullptr;
     const Texture2D* m_ao = nullptr;

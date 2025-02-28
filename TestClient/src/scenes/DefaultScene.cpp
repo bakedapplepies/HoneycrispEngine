@@ -23,11 +23,14 @@ DefaultScene::DefaultScene(const char* scene_name)
         0.1f, 0.5f, 1.0f                // ambient - diffuse - specular
     );
 
-    m_cube = CreateRenderObj<Cube>();
+    Material cubeMaterial(g_ShaderManager.albedoShader);
+    m_cube = CreateRenderObj<Cube>(cubeMaterial);
     m_cube->SetShader(m_shader);
     m_cube->SetTransform(Transform(glm::vec3(-1.0f, -3.0f, -1.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
 
-    m_billboard = CreateRenderObj<Billboard>(3.0f, 1.0f, g_Texture2DManager.mainTextureMap);
+    Material billboardMaterial(g_ShaderManager.albedoShader);
+    m_billboard = CreateRenderObj<Billboard>(billboardMaterial, 3.0f, 1.0f);
+    billboardMaterial.SetAlbedoMap(g_Texture2DManager.mainTextureMap);
     m_billboard->SetPosition(glm::vec3(0.0f, 4.0f, 3.0f));
 
     std::vector<glm::vec3> vertices = {
@@ -169,7 +172,11 @@ DefaultScene::DefaultScene(const char* scene_name)
         20, 22, 23
     };
 
+    Material meshMaterial(g_ShaderManager.basicShader);
+    meshMaterial.SetAlbedoMap(g_Texture2DManager.mainTextureMap);
+    meshMaterial.SetSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
     m_customMesh = CreateRenderObj<Mesh>(
+        meshMaterial,
         &vertices,
         &indices,
         &normals,
@@ -192,11 +199,7 @@ void DefaultScene::OnUpdate(const float& dt)
 }
 
 void DefaultScene::SetInitialUniforms(void)
-{
-    DrawData& meshData = g_ECSManager.GetComponent<DrawData>(m_customMesh->entityUID);
-    meshData.materials[0]->SetAlbedoMap(g_Texture2DManager.mainTextureMap);
-    meshData.materials[0]->SetSpecularMap(g_Texture2DManager.mainTextureSpecularMap);
-}
+{}
 
 void DefaultScene::OnImGui(void)
 {

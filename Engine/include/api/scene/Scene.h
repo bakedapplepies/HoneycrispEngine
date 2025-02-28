@@ -2,8 +2,9 @@
 
 #include "api/pch/hncrsp_pch.h"
 
-#include "api/scene/Renderable.h"
+#include "api/scene/IRenderable.h"
 #include "api/scene/SceneRenderObj.h"
+#include "api/managers/ShaderManager.h"
 #include "api/graphics/Cubemap.h"
 #include "api/graphics/DirectionalLight.h"
 #include "api/graphics/PointLight.h"
@@ -39,12 +40,21 @@ private:
     const char* m_sceneName;
 
 protected:
-    template <typename TRenderable, typename... Args>
-    std::unique_ptr< SceneRenderObj<TRenderable> > CreateRenderObj(Args&&... args)
+    template <typename TIRenderable, typename... Args>
+    std::unique_ptr< SceneRenderObj<TIRenderable> > CreateRenderObj(const Material& material, Args&&... args)
     {
-        HNCRSP_STATIC_ASSERT(std::is_base_of<Renderable, TRenderable>(), "TRenderable is not base of Renderable.");
+        HNCRSP_STATIC_ASSERT(std::is_base_of<IRenderable, TIRenderable>(), "TIRenderable is not base of IRenderable.");
 
-        return std::make_unique< SceneRenderObj<TRenderable> >(std::forward<Args>(args)...);
+        return std::make_unique< SceneRenderObj<TIRenderable> >(material, std::forward<Args>(args)...);
+    }
+    
+    template <typename TIRenderable, typename... Args>
+    std::unique_ptr< SceneRenderObj<TIRenderable> > CreateModel(Args&&... args)
+    {
+        HNCRSP_STATIC_ASSERT(std::is_base_of<IRenderable, TIRenderable>(), "TIRenderable is not base of IRenderable.");
+    
+        Material material(g_ShaderManager.basicShader);
+        return std::make_unique< SceneRenderObj<TIRenderable> >(material, std::forward<Args>(args)...);
     }
 
     template <typename TLight, typename... Args>
@@ -110,14 +120,10 @@ protected:
         const FileSystem::Path& fragment,
         const FileSystem::Path& geometry = FileSystem::Path("")
     );
+    void UpdateLight(const ILight* light) const;
 
-    void UpdateLight(const ILight* light) const
-    {
-        for (const Shader* shader : m_shadersInScene)
-        {
-            light->ConfigureShader(shader);
-        }
-    }
+    // TODO: This is kind of a workaround to texture changes that are unupdated by the Renderer
+    void UpdateObjMaterial(ECS::EntityUID entity_UID, uint32_t material_index, const Material& material) const;
 
 public:
     Scene(const char* scene_name);

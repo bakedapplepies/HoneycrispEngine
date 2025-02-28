@@ -38,11 +38,11 @@ Mesh& Mesh::operator=(Mesh&& other) noexcept
     return *this;
 }
 
-void Mesh::virt_AddDrawDataToRenderer(ECS::EntityUID entityUID) const
+void Mesh::virt_AddDrawDataToRenderer(ECS::EntityUID entityUID, const Material& material) const
 {
     DrawData drawData;
     drawData.VAO_id = m_VAO.GetID();
-    drawData.materials.push_back(CreateMaterial(g_ShaderManager.basicShader));
+    drawData.materials.push_back(material);
     drawData.meta_data.push_back(MeshMetaData {
         .mesh_vertex_offset = 0,
         .indices_buffer_count = static_cast<GLuint>(m_VAO.GetIndicesLen()),

@@ -1,5 +1,6 @@
 #include "api/scene/Scene.h"
 #include "api/managers/ShaderManager.h"
+#include "api/systems/Renderer.h"
 
 HNCRSP_NAMESPACE_START
 
@@ -66,6 +67,22 @@ void Scene::_ReconfigureAllShaders() const
             m_lightContainer.spotLights[i]->ConfigureShader(shader);
         }
     }
+}
+
+void Scene::UpdateLight(const ILight* light) const
+{
+    for (const Shader* shader : m_shadersInScene)
+    {
+        light->ConfigureShader(shader);
+    }
+}
+
+void Scene::UpdateObjMaterial(ECS::EntityUID entity_UID, uint32_t material_index, const Material& material) const
+{
+    DrawData copyDrawData = g_ECSManager.GetComponent<DrawData>(entity_UID);
+    copyDrawData.materials[material_index] = material;
+    g_ECSManager.RemoveComponent<DrawData>(entity_UID);
+    g_ECSManager.AddComponent(entity_UID, copyDrawData);
 }
 
 HNCRSP_NAMESPACE_END

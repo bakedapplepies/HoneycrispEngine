@@ -16,9 +16,9 @@ void GLAPIENTRY DebugMessageCallback(
     GLenum type,
     GLuint id,
     GLenum severity,
-    [[maybe_unused]] GLsizei length,
+    HNCRSP_MAYBE_UNUSED GLsizei length,
     const GLchar* message,
-    [[maybe_unused]] const void* userParam
+    HNCRSP_MAYBE_UNUSED const void* userParam
 );
 
 void CheckRenderContext(const char* function, const char* file, unsigned int line);

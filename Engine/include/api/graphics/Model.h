@@ -1,7 +1,7 @@
 #pragma once
 
 #include "api/pch/hncrsp_pch.h"
-#include "api/scene/Renderable.h"
+#include "api/scene/IRenderable.h"
 #include "api/serialization/ModelSerializer.h"
 #include "api/components/DrawData.h"
 
@@ -9,12 +9,13 @@ HNCRSP_NAMESPACE_START
 
 class Scene;
 
-class Model : public Renderable
+class Model : public IRenderable
 {
 private:
     VertexArray m_VAO;
+    // TODO: Deallocate these
     std::vector<MeshMetaData> m_meshesMetaData;  // size is also number of meshes
-    std::vector< std::shared_ptr<Material> > m_materials;
+    std::vector<Material> m_materials;
     const Shader* m_shader;
 
 public:
@@ -23,7 +24,10 @@ public:
     Model(Model&& other) noexcept;  // TODO: Proper constructors
     Model& operator=(const Model&) = delete;
     Model& operator=(Model&& other) noexcept;
-    void virt_AddDrawDataToRenderer(ECS::EntityUID entityUID) const override final;
+    void virt_AddDrawDataToRenderer(
+        ECS::EntityUID entityUID,
+        HNCRSP_MAYBE_UNUSED const Material& material
+    ) const override final;
 
 private:  // building model
     void _ProcessNode(

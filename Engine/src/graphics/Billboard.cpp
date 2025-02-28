@@ -6,7 +6,7 @@
 
 HNCRSP_NAMESPACE_START
 
-Billboard::Billboard(uint32_t width, uint32_t height, const Texture2D* texture)
+Billboard::Billboard(uint32_t width, uint32_t height)
 {
     std::vector<glm::vec3> vertices = {
         glm::vec3(-1.0f,  1.0f,  0.0f) * glm::vec3(width, height, 0.0f),
@@ -34,11 +34,9 @@ Billboard::Billboard(uint32_t width, uint32_t height, const Texture2D* texture)
         nullptr,
         &uvs
     );
-
-    m_texture = texture;
 }
 
-void Billboard::virt_AddDrawDataToRenderer(ECS::EntityUID entityUID) const
+void Billboard::virt_AddDrawDataToRenderer(ECS::EntityUID entityUID, const Material& material) const
 {
     // Entity already has Transform (SceneRenderObj)
     g_ECSManager.GetComponent<Transform>(entityUID).lookAtCamera = true;
@@ -46,9 +44,8 @@ void Billboard::virt_AddDrawDataToRenderer(ECS::EntityUID entityUID) const
     DrawData drawData;
     drawData.VAO_id = m_VAO.GetID();
     drawData.meta_data.emplace_back(0, m_VAO.GetIndicesLen(), 0);
-    drawData.materials.push_back(std::make_shared<Material>(g_ShaderManager.albedoShader));
+    drawData.materials.push_back(material);
 
-    drawData.materials[0]->SetAlbedoMap(m_texture);
     g_ECSManager.AddComponent<DrawData>(entityUID, drawData);
 }
 

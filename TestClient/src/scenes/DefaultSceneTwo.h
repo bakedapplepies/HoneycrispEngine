@@ -33,7 +33,7 @@ private:
     float m_u_normal_length = 0.7f;
     
     // components
-    Transform* cubeTransform = nullptr;
+    Honeycrisp::Transform* cubeTransform = nullptr;
 
 public:
     DefaultSceneTwo(const char* scene_name);
@@ -44,4 +44,8 @@ public:
 private:
     void InitializeShaders(void);
     void SetInitialUniforms(void);
+
+    void _CreateCube(void);
+    void _CreatePlane(void);
+    void _CreateModels(void);
 };

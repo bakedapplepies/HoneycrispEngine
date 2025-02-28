@@ -159,7 +159,7 @@ void Renderer::_RenderScenePass() const
     for (const ECS::EntityUID& uid : p_entityUIDs)
     {
         const DrawData& drawData = g_ECSManager.GetComponent<DrawData>(uid);
-        const Shader* shader = drawData.materials[0]->GetShader();
+        const Shader* shader = drawData.materials[0].GetShader();
 
         const Transform& transform = g_ECSManager.GetComponent<Transform>(uid);
         glBindVertexArray(drawData.VAO_id);
@@ -184,18 +184,19 @@ void Renderer::_RenderScenePass() const
         uint32_t indexBufferOffset = 0;
         for (uint32_t i = 0; i < drawData.meta_data.size(); i++)
         {
-            Material* material = drawData.materials[drawData.meta_data[i].material_index].get();
-            if (!material->IsOpaque())
+            const Material& material = drawData.materials[drawData.meta_data[i].material_index];
+            if (!material.IsOpaque())
             {
+                
                 indexBufferOffset += drawData.meta_data[i].indices_buffer_count;
                 continue;                
             }
 
-            albedoMap = material->GetAlbedoMap();
-            roughnessMap = material->GetRoughnessMap();
-            aoMap = material->GetAoMap();
-            normalMap = material->GetNormalMap();
-            specularMap = material->GetSpecularMap();
+            albedoMap = material.GetAlbedoMap();
+            roughnessMap = material.GetRoughnessMap();
+            aoMap = material.GetAoMap();
+            normalMap = material.GetNormalMap();
+            specularMap = material.GetSpecularMap();
 
             uint32_t whichMaterial = 0;
             if (albedoMap)
@@ -258,7 +259,7 @@ void Renderer::_RenderTransparentObjectsPass() const
     for (const DelayedTransparentObjectDrawData& obj : m_transparentObjects[m_currentSceneIndex])
     {
         const DrawData& drawData = g_ECSManager.GetComponent<DrawData>(obj.entityUID);
-        const Shader* shader = drawData.materials[0]->GetShader();
+        const Shader* shader = drawData.materials[0].GetShader();
 
         const Transform& transform = g_ECSManager.GetComponent<Transform>(obj.entityUID);
         glBindVertexArray(drawData.VAO_id);
@@ -281,41 +282,41 @@ void Renderer::_RenderTransparentObjectsPass() const
         shader->SetMat3Unf("u_normalMatrix", glm::mat3(glm::transpose(glm::inverse(model_matrix))));
         shader->SetMat4Unf("u_model", model_matrix);
 
-        Material* material = drawData.materials[drawData.meta_data[obj.metaDataIndex].material_index].get();
+        const Material& material = drawData.materials[drawData.meta_data[obj.metaDataIndex].material_index];
 
-        albedoMap = material->GetAlbedoMap();
-            roughnessMap = material->GetRoughnessMap();
-            aoMap = material->GetAoMap();
-            normalMap = material->GetNormalMap();
-            specularMap = material->GetSpecularMap();
+        albedoMap = material.GetAlbedoMap();
+        roughnessMap = material.GetRoughnessMap();
+        aoMap = material.GetAoMap();
+        normalMap = material.GetNormalMap();
+        specularMap = material.GetSpecularMap();
 
-            uint32_t whichMaterial = 0;
-            if (albedoMap)
-            {
-                albedoMap->Bind();
-                whichMaterial |= 1 << 0;
-            }
-            if (roughnessMap)
-            {
-                roughnessMap->Bind();
-                whichMaterial |= 1 << 1;
-            }
-            if (aoMap)
-            {
-                aoMap->Bind();
-                whichMaterial |= 1 << 2;
-            }
-            if (normalMap)
-            {
-                normalMap->Bind();
-                whichMaterial |= 1 << 3;
-            }
-            if (specularMap)
-            {
-                specularMap->Bind();
-                whichMaterial |= 1 << 4;
-            }
-            shader->SetUIntUnf("u_material.whichMaterial", whichMaterial);
+        uint32_t whichMaterial = 0;
+        if (albedoMap)
+        {
+            albedoMap->Bind();
+            whichMaterial |= 1 << 0;
+        }
+        if (roughnessMap)
+        {
+            roughnessMap->Bind();
+            whichMaterial |= 1 << 1;
+        }
+        if (aoMap)
+        {
+            aoMap->Bind();
+            whichMaterial |= 1 << 2;
+        }
+        if (normalMap)
+        {
+            normalMap->Bind();
+            whichMaterial |= 1 << 3;
+        }
+        if (specularMap)
+        {
+            specularMap->Bind();
+            whichMaterial |= 1 << 4;
+        }
+        shader->SetUIntUnf("u_material.whichMaterial", whichMaterial);
 
         // TODO: Send uniform for index into texture array
         glDrawElementsBaseVertex(
@@ -344,7 +345,16 @@ void Renderer::_SortTransparentObjects() const
         [](const DelayedTransparentObjectDrawData& obj1, const DelayedTransparentObjectDrawData& obj2) {
             glm::vec3& obj1Position = g_ECSManager.GetComponent<Transform>(obj1.entityUID).position;
             glm::vec3& obj2Position = g_ECSManager.GetComponent<Transform>(obj2.entityUID).position;
-            return glm::length(obj1Position - cameraPos) < glm::length(obj2Position - cameraPos);
+            glm::vec3 camToObj1 = obj1Position - cameraPos;
+            glm::vec3 camToObj2 = obj2Position - cameraPos;
+            float len1 = (camToObj1).x * (camToObj1).x +
+                         (camToObj1).y * (camToObj1).y +
+                         (camToObj1).z * (camToObj1).z;
+            float len2 = (camToObj2).x * (camToObj2).x +
+                         (camToObj2).y * (camToObj2).y +
+                         (camToObj2).z * (camToObj2).z;
+                    
+            return len1 < len2;
         };
 
     // Quicksort
@@ -406,6 +416,8 @@ void Renderer::SetCubemap(const Cubemap* cubemap)
 // Called from SystemManager to add related entities
 void Renderer::AddEntityUID(ECS::EntityUID entity_UID)
 {
+    // TODO: When adding new systems, this would be very troublesome
+    // Add new object slots for new scenes
     while (m_currentSceneIndex + 1 > m_shaderIDs_Order.size())
     {
         m_shaderIDs_Order.push_back({});
@@ -417,9 +429,9 @@ void Renderer::AddEntityUID(ECS::EntityUID entity_UID)
 
     AddTransparentObject(entity_UID);
 
-    // Binary-search + insert to optimize shader use
+    // Binary-search + insert with shader ID to optimize shader use
     GLuint shaderID = 
-        g_ECSManager.GetComponent<DrawData>(entity_UID).materials[0]->GetShader()->GetID();
+        g_ECSManager.GetComponent<DrawData>(entity_UID).materials[0].GetShader()->GetID();
     _BinaryInsert_ShaderComparator(
         p_entityUIDs, m_shaderIDs_Order[m_currentSceneIndex], entity_UID, shaderID
     );
@@ -432,8 +444,8 @@ void Renderer::AddTransparentObject(ECS::EntityUID entity_UID)
     uint32_t indexBufferOffset = 0;
     for (uint32_t i = 0; i < drawData.meta_data.size(); i++)
     {
-        const Material* material = drawData.materials[drawData.meta_data[i].material_index].get();
-        if (!material->IsOpaque())
+        const Material& material = drawData.materials[drawData.meta_data[i].material_index];
+        if (!material.IsOpaque())
         {
             m_transparentObjects[m_currentSceneIndex].emplace_back(entity_UID, i, indexBufferOffset);
         }

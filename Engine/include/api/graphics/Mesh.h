@@ -2,11 +2,11 @@
 
 #include "api/pch/hncrsp_pch.h"
 #include "api/graphics/core/VertexArray.h"
-#include "api/scene/Renderable.h"
+#include "api/scene/IRenderable.h"
 
 HNCRSP_NAMESPACE_START
 
-class Mesh : public Renderable
+class Mesh : public IRenderable
 {
 private:
     VertexArray m_VAO;
@@ -30,7 +30,7 @@ public:
     Mesh& operator=(Mesh&& other) noexcept;
     virtual ~Mesh() = default;
 
-    void virt_AddDrawDataToRenderer(ECS::EntityUID entityUID) const override final;
+    void virt_AddDrawDataToRenderer(ECS::EntityUID entityUID, const Material& material) const override final;
 };
 
 HNCRSP_NAMESPACE_END

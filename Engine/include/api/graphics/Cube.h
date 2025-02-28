@@ -2,12 +2,12 @@
 
 #include "api/pch/hncrsp_pch.h"
 #include "api/ecs/ECSManager.h"
-#include "api/scene/Renderable.h"
-#include "api/graphics/core/VertexArray.h"
+#include "api/scene/IRenderable.h"
+#include "api/graphics/Material.h"
 
 HNCRSP_NAMESPACE_START
 
-class Cube : public Renderable
+class Cube : public IRenderable
 {
 private:
     VertexArray m_VAO;
@@ -20,7 +20,7 @@ public:
     Cube& operator=(Cube&& other) noexcept;
     ~Cube() = default;
     
-    void virt_AddDrawDataToRenderer(ECS::EntityUID entityUID) const override final;
+    void virt_AddDrawDataToRenderer(ECS::EntityUID entityUID, const Material& material) const override final;
 
 private:
     void _InitializeAttributeData();

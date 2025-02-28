@@ -1,5 +1,6 @@
 #include "api/graphics/Material.h"
 #include "api/managers/Texture2DManager.h"
+#include "api/ecs/ECSManager.h"
 
 HNCRSP_NAMESPACE_START
 
@@ -88,6 +89,13 @@ void Material::SetAlbedoMap(const FileSystem::Path& path)
     m_albedo = g_Texture2DManager.GetTexture2D(path, ETextureType::ALBEDO);
     if (m_albedo->GetChannels() == 4)
         m_isOpaque = false;
+    else
+        m_isOpaque = true;
+
+    // DrawData& copyDrawData = g_ECSManager.GetComponent<DrawData>(entity_UID);
+    // copyDrawData.materials[material_index] = *this;
+    // g_ECSManager.RemoveComponent<DrawData>(entity_UID);
+    // g_ECSManager.AddComponent(entity_UID, copyDrawData);
 }
 
 void Material::SetAlbedoMap(const Texture2D* texture_obj)
@@ -95,6 +103,8 @@ void Material::SetAlbedoMap(const Texture2D* texture_obj)
     m_albedo = texture_obj;
     if (m_albedo->GetChannels() == 4)
         m_isOpaque = false;
+    else
+        m_isOpaque = true;
 }
 
 void Material::SetRoughnessMap(const FileSystem::Path& path)
