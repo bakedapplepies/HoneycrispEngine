@@ -77,12 +77,4 @@ void Scene::UpdateLight(const ILight* light) const
     }
 }
 
-void Scene::UpdateObjMaterial(ECS::EntityUID entity_UID, uint32_t material_index, const Material& material) const
-{
-    DrawData copyDrawData = g_ECSManager.GetComponent<DrawData>(entity_UID);
-    copyDrawData.materials[material_index] = material;
-    g_ECSManager.RemoveComponent<DrawData>(entity_UID);
-    g_ECSManager.AddComponent(entity_UID, copyDrawData);
-}
-
 HNCRSP_NAMESPACE_END

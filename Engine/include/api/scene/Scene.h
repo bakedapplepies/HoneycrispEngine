@@ -122,9 +122,6 @@ protected:
     );
     void UpdateLight(const ILight* light) const;
 
-    // TODO: This is kind of a workaround to texture changes that are unupdated by the Renderer
-    void UpdateObjMaterial(ECS::EntityUID entity_UID, uint32_t material_index, const Material& material) const;
-
 public:
     Scene(const char* scene_name);
     virtual ~Scene() = default;

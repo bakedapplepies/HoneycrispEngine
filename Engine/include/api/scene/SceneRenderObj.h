@@ -35,15 +35,23 @@ public:
         g_ECSManager.DestroyEntity(entityUID);
     }
 
-    inline void SetShader(const Shader* newShader) const
+    inline void SetShader(const Shader* new_shader) const
     {
         DrawData& thisDrawData = g_ECSManager.GetComponent<DrawData>(entityUID);
-        thisDrawData.materials[0].SetShader(newShader);
+        thisDrawData.materials[0].SetShader(new_shader);
     }
 
-    inline void SetTransform(const Transform& newTransform) const
+    inline void SetMaterial(uint32_t material_index, const Material& new_material)
     {
-        g_ECSManager.GetComponent<Transform>(entityUID) = newTransform;
+        DrawData copyDrawData = g_ECSManager.GetComponent<DrawData>(entityUID);
+        copyDrawData.materials[material_index] = new_material;
+        g_ECSManager.RemoveComponent<DrawData>(entityUID);
+        g_ECSManager.AddComponent(entityUID, copyDrawData);
+    }
+
+    inline void SetTransform(const Transform& new_transform) const
+    {
+        g_ECSManager.GetComponent<Transform>(entityUID) = new_transform;
     }
 
     inline void SetPosition(const glm::vec3& position) const
