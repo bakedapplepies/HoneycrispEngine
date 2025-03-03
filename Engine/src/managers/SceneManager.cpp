@@ -24,7 +24,7 @@ void SceneManager::ShutDown(uint64_t key)
 {
     if (key != s_key)
     {
-        HNCRSP_ERROR("SceneManager shutdown key invalid!");
+        HNCRSP_TERMINATE("SceneManager shutdown key invalid!");
         return;
     }
     m_scenesMap.clear();

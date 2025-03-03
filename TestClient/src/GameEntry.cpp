@@ -1,6 +1,11 @@
 #include "api/game/GameEntry.h"
+#include "Setup.h"
 #include "scenes/DefaultSceneTwo.h"
 
+void GameEntry::OnLoad()
+{
+    PreloadShaders();
+}
 
 void GameEntry::RegisterScenes()
 {

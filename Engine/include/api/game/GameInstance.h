@@ -24,5 +24,6 @@ public:
     GameInstance& operator=(GameInstance&&) = delete;
     ~GameInstance() = default;
 
+    virtual void OnLoad() = 0;
     virtual void RegisterScenes() = 0;
 };

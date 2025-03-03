@@ -171,7 +171,7 @@ void ImGuiManager::ShutDown(uint64_t key)
 {
     if (key != s_key)
     {
-        HNCRSP_ERROR("ImGuiManager shutdown key invalid!");
+        HNCRSP_TERMINATE("ImGuiManager shutdown key invalid!");
         return;
     }
     ImGui::Shutdown();

@@ -4,22 +4,22 @@ project(${CMAKE_PROJECT_NAME} CXX C)
 add_subdirectory(core)
 
 set(SOURCE
-    ${CMAKE_SOURCE_DIR}/Engine/src/graphics/AxesCrosshair.cpp
-    ${CMAKE_SOURCE_DIR}/Engine/src/graphics/Billboard.cpp
-    ${CMAKE_SOURCE_DIR}/Engine/src/graphics/Camera.cpp
-    ${CMAKE_SOURCE_DIR}/Engine/src/graphics/Cube.cpp
-    ${CMAKE_SOURCE_DIR}/Engine/src/graphics/Cubemap.cpp
-    ${CMAKE_SOURCE_DIR}/Engine/src/graphics/DepthPassCamera.cpp
-    ${CMAKE_SOURCE_DIR}/Engine/src/graphics/DirectionalLight.cpp
-    ${CMAKE_SOURCE_DIR}/Engine/src/graphics/PointLight.cpp
-    ${CMAKE_SOURCE_DIR}/Engine/src/graphics/SpotLight.cpp
-    ${CMAKE_SOURCE_DIR}/Engine/src/graphics/Material.cpp
-    ${CMAKE_SOURCE_DIR}/Engine/src/graphics/Mesh.cpp
-    ${CMAKE_SOURCE_DIR}/Engine/src/graphics/Model.cpp
-    ${CMAKE_SOURCE_DIR}/Engine/src/graphics/PostProcessingQueue.cpp
-    ${CMAKE_SOURCE_DIR}/Engine/src/graphics/TextureAtlas.cpp
+    ${PROJECT_SOURCE_DIR}/AxesCrosshair.cpp
+    ${PROJECT_SOURCE_DIR}/Billboard.cpp
+    ${PROJECT_SOURCE_DIR}/Camera.cpp
+    ${PROJECT_SOURCE_DIR}/Cube.cpp
+    ${PROJECT_SOURCE_DIR}/Cubemap.cpp
+    ${PROJECT_SOURCE_DIR}/DepthPassCamera.cpp
+    ${PROJECT_SOURCE_DIR}/DirectionalLight.cpp
+    ${PROJECT_SOURCE_DIR}/PointLight.cpp
+    ${PROJECT_SOURCE_DIR}/SpotLight.cpp
+    ${PROJECT_SOURCE_DIR}/Material.cpp
+    ${PROJECT_SOURCE_DIR}/Mesh.cpp
+    ${PROJECT_SOURCE_DIR}/Model.cpp
+    ${PROJECT_SOURCE_DIR}/PostProcessingQueue.cpp
+    ${PROJECT_SOURCE_DIR}/TextureAtlas.cpp
 )
 
-add_library(${CMAKE_PROJECT_NAME}.Engine.Graphics ${SOURCE})
+add_library(${CMAKE_PROJECT_NAME}.Graphics ${SOURCE})
 
-target_link_options(${CMAKE_PROJECT_NAME}.Engine.Graphics PRIVATE ${CMAKE_PROJECT_NAME}.Engine.Graphics.Core)
+target_link_options(${CMAKE_PROJECT_NAME}.Graphics PRIVATE ${CMAKE_PROJECT_NAME}.Graphics.Core)

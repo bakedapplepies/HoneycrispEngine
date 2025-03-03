@@ -2,11 +2,11 @@ cmake_minimum_required(VERSION 3.26.0)
 project(${CMAKE_PROJECT_NAME} CXX C)
 
 set(SOURCE
-    ${CMAKE_SOURCE_DIR}/Engine/src/core/constants.cpp
-    ${CMAKE_SOURCE_DIR}/Engine/src/core/Debug.cpp
-    ${CMAKE_SOURCE_DIR}/Engine/src/core/Logging.cpp
-    ${CMAKE_SOURCE_DIR}/Engine/src/core/FileSystem.cpp
-    ${CMAKE_SOURCE_DIR}/Engine/src/core/Utils.cpp
+    ${PROJECT_SOURCE_DIR}/constants.cpp
+    ${PROJECT_SOURCE_DIR}/Debug.cpp
+    ${PROJECT_SOURCE_DIR}/Logging.cpp
+    ${PROJECT_SOURCE_DIR}/FileSystem.cpp
+    ${PROJECT_SOURCE_DIR}/Utils.cpp
 )
 
-add_library(${CMAKE_PROJECT_NAME}.Engine.Core ${SOURCE})
+add_library(${CMAKE_PROJECT_NAME}.Core ${SOURCE})

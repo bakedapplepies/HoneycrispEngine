@@ -45,7 +45,7 @@ void ShaderManager::ShutDown(uint64_t key)
 {
     if (key != s_key)
     {
-        HNCRSP_ERROR("ShaderManager shutdown key invalid!");
+        HNCRSP_TERMINATE("ShaderManager shutdown key invalid!");
         return;
     }
     m_cachedShaders.clear();

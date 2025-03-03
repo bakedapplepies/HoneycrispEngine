@@ -46,6 +46,7 @@ void Application::Run()
     // post-deletion of resources is mostly trivial
     GameLoop gameLoop;
     GameEntry gameEntry;
+    gameEntry.OnLoad();
     gameEntry.RegisterScenes();
     gameLoop.Start();
 

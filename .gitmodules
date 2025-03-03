@@ -1,15 +1,15 @@
-[submodule "vendor/glm"]
-	path = vendor/glm
+[submodule "Engine/vendor/glm"]
+	path = Engine/vendor/glm
 	url = https://github.com/g-truc/glm.git
-[submodule "vendor/assimp"]
-	path = vendor/assimp
+[submodule "Engine/vendor/assimp"]
+	path = Engine/vendor/assimp
 	url = https://github.com/assimp/assimp.git
-[submodule "vendor/glfw"]
-	path = vendor/glfw
+[submodule "Engine/vendor/glfw"]
+	path = Engine/vendor/glfw
 	url = https://github.com/glfw/glfw.git
-[submodule "vendor/fmt"]
-	path = vendor/fmt
+[submodule "Engine/vendor/fmt"]
+	path = Engine/vendor/fmt
 	url = https://github.com/fmtlib/fmt.git
-[submodule "vendor/tracy"]
-	path = vendor/tracy
+[submodule "Engine/vendor/tracy"]
+	path = Engine/vendor/tracy
 	url = https://github.com/wolfpld/tracy.git

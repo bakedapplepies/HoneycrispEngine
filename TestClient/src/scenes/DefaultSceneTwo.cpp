@@ -195,9 +195,7 @@ void DefaultSceneTwo::_CreatePlane(void)
         ETextureType::ALBEDO 
     );
     // mesh->SetMaterial(0, meshMaterial);
-    
     mesh->SetTransform(Transform(glm::vec3(-8.0f, -6.0f, -20.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
-    mesh->SetShader(phongWTintShader);
 }
 
 void DefaultSceneTwo::_CreateModels(void)

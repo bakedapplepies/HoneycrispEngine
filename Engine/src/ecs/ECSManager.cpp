@@ -31,7 +31,7 @@ namespace ECS
     {
         if (key != s_key)
         {
-            HNCRSP_ERROR("ECSManager shutdown key invalid!");
+            HNCRSP_TERMINATE("ECSManager shutdown key invalid!");
             return;
         }
         m_entityManager.ShutDown();

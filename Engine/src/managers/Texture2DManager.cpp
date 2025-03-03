@@ -66,7 +66,7 @@ void Texture2DManager::ShutDown(uint64_t key)
 {
     if (key != s_key)
     {
-        HNCRSP_ERROR("Texture2DManager shutdown key invalid!");
+        HNCRSP_TERMINATE("Texture2DManager shutdown key invalid!");
         return;
     }
     m_cachedTexture2Ds.clear();
