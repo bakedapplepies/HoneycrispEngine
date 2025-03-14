@@ -53,8 +53,8 @@ protected:
     {
         HNCRSP_STATIC_ASSERT(std::is_base_of<IRenderable, TIRenderable>(), "TIRenderable is not base of IRenderable.");
     
-        Material material(g_ShaderManager.basicShader);
-        return std::make_unique< SceneRenderObj<TIRenderable> >(material, std::forward<Args>(args)...);
+        Material dummyMaterial(g_ShaderManager.basicShader);
+        return std::make_unique< SceneRenderObj<TIRenderable> >(dummyMaterial, std::forward<Args>(args)...);
     }
 
     template <typename TLight, typename... Args>

@@ -202,6 +202,7 @@ VertexArray::VertexArray(
     );
 
     bool pos = (vertex_attrib_bits & VERTEX_ATTRIB_POSITION_BIT) == VERTEX_ATTRIB_POSITION_BIT;
+    HNCRSP_ASSERT(pos);
     bool color = (vertex_attrib_bits & VERTEX_ATTRIB_COLOR_BIT) == VERTEX_ATTRIB_COLOR_BIT;
     bool uv = (vertex_attrib_bits & VERTEX_ATTRIB_UV_BIT) == VERTEX_ATTRIB_UV_BIT;
     bool normal = (vertex_attrib_bits & VERTEX_ATTRIB_NORMAL_BIT) == VERTEX_ATTRIB_NORMAL_BIT;
@@ -278,52 +279,36 @@ void VertexArray::EnableVertexAttribPosition(bool on) const
 {
     Bind();
     if (on)
-    {
         glEnableVertexAttribArray(VERTEX_ATTRIB_POSITION_INDEX);
-    }
     else
-    {
         glDisableVertexAttribArray(VERTEX_ATTRIB_POSITION_INDEX);
-    }
 }
 
 void VertexArray::EnableVertexAttribColor(bool on) const
 {
     Bind();
     if (on)
-    {
         glEnableVertexAttribArray(VERTEX_ATTRIB_COLOR_INDEX);
-    }
     else
-    {
         glDisableVertexAttribArray(VERTEX_ATTRIB_COLOR_INDEX);
-    }
 }
 
 void VertexArray::EnableVertexAttribUV(bool on) const
 {
     Bind();
     if (on)
-    {
         glEnableVertexAttribArray(VERTEX_ATTRIB_UV_INDEX);
-    }
     else
-    {
         glDisableVertexAttribArray(VERTEX_ATTRIB_UV_INDEX);
-    }
 }
 
 void VertexArray::EnableVertexAttribNormals(bool on) const
 {
     Bind();
     if (on)
-    {
         glEnableVertexAttribArray(VERTEX_ATTRIB_NORMAL_INDEX);
-    }
     else
-    {
         glDisableVertexAttribArray(VERTEX_ATTRIB_NORMAL_INDEX);
-    }
 }
 
 VertexArray::VertexArray(VertexArray&& other) noexcept
@@ -407,6 +392,34 @@ uint32_t VertexArray::GetVertexAttribCount() const
 uint32_t VertexArray::GetVertexCount() const
 {
     return m_verticesCount;
+}
+
+void VertexArray::PrintVertexFormat() const
+{
+    uint32_t vertexAttribCount = GetVertexAttribCount();
+    HNCRSP_INFO("Vertex Format of VAO ID: {}", m_VAO_ID);
+    uint32_t totalBytes = 0;
+    if ((m_vertexAttribBits & VERTEX_ATTRIB_POSITION_INDEX) == VERTEX_ATTRIB_POSITION_INDEX)
+    {
+        HNCRSP_INFO("\tPosition: vec3f ({} bytes, offset {} bytes)", sizeof(float) * 3, totalBytes);
+        totalBytes += sizeof(float) * 3;
+    }
+    if ((m_vertexAttribBits & VERTEX_ATTRIB_COLOR_INDEX) == VERTEX_ATTRIB_COLOR_INDEX)
+    {
+        HNCRSP_INFO("\tColor: vec3f ({} bytes, offset {} bytes)", sizeof(float) * 3, totalBytes);
+        totalBytes += sizeof(float) * 3;
+    }
+    if ((m_vertexAttribBits & VERTEX_ATTRIB_NORMAL_INDEX) == VERTEX_ATTRIB_NORMAL_INDEX)
+    {
+        HNCRSP_INFO("\tNormal: vec3f ({} bytes, offset {} bytes)", sizeof(float) * 3, totalBytes);
+        totalBytes += sizeof(float) * 3;
+    }
+    if ((m_vertexAttribBits & VERTEX_ATTRIB_UV_INDEX) == VERTEX_ATTRIB_UV_INDEX)
+    {
+        HNCRSP_INFO("\tUV: vec2f ({} bytes, offset {} bytes)", sizeof(float) * 2, totalBytes);
+        totalBytes += sizeof(float) * 3;
+    }
+    HNCRSP_INFO("\tTotal bytes/vertices: {}", totalBytes);
 }
 
 HNCRSP_NAMESPACE_END

@@ -31,6 +31,10 @@ void RenderContext::Initialize()
     void* func;
     glGetPointerv(GL_DEBUG_CALLBACK_FUNCTION, &func);
 
+    GLint maxVertAttrib;
+    glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &maxVertAttrib);
+    HNCRSP_INFO("GL_MAX_VERTEX_UNIFORM_COMPONENTS: {}", maxVertAttrib);
+
     /* Depth, Stencil, Blending, Gamma correction */
     // cull faces
     glEnable(GL_CULL_FACE);

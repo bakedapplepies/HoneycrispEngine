@@ -1,4 +1,6 @@
 #version 450 core
+#pragma CONSTANT MAX_MATERIALS
+#define MAX_MATERIALS
 out vec4 glFragColor;
 
 in VS_OUT {
@@ -27,6 +29,8 @@ struct Material
 
     float shininess;
 };
+
+uniform Material u_materials[8000];
 
 struct DirLight
 {

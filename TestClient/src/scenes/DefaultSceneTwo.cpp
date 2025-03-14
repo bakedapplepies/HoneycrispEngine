@@ -10,19 +10,8 @@ using namespace Honeycrisp;
 DefaultSceneTwo::DefaultSceneTwo(const char* scene_name)
     : Scene(scene_name)
 {
-    const Camera* camera = g_ECSManager.GetSystem<Renderer>()->GetCamera();
-    pointLight = CreateLight<PointLight>(
-        glm::vec3(0.0f, 0.0f, 0.0f),  // pos
-        glm::vec3(1.0f, 1.0f, 1.0f),  // color
-        0.3f, 0.5f, 1.0f              // ambient - diffuse - specular
-    );
-    // dirLight = CreateLight<DirectionalLight>(
-    //     glm::vec3(0.0f, -1.0f, 0.0),
-    //     glm::vec3(1.0f, 1.0f, 1.0f),
-    //     0.05f, 0.5f, 1.0f
-    // );
-
-    InitializeShaders();
+    _CreateLights();
+    _GetShaders();
     _CreateCube();
     _CreatePlane();
     _CreateModels();
@@ -34,20 +23,31 @@ DefaultSceneTwo::DefaultSceneTwo(const char* scene_name)
         FileSystem::Path("resources/textures/cubemaps/skybox/front.jpg"),
         FileSystem::Path("resources/textures/cubemaps/skybox/back.jpg")
     );
-
-    SetInitialUniforms();
 }
 
 void DefaultSceneTwo::OnUpdate(const float& dt)
 {
-    // normalShader->setFloatUnf("u_normal_length", m_u_normal_length);
-
     cubeTransform->eulerAngles += glm::vec3(1.0f, 1.0f, 0.0f) * dt;
     pointLight->position = cubeTransform->position;
     // cubeTransform->position = glm::vec3(0.0f, sinf(glfwGetTime()) * 7.0f, 0.0f);
 }
 
-void DefaultSceneTwo::InitializeShaders(void)
+void DefaultSceneTwo::_CreateLights(void)
+{
+    const Camera* camera = g_ECSManager.GetSystem<Renderer>()->GetCamera();
+    pointLight = CreateLight<PointLight>(
+        glm::vec3(0.0f, 0.0f, 0.0f),  // pos
+        glm::vec3(1.0f, 1.0f, 1.0f),  // color
+        0.3f, 0.5f, 1.0f              // ambient - diffuse - specular
+    );
+    // dirLight = CreateLight<DirectionalLight>(
+    //     glm::vec3(0.0f, -1.0f, 0.0),
+    //     glm::vec3(1.0f, 1.0f, 1.0f),
+    //     0.05f, 0.5f, 1.0f
+    // );
+}
+
+void DefaultSceneTwo::_GetShaders(void)
 {
     phongShader = CreateShader(
         FileSystem::Path("resources/shaders/Default.vert"),
@@ -64,9 +64,6 @@ void DefaultSceneTwo::InitializeShaders(void)
     //     FileSystem::Path("resources/shaders/Normal.geom")
     // );
 }
-
-void DefaultSceneTwo::SetInitialUniforms(void)
-{}
 
 void DefaultSceneTwo::OnImGui(void)
 {
@@ -192,7 +189,7 @@ void DefaultSceneTwo::_CreatePlane(void)
     );
     const Texture2D* meshAlbedo = g_Texture2DManager.GetTexture2D(
         FileSystem::Path("resources/textures/cubemaps/skybox/back.jpg"),
-        ETextureType::ALBEDO 
+        ETextureType::ALBEDO
     );
     // mesh->SetMaterial(0, meshMaterial);
     mesh->SetTransform(Transform(glm::vec3(-8.0f, -6.0f, -20.0f), glm::vec3(0.0f), glm::vec3(1.0f)));

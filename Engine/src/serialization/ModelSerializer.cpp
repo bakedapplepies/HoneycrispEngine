@@ -79,7 +79,7 @@ flatbuffers::Offset<Serialized::Model> ModelSerializer::_FinishModel(
 void ModelSerializer::Serialize(const FileSystem::Path& path_to_model)
 {
     // Get hash from path
-    FileSystem::Path serialized_dir(fmt::format("build/{}/src/serialized/models", HNCRSP_BUILD_TYPE));
+    FileSystem::Path serialized_dir(fmt::format("build/{}/Engine/serialized/models", HNCRSP_BUILD_TYPE));
     std::filesystem::create_directories(serialized_dir.string());
     int64_t path_hash = std::hash<std::string>{}(path_to_model.string());
     std::string serialized_model_path = fmt::format("{}/{}.hncmdl", serialized_dir.string(), path_hash);
@@ -112,7 +112,7 @@ const Serialized::Model* ModelSerializer::GetDeserializedObject(const FileSystem
     else
     {
         int64_t path_hash = std::hash<std::string>{}(path_to_model.string());
-        serialized_model_path = FileSystem::Path(fmt::format("build/{}/src/serialized/models/{}.hncmdl", HNCRSP_BUILD_TYPE, path_hash)).string();
+        serialized_model_path = FileSystem::Path(fmt::format("build/{}/Engine/serialized/models/{}.hncmdl", HNCRSP_BUILD_TYPE, path_hash)).string();
         if(!std::filesystem::exists(serialized_model_path))
         {
             return nullptr;

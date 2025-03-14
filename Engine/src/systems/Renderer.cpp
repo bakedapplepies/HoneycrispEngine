@@ -227,6 +227,7 @@ void Renderer::_RenderScenePass() const
             shader->SetUIntUnf("u_material.whichMaterial", whichMaterial);
 
             // TODO: Send uniform for index into texture array
+            // glDrawElements
             glDrawElementsBaseVertex(
                 GL_TRIANGLES,
                 drawData.meta_data[i].indices_buffer_count,

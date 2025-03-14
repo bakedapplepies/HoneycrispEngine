@@ -14,9 +14,8 @@ class Model : public IRenderable
 private:
     VertexArray m_VAO;
     // TODO: Deallocate these
-    std::vector<MeshMetaData> m_meshesMetaData;  // size is also number of meshes
-    std::vector<Material> m_materials;
-    const Shader* m_shader;
+    mutable std::vector<MeshMetaData> m_meshesMetaData;  // size is also number of meshes
+    mutable std::vector<Material> m_materials;
 
 public:
     Model(const FileSystem::Path& path, const Shader* shader, bool flip_uv);
@@ -49,13 +48,14 @@ private:  // building model
     void _GetMaterials(
         const aiScene* scene,
         const FileSystem::Path& modelDirectory,
-        ModelSerializer& modelSerializer
+        ModelSerializer& modelSerializer,
+        const Shader* shader
     );
     const Texture2D* _GetMaterialTexture(
         std::string_view texturePath,
         aiTextureType assimp_texture_type
     );
-    void _LoadDeserializedModel(const Serialized::Model* deserialized_model);
+    void _LoadDeserializedModel(const Serialized::Model* deserialized_model, const Shader* shader);
 };
 
 HNCRSP_NAMESPACE_END

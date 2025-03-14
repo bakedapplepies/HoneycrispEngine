@@ -22,11 +22,12 @@ struct MeshMetaData
     GLuint mesh_vertex_offset;
     GLuint indices_buffer_count;
     uint32_t material_index;
-
+    
     operator Serialized::MeshMetaData() const
     {
         return Serialized::MeshMetaData(mesh_vertex_offset, indices_buffer_count, material_index);
     }
 };
+// HNCRSP_STATIC_ASSERT(std::is_aggregate<MeshMetaData>(), "Illegal"); succeeds
 
 HNCRSP_NAMESPACE_END

@@ -7,6 +7,14 @@
 
 HNCRSP_NAMESPACE_START
 
+// struct Vertex
+// {
+//     glm::vec3 position;
+//     glm::vec3 color;
+//     glm::vec3 normal;
+//     glm::vec2 uv;
+// };
+
 class VertexArray
 {
 private:
@@ -48,6 +56,7 @@ public:
     size_t GetIndicesLen() const;
     uint32_t GetVertexAttribCount() const;
     uint32_t GetVertexCount() const;
+    void PrintVertexFormat() const;
 
     void EnableVertexAttribPosition(bool on) const;
     void EnableVertexAttribColor(bool on) const;

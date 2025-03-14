@@ -11,6 +11,8 @@ private:
     GLuint m_textureID;
     int32_t m_channels;
     ETextureType m_textureType;
+    // uint16_t m_width;
+    // uint16_t m_height;
     
 public:
     Texture2D() = default;

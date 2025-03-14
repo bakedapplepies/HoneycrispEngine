@@ -148,7 +148,7 @@ void GameLoop::_CalcFPS()
 
 GameLoop::~GameLoop()
 {
-    FileSystem::Path data_report_path(fmt::format("build/{}/src/data_report", HNCRSP_BUILD_TYPE));
+    FileSystem::Path data_report_path(fmt::format("build/{}/Engine/data_report", HNCRSP_BUILD_TYPE));
     std::filesystem::create_directory(data_report_path.string());
     std::ofstream report_file(
         fmt::format("{}/fps_report.txt", data_report_path.string()), std::ios::out | std::ios::app);

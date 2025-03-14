@@ -20,7 +20,7 @@ void ImageSerializer::AddImage(
     m_builder.Finish(serialized_image);
 
     // Get hash from path
-    FileSystem::Path serialized_dir(fmt::format("build/{}/src/serialized/images", HNCRSP_BUILD_TYPE));
+    FileSystem::Path serialized_dir(fmt::format("build/{}/Engine/serialized/images", HNCRSP_BUILD_TYPE));
     int64_t path_hash = std::hash<std::string>{}(path_to_image.string());
     std::filesystem::create_directories(serialized_dir.string());
 
@@ -40,7 +40,7 @@ Serialized::Image* ImageSerializer::GetDeserializedObject(const FileSystem::Path
 {
     // Get hash from path
     int64_t path_hash = std::hash<std::string>{}(path_to_image.string());
-    FileSystem::Path serialized_image_path(fmt::format("build/{}/src/serialized/images/{}.hncimg", HNCRSP_BUILD_TYPE, path_hash));
+    FileSystem::Path serialized_image_path(fmt::format("build/{}/Engine/serialized/images/{}.hncimg", HNCRSP_BUILD_TYPE, path_hash));
     if(!std::filesystem::exists(serialized_image_path.string()))
     {
         return nullptr;

@@ -9,11 +9,10 @@ static bool s_isFirstMatNull = false;
 
 Model::Model(const FileSystem::Path& path, const Shader* shader, bool flip_uv)
 {
-    m_shader = shader;
     ModelSerializer modelSerializer;
     if (const Serialized::Model* deserialized_model = modelSerializer.GetDeserializedObject(path))
     {
-        _LoadDeserializedModel(deserialized_model);
+        _LoadDeserializedModel(deserialized_model, shader);
         return;
     }
 
@@ -38,7 +37,7 @@ Model::Model(const FileSystem::Path& path, const Shader* shader, bool flip_uv)
     std::vector<float> vertexData;
     std::vector<GLuint> indices;
 
-    _GetMaterials(scene, modelDirectory, modelSerializer);
+    _GetMaterials(scene, modelDirectory, modelSerializer, shader);
 
     // HNCRSP_INFO(scene->mNumMaterials);
     
@@ -141,19 +140,19 @@ void Model::_ProcessMesh(
 
     if (m_meshesMetaData.size() == 0)
     {
-        m_meshesMetaData.emplace_back(
-            0,                                                               // index offset
-            mesh->mNumFaces * 3,                                             // vertex count
-            mesh->mMaterialIndex - static_cast<uint32_t>(s_isFirstMatNull)   // material index
-        );
+        m_meshesMetaData.push_back(MeshMetaData {
+            .mesh_vertex_offset = 0,
+            .indices_buffer_count = mesh->mNumFaces * 3,
+            .material_index = mesh->mMaterialIndex - static_cast<uint32_t>(s_isFirstMatNull) 
+        });
     }
     else
     {
-        m_meshesMetaData.emplace_back(
-            m_meshesMetaData.back().mesh_vertex_offset + num_vertices,
-            mesh->mNumFaces * 3,
-            mesh->mMaterialIndex - static_cast<uint32_t>(s_isFirstMatNull)
-        );
+        m_meshesMetaData.push_back(MeshMetaData {
+            .mesh_vertex_offset = m_meshesMetaData.back().mesh_vertex_offset + num_vertices,
+            .indices_buffer_count = mesh->mNumFaces * 3,
+            .material_index = mesh->mMaterialIndex - static_cast<uint32_t>(s_isFirstMatNull)
+        });
     }
     num_vertices = mesh->mNumVertices;
 }
@@ -161,7 +160,8 @@ void Model::_ProcessMesh(
 void Model::_GetMaterials(
     const aiScene* scene,
     const FileSystem::Path& modelDirectory,
-    ModelSerializer& modelSerializer
+    ModelSerializer& modelSerializer,
+    const Shader* shader
 ) {
     for (uint32_t i = 0; i < scene->mNumMaterials; i++)
     {
@@ -177,7 +177,7 @@ void Model::_GetMaterials(
             }
         }
         
-        Material currentMaterial(m_shader);
+        Material currentMaterial(shader);
 
         aiString textureFilename;
         std::string texturePath;
@@ -271,7 +271,7 @@ const Texture2D* Model::_GetMaterialTexture(
     return g_Texture2DManager.GetTexture2D(FileSystem::Path(texturePath), textureType);
 }
 
-void Model::_LoadDeserializedModel(const Serialized::Model* deserialized_model)
+void Model::_LoadDeserializedModel(const Serialized::Model* deserialized_model, const Shader* shader)
 {
     std::vector<float> vertex_data = std::vector<float>(
         deserialized_model->vertex_data()->begin(),
@@ -310,7 +310,7 @@ void Model::_LoadDeserializedModel(const Serialized::Model* deserialized_model)
         std::string_view normal = material->normal_path()->string_view();
         std::string_view specular = material->specular_path()->string_view();
 
-        Material currentMaterial(m_shader);
+        Material currentMaterial(shader);
 
         if (albedo != "") currentMaterial.SetAlbedoMap(
             FileSystem::Path(albedo)
@@ -343,6 +343,9 @@ void Model::virt_AddDrawDataToRenderer(ECS::EntityUID entityUID, const Material&
     );
 
     g_ECSManager.AddComponent<DrawData>(entityUID, meshData);
+
+    m_meshesMetaData.clear();
+    m_materials.clear();
 }
 
 Model::Model(Model&& other) noexcept
@@ -350,8 +353,6 @@ Model::Model(Model&& other) noexcept
     m_VAO = std::move(other.m_VAO);
     m_meshesMetaData = std::move(other.m_meshesMetaData);
     m_materials = std::move(other.m_materials);
-    m_shader = other.m_shader;
-    other.m_shader = nullptr;
 }
 
 Model& Model::operator=(Model&& other) noexcept
@@ -359,8 +360,6 @@ Model& Model::operator=(Model&& other) noexcept
     m_VAO = std::move(other.m_VAO);
     m_meshesMetaData = std::move(other.m_meshesMetaData);
     m_materials = std::move(other.m_materials);
-    m_shader = other.m_shader;
-    other.m_shader = nullptr;
 
     return *this;
 }

@@ -42,9 +42,8 @@ public:
     void OnImGui(void) override;
 
 private:
-    void InitializeShaders(void);
-    void SetInitialUniforms(void);
-
+    void _CreateLights(void);
+    void _GetShaders(void);
     void _CreateCube(void);
     void _CreatePlane(void);
     void _CreateModels(void);
