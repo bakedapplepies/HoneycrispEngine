@@ -193,5 +193,5 @@ void main()
     // No clamping since using HDR
     // result = clamp(result, vec3(0.0), vec3(1.0));
 
-    FragColor = vec4(fs_in.VertColor, 1.0) * vec4(result, albedoFrag.w);
+    FragColor = vec4(fs_in.VertColor, 1.0) * vec4(vec3(shadowFactor), albedoFrag.w);
 }

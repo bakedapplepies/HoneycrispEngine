@@ -225,9 +225,10 @@ void Renderer::_RenderScenePass() const
                 whichMaterial |= 1 << 4;
             }
             shader->SetUIntUnf("u_material.whichMaterial", whichMaterial);
-
+            // TODO: Profile between glDrawElementsBaseVertex and glMultiDrawElementsIndirect
             // TODO: Send uniform for index into texture array
-            // glDrawElements
+            // glMultiDrawElementsBaseVertex
+            // glMultiDrawElementsIndirect
             glDrawElementsBaseVertex(
                 GL_TRIANGLES,
                 drawData.meta_data[i].indices_buffer_count,

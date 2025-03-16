@@ -202,5 +202,5 @@ void main()
 
     // result *= shadowFactor;
 
-    glFragColor = vec4(result, albedoFrag.w);
+    glFragColor = vec4(vec3(shadowFactor), albedoFrag.w);
 }

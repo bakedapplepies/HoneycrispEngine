@@ -24,16 +24,12 @@ void RenderContext::Initialize()
     HNCRSP_INFO("OpenGL (Core) ", reinterpret_cast<const char*>(glGetString(GL_VERSION)));
 
     // Set DebugCallback ----------
-    HNCRSP_INFO("{}", (void*)Honeycrisp::DebugMessageCallback);
+    // HNCRSP_INFO("{}", (void*)Honeycrisp::DebugMessageCallback);
     glEnable(GL_DEBUG_OUTPUT);
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
     glDebugMessageCallback(Honeycrisp::DebugMessageCallback, nullptr);
     void* func;
     glGetPointerv(GL_DEBUG_CALLBACK_FUNCTION, &func);
-
-    GLint maxVertAttrib;
-    glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &maxVertAttrib);
-    HNCRSP_INFO("GL_MAX_VERTEX_UNIFORM_COMPONENTS: {}", maxVertAttrib);
 
     /* Depth, Stencil, Blending, Gamma correction */
     // cull faces

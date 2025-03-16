@@ -1,9 +1,8 @@
-*
-!*/
-!*.*
-
+# *
+# !*/
+# !*.*
+# only ignore what???
 *.exe
-glm
 build
 bin
 imgui.ini
