@@ -4,29 +4,6 @@ project(${CMAKE_PROJECT_NAME} CXX C)
 include(FetchContent)
 include(ExternalProject)
 
-add_library(GLAD STATIC
-    ${PROJECT_SOURCE_DIR}/glad/glad.c
-)
-target_include_directories(GLAD PRIVATE ${PROJECT_SOURCE_DIR})
-
-add_library(IMGUI STATIC
-    ${PROJECT_SOURCE_DIR}/imgui/imgui.cpp
-    ${PROJECT_SOURCE_DIR}/imgui/imgui_draw.cpp
-    ${PROJECT_SOURCE_DIR}/imgui/imgui_tables.cpp
-    ${PROJECT_SOURCE_DIR}/imgui/imgui_widgets.cpp
-    ${PROJECT_SOURCE_DIR}/imgui/imgui_impl_glfw.cpp
-    ${PROJECT_SOURCE_DIR}/imgui/imgui_impl_opengl3.cpp
-)
-target_include_directories(IMGUI PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/glfw-prefix/src/glfw/include)
-# target_compile_definitions(IMGUI PRIVATE IMGUI_IMPL_OPENGL_LOADER_CUSTOM)
-
-add_library(STB_IMAGE STATIC
-    ${PROJECT_SOURCE_DIR}/stb/stb_image.cpp
-)
-target_include_directories(STB_IMAGE PRIVATE ${PROJECT_SOURCE_DIR})
-
-option(TRACY_ENABLE "" ON)
-
 # set(GLFW_BUILD_DOCS OFF CACHE BOOL "GLFW lib only" FORCE)
 # set(GLFW_BUILD_TESTS OFF CACHE BOOL "GLFW lib only" FORCE)
 # set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "GLFW lib only" FORCE)
@@ -62,6 +39,7 @@ ExternalProject_Add(
     GIT_TAG 075395620a504c0cdcaf9bab3d196db16a043de7
     CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX:PATH=${TRACY_INSTALL_DIR}/install
+        -DTRACY_ENABLE:BOOL=ON
 )
 add_library(TRACY_LIBRARY STATIC IMPORTED)
 set_target_properties(TRACY_LIBRARY PROPERTIES IMPORTED_LOCATION ${TRACY_INSTALL_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}tracy${CMAKE_STATIC_LIBRARY_SUFFIX})
@@ -109,4 +87,24 @@ ExternalProject_Add(
 add_library(ASSIMP_LIBRARY STATIC IMPORTED)
 set_target_properties(ASSIMP_LIBRARY PROPERTIES IMPORTED_LOCATION ${ASSIMP_INSTALL_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}assimp${CMAKE_STATIC_LIBRARY_SUFFIX})
 
-add_dependencies(IMGUI GLFW_LIBRARY)
+add_library(GLAD STATIC
+    ${PROJECT_SOURCE_DIR}/glad/glad.c
+)
+target_include_directories(GLAD PRIVATE ${PROJECT_SOURCE_DIR})
+
+add_library(IMGUI STATIC
+    ${PROJECT_SOURCE_DIR}/imgui/imgui.cpp
+    ${PROJECT_SOURCE_DIR}/imgui/imgui_draw.cpp
+    ${PROJECT_SOURCE_DIR}/imgui/imgui_tables.cpp
+    ${PROJECT_SOURCE_DIR}/imgui/imgui_widgets.cpp
+    ${PROJECT_SOURCE_DIR}/imgui/imgui_impl_glfw.cpp
+    ${PROJECT_SOURCE_DIR}/imgui/imgui_impl_opengl3.cpp
+)
+add_dependencies(IMGUI GLFW_EXTERN)
+target_include_directories(IMGUI PRIVATE ${GLFW_INSTALL_DIR}/install/include)
+# target_compile_definitions(IMGUI PRIVATE IMGUI_IMPL_OPENGL_LOADER_CUSTOM)
+
+add_library(STB_IMAGE STATIC
+    ${PROJECT_SOURCE_DIR}/stb/stb_image.cpp
+)
+target_include_directories(STB_IMAGE PRIVATE ${PROJECT_SOURCE_DIR})

@@ -27,13 +27,13 @@ set(INCLUDE_DIRECTORIES
     ${PROJECT_SOURCE_DIR}
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_SOURCE_DIR}/vendor
-    ${CMAKE_BINARY_DIR}/Engine/vendor/glfw-prefix/src/glfw/include
-    ${CMAKE_BINARY_DIR}/Engine/vendor/glm-prefix/src/glm
-    ${CMAKE_BINARY_DIR}/Engine/vendor/assimp-prefix/src/assimp/include
-    ${CMAKE_BINARY_DIR}/Engine/vendor/assimp-prefix/src/assimp/include/assimp
-    ${CMAKE_BINARY_DIR}/Engine/vendor/assimp-prefix/src/assimp-build/include
-    ${CMAKE_BINARY_DIR}/Engine/vendor/fmt-prefix/src/fmt/include
-    ${CMAKE_BINARY_DIR}/Engine/vendor/tracy-prefix/src/tracy/public/tracy
+    ${GLFW_INSTALL_DIR}/install/include
+    ${GLM_INSTALL_DIR}/install/glm
+    ${ASSIMP_INSTALL_DIR}/install/include/include
+    ${ASSIMP_INSTALL_DIR}/install/include/include/assimp
+    # ${ASSIMP_INSTALL_DIR}/install/include/assimp-build/include
+    ${FMT_INSTALL_DIR}/install/include
+    ${TRACY_INSTALL_DIR}/install/include
 )
 set(LINK_DIRECTORIES
     ${GLFW_INSTALL_DIR}/install/lib
@@ -42,8 +42,6 @@ set(LINK_DIRECTORIES
     ${ASSIMP_INSTALL_DIR}/install/lib
     ${TRACY_INSTALL_DIR}/install/lib
 )
-message("Here")
-message(${LINK_DIRECTORIES})
 set(PCH
     ${PROJECT_SOURCE_DIR}/include/api/pch/hncrsp_pch.h
 )
