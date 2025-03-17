@@ -8,10 +8,12 @@ set(SOURCE
     ${PROJECT_SOURCE_DIR}/Application.cpp
     ${PROJECT_SOURCE_DIR}/Scene.cpp
     ${PROJECT_SOURCE_DIR}/GameLoop.cpp
-    ${PROJECT_SOURCE_DIR}/../vendor/tracy/public/TracyClient.cpp
+    # ${PROJECT_SOURCE_DIR}/../vendor/tracy/public/TracyClient.cpp
 )
 
 add_library(${CMAKE_PROJECT_NAME}.Source ${SOURCE} ${PROJECT_SOURCE_DIR}/main.cpp)
+
+add_dependencies(${CMAKE_PROJECT_NAME}.Source ASSIMP_EXTERN)
 
 add_subdirectory(managers)
 add_subdirectory(graphics)

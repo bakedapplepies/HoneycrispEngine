@@ -29,16 +29,18 @@ set(COMPILE_OPTIONS
     -Wno-unused-private-field
 )
 
+# TODO: very troublesome to include include directories like this
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/TestClient/src
     ${CMAKE_SOURCE_DIR}/Engine/include
     ${CMAKE_SOURCE_DIR}/Engine/vendor
-    ${CMAKE_SOURCE_DIR}/Engine/vendor/glfw/include
-    ${CMAKE_SOURCE_DIR}/Engine/vendor/glm
-    ${CMAKE_SOURCE_DIR}/Engine/vendor/assimp/include
-    ${CMAKE_SOURCE_DIR}/Engine/vendor/assimp/include/assimp
-    ${CMAKE_SOURCE_DIR}/Engine/vendor/fmt/include
-    ${CMAKE_SOURCE_DIR}/Engine/vendor/tracy/public/tracy
+    ${CMAKE_BINARY_DIR}/Engine/vendor/glfw-prefix/src/glfw/include
+    ${CMAKE_BINARY_DIR}/Engine/vendor/glm-prefix/src/glm
+    ${CMAKE_BINARY_DIR}/Engine/vendor/assimp-prefix/src/assimp/include
+    ${CMAKE_BINARY_DIR}/Engine/vendor/assimp-prefix/src/assimp/include/assimp
+    ${CMAKE_BINARY_DIR}/Engine/vendor/assimp-prefix/src/assimp-build/include
+    ${CMAKE_BINARY_DIR}/Engine/vendor/fmt-prefix/src/fmt/include
+    ${CMAKE_BINARY_DIR}/Engine/vendor/tracy-prefix/src/tracy/public/tracy
 )
 
 target_compile_options(${PROJECT_NAME} PRIVATE
@@ -46,7 +48,11 @@ target_compile_options(${PROJECT_NAME} PRIVATE
 )
 
 target_link_directories(${PROJECT_NAME} PRIVATE
-    ${CMAKE_BINARY_DIR}
+    ${GLFW_INSTALL_DIR}/install/lib
+    ${GLM_INSTALL_DIR}/install/lib
+    ${FMT_INSTALL_DIR}/install/lib
+    ${ASSIMP_INSTALL_DIR}/install/lib
+    ${TRACY_INSTALL_DIR}/install/lib
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE

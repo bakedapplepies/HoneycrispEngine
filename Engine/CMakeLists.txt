@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.26.0)
 project(HoneycrispEngine CXX C)
 
+add_subdirectory(vendor)
+
 # Find packages
 find_package(Git REQUIRED)
 
@@ -25,20 +27,23 @@ set(INCLUDE_DIRECTORIES
     ${PROJECT_SOURCE_DIR}
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_SOURCE_DIR}/vendor
-    ${PROJECT_SOURCE_DIR}/vendor/glfw/include
-    ${PROJECT_SOURCE_DIR}/vendor/glm
-    ${PROJECT_SOURCE_DIR}/vendor/assimp/include
-    ${PROJECT_SOURCE_DIR}/vendor/assimp/include/assimp
-    ${PROJECT_SOURCE_DIR}/vendor/fmt/include
-    ${PROJECT_SOURCE_DIR}/vendor/tracy/public/tracy
+    ${CMAKE_BINARY_DIR}/Engine/vendor/glfw-prefix/src/glfw/include
+    ${CMAKE_BINARY_DIR}/Engine/vendor/glm-prefix/src/glm
+    ${CMAKE_BINARY_DIR}/Engine/vendor/assimp-prefix/src/assimp/include
+    ${CMAKE_BINARY_DIR}/Engine/vendor/assimp-prefix/src/assimp/include/assimp
+    ${CMAKE_BINARY_DIR}/Engine/vendor/assimp-prefix/src/assimp-build/include
+    ${CMAKE_BINARY_DIR}/Engine/vendor/fmt-prefix/src/fmt/include
+    ${CMAKE_BINARY_DIR}/Engine/vendor/tracy-prefix/src/tracy/public/tracy
 )
 set(LINK_DIRECTORIES
-    ${CMAKE_SOURCE_DIR}/lib
-    ${PROJECT_BINARY_DIR}/vendor/glfw/src
-    ${PROJECT_BINARY_DIR}/vendor/fmt
-    ${PROJECT_BINARY_DIR}/vendor/assimp/lib
-    ${PROJECT_BINARY_DIR}/vendor/assimp/contrib/zlib
+    ${GLFW_INSTALL_DIR}/install/lib
+    ${GLM_INSTALL_DIR}/install/lib
+    ${FMT_INSTALL_DIR}/install/lib
+    ${ASSIMP_INSTALL_DIR}/install/lib
+    ${TRACY_INSTALL_DIR}/install/lib
 )
+message("Here")
+message(${LINK_DIRECTORIES})
 set(PCH
     ${PROJECT_SOURCE_DIR}/include/api/pch/hncrsp_pch.h
 )
@@ -47,6 +52,14 @@ set(DEFINES
 )
 
 add_library(${CMAKE_PROJECT_NAME} ${CMAKE_SOURCE_DIR}/Engine/src/main.cpp)
+
+add_dependencies(${CMAKE_PROJECT_NAME}
+    GLFW_EXTERN
+    GLM_EXTERN
+    FMT_EXTERN
+    ASSIMP_EXTERN
+    TRACY_EXTERN
+)
 
 # -ffile-prefix-map=${CMAKE_SOURCE_DIR}=. messes up the debugger
 set(COMPILE_OPTIONS
@@ -61,27 +74,7 @@ set(COMPILE_OPTIONS
 )
 
 # Subdirectories
-add_subdirectory(vendor)
 add_subdirectory(src)
-
-# TODO: some libraries are Windows-specific
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
-    ${CMAKE_PROJECT_NAME}.Source
-    GLAD
-    IMGUI
-    STB_IMAGE
-    glfw
-    fmt
-    assimp
-    zlibstatic
-    ws2_32  # for tracy
-    Dbghelp  # for tracy
-    opengl32
-    gdi32
-    user32
-    kernel32
-    shell32
-)
 
 target_compile_options(${CMAKE_PROJECT_NAME}.Source PRIVATE
     ${COMPILE_OPTIONS}    
@@ -136,6 +129,24 @@ target_link_directories(${CMAKE_PROJECT_NAME}.Serialization PRIVATE ${LINK_DIREC
 target_link_directories(${CMAKE_PROJECT_NAME}.Core          PRIVATE ${LINK_DIRECTORIES})
 
 set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES VERIFY_INTERFACE_HEADER_SETS true)
+
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
+    ${CMAKE_PROJECT_NAME}.Source
+    GLAD
+    IMGUI
+    STB_IMAGE
+    glfw3
+    glm
+    fmt
+    assimp
+    zlibstatic
+    TracyClient
+    opengl32
+    gdi32
+    user32
+    kernel32
+    shell32
+)
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "Release")  # for some reason Tracy raises an error in Debug mode
     target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE Tracy::TracyClient)
