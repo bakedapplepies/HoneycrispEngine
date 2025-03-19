@@ -38,12 +38,12 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_SOURCE_DIR}/vendor
     ${GLFW_INSTALL_DIR}/install/include
-    ${GLM_INSTALL_DIR}/install/glm
-    ${ASSIMP_INSTALL_DIR}/install/include/include
-    ${ASSIMP_INSTALL_DIR}/install/include/include/assimp
+    ${GLM_INSTALL_DIR}/install/include
+    ${ASSIMP_INSTALL_DIR}/install/include
+    # ${ASSIMP_INSTALL_DIR}/install/include/include/assimp
     # ${ASSIMP_INSTALL_DIR}/install/include/assimp-build/include
     ${FMT_INSTALL_DIR}/install/include
-    ${TRACY_INSTALL_DIR}/install/include
+    ${TRACY_INSTALL_DIR}/install/include/tracy
 )
 
 target_compile_options(${PROJECT_NAME} PRIVATE
