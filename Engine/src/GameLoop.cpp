@@ -39,7 +39,7 @@ void GameLoop::Start()
 
     while(!glfwWindowShouldClose(window))
     {
-        ZoneScoped;
+        ZoneScopedN("Frame");
 
         m_deltaTime = glfwGetTime() - begin;
         begin = glfwGetTime();
@@ -83,8 +83,6 @@ void GameLoop::Start()
 
 void GameLoop::_ProcessInput()
 {
-    ZoneScoped;
-
     static GLFWwindow* window = glfwGetCurrentContext();
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
@@ -126,8 +124,6 @@ static uint32_t countedFPSes = 0;
 static uint32_t totalFPS = 0;  // uint32_t is more than enough
 void GameLoop::_CalcFPS()
 {
-    ZoneScoped;
-
     static GLFWwindow* window = glfwGetCurrentContext();
 
     m_totalTime += m_deltaTime;

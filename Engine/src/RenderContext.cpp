@@ -31,6 +31,10 @@ void RenderContext::Initialize()
     void* func;
     glGetPointerv(GL_DEBUG_CALLBACK_FUNCTION, &func);
 
+    GLint maxTextureUnits;
+    glGetIntegerv(GL_MAX_TEXTURE_UNITS, &maxTextureUnits);
+    HNCRSP_INFO("MAX TEXTURE UNITS: {}", maxTextureUnits);
+
     /* Depth, Stencil, Blending, Gamma correction */
     // cull faces
     glEnable(GL_CULL_FACE);

@@ -138,7 +138,6 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     fmt
     assimp
     zlibstatic
-    TracyClient
     opengl32
     gdi32
     user32
@@ -146,6 +145,12 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     shell32
 )
 
+# https://github.com/wolfpld/tracy/blob/master/CMakeLists.txt
+# view tracy's CMake configuration to see its dependencies
 if(${CMAKE_BUILD_TYPE} STREQUAL "Release")  # for some reason Tracy raises an error in Debug mode
-    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE Tracy::TracyClient)
+    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
+        TracyClient
+        ws2_32  # for tracy
+        Dbghelp  # for tracy
+    )
 endif()

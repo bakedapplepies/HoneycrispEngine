@@ -36,6 +36,7 @@ SceneManager::SceneManager()
 
 void SceneManager::_Update(const float& dt)
 {
+    ZoneScopedN("Scene Update");
     m_scenesMap[m_activeSceneIndex]->OnUpdate(dt);
 }
 

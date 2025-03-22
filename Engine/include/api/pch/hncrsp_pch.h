@@ -67,3 +67,4 @@
 #include "api/core/Terminate.h"
 #include "api/core/Logging.h"
 #include "api/core/constants.h"
+#include "api/core/TracyProfile.h"

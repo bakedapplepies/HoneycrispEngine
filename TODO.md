@@ -1,7 +1,6 @@
 # TODO List
 
 - TODO: mipmaps aren't generating (sponza cloths)
-- TODO: vcpkg
 - TODO: try building dll (HNCRSP_API)
 - TODO: ShaderConfig object to pass into draw calls?
 - TODO: LOD (tesselation shader, mesh shader; latter is quite hard)
@@ -15,6 +14,8 @@
 - TODO: SPIR-V
 - TODO: Automatic handling of nullptrs that doesn't use weakptrs (somehow)
 - TODO: Relative world positions to parents
+
+- TODO: Frustum Culling
 
 - TODO: OpenGL Disable-type functions don't have to be coupled to their private members, maybe
 use non-member functions?
@@ -31,14 +32,17 @@ use non-member functions?
 
 Object data are currently managed by ECS system.
 Because objects' world positions may be changed at any time, the so will the model matrices.
--> Each model will have n meshes (uses the same model matrices)
+-> Each model will have n meshes (uses the same model matrices and same VAO)
     Each mesh will have an material ID.
     There are k materials.
 -> Uniform array of k materials.
     Each material has maximum of 5 textures
     If there are only 3 materials, there will be a maximum of 15 textures which is A LOT
+    Could potentially be solved by using bindless textures
     Each mesh can have an instanced attribute in the VAO for storing an index to the material array
 -> Render a complex model in one draw call (glDrawMultiIndirect)
     Filter out opaque objects and draw later
+    Put all objects to be rendered in GL_INDIRECT_BUFFER
+    profit
 
 Also see glBindTextures

@@ -25,6 +25,7 @@ HNCRSP_NAMESPACE_START
 static void GetExtensions();
 void Application::Run()
 {
+    HNCRSP_INFO("{} Build", HNCRSP_BUILD_TYPE);
     WindowHandler windowHandler;
     windowHandler.StartUp();
 

@@ -2,6 +2,9 @@
 
 #include "api/pch/hncrsp_pch.h"
 
+// void* operator new(uint64_t count);
+// void operator delete(void* ptr) noexcept;
+
 HNCRSP_NAMESPACE_START
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);

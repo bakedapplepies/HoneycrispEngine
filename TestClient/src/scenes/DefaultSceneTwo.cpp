@@ -187,10 +187,10 @@ void DefaultSceneTwo::_CreatePlane(void)
         &colors,
         &uvs
     );
-    const Texture2D* meshAlbedo = g_Texture2DManager.GetTexture2D(
-        FileSystem::Path("resources/textures/cubemaps/skybox/back.jpg"),
-        ETextureType::ALBEDO
-    );
+    // const Texture2D* meshAlbedo = g_Texture2DManager.GetTexture2D(
+    //     FileSystem::Path("resources/textures/cubemaps/skybox/back.jpg"),
+    //     ETextureType::ALBEDO
+    // );
     // mesh->SetMaterial(0, meshMaterial);
     mesh->SetTransform(Transform(glm::vec3(-8.0f, -6.0f, -20.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
 }

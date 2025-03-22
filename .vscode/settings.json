@@ -113,9 +113,9 @@
     ],
     "clangd.path": "C:/clangd/bin/clangd.exe",
     "clangd.arguments": [
-        "--compile-commands-dir=${workspaceFolder}/build/Debug/",
+        "--compile-commands-dir=${workspaceFolder}/build/Release",
         "--header-insertion=never",
-        "--query-driver=C:/MinGW-W64/MinGW-W64/bin/clang++.exe",
+        "--query-driver=C:/MinGW-W64/MinGW-W64/bin/clang++.exe"
     ],
     "C_Cpp.intelliSenseEngine": "disabled",
     "cmake.debugConfig": {
