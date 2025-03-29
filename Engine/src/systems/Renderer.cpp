@@ -178,7 +178,8 @@ void Renderer::_RenderScenePass() const
         glm::mat4 viewProjectionMatrix;
         glm::vec3 targetDir = glm::vec3(m_camera->direction.x, 0.0f, m_camera->direction.z);
         glm::vec3 targetPos = m_camera->direction * 10.0f;
-        viewProjectionMatrix = m_depthPassCamera.GetViewProjectionMatrix(targetPos, DEPTH_CAMERA_RESOLUTION);        shader->SetMat4Unf("u_depthSpaceMatrix", viewProjectionMatrix);
+        viewProjectionMatrix = m_depthPassCamera.GetViewProjectionMatrix(targetPos, DEPTH_CAMERA_RESOLUTION);
+        shader->SetMat4Unf("u_depthSpaceMatrix", viewProjectionMatrix);
         shader->SetMat3Unf("u_normalMatrix", glm::mat3(glm::transpose(glm::inverse(model_matrix))));
         shader->SetMat4Unf("u_model", model_matrix);
         uint32_t indexBufferOffset = 0;

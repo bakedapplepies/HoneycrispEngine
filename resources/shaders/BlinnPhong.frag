@@ -179,9 +179,11 @@ void main()
     // Textures
     vec4 albedoFrag = textureLod(u_material.albedo, fs_in.TexCoord, 0.0);
     vec4 specularFrag = vec4(0.0);
-    if ((u_material.whichMaterial & (1 << 4)) == 1 << 4)
+    vec4 normalFrag = texture(u_material.normal, fs_in.TexCoord);
+    normalFrag * ((u_material.whichMaterial & (1 << 3)) > 0 ? 1.0 : 0.0);
+    if ((u_material.whichMaterial & (1 << 4)) > 0)
     {
-        vec4 specularFrag = texture(u_material.specular, fs_in.TexCoord);
+        specularFrag = texture(u_material.specular, fs_in.TexCoord);
     }
 
     // Shadow space calculations
@@ -202,5 +204,5 @@ void main()
 
     // result *= shadowFactor;
 
-    glFragColor = vec4(vec3(shadowFactor), albedoFrag.w);
+    glFragColor = vec4(vec3(normalFrag), albedoFrag.w);
 }

@@ -23,6 +23,7 @@ Model::Model(const FileSystem::Path& path, const Shader* shader, bool flip_uv)
     const aiScene*  scene = import.ReadFile(path.string().data(),
         aiProcess_Triangulate
         | aiProcess_FlipWindingOrder
+        | aiProcess_CalcTangentSpace
         | (flip_uv ? aiProcess_FlipUVs : 0)
         // | aiProcess_GenNormals
     );
