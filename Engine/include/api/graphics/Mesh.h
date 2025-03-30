@@ -12,15 +12,17 @@ private:
     VertexArray m_VAO;
 
 public:
+    Mesh() = default;
     Mesh(
-        std::vector<glm::vec3>* vertices,
+        std::vector<glm::vec3>* positions,
         std::vector<GLuint>* indices,
         std::vector<glm::vec3>* normals,
         std::vector<glm::vec3>* colors,
-        std::vector<glm::vec2>* uvs
+        std::vector<glm::vec2>* uvs,
+        std::vector<glm::vec3>* tangents
     );
     Mesh(
-        uint8_t vertex_attrib_bits,
+        uint16_t vertex_attrib_bits,
         const std::vector<float>& vertex_data,
         const std::vector<GLuint>& indices_data
     );

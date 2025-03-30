@@ -46,3 +46,9 @@ Because objects' world positions may be changed at any time, the so will the mod
     profit
 
 Also see glBindTextures
+
+Another solution:
+-> Let the programmer decide when to use MDI
+-> For example: A huge grass field (n = ~10000) in which all grass blades use the same shader/material; or maybe stuff like particles
+-> Put that into a separate draw command
+-> Profit

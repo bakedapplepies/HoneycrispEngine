@@ -2,7 +2,7 @@
 
 #include "api/pch/hncrsp_pch.h"
 #include "api/ecs/ECSManager.h"
-#include "api/scene/IRenderable.h"
+#include "api/graphics/Mesh.h"
 #include "api/graphics/Material.h"
 
 HNCRSP_NAMESPACE_START
@@ -10,7 +10,7 @@ HNCRSP_NAMESPACE_START
 class Cube : public IRenderable
 {
 private:
-    VertexArray m_VAO;
+    Mesh m_mesh;
 
 public:
     Cube();

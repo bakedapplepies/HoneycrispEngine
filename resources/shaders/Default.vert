@@ -4,11 +4,13 @@
 #define COLOR_LOCATION 1
 #define UV_LOCATION 2
 #define NORMAL_LOCATION 3
+#define TANGENT_LOCATION 4
 
 layout(location = POSITION_LOCATION) in vec3 aPos;
 layout(location = COLOR_LOCATION)    in vec3 aColor;
 layout(location = UV_LOCATION)       in vec2 aTexCoord;
 layout(location = NORMAL_LOCATION)   in vec3 aNormal;
+layout(location = TANGENT_LOCATION)   in vec3 aTangent;
 
 out VS_OUT {
     vec3 VertColor;
@@ -35,6 +37,9 @@ void main()
     vs_out.VertColor = aColor;
     vs_out.TexCoord = aTexCoord;
     vs_out.Normal = u_normalMatrix * aNormal;
+
+    vec3 normal = u_normalMatrix * aNormal;
+    vec3 tangent = u_normalMatrix * aTangent;
 
     vec4 worldPos = u_model * vec4(aPos, 1.0);
     vs_out.FragPos = vec3(worldPos);

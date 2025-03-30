@@ -10,11 +10,13 @@ extern const uint8_t VERTEX_ATTRIB_POSITION_INDEX;
 extern const uint8_t VERTEX_ATTRIB_COLOR_INDEX;
 extern const uint8_t VERTEX_ATTRIB_UV_INDEX;
 extern const uint8_t VERTEX_ATTRIB_NORMAL_INDEX;
+extern const uint8_t VERTEX_ATTRIB_TANGENT_INDEX;
 
 extern const uint16_t VERTEX_ATTRIB_POSITION_BIT;
 extern const uint16_t VERTEX_ATTRIB_COLOR_BIT;
 extern const uint16_t VERTEX_ATTRIB_UV_BIT;
 extern const uint16_t VERTEX_ATTRIB_NORMAL_BIT;
+extern const uint16_t VERTEX_ATTRIB_TANGENT_BIT;
 // ----------
 
 // Shader-related constants ----------

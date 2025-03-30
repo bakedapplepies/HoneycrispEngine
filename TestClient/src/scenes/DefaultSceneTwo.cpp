@@ -185,7 +185,8 @@ void DefaultSceneTwo::_CreatePlane(void)
         &indices,
         &normals,
         &colors,
-        &uvs
+        &uvs,
+        nullptr
     );
     // const Texture2D* meshAlbedo = g_Texture2DManager.GetTexture2D(
     //     FileSystem::Path("resources/textures/cubemaps/skybox/back.jpg"),

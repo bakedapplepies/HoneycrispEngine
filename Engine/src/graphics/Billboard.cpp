@@ -14,7 +14,7 @@ Billboard::Billboard(uint32_t width, uint32_t height)
         glm::vec3( 1.0f, -1.0f,  0.0f) * glm::vec3(width, height, 0.0f),
         glm::vec3(-1.0f, -1.0f,  0.0f) * glm::vec3(width, height, 0.0f)
     };
-    
+
     std::vector<glm::vec2> uvs = {
         glm::vec2(0.0f,  1.0f),
         glm::vec2(1.0f,  1.0f),
@@ -27,26 +27,22 @@ Billboard::Billboard(uint32_t width, uint32_t height)
         1, 2, 3
     };
 
-    m_VAO = VertexArray(
+    m_mesh = Mesh(
         &vertices,
         &indices,
         nullptr,
         nullptr,
-        &uvs
+        &uvs,
+        nullptr
     );
 }
 
 void Billboard::virt_AddDrawDataToRenderer(ECS::EntityUID entityUID, const Material& material) const
 {
+    m_mesh.virt_AddDrawDataToRenderer(entityUID, material);
+
     // Entity already has Transform (SceneRenderObj)
     g_ECSManager.GetComponent<Transform>(entityUID).lookAtCamera = true;
-
-    DrawData drawData;
-    drawData.VAO_id = m_VAO.GetID();
-    drawData.meta_data.emplace_back(0, m_VAO.GetIndicesLen(), 0);
-    drawData.materials.push_back(material);
-
-    g_ECSManager.AddComponent<DrawData>(entityUID, drawData);
 }
 
 HNCRSP_NAMESPACE_END

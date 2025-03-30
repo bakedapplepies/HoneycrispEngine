@@ -13,12 +13,12 @@ Cube::Cube()
 
 Cube::Cube(Cube&& other) noexcept
 {
-    m_VAO = std::move(other.m_VAO);
+    m_mesh = std::move(other.m_mesh);
 }
 
 Cube& Cube::operator=(Cube&& other) noexcept
 {
-    m_VAO = std::move(other.m_VAO);
+    m_mesh = std::move(other.m_mesh);
 
     return *this;
 }
@@ -202,27 +202,19 @@ void Cube::_InitializeAttributeData()
         20, 22, 23
     };
 
-    m_VAO = VertexArray(
+    m_mesh = Mesh(
         &verticesPos,
         &indices,
         &normals,
         &colors,
-        &uvs
+        &uvs,
+        nullptr
     );
 }
 
 void Cube::virt_AddDrawDataToRenderer(ECS::EntityUID entityUID, const Material& material) const
 {
-    DrawData drawData;
-    drawData.VAO_id = m_VAO.GetID();
-    drawData.meta_data.emplace_back(MeshMetaData {
-        .mesh_vertex_offset = 0,
-        .indices_buffer_count = static_cast<GLuint>(m_VAO.GetIndicesLen()),
-        .material_index = 0
-    });
-    drawData.materials.push_back(material);
-
-    g_ECSManager.AddComponent<DrawData>(entityUID, drawData);
+    m_mesh.virt_AddDrawDataToRenderer(entityUID, material);
 }
 
 HNCRSP_NAMESPACE_END

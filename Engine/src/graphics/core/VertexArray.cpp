@@ -3,19 +3,17 @@
 HNCRSP_NAMESPACE_START
 
 VertexArray::VertexArray(
-    const std::vector<glm::vec3>* vertices,
-    const std::vector<GLuint>* indices,
-    const std::vector<glm::vec3>* normals,
-    const std::vector<glm::vec3>* colors,
-    const std::vector<glm::vec2>* uvs
+    uint16_t vertex_attrib_bits,
+    const std::vector<Vertex>* vertices,
+    const std::vector<GLuint>* indices
 ) {
     std::vector<float> vertexData;
     std::vector<GLuint> indexData;
 
-    // Preliminary checks
+    // Checks if enough data is given
     if (vertices == nullptr || indices == nullptr)
     {
-        HNCRSP_TERMINATE("Missing vertex positions and indices.");
+        HNCRSP_TERMINATE("Missing vertices and indices.");
     }
 
     if (m_VAO_ID != 0)
@@ -23,6 +21,8 @@ VertexArray::VertexArray(
         HNCRSP_WARN("Mesh already constructed.");
         return;
     }
+
+    m_vertexAttribBits = vertex_attrib_bits;
 
     // Check if vectors contain anything
     if (vertices->empty())
@@ -33,34 +33,23 @@ VertexArray::VertexArray(
     {
         HNCRSP_TERMINATE("No indices to draw mesh.");
     }
-    if (normals)
+    if (!(m_vertexAttribBits & VERTEX_ATTRIB_POSITION_BIT))
     {
-        if (normals->size() != vertices->size())
-        {
-            HNCRSP_TERMINATE("Normals data not uniform with vertex positions.");
-        }
+        HNCRSP_TERMINATE("Vertex position is mandatory.");
     }
-    if (colors)
-    {
-        if (colors->size() != vertices->size())
-        {
-            HNCRSP_TERMINATE("Color data not uniform with vertex positions.");
-        }
-    }
-    if (uvs)
-    {
-        if (uvs->size() != vertices->size())
-        {
-            HNCRSP_TERMINATE("UV data not uniform with vertex positions.");
-        }
-    }
+
+    bool hasColorBit = static_cast<bool>(m_vertexAttribBits & VERTEX_ATTRIB_COLOR_BIT);
+    bool hasNormalBit = static_cast<bool>(m_vertexAttribBits & VERTEX_ATTRIB_NORMAL_BIT);
+    bool hasUVBit = static_cast<bool>(m_vertexAttribBits & VERTEX_ATTRIB_UV_BIT);
+    bool hasTangentBit = static_cast<bool>(m_vertexAttribBits & VERTEX_ATTRIB_TANGENT_BIT);
 
     indexData = std::vector<GLuint>(indices->begin(), indices->end());
     
     size_t vertArrayDataSize = vertices->size() * 3;
-    if (colors) vertArrayDataSize += colors->size() * 3;
-    if (normals) vertArrayDataSize += normals->size() * 3;
-    if (uvs) vertArrayDataSize += uvs->size() * 2;
+    if (hasColorBit) vertArrayDataSize += vertices->size() * 3;
+    if (hasNormalBit) vertArrayDataSize += vertices->size() * 3;
+    if (hasUVBit) vertArrayDataSize += vertices->size() * 2;
+    if (hasTangentBit) vertArrayDataSize += vertices->size() * 3;
     vertexData.reserve(vertArrayDataSize);
     
     // TODO: Somehow fill this asynchronously
@@ -72,39 +61,36 @@ VertexArray::VertexArray(
 //         static_cast<unsigned int>(1.0 * vertArrayDataSize / MAX_VERTICES_PER_PROCESS + 0.5);
 //     if (num_processes == 0) num_processes = 1;
 
-    const std::vector<glm::vec3>& verticesRef = *vertices;
-    const std::vector<glm::vec3>& colorsRef = *colors;
-    const std::vector<glm::vec2>& uvsRef = *uvs;
-    const std::vector<glm::vec3>& normalsRef = *normals;
+    const std::vector<Vertex>& verticesRef = *vertices;
 
     for (size_t vertIndex = 0; vertIndex < vertices->size(); vertIndex++)
     {
-        vertexData.push_back(verticesRef[vertIndex].x);
-        vertexData.push_back(verticesRef[vertIndex].y);
-        vertexData.push_back(verticesRef[vertIndex].z);
-        m_vertexAttribBits |= VERTEX_ATTRIB_POSITION_BIT;
+        vertexData.push_back(verticesRef[vertIndex].position.x);
+        vertexData.push_back(verticesRef[vertIndex].position.y);
+        vertexData.push_back(verticesRef[vertIndex].position.z);
 
-        if (colors)
+        if (hasColorBit)
         {
-            vertexData.push_back(colorsRef[vertIndex].x);
-            vertexData.push_back(colorsRef[vertIndex].y);
-            vertexData.push_back(colorsRef[vertIndex].z);
-            m_vertexAttribBits |= VERTEX_ATTRIB_COLOR_BIT;
+            vertexData.push_back(verticesRef[vertIndex].color.x);
+            vertexData.push_back(verticesRef[vertIndex].color.y);
+            vertexData.push_back(verticesRef[vertIndex].color.z);
         }
-
-        if (uvs)
+        if (hasUVBit)
         {
-            vertexData.push_back(uvsRef[vertIndex].x);
-            vertexData.push_back(uvsRef[vertIndex].y);
-            m_vertexAttribBits |= VERTEX_ATTRIB_UV_BIT;
+            vertexData.push_back(verticesRef[vertIndex].uv.x);
+            vertexData.push_back(verticesRef[vertIndex].uv.y);
         }
-
-        if (normals)
+        if (hasNormalBit)
         {
-            vertexData.push_back(normalsRef[vertIndex].x);
-            vertexData.push_back(normalsRef[vertIndex].y);
-            vertexData.push_back(normalsRef[vertIndex].z);
-            m_vertexAttribBits |= VERTEX_ATTRIB_NORMAL_BIT;
+            vertexData.push_back(verticesRef[vertIndex].normal.x);
+            vertexData.push_back(verticesRef[vertIndex].normal.y);
+            vertexData.push_back(verticesRef[vertIndex].normal.z);
+        }
+        if (hasTangentBit)
+        {
+            vertexData.push_back(verticesRef[vertIndex].tangent.x);
+            vertexData.push_back(verticesRef[vertIndex].tangent.y);
+            vertexData.push_back(verticesRef[vertIndex].tangent.z);
         }
     }
 
@@ -118,9 +104,10 @@ VertexArray::VertexArray(
 
     size_t numAttribElements = 
         3 +
-        3 * static_cast<bool>(colors) +
-        2 * static_cast<bool>(uvs) +
-        3 * static_cast<bool>(normals);
+        3 * static_cast<uint64_t>(hasColorBit) +
+        2 * static_cast<uint64_t>(hasUVBit) +
+        3 * static_cast<uint64_t>(hasNormalBit) +
+        3 * static_cast<uint64_t>(hasTangentBit);
     unsigned int currentOffset = 0;
 
     // Postions XYZ
@@ -136,7 +123,7 @@ VertexArray::VertexArray(
     currentOffset += 3;
 
     // Color RGB
-    if (colors)
+    if (hasColorBit)
     {
         glVertexAttribPointer(
             VERTEX_ATTRIB_COLOR_INDEX,
@@ -151,7 +138,7 @@ VertexArray::VertexArray(
     }
     else { EnableVertexAttribColor(false); }
 
-    if (uvs)
+    if (hasUVBit)
     {
         // Texture Coordinates XY
         glVertexAttribPointer(
@@ -167,7 +154,7 @@ VertexArray::VertexArray(
     }
     else { EnableVertexAttribUV(false); }
 
-    if (normals)
+    if (hasNormalBit)
     {
         // Normals XYZ (Normalized vectors)
         glVertexAttribPointer(
@@ -182,10 +169,26 @@ VertexArray::VertexArray(
         currentOffset += 3;
     }
     else { EnableVertexAttribNormals(false); }
+    
+    if (hasTangentBit)
+    {
+        // Tangents XYZ (Normalized vectors)
+        glVertexAttribPointer(
+            VERTEX_ATTRIB_TANGENT_INDEX,
+            3,
+            GL_FLOAT, 
+            GL_FALSE,
+            numAttribElements * sizeof(float),
+            reinterpret_cast<void*>(currentOffset * sizeof(float))
+        );
+        EnableVertexAttribTangents(true);
+        currentOffset += 3;
+    }
+    else { EnableVertexAttribTangents(false); }
 }
 
 VertexArray::VertexArray(
-    uint8_t vertex_attrib_bits,
+    uint16_t vertex_attrib_bits,
     const std::vector<float>& vertex_data,
     const std::vector<GLuint>& indices_data
 ) {
@@ -201,17 +204,22 @@ VertexArray::VertexArray(
         GL_STATIC_DRAW
     );
 
-    bool pos = (vertex_attrib_bits & VERTEX_ATTRIB_POSITION_BIT) == VERTEX_ATTRIB_POSITION_BIT;
-    HNCRSP_ASSERT(pos);
-    bool color = (vertex_attrib_bits & VERTEX_ATTRIB_COLOR_BIT) == VERTEX_ATTRIB_COLOR_BIT;
-    bool uv = (vertex_attrib_bits & VERTEX_ATTRIB_UV_BIT) == VERTEX_ATTRIB_UV_BIT;
-    bool normal = (vertex_attrib_bits & VERTEX_ATTRIB_NORMAL_BIT) == VERTEX_ATTRIB_NORMAL_BIT;
+    if (!(m_vertexAttribBits & VERTEX_ATTRIB_POSITION_BIT))
+    {
+        HNCRSP_TERMINATE("Vertex position is mandatory.");
+    }
+
+    bool hasColorBit = static_cast<bool>(m_vertexAttribBits & VERTEX_ATTRIB_COLOR_BIT);
+    bool hasNormalBit = static_cast<bool>(m_vertexAttribBits & VERTEX_ATTRIB_NORMAL_BIT);
+    bool hasUVBit = static_cast<bool>(m_vertexAttribBits & VERTEX_ATTRIB_UV_BIT);
+    bool hasTangentBit = static_cast<bool>(m_vertexAttribBits & VERTEX_ATTRIB_TANGENT_BIT);
 
     size_t numAttribElements = 
         3 +
-        3 * static_cast<size_t>(color) +
-        2 * static_cast<size_t>(uv) +
-        3 * static_cast<size_t>(normal);
+        3 * static_cast<uint64_t>(hasColorBit) +
+        2 * static_cast<uint64_t>(hasUVBit) +
+        3 * static_cast<uint64_t>(hasNormalBit) +
+        3 * static_cast<uint64_t>(hasTangentBit);
     unsigned int currentOffset = 0;
 
     // Postions XYZ
@@ -227,7 +235,7 @@ VertexArray::VertexArray(
     currentOffset += 3;
 
     // Color RGB
-    if (color)
+    if (hasColorBit)
     {
         glVertexAttribPointer(
             VERTEX_ATTRIB_COLOR_INDEX,
@@ -242,7 +250,7 @@ VertexArray::VertexArray(
     }
     else { EnableVertexAttribColor(false); }
 
-    if (uv)
+    if (hasUVBit)
     {
         // Texture Coordinates XY
         glVertexAttribPointer(
@@ -258,7 +266,7 @@ VertexArray::VertexArray(
     }
     else { EnableVertexAttribUV(false); }
 
-    if (normal)
+    if (hasNormalBit)
     {
         // Normals XYZ (Normalized vectors)
         glVertexAttribPointer(
@@ -273,6 +281,22 @@ VertexArray::VertexArray(
         currentOffset += 3;
     }
     else { EnableVertexAttribNormals(false); }
+    
+    if (hasTangentBit)
+    {
+        // Tangents XYZ (Normalized vectors)
+        glVertexAttribPointer(
+            VERTEX_ATTRIB_TANGENT_INDEX,
+            3,
+            GL_FLOAT, 
+            GL_FALSE,
+            numAttribElements * sizeof(float),
+            reinterpret_cast<void*>(currentOffset * sizeof(float))
+        );
+        EnableVertexAttribTangents(true);
+        currentOffset += 3;
+    }
+    else { EnableVertexAttribTangents(false); }
 }
 
 void VertexArray::EnableVertexAttribPosition(bool on) const
@@ -309,6 +333,15 @@ void VertexArray::EnableVertexAttribNormals(bool on) const
         glEnableVertexAttribArray(VERTEX_ATTRIB_NORMAL_INDEX);
     else
         glDisableVertexAttribArray(VERTEX_ATTRIB_NORMAL_INDEX);
+}
+
+void VertexArray::EnableVertexAttribTangents(bool on) const
+{
+    Bind();
+    if (on)
+        glEnableVertexAttribArray(VERTEX_ATTRIB_TANGENT_INDEX);
+    else
+        glDisableVertexAttribArray(VERTEX_ATTRIB_TANGENT_INDEX);
 }
 
 VertexArray::VertexArray(VertexArray&& other) noexcept

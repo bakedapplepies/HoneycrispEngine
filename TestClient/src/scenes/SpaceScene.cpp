@@ -197,6 +197,7 @@ std::unique_ptr< Honeycrisp::SceneRenderObj<Honeycrisp::Mesh> > SpaceScene::Gene
         &indices,
         nullptr,
         &color,
+        nullptr,
         nullptr
     );
 }

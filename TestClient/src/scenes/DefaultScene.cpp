@@ -181,6 +181,7 @@ DefaultScene::DefaultScene(const char* scene_name)
         &indices,
         &normals,
         &colors,
+        nullptr,
         nullptr
     );
     m_customMesh->SetTransform(Transform(

@@ -6,21 +6,33 @@
 HNCRSP_NAMESPACE_START
 
 Mesh::Mesh(
-    std::vector<glm::vec3>* vertices,
+    std::vector<glm::vec3>* positions,
     std::vector<GLuint>* indices,
     std::vector<glm::vec3>* normals,
     std::vector<glm::vec3>* colors,
-    std::vector<glm::vec2>* uvs
-) : m_VAO(
-    vertices,
-    indices,
-    normals,
-    colors,
-    uvs
-) {}
+    std::vector<glm::vec2>* uvs,
+    std::vector<glm::vec3>* tangents
+) : m_VAO()
+{
+    if (positions == nullptr) HNCRSP_TERMINATE("Positions data empty.");
+    if (indices == nullptr) HNCRSP_TERMINATE("Indices data empty.");
+
+    std::vector<Vertex> vertices;
+    vertices.reserve(positions->size());
+    for (uint32_t i = 0; i < positions->size(); i++)
+    {
+        vertices.push_back(Vertex {
+            .position = (*positions)[i],
+            .color    = (colors != nullptr)   ? (*colors)[i]   : glm::vec3(0.0f, 0.0f, 0.0f),
+            .normal   = (normals != nullptr)  ? (*normals)[i]  : glm::vec3(0.0f, 0.0f, 0.0f),
+            .uv       = (uvs != nullptr)      ? (*uvs)[i]      : glm::vec2(0.0f, 0.0f),
+            .tangent  = (tangents != nullptr) ? (*tangents)[i] : glm::vec3(0.0f, 0.0f, 0.0f),
+        });
+    }
+}
 
 Mesh::Mesh(
-    uint8_t vertex_attrib_bits,
+    uint16_t vertex_attrib_bits,
     const std::vector<float>& vertex_data,
     const std::vector<GLuint>& indices_data
 ) : m_VAO(vertex_attrib_bits, vertex_data, indices_data)

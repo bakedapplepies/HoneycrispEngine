@@ -93,41 +93,41 @@ Cubemap::~Cubemap()
 
 void Cubemap::_SetMesh()
 {
-    std::vector<glm::vec3> verticesPos = {
-        glm::vec3(-1.0f,  1.0f,  1.0f),
-        glm::vec3( 1.0f,  1.0f,  1.0f),
-        glm::vec3( 1.0f, -1.0f,  1.0f),
-        glm::vec3(-1.0f, -1.0f,  1.0f),
+    std::vector<Vertex> vertices = {
+        { glm::vec3(-1.0f,  1.0f,  1.0f) },
+        { glm::vec3( 1.0f,  1.0f,  1.0f) },
+        { glm::vec3( 1.0f, -1.0f,  1.0f) },
+        { glm::vec3(-1.0f, -1.0f,  1.0f) },
 
         // right
-        glm::vec3( 1.0f,  1.0f,  1.0f),
-        glm::vec3( 1.0f,  1.0f, -1.0f),
-        glm::vec3( 1.0f, -1.0f, -1.0f),
-        glm::vec3( 1.0f, -1.0f,  1.0f),
+        { glm::vec3( 1.0f,  1.0f,  1.0f) },
+        { glm::vec3( 1.0f,  1.0f, -1.0f) },
+        { glm::vec3( 1.0f, -1.0f, -1.0f) },
+        { glm::vec3( 1.0f, -1.0f,  1.0f) },
 
         // back
-        glm::vec3( 1.0f,  1.0f, -1.0f),
-        glm::vec3(-1.0f,  1.0f, -1.0f),
-        glm::vec3(-1.0f, -1.0f, -1.0f),
-        glm::vec3( 1.0f, -1.0f, -1.0f),
+        { glm::vec3( 1.0f,  1.0f, -1.0f) },
+        { glm::vec3(-1.0f,  1.0f, -1.0f) },
+        { glm::vec3(-1.0f, -1.0f, -1.0f) },
+        { glm::vec3( 1.0f, -1.0f, -1.0f) },
 
         // left
-        glm::vec3(-1.0f,  1.0f, -1.0f),
-        glm::vec3(-1.0f,  1.0f,  1.0f),
-        glm::vec3(-1.0f, -1.0f,  1.0f),
-        glm::vec3(-1.0f, -1.0f, -1.0f),
+        { glm::vec3(-1.0f,  1.0f, -1.0f) },
+        { glm::vec3(-1.0f,  1.0f,  1.0f) },
+        { glm::vec3(-1.0f, -1.0f,  1.0f) },
+        { glm::vec3(-1.0f, -1.0f, -1.0f) },
 
         // top
-        glm::vec3(-1.0f,  1.0f, -1.0f),
-        glm::vec3( 1.0f,  1.0f, -1.0f),
-        glm::vec3( 1.0f,  1.0f,  1.0f),
-        glm::vec3(-1.0f,  1.0f,  1.0f),
+        { glm::vec3(-1.0f,  1.0f, -1.0f) },
+        { glm::vec3( 1.0f,  1.0f, -1.0f) },
+        { glm::vec3( 1.0f,  1.0f,  1.0f) },
+        { glm::vec3(-1.0f,  1.0f,  1.0f) },
 
         // bottom
-        glm::vec3(-1.0f, -1.0f,  1.0f),
-        glm::vec3( 1.0f, -1.0f,  1.0f),
-        glm::vec3( 1.0f, -1.0f, -1.0f),
-        glm::vec3(-1.0f, -1.0f, -1.0f),
+        { glm::vec3(-1.0f, -1.0f,  1.0f) },
+        { glm::vec3( 1.0f, -1.0f,  1.0f) },
+        { glm::vec3( 1.0f, -1.0f, -1.0f) },
+        { glm::vec3(-1.0f, -1.0f, -1.0f) },
     };
 
     std::vector<GLuint> indicesData = {
@@ -157,11 +157,9 @@ void Cubemap::_SetMesh()
     };
 
     m_VAO = VertexArray(
-        &verticesPos,
-        &indicesData,
-        nullptr,
-        nullptr,
-        nullptr
+        VERTEX_ATTRIB_POSITION_BIT,
+        &vertices,
+        &indicesData
     );
     m_verticesCount = indicesData.size();
 }

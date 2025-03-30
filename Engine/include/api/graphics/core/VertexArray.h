@@ -7,13 +7,14 @@
 
 HNCRSP_NAMESPACE_START
 
-// struct Vertex
-// {
-//     glm::vec3 position;
-//     glm::vec3 color;
-//     glm::vec3 normal;
-//     glm::vec2 uv;
-// };
+struct Vertex
+{
+    glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec3 color = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec3 normal = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec2 uv = glm::vec2(0.0f, 0.0f);
+    glm::vec3 tangent = glm::vec3(0.0f, 0.0f, 0.0f);
+};
 
 class VertexArray
 {
@@ -21,7 +22,7 @@ private:
     GLuint m_VAO_ID = 0;
     VertexBuffer m_vertexBuffer;
     ElementBuffer m_elementBuffer;
-    uint8_t m_vertexAttribBits = 0;
+    uint16_t m_vertexAttribBits = 0;
 
     // mesh data
     uint32_t m_verticesCount;
@@ -33,14 +34,12 @@ private:
 public:
     VertexArray() = default;
     VertexArray(
-        const std::vector<glm::vec3>* vertices,
-        const std::vector<GLuint>* indices,
-        const std::vector<glm::vec3>* normals,
-        const std::vector<glm::vec3>* colors,
-        const std::vector<glm::vec2>* uvs
+        uint16_t vertex_attrib_bits,
+        const std::vector<Vertex>* vertices,
+        const std::vector<GLuint>* indices
     );
     VertexArray(
-        uint8_t vertex_attrib_bits,
+        uint16_t vertex_attrib_bits,
         const std::vector<float>& vertex_data,
         const std::vector<GLuint>& indices_data
     );
@@ -62,6 +61,7 @@ public:
     void EnableVertexAttribColor(bool on) const;
     void EnableVertexAttribUV(bool on) const;
     void EnableVertexAttribNormals(bool on) const;
+    void EnableVertexAttribTangents(bool on) const;
 };
 
 HNCRSP_NAMESPACE_END

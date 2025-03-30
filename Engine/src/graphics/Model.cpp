@@ -51,10 +51,11 @@ Model::Model(const FileSystem::Path& path, const Shader* shader, bool flip_uv)
     );
 
     // Vertex Array construction ----------
-    unsigned short vertex_attrib_bits =
+    uint16_t vertex_attrib_bits =
         VERTEX_ATTRIB_POSITION_BIT
         | VERTEX_ATTRIB_UV_BIT
-        | VERTEX_ATTRIB_NORMAL_BIT;
+        | VERTEX_ATTRIB_NORMAL_BIT
+        | VERTEX_ATTRIB_TANGENT_BIT;
 
     m_VAO = VertexArray(
         vertex_attrib_bits,
@@ -106,6 +107,7 @@ void Model::_ProcessMesh(
 ) {
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
+        // TODO: Maybe a Vertex struct could do better
         // Order is important here
         // Position -> UV -> Normal
         vertexData.push_back(mesh->mVertices[i].x);
@@ -126,6 +128,10 @@ void Model::_ProcessMesh(
         vertexData.push_back(mesh->mNormals[i].x);
         vertexData.push_back(mesh->mNormals[i].y);
         vertexData.push_back(mesh->mNormals[i].z);
+
+        vertexData.push_back(mesh->mTangents[i].x);
+        vertexData.push_back(mesh->mTangents[i].y);
+        vertexData.push_back(mesh->mTangents[i].z);
     }
 
     for (unsigned int i = 0; i < mesh->mNumFaces; i++)

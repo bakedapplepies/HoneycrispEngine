@@ -6,7 +6,7 @@ ModelSerializer::ModelSerializer()
 {}
 
 void ModelSerializer::AddModel(
-    uint8_t vertex_attrib_bits,
+    uint16_t vertex_attrib_bits,
     const float* vertex_data,
     size_t vertex_data_len,
     const GLuint* indices_data,
