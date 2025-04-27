@@ -1,19 +1,8 @@
 cmake_minimum_required(VERSION 3.26.0)
 project(${CMAKE_PROJECT_NAME} CXX C)
 
-include(FetchContent)
 include(ExternalProject)
 
-# set(GLFW_BUILD_DOCS OFF CACHE BOOL "GLFW lib only" FORCE)
-# set(GLFW_BUILD_TESTS OFF CACHE BOOL "GLFW lib only" FORCE)
-# set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "GLFW lib only" FORCE)
-# set(GLFW_INSTALL OFF CACHE BOOL "GLFW lib only" FORCE)
-# FetchContent_Declare(
-#     glfw
-#     GIT_REPOSITORY https://github.com/glfw/glfw.git
-#     GIT_TAG e7ea71be039836da3a98cea55ae5569cb5eb885c
-#     OVERRIDE_FIND_PACKAGE
-# )
 set(GLFW_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/extern/glfw CACHE INTERNAL "")
 message("${GLFW_INSTALL_DIR}")
 ExternalProject_Add(
@@ -110,6 +99,8 @@ add_library(IMGUI STATIC
     ${PROJECT_SOURCE_DIR}/imgui/imgui_widgets.cpp
     ${PROJECT_SOURCE_DIR}/imgui/imgui_impl_glfw.cpp
     ${PROJECT_SOURCE_DIR}/imgui/imgui_impl_opengl3.cpp
+    ${PROJECT_SOURCE_DIR}/imgui/implot.cpp
+    ${PROJECT_SOURCE_DIR}/imgui/implot_items.cpp
 )
 add_dependencies(IMGUI GLFW_EXTERN)
 target_include_directories(IMGUI PRIVATE ${GLFW_INSTALL_DIR}/install/include)

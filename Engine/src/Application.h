@@ -11,7 +11,7 @@ extern void Application_RegisterSystems();
 
 namespace Application
 {
-	void Run();	
+	void Run();
 }
 
 HNCRSP_NAMESPACE_END

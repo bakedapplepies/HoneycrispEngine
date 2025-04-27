@@ -18,6 +18,7 @@ out VS_OUT {
     vec3 Normal;
     vec3 FragPos;
     vec4 FragPosDepthSpace;
+    mat3 TBN;
 } vs_out;
 
 uniform mat4 u_model;
@@ -38,8 +39,12 @@ void main()
     vs_out.TexCoord = aTexCoord;
     vs_out.Normal = u_normalMatrix * aNormal;
 
-    vec3 normal = u_normalMatrix * aNormal;
-    vec3 tangent = u_normalMatrix * aTangent;
+    vec3 normal = normalize(u_normalMatrix * aNormal);
+    vec3 tangent = normalize(u_normalMatrix * aTangent);
+    tangent = normalize(tangent - dot(tangent, normal) * normal);
+    vec3 bitangent = cross(normal, tangent);
+    mat3 TBN = mat3(tangent, bitangent, normal);
+    vs_out.TBN = TBN;
 
     vec4 worldPos = u_model * vec4(aPos, 1.0);
     vs_out.FragPos = vec3(worldPos);

@@ -30,12 +30,9 @@ public:
 
     void AddModel(
         uint16_t vertex_attrib_bits,
-        const float* vertex_data,
-        size_t vertex_data_len,
-        const GLuint* indices_data,
-        size_t indices_data_len,
-        const MeshMetaData* mesh_meta_data,
-        size_t mesh_meta_data_len
+        const std::vector<Vertex>& vertex_data,
+        const std::vector<GLuint>& indices_data,
+        const std::vector<MeshMetaData>& MeshMetaData
     );
     void AddMaterial(
         const FileSystem::Path& albedo_path,

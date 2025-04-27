@@ -14,8 +14,7 @@ private:
 
     bool m_continueProgram = true;
     float m_deltaTime = 0.0f;
-    float m_totalTime = 0.0f;
-    unsigned int m_frames = 0;
+    uint32_t m_lastFPS = 0;
 
 public:
     GameLoop();

@@ -17,18 +17,32 @@ Mesh::Mesh(
     if (positions == nullptr) HNCRSP_TERMINATE("Positions data empty.");
     if (indices == nullptr) HNCRSP_TERMINATE("Indices data empty.");
 
+    bool hasColorBit = colors != nullptr;
+    bool hasNormalBit = normals != nullptr;
+    bool hasUVBit = uvs != nullptr;
+    bool hasTangentBit = tangents != nullptr;
+
+    uint16_t vertex_attrib_bits = 
+        VERTEX_ATTRIB_POSITION_BIT
+        | VERTEX_ATTRIB_COLOR_BIT   * static_cast<uint16_t>(hasColorBit)
+        | VERTEX_ATTRIB_NORMAL_BIT  * static_cast<uint16_t>(hasNormalBit)
+        | VERTEX_ATTRIB_UV_BIT      * static_cast<uint16_t>(hasUVBit)
+        | VERTEX_ATTRIB_TANGENT_BIT * static_cast<uint16_t>(hasTangentBit);
+
     std::vector<Vertex> vertices;
     vertices.reserve(positions->size());
     for (uint32_t i = 0; i < positions->size(); i++)
     {
         vertices.push_back(Vertex {
             .position = (*positions)[i],
-            .color    = (colors != nullptr)   ? (*colors)[i]   : glm::vec3(0.0f, 0.0f, 0.0f),
-            .normal   = (normals != nullptr)  ? (*normals)[i]  : glm::vec3(0.0f, 0.0f, 0.0f),
-            .uv       = (uvs != nullptr)      ? (*uvs)[i]      : glm::vec2(0.0f, 0.0f),
-            .tangent  = (tangents != nullptr) ? (*tangents)[i] : glm::vec3(0.0f, 0.0f, 0.0f),
+            .color    = (hasColorBit)   ? (*colors)[i]   : glm::vec3(0.0f, 0.0f, 0.0f),
+            .normal   = (hasNormalBit)  ? (*normals)[i]  : glm::vec3(0.0f, 0.0f, 0.0f),
+            .uv       = (hasUVBit)      ? (*uvs)[i]      : glm::vec2(0.0f, 0.0f),
+            .tangent  = (hasTangentBit) ? (*tangents)[i] : glm::vec3(0.0f, 0.0f, 0.0f),
         });
     }
+
+    m_VAO = VertexArray(vertex_attrib_bits, &vertices, indices);
 }
 
 Mesh::Mesh(

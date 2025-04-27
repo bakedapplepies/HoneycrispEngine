@@ -7,27 +7,66 @@ ModelSerializer::ModelSerializer()
 
 void ModelSerializer::AddModel(
     uint16_t vertex_attrib_bits,
-    const float* vertex_data,
-    size_t vertex_data_len,
-    const GLuint* indices_data,
-    size_t indices_data_len,
-    const MeshMetaData* mesh_meta_data,
-    size_t mesh_meta_data_len
+    const std::vector<Vertex>& vertex_data,
+    const std::vector<GLuint>& indices_data,
+    const std::vector<MeshMetaData>& mesh_meta_data
 ) {
     m_vertex_attrib_bits = vertex_attrib_bits;
 
     std::vector<Serialized::MeshMetaData> mesh_meta_data_vec;
-    m_vertex_data = m_builder.CreateVector(vertex_data, vertex_data_len);
-    m_indices = m_builder.CreateVector(indices_data, indices_data_len);
+    mesh_meta_data_vec.reserve(mesh_meta_data.size());
+    std::vector<float> vertex_data_vec;
+    bool hasColorBit = static_cast<bool>(vertex_attrib_bits & VERTEX_ATTRIB_COLOR_BIT);
+    bool hasNormalBit = static_cast<bool>(vertex_attrib_bits & VERTEX_ATTRIB_NORMAL_BIT);
+    bool hasUVBit = static_cast<bool>(vertex_attrib_bits & VERTEX_ATTRIB_UV_BIT);
+    bool hasTangentBit = static_cast<bool>(vertex_attrib_bits & VERTEX_ATTRIB_TANGENT_BIT);
+    size_t numAttribElements = 
+        3 +
+        3 * static_cast<uint64_t>(hasColorBit) +
+        2 * static_cast<uint64_t>(hasUVBit) +
+        3 * static_cast<uint64_t>(hasNormalBit) +
+        3 * static_cast<uint64_t>(hasTangentBit);
+    vertex_data_vec.reserve(vertex_data.size());
+    m_indices = m_builder.CreateVector(indices_data);
 
-    for (unsigned int i = 0; i < mesh_meta_data_len; i++)
+    for (uint32_t i = 0; i < mesh_meta_data.size(); i++)
     {
-        mesh_meta_data_vec.emplace_back(
-            mesh_meta_data[i].mesh_vertex_offset,
-            mesh_meta_data[i].indices_buffer_count,
-            mesh_meta_data[i].material_index
-        );
+        mesh_meta_data_vec.push_back(MeshMetaData {
+            .mesh_vertex_offset = mesh_meta_data[i].mesh_vertex_offset,
+            .indices_buffer_count = mesh_meta_data[i].indices_buffer_count,
+            .material_index = mesh_meta_data[i].material_index
+        });
     }
+    for (uint32_t i = 0; i < vertex_data.size(); i++)
+    {
+        vertex_data_vec.push_back(vertex_data[i].position.x);
+        vertex_data_vec.push_back(vertex_data[i].position.y);
+        vertex_data_vec.push_back(vertex_data[i].position.z);
+        if (hasColorBit)
+        {
+            vertex_data_vec.push_back(vertex_data[i].color.x);
+            vertex_data_vec.push_back(vertex_data[i].color.y);
+            vertex_data_vec.push_back(vertex_data[i].color.z);
+        }
+        if (hasUVBit)
+        {   
+            vertex_data_vec.push_back(vertex_data[i].uv.x);
+            vertex_data_vec.push_back(vertex_data[i].uv.y);
+        }
+        if (hasNormalBit)
+        {
+            vertex_data_vec.push_back(vertex_data[i].normal.x);
+            vertex_data_vec.push_back(vertex_data[i].normal.y);
+            vertex_data_vec.push_back(vertex_data[i].normal.z);
+        }
+        if (hasTangentBit)
+        {
+            vertex_data_vec.push_back(vertex_data[i].tangent.x);
+            vertex_data_vec.push_back(vertex_data[i].tangent.y);
+            vertex_data_vec.push_back(vertex_data[i].tangent.z);
+        }
+    }
+    m_vertex_data = m_builder.CreateVector(vertex_data_vec);
     m_meshes_meta_data = m_builder.CreateVectorOfStructs(mesh_meta_data_vec);
 }
 

@@ -57,13 +57,14 @@ void GLAPIENTRY DebugMessageCallback(
 
     switch (severity)
     {
-        case GL_DEBUG_SEVERITY_HIGH: debugMessageStream << "Severity: high"; break;
-        case GL_DEBUG_SEVERITY_MEDIUM: debugMessageStream << "Severity: medium"; break;
-        case GL_DEBUG_SEVERITY_LOW: debugMessageStream << "Severity: low"; break;
-        case GL_DEBUG_SEVERITY_NOTIFICATION: debugMessageStream << "Severity: notification"; break;
+        case GL_DEBUG_SEVERITY_HIGH: debugMessageStream << "Severity: High"; break;
+        case GL_DEBUG_SEVERITY_MEDIUM: debugMessageStream << "Severity: Medium"; break;
+        case GL_DEBUG_SEVERITY_LOW: debugMessageStream << "Severity: Low"; break;
+        case GL_DEBUG_SEVERITY_NOTIFICATION: debugMessageStream << "Severity: Notification"; break;
     }
 
     HNCRSP_ERROR("OpenGL Message: {} {}", type, debugMessageStream.str());
+    HNCRSP_DEBUG_BREAK();
     return;
 }   
 

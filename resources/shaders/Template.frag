@@ -8,6 +8,7 @@ in VS_OUT {
     vec3 Normal;
     vec3 FragPos;
     vec4 FragPosDepthSpace;
+    mat3 TBN;
 } fs_in;
 
 // layout (location = 0) uniform sampler2D

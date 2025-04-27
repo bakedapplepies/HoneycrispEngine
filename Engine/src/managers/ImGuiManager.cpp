@@ -1,8 +1,9 @@
 #include "api/managers/ImGuiManager.h"
+#include "vendor/imgui/implot.h"
 #include "api/ecs/ECSManager.h"
 #include "api/managers/SceneManager.h"
-#include "src/WindowHandler.h"
 #include "api/managers/ShaderManager.h"
+#include "src/WindowHandler.h"
 #include "api/core/Random.h"
 #include "api/core/Timer.h"
 
@@ -11,7 +12,7 @@ HNCRSP_NAMESPACE_START
 
 ImGuiManager g_ImGuiManager;
 
-void ImGuiManager::Update()
+void ImGuiManager::Update(uint32_t last_frame_FPS)
 {
     static CallbackData* callbackData = GetCallbackData();
 
@@ -73,18 +74,30 @@ void ImGuiManager::Update()
         postprocessingShader->SetVec3Unf("u_colorFilter", colorFilter);
 
     ImGui::NewLine();
-    ImGui::SeparatorText("Statistics");
-    // float totalRenderTime = depthPass + scenePass + postprocessing;
-    // ImGui::Text("Total Render time: %fms (%f%%)", totalRenderTime * 1000, totalRenderTime/m_deltaTime);
-
-    // static bool anti_aliasing;
-    // if (ImGui::Checkbox("Anti-aliasing", &anti_aliasing))
-    // {
-    //     HNCRSP_INFO(anti_aliasing);
-    // }
-    
-    // ImGui::Image((void*)&Texture2DManager::mainTextureMap->getID(), ImVec2(100.0f, 100.0f));
-    
+    ImGui::SeparatorText("Statistics");   
+    static std::vector<double> fpsData;
+    static std::vector<double> fpsDataTimeFrame;
+    static double baseTime = std::ceilf(ImGui::GetTime());
+    if (ImGui::GetTime() >= baseTime)
+    {
+        fpsData.push_back(static_cast<double>(last_frame_FPS));
+        fpsDataTimeFrame.push_back(baseTime);
+        if (fpsData.size() >= 21)
+        {
+            fpsData.erase(fpsData.begin());
+            fpsDataTimeFrame.erase(fpsDataTimeFrame.begin());
+        }
+        baseTime += 0.5;
+    }
+    if (ImPlot::BeginPlot("Line Plots"))
+    {
+        ImPlot::SetNextAxisLimits(ImAxis_Y1, 0.0, 2000.0);
+        ImPlot::SetNextAxisToFit(ImAxis_X1);
+        ImPlot::SetNextAxisToFit(ImAxis_Y1);
+        ImPlot::SetupAxes("Time","FPS");
+        ImPlot::PlotLine("FPS", fpsDataTimeFrame.data(), fpsData.data(), fpsData.size());
+        ImPlot::EndPlot();
+    } 
     ImGui::End();
 
     // ----- Per-scene settings -----
@@ -156,6 +169,7 @@ uint64_t ImGuiManager::StartUp()
     IMGUI_CHECKVERSION();
 
     ImGui::CreateContext();
+    ImPlot::CreateContext();
     ImGui_ImplOpenGL3_Init();
     ImGui_ImplGlfw_InitForOpenGL(glfwGetCurrentContext(), true);
 
@@ -177,6 +191,7 @@ void ImGuiManager::ShutDown(uint64_t key)
     ImGui::Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+    ImPlot::DestroyContext();
 }
 
 HNCRSP_NAMESPACE_END

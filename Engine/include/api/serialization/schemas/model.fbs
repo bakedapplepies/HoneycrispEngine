@@ -1,7 +1,5 @@
 namespace Honeycrisp.Serialized;
 
-// Basic Model schema
-
 struct MeshMetaData
 {
     mesh_vertex_offset: uint32;

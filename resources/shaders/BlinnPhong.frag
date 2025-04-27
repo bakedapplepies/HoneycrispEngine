@@ -9,6 +9,7 @@ in VS_OUT {
     vec3 Normal;
     vec3 FragPos;
     vec4 FragPosDepthSpace;
+    mat3 TBN;
 } fs_in;
 
 layout(std140, binding = 1) uniform GlobUniforms
@@ -110,7 +111,7 @@ vec3 CalcDirLight(DirLight dir_light, vec3 normal, vec3 dir_to_view, float shado
     float specularCoef = pow(max(dot(reflectDir, dir_to_view), 0.0), u_material.shininess);
     vec3 specular = dir_light.specular * specularCoef * specular_frag;
 
-    return ambient * min(1.0, shadow_factor * 0.5) + (diffuse + specular) * shadow_factor;
+    return ambient + (diffuse + specular) * shadow_factor;
 }
 
 vec3 CalcPointLight(PointLight point_light, vec3 normal, vec3 dir_to_view, vec3 albedo_frag, vec3 specular_frag)
@@ -180,7 +181,9 @@ void main()
     vec4 albedoFrag = textureLod(u_material.albedo, fs_in.TexCoord, 0.0);
     vec4 specularFrag = vec4(0.0);
     vec4 normalFrag = texture(u_material.normal, fs_in.TexCoord);
-    normalFrag * ((u_material.whichMaterial & (1 << 3)) > 0 ? 1.0 : 0.0);
+    normalFrag *= ((u_material.whichMaterial & (1 << 3)) != 0 ? 1.0 : 0.0);
+    normalFrag = normalFrag * 2.0 - 1.0;  // convert from [0, 1] to [-1, 1]
+    vec3 normal = fs_in.TBN * vec3(normalFrag);
     if ((u_material.whichMaterial & (1 << 4)) > 0)
     {
         specularFrag = texture(u_material.specular, fs_in.TexCoord);
@@ -191,18 +194,18 @@ void main()
 
     // Accumulate light
     for (int i = 0; i < u_num_dir_light; i++)
-        result += CalcDirLight(u_dir_light, fs_in.Normal, dirToView, shadowFactor, vec3(albedoFrag), vec3(specularFrag));
+        result += CalcDirLight(u_dir_light, normal, dirToView, shadowFactor, vec3(albedoFrag), vec3(specularFrag));
 
     for (int i = 0; i < u_num_point_light; i++)
-        result += CalcPointLight(u_point_light, fs_in.Normal, dirToView, vec3(albedoFrag), vec3(specularFrag));
+        result += CalcPointLight(u_point_light, normal, dirToView, vec3(albedoFrag), vec3(specularFrag));
         
     for (int i = 0; i < u_num_spot_light; i++)
-        result += CalcSpotLight(u_spot_light, fs_in.Normal, dirToView, vec3(albedoFrag), vec3(specularFrag));
+        result += CalcSpotLight(u_spot_light, normal, dirToView, vec3(albedoFrag), vec3(specularFrag));
 
     // No clamping since using HDR framebuffer
     // result = clamp(result, vec3(0.0), vec3(1.0));
 
     // result *= shadowFactor;
 
-    glFragColor = vec4(vec3(normalFrag), albedoFrag.w);
+    glFragColor = vec4(result, albedoFrag.w);
 }

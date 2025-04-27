@@ -72,7 +72,7 @@ void GameLoop::Start()
         renderer->_Render();
 
         // ----- Render ImGui ----- always render after scene so it doesn't get drawn over
-        g_ImGuiManager.Update();
+        g_ImGuiManager.Update(m_lastFPS);
                 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -125,20 +125,24 @@ static uint32_t totalFPS = 0;  // uint32_t is more than enough
 void GameLoop::_CalcFPS()
 {
     static GLFWwindow* window = glfwGetCurrentContext();
+    static float totalTime = 0.0f;
+    static float targetTime = 1.0f;
+    static uint32_t frames = 0u;
 
-    m_totalTime += m_deltaTime;
-    m_frames++;
-    if (m_totalTime >= 1.0f)
+    totalTime += m_deltaTime;
+    frames++;
+    if (totalTime >= targetTime)
     {
-        if (m_frames > highFPS) highFPS = m_frames;
-        if (m_frames < lowFPS) lowFPS = m_frames;
+        if (frames > highFPS) highFPS = frames;
+        if (frames < lowFPS) lowFPS = frames;
         countedFPSes++;
-        totalFPS += m_frames;
+        totalFPS += frames;
 
-        std::string title = "Honeycrisp - FPS: " + fmt::to_string(m_frames);
+        std::string title = "Honeycrisp - FPS: " + fmt::to_string(frames);
         glfwSetWindowTitle(window, title.c_str());
-        m_frames = 0;
-        m_totalTime = 0.0f;
+        m_lastFPS = frames;
+        frames = 0;
+        targetTime += 1.0f;
     }
 }
 

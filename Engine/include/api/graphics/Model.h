@@ -34,7 +34,7 @@ private:  // building model
         const aiScene*,
         const FileSystem::Path& modelDirectory,
         ModelSerializer& modelSerializer,
-        std::vector<float>& vertexData,
+        std::vector<Vertex>& vertexData,
         std::vector<GLuint>& indices
     );
     void _ProcessMesh(
@@ -42,7 +42,7 @@ private:  // building model
         const aiScene*,
         const FileSystem::Path& modelDirectory,
         ModelSerializer& modelSerializer,
-        std::vector<float>& vertexData,
+        std::vector<Vertex>& vertexData,
         std::vector<GLuint>& indices
     );
     void _GetMaterials(

@@ -14,6 +14,7 @@
 - TODO: SPIR-V
 - TODO: Automatic handling of nullptrs that doesn't use weakptrs (somehow)
 - TODO: Relative world positions to parents
+- TODO: Add Visual Studio 2022 support (CMake & Build{BuildType}.bat)
 
 - TODO: Frustum Culling
 

@@ -23,7 +23,7 @@ public:
     HNCRSP_NODISCARD uint64_t StartUp();
     void ShutDown(uint64_t key);
 
-    void Update();
+    void Update(uint32_t last_frame_FPS);
 
 private:
     void _NewFrame();

@@ -35,7 +35,7 @@ Model::Model(const FileSystem::Path& path, const Shader* shader, bool flip_uv)
     // Process Model ----------
     FileSystem::Path modelDirectory = path;
     modelDirectory.remove_filename();
-    std::vector<float> vertexData;
+    std::vector<Vertex> vertexData;
     std::vector<GLuint> indices;
 
     _GetMaterials(scene, modelDirectory, modelSerializer, shader);
@@ -59,19 +59,16 @@ Model::Model(const FileSystem::Path& path, const Shader* shader, bool flip_uv)
 
     m_VAO = VertexArray(
         vertex_attrib_bits,
-        vertexData,
-        indices
+        &vertexData,
+        &indices
     );
 
     // Serialization ----------
     modelSerializer.AddModel(
         vertex_attrib_bits,
-        vertexData.data(),
-        vertexData.size(),
-        indices.data(),
-        indices.size(),
-        m_meshesMetaData.data(),
-        m_meshesMetaData.size()
+        vertexData,
+        indices,
+        m_meshesMetaData
     );
     modelSerializer.Serialize(path);
 
@@ -81,57 +78,45 @@ Model::Model(const FileSystem::Path& path, const Shader* shader, bool flip_uv)
 void Model::_ProcessNode(
     aiNode* node,
     const aiScene* scene,
-    const FileSystem::Path& modelDirectory,
+    const FileSystem::Path& model_directory,
     ModelSerializer& modelSerializer,
-    std::vector<float>& vertexData,
+    std::vector<Vertex>& vertexData,
     std::vector<GLuint>& indices
 ) {
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        _ProcessMesh(mesh, scene, modelDirectory, modelSerializer, vertexData, indices);
+        _ProcessMesh(mesh, scene, model_directory, modelSerializer, vertexData, indices);
     }
     for (unsigned int i = 0; i < node->mNumChildren; i++)
     {
-        _ProcessNode(node->mChildren[i], scene, modelDirectory, modelSerializer, vertexData, indices);
+        _ProcessNode(node->mChildren[i], scene, model_directory, modelSerializer, vertexData, indices);
     }
 }
 
 void Model::_ProcessMesh(
     aiMesh* mesh,
     const aiScene* scene,
-    const FileSystem::Path& modelDirectory,
+    const FileSystem::Path& model_directory,
     ModelSerializer& modelSerializer,
-    std::vector<float>& vertexData,
+    std::vector<Vertex>& vertexData,
     std::vector<GLuint>& indices
 ) {
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
-        // TODO: Maybe a Vertex struct could do better
-        // Order is important here
-        // Position -> UV -> Normal
-        vertexData.push_back(mesh->mVertices[i].x);
-        vertexData.push_back(mesh->mVertices[i].y);
-        vertexData.push_back(mesh->mVertices[i].z);
-
-        if (mesh->mTextureCoords[0])
-        {
-            vertexData.push_back(mesh->mTextureCoords[0][i].x);
-            vertexData.push_back(mesh->mTextureCoords[0][i].y);
-        }
-        else
-        {
-            vertexData.push_back(0.0f);
-            vertexData.push_back(0.0f);
-        }
-
-        vertexData.push_back(mesh->mNormals[i].x);
-        vertexData.push_back(mesh->mNormals[i].y);
-        vertexData.push_back(mesh->mNormals[i].z);
-
-        vertexData.push_back(mesh->mTangents[i].x);
-        vertexData.push_back(mesh->mTangents[i].y);
-        vertexData.push_back(mesh->mTangents[i].z);
+        glm::vec3 position = glm::vec3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
+        glm::vec3 normal = glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
+        glm::vec2 uv = (mesh->mTextureCoords[0])
+            ? glm::vec2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y)
+            : glm::vec2(0.0f, 0.0f);
+        glm::vec3 tangent = glm::vec3(mesh->mTangents[i].x, mesh->mTangents[i].y, mesh->mTangents[i].z);
+        
+        vertexData.emplace_back(Vertex {
+            .position = position,
+            .normal = normal,
+            .uv = uv,
+            .tangent = tangent
+        });
     }
 
     for (unsigned int i = 0; i < mesh->mNumFaces; i++)
@@ -166,7 +151,7 @@ void Model::_ProcessMesh(
 
 void Model::_GetMaterials(
     const aiScene* scene,
-    const FileSystem::Path& modelDirectory,
+    const FileSystem::Path& model_directory,
     ModelSerializer& modelSerializer,
     const Shader* shader
 ) {
@@ -197,35 +182,35 @@ void Model::_GetMaterials(
 
         if (material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilename) != aiReturn_FAILURE)
         {
-            texturePath = modelDirectory.string() + textureFilename.C_Str();
+            texturePath = model_directory.string() + textureFilename.C_Str();
             albedo = FileSystem::Path(texturePath);
 
             currentMaterial.SetAlbedoMap(albedo);
         }
         if (material->GetTexture(aiTextureType_NORMALS, 0, &textureFilename) != aiReturn_FAILURE)
         {
-            texturePath = modelDirectory.string() + textureFilename.C_Str();
+            texturePath = model_directory.string() + textureFilename.C_Str();
             normal = FileSystem::Path(texturePath);
 
             currentMaterial.SetNormalMap(normal);
         }
         if (material->GetTexture(aiTextureType_SPECULAR, 0, &textureFilename) != aiReturn_FAILURE)
         {
-            texturePath = modelDirectory.string() + textureFilename.C_Str();
+            texturePath = model_directory.string() + textureFilename.C_Str();
             specular = FileSystem::Path(texturePath);
 
             currentMaterial.SetSpecularMap(specular);
         }
         if (material->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &textureFilename) != aiReturn_FAILURE)
         {
-            texturePath = modelDirectory.string() + textureFilename.C_Str();
+            texturePath = model_directory.string() + textureFilename.C_Str();
             roughness = FileSystem::Path(texturePath);
 
             currentMaterial.SetRoughnessMap(roughness);
         }
         if (material->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &textureFilename) != aiReturn_FAILURE)
         {
-            texturePath = modelDirectory.string() + textureFilename.C_Str();
+            texturePath = model_directory.string() + textureFilename.C_Str();
             ao = FileSystem::Path(texturePath);
 
             currentMaterial.SetAoMap(ao);
