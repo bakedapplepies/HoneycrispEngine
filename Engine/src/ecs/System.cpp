@@ -1,7 +1,0 @@
-#include "api/ecs/System.h"
-
-HNCRSP_NAMESPACE_START
-
-
-
-HNCRSP_NAMESPACE_END

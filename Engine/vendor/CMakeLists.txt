@@ -1,53 +1,40 @@
-cmake_minimum_required(VERSION 3.26.0)
-project(${CMAKE_PROJECT_NAME} CXX C)
+include(FetchContent)
 
-add_library(GLAD STATIC
-    ${PROJECT_SOURCE_DIR}/glad/glad.c
+if (UNIX)
+    set(LIB lib64)
+elseif (WIN32)
+    set(LIB lib)
+endif ()
+
+# ======================================================================
+FetchContent_Declare(glfw_fetch
+    GIT_REPOSITORY https://github.com/glfw/glfw.git
+    GIT_TAG dbadda26835ec5089ef922e6c290bcf58cf12056
 )
-target_include_directories(GLAD PRIVATE ${PROJECT_SOURCE_DIR})
-
-add_library(IMGUI STATIC
-    ${PROJECT_SOURCE_DIR}/imgui/imgui.cpp
-    ${PROJECT_SOURCE_DIR}/imgui/imgui_draw.cpp
-    ${PROJECT_SOURCE_DIR}/imgui/imgui_tables.cpp
-    ${PROJECT_SOURCE_DIR}/imgui/imgui_widgets.cpp
-    ${PROJECT_SOURCE_DIR}/imgui/imgui_impl_glfw.cpp
-    ${PROJECT_SOURCE_DIR}/imgui/imgui_impl_opengl3.cpp
+FetchContent_MakeAvailable(glfw_fetch)
+FetchContent_GetProperties(glfw_fetch
+    SOURCE_DIR glfw_SOURCE_DIR
+    BINARY_DIR glfw_BINARY_DIR
 )
-target_include_directories(IMGUI PRIVATE ${PROJECT_SOURCE_DIR}/glfw/include)
-# target_compile_definitions(IMGUI PRIVATE IMGUI_IMPL_OPENGL_LOADER_CUSTOM)
-
-add_library(STB_IMAGE STATIC
-    ${PROJECT_SOURCE_DIR}/stb/stb_image.cpp
+add_library(GLFW_LIBRARY INTERFACE IMPORTED GLOBAL)
+target_include_directories(GLFW_LIBRARY INTERFACE
+    ${glfw_SOURCE_DIR}/include
 )
-target_include_directories(STB_IMAGE PRIVATE ${PROJECT_SOURCE_DIR})
+target_link_libraries(GLFW_LIBRARY INTERFACE
+    ${glfw_BINARY_DIR}/src/libglfw3.a
+)
 
-set( GLFW_BUILD_DOCS OFF CACHE BOOL  "GLFW lib only" FORCE )
-set( GLFW_BUILD_TESTS OFF CACHE BOOL  "GLFW lib only" FORCE )
-set( GLFW_BUILD_EXAMPLES OFF CACHE BOOL  "GLFW lib only" FORCE )
-set( GLFW_INSTALL OFF CACHE BOOL  "GLFW lib only" FORCE )
-add_subdirectory(glfw)
-
-option( TRACY_ENABLE "" ON )
-# option( TRACY_ONLY_LOCALHOST "" ON )
-add_subdirectory(tracy)
-
-add_subdirectory(glm)
-add_subdirectory(fmt)
-
-set(ASSIMP_NO_EXPORT OFF CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_SAMPLES OFF CACHE BOOL "" FORCE)
-set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT OFF CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_ASSIMP_VIEW OFF CACHE BOOL "" FORCE)
-set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
-
-if (NOT EXISTS "${PROJECT_SOURCE_DIR}/assimp/include/assimp/config.h")
-    message("-- Building assimp")
-    execute_process(
-        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/assimp
-        COMMAND cmake . -G "Ninja"
+# ======================================================================
+if (${USE_LOCAL_ENVY_ENGINE})
+    FetchContent_Declare(envyengine_fetch
+        SOURCE_DIR ${LOCAL_ENVY_ENGINE_ROOT}
+    )
+else()
+    FetchContent_Declare(envyengine_fetch
+        GIT_REPOSITORY https://github.com/bakedapplepies/EnvyEngine.git
+        GIT_TAG a6222ed31f0c7d389b14219d17e229d1a7156139
     )
 endif()
-add_subdirectory(assimp)
+
+FetchContent_MakeAvailable(envyengine_fetch)
+add_library(ENVYENGINE_LIBRARY ALIAS EnvyEngine)
