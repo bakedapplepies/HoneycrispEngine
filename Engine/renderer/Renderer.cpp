@@ -4,6 +4,9 @@
 #include <fmt/format.h>
 
 #include "util/Path.h"
+#include "core/Constants.h"
+
+HNCRSP_NAMESPACE_START
 
 Renderer::Renderer(const Envy::EnvyInstance* envy_instance)
 {
@@ -12,9 +15,13 @@ Renderer::Renderer(const Envy::EnvyInstance* envy_instance)
 
     m_envyInstance = envy_instance;
 
-    m_globalUBO = m_envyInstance->CreateUBO(160, 0);
+    m_globalUBO = m_envyInstance->CreateUBO(160, UBO_BINDING_INDEX_GLOBAL);
+    m_lightUBO = m_envyInstance->CreateUBO(16 + 20 * 16, UBO_BINDING_INDEX_LIGHT);
 
-    m_fbo = m_envyInstance->CreateFramebuffer(1280, 720);
+    uint32_t pointLightNum = 1;
+    m_lightUBO->UploadData(0, 4, &pointLightNum);
+
+    m_fbo = m_envyInstance->CreateFramebuffer(2560, 1440);
 
     std::array<Envy::Vertex, 4> vertices = {
         Envy::Vertex {
@@ -56,71 +63,92 @@ Renderer::~Renderer()
     m_screenQuadVAO = GLResource<Envy::VertexArray>::empty;
 }
 
-void Renderer::Render(const Camera* camera, 
-                      const GLResource<Envy::Cubemap>& cubemap,
-                      const RenderCommand& render_command) const
+void Renderer::BeginFrame(const Camera* camera)
 {
+    m_canRenderFlag = true;
+
     m_fbo->Bind();
     m_envyInstance->ClearBuffer();
+    m_envyInstance->SetViewport(0, 0, 2560, 1440);
+
+    // Update only once per frame
+    _UpdateUBOs(camera);
+}
+
+void Renderer::EndFrame(const GLResource<Envy::Cubemap>& cubemap)
+{
+    m_canRenderFlag = false;
+
+    if (cubemap.Usable())  // Rendered last to avoid over-draw
+    {
+        cubemap->Draw();
+    }
+    _RenderToScreenQuad();
+}
+
+void Renderer::Render(const RenderCommand& render_command) const
+{
+    if (!m_canRenderFlag)
+    {
+        fmt::println("Honeycrisp: Frame hasn't began (use BeginFrame().)");
+        return;
+    }
 
     const Material* material = render_command.material;
-
     const uint32_t TEXTURE_UNIT_ALBEDO = 0;
     material->albedo->Bind(TEXTURE_UNIT_ALBEDO);
-
+    material->roughness->Bind(TEXTURE_UNIT_ROUGHNESS);
     material->pipeline->Bind();
     material->pipeline->GetVertexProgram()->UniformMat4("u_model",
                                                         render_command.transform->GetModelMatrix());
 
-    // Update only once
-    _UpdateGlobalUBO(camera);
-
     render_command.vertexArray->Bind();
-
     m_envyInstance->Draw(*render_command.vaoChunk);
-
-    if (cubemap.Usable())  // Rendered last to avoid over-draw
-    {
-        cubemap->Draw();
-    }
-
-    _RenderToScreenQuad();
 }
 
-void Renderer::RenderIndirect(const Camera* camera,
-                              const GLResource<Envy::Cubemap>& cubemap,
-                              const RenderCommandIndirect& render_command_indirect) const
+void Renderer::RenderMultiple(const std::vector<RenderCommand>& render_commands) const
 {
-    m_fbo->Bind();
-    m_envyInstance->ClearBuffer();
-    m_envyInstance->SetViewport(0, 0, 1280, 720);
+    if (!m_canRenderFlag)
+    {
+        fmt::println("Honeycrisp: Frame hasn't began (use BeginFrame().)");
+        return;
+    }
+
+    for (uint32_t i = 0; i < render_commands.size(); i++)
+    {
+        const Material* material = render_commands[i].material;
+        material->albedo->Bind(TEXTURE_UNIT_ALBEDO);
+        if (material->roughness.Usable()) material->roughness->Bind(TEXTURE_UNIT_ROUGHNESS);
+        material->pipeline->Bind();
+        material->pipeline->GetVertexProgram()->UniformMat4("u_model",
+                                                            render_commands[i].transform->GetModelMatrix());
+
+        render_commands[i].vertexArray->Bind();
+        m_envyInstance->Draw(*render_commands[i].vaoChunk);
+    }
+}
+
+void Renderer::RenderIndirect(const RenderCommandIndirect& render_command_indirect) const
+{
+    if (!m_canRenderFlag)
+    {
+        fmt::println("Frame hasn't began (use BeginFrame().)");
+        return;
+    }    
 
     const Material* material = render_command_indirect.material;
-
     const uint32_t TEXTURE_UNIT_ALBEDO = 0;
     material->albedo->Bind(TEXTURE_UNIT_ALBEDO);
-
     material->pipeline->Bind();
     material->pipeline->GetVertexProgram()->UniformMat4("u_model",
                                                         render_command_indirect.transform->GetModelMatrix());
 
-    // Update only once
-    _UpdateGlobalUBO(camera);
-
     render_command_indirect.vertexArray->Bind();
     render_command_indirect.indirectBuffer->Bind();
-
     m_envyInstance->DrawIndirect(render_command_indirect.indirectBuffer->GetCommandCount());
-
-    if (cubemap.Usable())  // Rendered last to avoid over-draw
-    {
-        cubemap->Draw();
-    }
-
-    _RenderToScreenQuad();
 }
 
-void Renderer::_UpdateGlobalUBO(const Camera* camera) const
+void Renderer::_UpdateUBOs(const Camera* camera) const
 {
     float time = glfwGetTime();
     glm::mat4 viewMatrix = camera->GetViewMatrix();
@@ -129,17 +157,18 @@ void Renderer::_UpdateGlobalUBO(const Camera* camera) const
     m_globalUBO->UploadData(16, 64, &viewMatrix);
     m_globalUBO->UploadData(80, 64, &projectionMatrix);
     m_globalUBO->UploadData(144, 16, &camera->position);
+
+    m_lightUBO->UploadData(16, 16, &camera->position);
 }
 
 void Renderer::_RenderToScreenQuad() const
 {
     static const Envy::ShaderProgram* vertexShader =
-        m_envyInstance->GetShaderProgram(Path("engine/shaders/screen_quad.vert").Str());
+        m_envyInstance->GetShaderProgram(Path("engine/renderer/shaders/screen_quad.vert").Str());
     static const Envy::ShaderProgram* fragmentShader =
-        m_envyInstance->GetShaderProgram(Path("engine/shaders/screen_quad.frag").Str());
+        m_envyInstance->GetShaderProgram(Path("engine/renderer/shaders/screen_quad.frag").Str());
     static const GLResource<Envy::Pipeline>
-        quadPipeline = m_envyInstance->CreatePipeline(vertexShader,
-                                                      fragmentShader);
+        quadPipeline = m_envyInstance->CreatePipeline(vertexShader, fragmentShader);
     
     m_envyInstance->BindDefaultFramebuffer();
     m_screenQuadVAO->Bind();
@@ -157,3 +186,5 @@ void Renderer::_RenderToScreenQuad() const
     m_envyInstance->ClearBuffer();
     m_envyInstance->Draw(quadVAOChunk);
 }
+
+HNCRSP_NAMESPACE_END

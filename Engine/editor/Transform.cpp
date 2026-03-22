@@ -2,6 +2,8 @@
 
 #include <glm/ext/matrix_transform.hpp>
 
+HNCRSP_NAMESPACE_START
+
 glm::mat4 Transform::GetModelMatrix() const
 {
     glm::mat4 model = glm::mat4(1.0f);
@@ -12,3 +14,5 @@ glm::mat4 Transform::GetModelMatrix() const
 
     return model;
 }
+
+HNCRSP_NAMESPACE_END

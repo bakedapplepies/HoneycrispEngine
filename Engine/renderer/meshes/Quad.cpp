@@ -2,6 +2,8 @@
 
 #include "util/Path.h"
 
+HNCRSP_NAMESPACE_START
+
 Quad::Quad(const Envy::EnvyInstance* envy_instance)
 {
     std::array<Envy::Vertex, 4> vertices = {
@@ -36,9 +38,9 @@ Quad::Quad(const Envy::EnvyInstance* envy_instance)
                                              indices.size());
 
     const Envy::ShaderProgram* vertexShader =
-        envy_instance->GetShaderProgram(Path("engine/shaders/default.vert").Str());
+        envy_instance->GetShaderProgram(Path("engine/renderer/shaders/default.vert").Str());
     const Envy::ShaderProgram* fragmentShader =
-        envy_instance->GetShaderProgram(Path("engine/shaders/default.frag").Str());
+        envy_instance->GetShaderProgram(Path("engine/renderer/shaders/default.frag").Str());
 
     material.albedo = envy_instance->GetTexture2D(Path("engine/resources/images/villager.png").Str());
     material.pipeline = envy_instance->CreatePipeline();
@@ -53,11 +55,14 @@ RenderCommand Quad::GetRenderCmd() const
         .elementsCount = 6,
         .vertexOffset = 0
     };
+    static Transform defaultTransform;
 
     return RenderCommand {
         .vertexArray = m_vao,
         .vaoChunk = &vaoChunk,
         .material = &material,
-        .transform = &transform
+        .transform = &defaultTransform
     };
 }
+
+HNCRSP_NAMESPACE_END

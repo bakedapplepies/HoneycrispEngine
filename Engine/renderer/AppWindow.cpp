@@ -3,7 +3,10 @@
 #include <fmt/format.h>
 
 #include "util/Path.h"
-#include "renderer/meshes/Quad.h"
+#include "meshes/Quad.h"
+#include "meshes/Model.h"
+
+HNCRSP_NAMESPACE_START
 
 Application::Application()
 {}
@@ -77,11 +80,13 @@ void Application::Destroy()
 
 void Application::Run()
 {
+    // Sub-systems setup
     m_renderer = std::make_unique<Renderer>(m_envyInstance);
 
     _LoadShaderPrograms();
     _LoadTexture2Ds();
 
+    // Scene data
     std::vector<glm::vec3> quadPositions;
     quadPositions.resize(10000);
     for (int i = 0; i < 100; i++)
@@ -112,12 +117,16 @@ void Application::Run()
         .transform = quadRenderCmd.transform
     };
 
+    Model model(Path("engine/resources/models/sponza2/Sponza.gltf").Str(), m_envyInstance);
+
+    // Camera
     Camera camera;
     m_mainCamera = &camera;
     m_GLFWUserData->cameraInControl = m_mainCamera;
     camera.position = glm::vec3(0.0f, 0.0f, 2.0f);
     camera.viewDir = glm::vec3(0.0f, 0.0f, -1.0f);
 
+    // Skybox
     const GLResource<Envy::Cubemap> skybox =
         m_envyInstance->CreateCubemap(Envy::TextureFormat::SRGBA8,
                                       Path("engine/resources/cubemaps/skybox/right.jpg").Str(),
@@ -127,6 +136,7 @@ void Application::Run()
                                       Path("engine/resources/cubemaps/skybox/front.jpg").Str(),
                                       Path("engine/resources/cubemaps/skybox/back.jpg").Str());
 
+    // Keep track of time             
     float beginTime = glfwGetTime();
     float totalTime = 0.0f;
     float deltaTime = 0.0f;
@@ -138,10 +148,17 @@ void Application::Run()
         totalTime += deltaTime;
         beginTime = glfwGetTime();
 
-        m_renderer->RenderIndirect(m_mainCamera, skybox, quadRenderCmdIndirect);
+        // Main logic
+
+        m_renderer->BeginFrame(m_mainCamera);
+        // m_renderer->RenderIndirect(quadRenderCmdIndirect);
+        m_renderer->RenderMultiple(model.GetRenderCmds());
+        m_renderer->EndFrame(skybox);
         glfwSwapBuffers(m_window);
 
         _ProcessInput(deltaTime);
+
+        //
 
         if (totalTime >= 1.0f)
         {       
@@ -157,53 +174,45 @@ void Application::_ProcessInput(float delta_time)
 {
     glfwPollEvents();
     if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
-    {
         m_applicationIsActive = false;
-    }
+
 
     if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
-    {
-        m_mainCamera->position += 4.0f * glm::normalize(glm::vec3(m_mainCamera->viewDir.x, 0.0f, m_mainCamera->viewDir.z)) * delta_time;
-    }
+        m_mainCamera->MoveForward(4.0f, delta_time);
+
     if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
-    {
-        m_mainCamera->position -= 4.0f * glm::normalize(glm::vec3(m_mainCamera->viewDir.x, 0.0f, m_mainCamera->viewDir.z)) * delta_time;
-    }
+        m_mainCamera->MoveBackward(4.0f, delta_time);
+
     if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
-    {
-        m_mainCamera->position += 4.0f * glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), m_mainCamera->viewDir)) * delta_time;
-    }
+        m_mainCamera->MoveLeft(4.0f, delta_time);
+
     if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
-    {
-        m_mainCamera->position -= 4.0f * glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), m_mainCamera->viewDir)) * delta_time;
-    }
+        m_mainCamera->MoveRight(4.0f, delta_time);
+
     if (glfwGetKey(m_window, GLFW_KEY_SPACE) == GLFW_PRESS)
-    {
-        m_mainCamera->position += 4.0f * glm::vec3(0.0f, 1.0f, 0.0f) * delta_time;
-    }
+        m_mainCamera->MoveUp(4.0f, delta_time);
+
     if (glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-    {
-        m_mainCamera->position -= 4.0f * glm::vec3(0.0f, 1.0f, 0.0f) * delta_time;
-    }
+        m_mainCamera->MoveDown(4.0f, delta_time);
 }
 
 void Application::_LoadShaderPrograms() const
 {
     m_envyInstance->LoadShaderProgram(
         Envy::ShaderType::VERTEX,
-        Path("engine/shaders/default.vert").Str());
+        Path("engine/renderer/shaders/default.vert").Str());
     m_envyInstance->LoadShaderProgram(
         Envy::ShaderType::FRAGMENT,
-        Path("engine/shaders/default.frag").Str());
+        Path("engine/renderer/shaders/default.frag").Str());
     m_envyInstance->LoadShaderProgram(
         Envy::ShaderType::VERTEX,
-        Path("engine/shaders/screen_quad.vert").Str());
+        Path("engine/renderer/shaders/screen_quad.vert").Str());
     m_envyInstance->LoadShaderProgram(
         Envy::ShaderType::FRAGMENT,
-        Path("engine/shaders/screen_quad.frag").Str());
+        Path("engine/renderer/shaders/screen_quad.frag").Str());
     m_envyInstance->LoadShaderProgram(
         Envy::ShaderType::COMPUTE,
-        Path("engine/shaders/default.comp").Str());
+        Path("engine/renderer/shaders/default.comp").Str());
 }
 
 void Application::_LoadTexture2Ds() const
@@ -212,3 +221,5 @@ void Application::_LoadTexture2Ds() const
         Envy::TextureFormat::SRGBA8,
         Path("engine/resources/images/villager.png").Str());
 }
+
+HNCRSP_NAMESPACE_END

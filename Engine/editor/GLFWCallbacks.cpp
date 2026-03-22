@@ -3,6 +3,8 @@
 #include <fmt/format.h>
 #include <glm/glm.hpp>
 
+HNCRSP_NAMESPACE_START
+
 void FramebufferSizeCallback(GLFWwindow* window,
                              int width,
                              int height)
@@ -64,3 +66,5 @@ void MouseCallback(GLFWwindow *window, double xpos_double, double ypos_double)
         direction.z = sinf(glm::radians(yaw)) * cosf(glm::radians(pitch));
     }
 }
+
+HNCRSP_NAMESPACE_END

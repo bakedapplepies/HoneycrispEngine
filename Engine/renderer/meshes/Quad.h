@@ -2,7 +2,9 @@
 
 #include <Envy/EnvyInstance.h>
 
-#include "../Renderer.h"
+#include "renderer/Renderer.h"
+
+HNCRSP_NAMESPACE_START
 
 class Quad
 {
@@ -14,8 +16,9 @@ public:
 
 public:
     Material material;
-    Transform transform;
 
 private:
     GLResource<Envy::VertexArray> m_vao;
 };
+
+HNCRSP_NAMESPACE_END

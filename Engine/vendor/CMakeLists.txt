@@ -25,6 +25,32 @@ target_link_libraries(GLFW_LIBRARY INTERFACE
 )
 
 # ======================================================================
+set(ASSIMP_NO_EXPORT OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_SAMPLES OFF CACHE BOOL "" FORCE)
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_ASSIMP_VIEW OFF CACHE BOOL "" FORCE)
+set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
+
+FetchContent_Declare(assimp_fetch
+    GIT_REPOSITORY https://github.com/assimp/assimp.git
+    GIT_TAG e0b52347c6e52de2827ec957a9ebf00ce3c54f79
+)
+FetchContent_MakeAvailable(assimp_fetch)
+FetchContent_GetProperties(assimp_fetch
+    SOURCE_DIR assimp_SOURCE_DIR
+    BINARY_DIR assimp_BINARY_DIR
+)
+add_library(ASSIMP_LIBRARY INTERFACE IMPORTED GLOBAL)
+target_include_directories(ASSIMP_LIBRARY INTERFACE
+    ${assimp_SOURCE_DIR}/include
+)
+target_link_libraries(ASSIMP_LIBRARY INTERFACE
+    assimp
+)
+
+# ======================================================================
 if (${USE_LOCAL_ENVY_ENGINE})
     FetchContent_Declare(envyengine_fetch
         SOURCE_DIR ${LOCAL_ENVY_ENGINE_ROOT}

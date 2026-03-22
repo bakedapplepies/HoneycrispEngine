@@ -7,6 +7,8 @@
 #include "editor/GLFWCallbacks.h"
 #include "Renderer.h"
 
+HNCRSP_NAMESPACE_START
+
 struct WindowConfig
 {
     const char* name;
@@ -14,7 +16,6 @@ struct WindowConfig
     int height;
 };
 
-struct GLFWwindow;
 class Application
 {
 public:
@@ -40,3 +41,5 @@ private:
     std::unique_ptr<Renderer> m_renderer = nullptr;
     Camera* m_mainCamera = nullptr;
 };
+
+HNCRSP_NAMESPACE_END

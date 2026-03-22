@@ -4,12 +4,12 @@
 int main(int argc, char** argv)
 {
     // Object creation
-    WindowConfig windowConfig {
+    Honeycrisp::WindowConfig windowConfig {
         .name = "HoneycrispEngine",
-        .width = 1280,
-        .height = 720
+        .width = 2560,
+        .height = 1440
     };
-    Application window;
+    Honeycrisp::Application window;
     Envy::EnvyInstance envyInstance;
     
     window.Create(windowConfig, envyInstance);

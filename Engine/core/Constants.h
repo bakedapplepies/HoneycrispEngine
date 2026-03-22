@@ -1,0 +1,11 @@
+#pragma once
+
+#include "Defines.h"
+
+HNCRSP_NAMESPACE_START
+
+const int TEXTURE_UNIT_ALBEDO = 0;
+const int TEXTURE_UNIT_NORMAL = 1;
+const int TEXTURE_UNIT_ROUGHNESS = 2;
+
+HNCRSP_NAMESPACE_END
