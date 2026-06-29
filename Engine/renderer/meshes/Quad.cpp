@@ -40,7 +40,7 @@ Quad::Quad(const Envy::EnvyInstance* envy_instance)
     const Envy::ShaderProgram* vertexShader =
         envy_instance->GetShaderProgram(Path("engine/renderer/shaders/default.vert").Str());
     const Envy::ShaderProgram* fragmentShader =
-        envy_instance->GetShaderProgram(Path("engine/renderer/shaders/default.frag").Str());
+        envy_instance->GetShaderProgram(Path("engine/renderer/shaders/forward.frag").Str());
 
     material.albedo = envy_instance->GetTexture2D(Path("engine/resources/images/villager.png").Str());
     material.pipeline = envy_instance->CreatePipeline();

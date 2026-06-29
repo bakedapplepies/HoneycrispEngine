@@ -1,5 +1,5 @@
 #include <Envy/EnvyInstance.h>
-#include "renderer/AppWindow.h"
+#include "editor/AppWindow.h"
 
 int main(int argc, char** argv)
 {

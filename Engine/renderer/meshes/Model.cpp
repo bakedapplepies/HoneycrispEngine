@@ -52,7 +52,7 @@ void Model::_RetrieveMaterials(const aiScene* scene, std::string_view root_path,
     const Envy::ShaderProgram* vertexShader =
         envy_instance->GetShaderProgram(Path("engine/renderer/shaders/default.vert").Str());
     const Envy::ShaderProgram* fragmentShader =
-        envy_instance->GetShaderProgram(Path("engine/renderer/shaders/default.frag").Str());
+        envy_instance->GetShaderProgram(Path("engine/renderer/shaders/forward.frag").Str());
     GLResource<Envy::Pipeline> modelMatPipeline = envy_instance->CreatePipeline();
     modelMatPipeline->SetVertexProgram(vertexShader);
     modelMatPipeline->SetFragmentProgram(fragmentShader);

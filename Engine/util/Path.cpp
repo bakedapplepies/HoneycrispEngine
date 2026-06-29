@@ -11,5 +11,5 @@ Path::Path(std::string_view path)
 std::string Path::Str() const
 {
     return fmt::format("{}",
-        (std::filesystem::path(HNCRSP_ROOT_DIR) / std::filesystem::path(m_path)).string());
+        (std::filesystem::path(HNCRSP_ROOT_DIR) / std::filesystem::path(m_path)).make_preferred().string());
 }

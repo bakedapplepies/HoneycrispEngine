@@ -10,9 +10,14 @@ glm::mat4 Camera::GetViewMatrix() const
     return glm::lookAt(position, position + viewDir, glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
-glm::mat4 Camera::GetProjectionMatrix(float aspect_ratio) const
+glm::mat4 Camera::GetPerspectiveProjectionMatrix(float aspect_ratio) const
 {
     return glm::perspective(glm::radians(fov), aspect_ratio, nearPlane, farPlane);
+}
+
+glm::mat4 Camera::GetOrthogonalProjectionMatrix() const
+{
+    return glm::ortho(-10.f, 10.f, -10.f, 10.f, nearPlane, farPlane);
 }
 
 void Camera::MoveForward(float distance, float delta_time)

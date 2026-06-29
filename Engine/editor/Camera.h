@@ -6,6 +6,12 @@
 
 HNCRSP_NAMESPACE_START
 
+enum class CameraProjection : uint32_t
+{
+    ORTHOGRAPHIC = 1,
+    PERSPECTIVE
+};
+
 class Camera
 {
 public:
@@ -13,7 +19,8 @@ public:
     ~Camera() = default;
 
     glm::mat4 GetViewMatrix() const;
-    glm::mat4 GetProjectionMatrix(float aspect_ratio) const;
+    glm::mat4 GetPerspectiveProjectionMatrix(float aspect_ratio) const;
+    glm::mat4 GetOrthogonalProjectionMatrix() const;
 
     void MoveForward(float distance, float delta_time);
     void MoveBackward(float distance, float delta_time);
@@ -27,7 +34,7 @@ public:
     glm::vec3 viewDir = glm::vec3(0.0f, 0.0f, -1.0f);
     float fov = 45.0f;
     float nearPlane = 0.1f;
-    float farPlane = 1000.0f;
+    float farPlane = 50.0f;
 };
 
 HNCRSP_NAMESPACE_END

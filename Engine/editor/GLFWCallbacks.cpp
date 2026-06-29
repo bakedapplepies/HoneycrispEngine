@@ -26,8 +26,9 @@ void MouseCallback(GLFWwindow *window, double xpos_double, double ypos_double)
     static float lastY = 0.0f;
     static float yaw = -90.0f;
     static float pitch = 0.0f;
+    static bool firstMouse = false;
     
-    if (true)  // not showing mouse logic
+    if (userData->hideCursor)  // not showing mouse logic
     {
         float xpos = static_cast<float>(xpos_double);
         float ypos = static_cast<float>(ypos_double);
@@ -36,13 +37,13 @@ void MouseCallback(GLFWwindow *window, double xpos_double, double ypos_double)
 
         glm::vec3& direction = camera->viewDir;
 
-        // if (callbackData->firstMouse)
-        // {
-        //     callbackData->lastX = xpos;
-        //     callbackData->lastY = ypos;
-        //     callbackData->firstMouse = false;
-        //     return;
-        // }
+        if (firstMouse)
+        {
+            lastX = xpos;
+            lastY = ypos;
+            firstMouse = false;
+            return;
+        }
 
         deltaX = xpos - lastX;
         deltaY = ypos - lastY;
@@ -64,6 +65,29 @@ void MouseCallback(GLFWwindow *window, double xpos_double, double ypos_double)
         direction.x = cosf(glm::radians(yaw)) * cosf(glm::radians(pitch));
         direction.y = sinf(glm::radians(-pitch));  // since going up means Y is going down
         direction.z = sinf(glm::radians(yaw)) * cosf(glm::radians(pitch));
+    }
+    else
+    {
+        firstMouse = true;
+    }
+}
+
+void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    static GLFWUserData* userData = static_cast<GLFWUserData*>(glfwGetWindowUserPointer(window));
+
+    if (key == GLFW_KEY_LEFT_ALT && action == GLFW_PRESS)
+    {
+        if (userData->hideCursor)
+        {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            userData->hideCursor = false;
+        }
+        else
+        {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            userData->hideCursor = true;
+        }
     }
 }
 

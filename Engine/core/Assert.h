@@ -36,5 +36,9 @@
             }                                                                            \
         }                                   
 #else
-#   define HNCRSP_ASSERT(expr, msg)
+#   ifdef HNCRSP_RELEASE_LOGGING  // TODO: Make this an option in CMake 
+#       define HNCRSP_ASSERT(expr, msg) fmt::println("ERROR: {}", msg);
+#   else
+#       define HNCRSP_ASSERT(expr, msg)
+#   endif
 #endif

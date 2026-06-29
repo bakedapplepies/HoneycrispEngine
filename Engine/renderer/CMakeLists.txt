@@ -1,6 +1,6 @@
 set(RENDERER_SOURCES
-    AppWindow.cpp
     Renderer.cpp
+    PostprocessQueue.cpp
     meshes/Quad.cpp
     meshes/Model.cpp
 )

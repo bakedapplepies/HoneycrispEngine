@@ -25,6 +25,28 @@ target_link_libraries(GLFW_LIBRARY INTERFACE
 )
 
 # ======================================================================
+FetchContent_Declare(tracy_fetch
+    GIT_REPOSITORY https://github.com/wolfpld/tracy.git
+    GIT_TAG 05cceee0df3b8d7c6fa87e9638af311dbabc63cb
+)
+FetchContent_MakeAvailable(tracy_fetch)
+FetchContent_GetProperties(tracy_fetch
+    SOURCE_DIR tracy_SOURCE_DIR
+    BINARY_DIR tracy_BINARY_DIR
+)
+add_library(TRACY_LIBRARY INTERFACE IMPORTED GLOBAL)
+target_include_directories(TRACY_LIBRARY INTERFACE
+    ${tracy_SOURCE_DIR}/public
+)
+target_compile_definitions(TRACY_LIBRARY INTERFACE
+    $<IF:$<CONFIG:Debug>,, TRACY_ENABLE>
+    $<IF:$<CONFIG:Debug>,, TRACY_ON_DEMAND>
+)
+target_link_libraries(TRACY_LIBRARY INTERFACE
+    $<IF:$<CONFIG:Debug>,, TracyClient>
+)
+
+# ======================================================================
 set(ASSIMP_NO_EXPORT OFF CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_SAMPLES OFF CACHE BOOL "" FORCE)
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
@@ -48,6 +70,33 @@ target_include_directories(ASSIMP_LIBRARY INTERFACE
 )
 target_link_libraries(ASSIMP_LIBRARY INTERFACE
     assimp
+)
+
+# ======================================================================
+FetchContent_Declare(imgui_fetch
+    GIT_REPOSITORY https://github.com/ocornut/imgui.git
+    GIT_TAG 2a1b69f05748ad909f03acf4533447cac1331611
+)
+FetchContent_MakeAvailable(imgui_fetch)
+FetchContent_GetProperties(imgui_fetch
+    SOURCE_DIR imgui_SOURCE_DIR
+    BINARY_DIR imgui_BINARY_DIR
+)
+add_library(IMGUI_LIBRARY STATIC
+    ${imgui_SOURCE_DIR}/imgui.cpp
+    ${imgui_SOURCE_DIR}/imgui_draw.cpp
+    ${imgui_SOURCE_DIR}/imgui_widgets.cpp
+    ${imgui_SOURCE_DIR}/imgui_tables.cpp
+    ${imgui_SOURCE_DIR}/imgui_demo.cpp
+    ${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.cpp  # TODO: Add implementation guard (e.g. Vulkan or OpengGL?)
+    ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
+)
+target_include_directories(IMGUI_LIBRARY PUBLIC
+    ${imgui_SOURCE_DIR}
+    ${imgui_SOURCE_DIR}/backends
+)
+target_link_libraries(IMGUI_LIBRARY PRIVATE
+    GLFW_LIBRARY
 )
 
 # ======================================================================

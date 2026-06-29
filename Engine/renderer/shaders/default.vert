@@ -20,6 +20,7 @@ layout (location = 0) out V_OUT
     vec3 o_WorldPosition;
     vec3 o_Normal;
     vec2 o_UV;
+    vec4 o_LightSpacePosition;
     flat uint instanceID;
 } v_out;
 
@@ -29,6 +30,7 @@ layout (binding = 0, std140) uniform GlobalUBO
     mat4 u_view;
     mat4 u_projection;
     vec4 u_cameraPos;
+    mat4 u_lightSpace;
 };
 
 uniform mat4 u_model;
@@ -40,6 +42,7 @@ void main()
     v_out.o_WorldPosition = worldPosition.xyz;
     v_out.o_Normal = i_Normal;
     v_out.o_UV = i_UV;
+    v_out.o_LightSpacePosition = u_lightSpace * worldPosition;
     v_out.instanceID = gl_InstanceID;
 
     gl_Position = u_projection * u_view * worldPosition;

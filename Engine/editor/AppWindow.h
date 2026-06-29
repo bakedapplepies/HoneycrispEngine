@@ -5,7 +5,7 @@
 #include <Envy/EnvyInstance.h>
 
 #include "editor/GLFWCallbacks.h"
-#include "Renderer.h"
+#include "renderer/Renderer.h"
 
 HNCRSP_NAMESPACE_START
 
@@ -36,7 +36,7 @@ private:
     std::unique_ptr<GLFWUserData> m_GLFWUserData = nullptr;
     bool m_applicationIsActive = false;
 
-    // This will be where graphics backends can be switched in and out
+    // This will be where graphics APIs can be switched in and out
     const Envy::EnvyInstance* m_envyInstance = nullptr;
     std::unique_ptr<Renderer> m_renderer = nullptr;
     Camera* m_mainCamera = nullptr;

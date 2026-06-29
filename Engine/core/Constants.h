@@ -4,8 +4,17 @@
 
 HNCRSP_NAMESPACE_START
 
-const int TEXTURE_UNIT_ALBEDO = 0;
-const int TEXTURE_UNIT_NORMAL = 1;
-const int TEXTURE_UNIT_ROUGHNESS = 2;
+constexpr int UBO_BINDING_INDEX_GLOBAL   = 0;
+constexpr int UBO_BINDING_INDEX_LIGHT    = 1;
+constexpr int UBO_BINDING_INDEX_MATERIAL = 2;
+
+constexpr int TEXTURE_UNIT_ALBEDO    = 0;
+constexpr int TEXTURE_UNIT_NORMAL    = 1;
+constexpr int TEXTURE_UNIT_ROUGHNESS = 2;
+constexpr int TEXTURE_UNIT_CUBEMAP   = 3;
+constexpr int TEXTURE_UNIT_DEPTH_MAP = 4;
+
+constexpr int IMAGE_UNIT_READ  = 0;
+constexpr int IMAGE_UNIT_WRITE = 1;
 
 HNCRSP_NAMESPACE_END

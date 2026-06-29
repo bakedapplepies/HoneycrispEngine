@@ -1,4 +1,5 @@
 set(EDITOR_SOURCES
+    AppWindow.cpp
     GLFWCallbacks.cpp
     Camera.cpp
     Material.cpp

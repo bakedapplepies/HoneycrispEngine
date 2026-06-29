@@ -2,9 +2,10 @@
 
 #include <GLFW/glfw3.h>
 #include <fmt/format.h>
+#include <tracy/Tracy.hpp>
 
-#include "util/Path.h"
 #include "core/Constants.h"
+#include "util/Path.h"
 
 HNCRSP_NAMESPACE_START
 
@@ -15,80 +16,145 @@ Renderer::Renderer(const Envy::EnvyInstance* envy_instance)
 
     m_envyInstance = envy_instance;
 
-    m_globalUBO = m_envyInstance->CreateUBO(160, UBO_BINDING_INDEX_GLOBAL);
-    m_lightUBO = m_envyInstance->CreateUBO(16 + 20 * 16, UBO_BINDING_INDEX_LIGHT);
+    /*                      size    offset  total_size
+        float u_time      : 4       0
+        mat4 u_view       : 64      16
+        mat4 u_projection : 64      80
+        vec4 u_cameraPos  : 16      144
+        mat4 u_lightSpace : 64      160     224
+    */
+    m_globalUBO = m_envyInstance->CreateUBO(224, UBO_BINDING_INDEX_GLOBAL);
+
+    /*                                               size    offset  total_size
+        DirLight u_light                           : 16      0
+        uint u_numPointLight                       : 4       16
+        PointLight u_pointLights[MAX_POINT_LIGHTS] : 320     32      352
+    */
+    m_lightUBO = m_envyInstance->CreateUBO(352, UBO_BINDING_INDEX_LIGHT);
+
+    /*                               size    offset  total_size
+        float u_ambient_intensity  : 4       0
+        float u_diffuse_intensity  : 4       16
+        float u_specular_intensity : 4       32
+        float u_roughness_scalar   : 4       48      52
+    */
+    m_materialUBO = m_envyInstance->CreateUBO(64, UBO_BINDING_INDEX_MATERIAL);
 
     uint32_t pointLightNum = 1;
-    m_lightUBO->UploadData(0, 4, &pointLightNum);
+    m_lightUBO->UploadData(16, 4, &pointLightNum);
 
-    m_fbo = m_envyInstance->CreateFramebuffer(2560, 1440);
-
-    std::array<Envy::Vertex, 4> vertices = {
-        Envy::Vertex {
-            .position = glm::vec3(-1.0f,  1.0f,  0.0f),
-            .normal   = glm::vec3( 0.0f,  0.0f,  0.0f),
-            .uv       = glm::vec2( 0.0f,  1.0f)
+    // TODO: In case a Resource container is assigned to a different resource
+    // whilst already holding a resource, it may lead to non-deallocated memory.
+    // It will get cleaned up when the program ends, but in the duration the
+    // program is running, it's just sitting there.
+    m_mainFBO = m_envyInstance->CreateFramebuffer(2560, 1440, {
+        Envy::FBOAttachment {
+            .target = Envy::FBOAttachmentTarget::COLOR,
+            .usage = Envy::FBOAttachmentUsage::TEXTURE
         },
-        Envy::Vertex {
-            .position = glm::vec3( 1.0f,  1.0f,  0.0f),
-            .normal   = glm::vec3( 0.0f,  0.0f,  0.0f),
-            .uv       = glm::vec2( 1.0f,  1.0f)
-        },
-        Envy::Vertex {
-            .position = glm::vec3( 1.0f, -1.0f,  0.0f),
-            .normal   = glm::vec3( 0.0f,  0.0f,  0.0f),
-            .uv       = glm::vec2( 1.0f,  0.0f)
-        },
-        Envy::Vertex {
-            .position = glm::vec3(-1.0f, -1.0f,  0.0f),
-            .normal   = glm::vec3( 0.0f,  0.0f,  0.0f),
-            .uv       = glm::vec2( 0.0f,  0.0f)
+        Envy::FBOAttachment {
+            .target = Envy::FBOAttachmentTarget::DEPTH,
+            .usage = Envy::FBOAttachmentUsage::RENDER_BUFFER
         }
-    };
-    std::array<GLuint, 6> indices = {
-        0, 1, 2,
-        0, 2, 3
-    };
-    m_screenQuadVAO = m_envyInstance->CreateVertexArray(vertices.data(),
-                                                        vertices.size(),
-                                                        indices.data(),
-                                                        indices.size());
+    });
+    m_shadowFBO = m_envyInstance->CreateFramebuffer(2560, 1440, {
+        Envy::FBOAttachment {
+            .target = Envy::FBOAttachmentTarget::DEPTH,
+            .usage = Envy::FBOAttachmentUsage::TEXTURE
+        }
+    });
+    m_shadowFBO->EnableColorTargetRead(Envy::FBOAttachmentTarget::NONE);
+    m_shadowFBO->EnableColorTargetWrite(Envy::FBOAttachmentTarget::NONE);
+
+    m_shadowMappingMaterial.pipeline = m_envyInstance->CreatePipeline();
+    m_shadowMappingMaterial.pipeline->SetVertexProgram(
+        m_envyInstance->GetShaderProgram(Path("engine/renderer/shaders/shadow.vert").Str()));
+    m_shadowMappingMaterial.pipeline->SetFragmentProgram(
+        m_envyInstance->GetShaderProgram(Path("engine/renderer/shaders/shadow.frag").Str()));
 }
 
 Renderer::~Renderer()
 {
     m_envyInstance = nullptr;
     m_globalUBO = GLResource<Envy::UniformBuffer>::empty;
-    m_fbo = GLResource<Envy::Framebuffer>::empty;
-    m_screenQuadVAO = GLResource<Envy::VertexArray>::empty;
+    m_lightUBO = GLResource<Envy::UniformBuffer>::empty;
+    m_materialUBO = GLResource<Envy::UniformBuffer>::empty;
+    m_mainFBO = GLResource<Envy::Framebuffer>::empty;
+    m_shadowFBO = GLResource<Envy::Framebuffer>::empty;
 }
 
-void Renderer::BeginFrame(const Camera* camera)
+void Renderer::UpdateDirLight(const DirLight& dir_light) const
 {
-    m_canRenderFlag = true;
+    m_lightUBO->UploadData(offsetof(LightUBO, u_dirLight), 16, &dir_light);
+}
 
-    m_fbo->Bind();
-    m_envyInstance->ClearBuffer();
+void Renderer::UpdatePointLights(const std::vector<PointLight>& point_lights) const
+{
+    // m_pointLights = std::move(point_lights);
+
+    uint32_t pointLightNum = point_lights.size();
+    m_lightUBO->UploadData(offsetof(LightUBO, u_numPointLight), 4, &pointLightNum);
+    for (uint32_t i = 0; i < point_lights.size(); i++)
+    {
+        m_lightUBO->UploadData(offsetof(LightUBO, u_pointLights) + 16 * i, 16, point_lights.data() + i);
+    }
+}
+
+void Renderer::UpdateGlobalMatParam(const MaterialUBO& mat_params) const
+{
+    m_materialUBO->UploadData(offsetof(MaterialUBO, u_ambient_intensity), 4, &mat_params.u_ambient_intensity);
+    m_materialUBO->UploadData(offsetof(MaterialUBO, u_diffuse_intensity), 4, &mat_params.u_diffuse_intensity);
+    m_materialUBO->UploadData(offsetof(MaterialUBO, u_specular_intensity), 4, &mat_params.u_specular_intensity);
+    m_materialUBO->UploadData(offsetof(MaterialUBO, u_roughness_scalar), 4, &mat_params.u_roughness_scalar);
+}
+
+void Renderer::BeginFrame(const FrameData& frame_data)
+{
+    assert(m_currentFrameType == FrameType::NONE && "Renderer::BeginFrame: In the middle of a frame.");
+
+    m_currentFrameType = frame_data.frameType;
+
+    frame_data.framebuffer->Bind();
+    if ((frame_data.fboClearBufferFlags & Envy::FBOBuffer::COLOR) == Envy::FBOBuffer::COLOR)
+        frame_data.framebuffer->ClearBuffer(Envy::FBOBuffer::COLOR, 0.0f);
+    if ((frame_data.fboClearBufferFlags & Envy::FBOBuffer::DEPTH) == Envy::FBOBuffer::DEPTH)
+        frame_data.framebuffer->ClearBuffer(Envy::FBOBuffer::DEPTH, 1.0f);
+    if ((frame_data.fboClearBufferFlags & Envy::FBOBuffer::STENCIL) == Envy::FBOBuffer::STENCIL)
+        frame_data.framebuffer->ClearBuffer(Envy::FBOBuffer::STENCIL, 0);
     m_envyInstance->SetViewport(0, 0, 2560, 1440);
 
-    // Update only once per frame
-    _UpdateUBOs(camera);
+    if (m_currentFrameType == FrameType::NORMAL)
+        _UpdateUBOCamera(frame_data.camera, frame_data.cameraProjection);
+    else if (m_currentFrameType == FrameType::SHADOW)
+        _UpdateUBODepthCamera(frame_data.camera, frame_data.cameraProjection);
+    _UpdateUBOTime();
 }
 
-void Renderer::EndFrame(const GLResource<Envy::Cubemap>& cubemap)
+GLResource<Envy::Texture2D> Renderer::EndFrame(const GLResource<Envy::Cubemap>& cubemap)
 {
-    m_canRenderFlag = false;
+    assert(m_currentFrameType != FrameType::NONE && "Renderer::EndFrame: Frame hasn't started.");
 
-    if (cubemap.Usable())  // Rendered last to avoid over-draw
+    FrameType frameType = m_currentFrameType;
+    m_currentFrameType = FrameType::NONE;
+    if (frameType == FrameType::NORMAL)
     {
-        cubemap->Draw();
+        if (cubemap.Usable())  // Rendered last to avoid over-draw
+        {
+            cubemap->Draw();
+        }
+        return m_mainFBO->GetTex2DAttachment(MAIN_FBO_COLOR_ATTACHMENT_INDEX);
     }
-    _RenderToScreenQuad();
+    else if (frameType == FrameType::SHADOW)
+    {
+        return m_shadowFBO->GetTex2DAttachment(SHADOW_FBO_DEPTH_ATTACHMENT_INDEX);
+    }
+    assert(false && "Renderer::EndFrame: Unknown frame type.");
 }
 
 void Renderer::Render(const RenderCommand& render_command) const
 {
-    if (!m_canRenderFlag)
+    ZoneScoped;
+    if (m_currentFrameType == FrameType::NONE)
     {
         fmt::println("Honeycrisp: Frame hasn't began (use BeginFrame().)");
         return;
@@ -108,83 +174,118 @@ void Renderer::Render(const RenderCommand& render_command) const
 
 void Renderer::RenderMultiple(const std::vector<RenderCommand>& render_commands) const
 {
-    if (!m_canRenderFlag)
+    ZoneScoped;
+    if (m_currentFrameType == FrameType::NONE)
     {
         fmt::println("Honeycrisp: Frame hasn't began (use BeginFrame().)");
         return;
     }
 
-    for (uint32_t i = 0; i < render_commands.size(); i++)
+    if (m_currentFrameType == FrameType::NORMAL)
     {
-        const Material* material = render_commands[i].material;
-        material->albedo->Bind(TEXTURE_UNIT_ALBEDO);
-        if (material->roughness.Usable()) material->roughness->Bind(TEXTURE_UNIT_ROUGHNESS);
-        material->pipeline->Bind();
-        material->pipeline->GetVertexProgram()->UniformMat4("u_model",
-                                                            render_commands[i].transform->GetModelMatrix());
-
-        render_commands[i].vertexArray->Bind();
-        m_envyInstance->Draw(*render_commands[i].vaoChunk);
+        for (uint32_t i = 0; i < render_commands.size(); i++)
+        {
+            const Material* material = render_commands[i].material;
+            material->albedo->Bind(TEXTURE_UNIT_ALBEDO);
+            if (material->roughness.Usable()) material->roughness->Bind(TEXTURE_UNIT_ROUGHNESS);
+            material->pipeline->Bind();
+            material->pipeline->GetVertexProgram()->UniformMat4("u_model",
+                                                                render_commands[i].transform->GetModelMatrix());
+    
+            render_commands[i].vertexArray->Bind();
+            m_envyInstance->Draw(*render_commands[i].vaoChunk);
+        }
+    }
+    else if (m_currentFrameType == FrameType::SHADOW)
+    {
+        m_shadowMappingMaterial.pipeline->Bind();
+        for (uint32_t i = 0; i < render_commands.size(); i++)
+        {
+            m_shadowMappingMaterial.pipeline->GetVertexProgram()->UniformMat4("u_model",
+                                                                              render_commands[i].transform->GetModelMatrix());
+            render_commands[i].vertexArray->Bind();
+            m_envyInstance->Draw(*render_commands[i].vaoChunk);
+        }
     }
 }
 
 void Renderer::RenderIndirect(const RenderCommandIndirect& render_command_indirect) const
 {
-    if (!m_canRenderFlag)
+    ZoneScoped;
+    if (m_currentFrameType == FrameType::NONE)
     {
-        fmt::println("Frame hasn't began (use BeginFrame().)");
+        fmt::println("Honeycrisp: Frame hasn't began (use BeginFrame().)");
         return;
     }    
 
-    const Material* material = render_command_indirect.material;
-    const uint32_t TEXTURE_UNIT_ALBEDO = 0;
-    material->albedo->Bind(TEXTURE_UNIT_ALBEDO);
+    render_command_indirect.vertexArray->Bind();
+    render_command_indirect.indirectBuffer->Bind();
+    const Material* material = nullptr;
+    if (m_currentFrameType == FrameType::NORMAL)
+    {
+        material = render_command_indirect.material;
+        const uint32_t TEXTURE_UNIT_ALBEDO = 0;
+        material->albedo->Bind(TEXTURE_UNIT_ALBEDO);
+    }
+    else if (m_currentFrameType == FrameType::SHADOW)
+    {
+        material = &m_shadowMappingMaterial;
+    }
     material->pipeline->Bind();
     material->pipeline->GetVertexProgram()->UniformMat4("u_model",
                                                         render_command_indirect.transform->GetModelMatrix());
-
-    render_command_indirect.vertexArray->Bind();
-    render_command_indirect.indirectBuffer->Bind();
+    
     m_envyInstance->DrawIndirect(render_command_indirect.indirectBuffer->GetCommandCount());
 }
 
-void Renderer::_UpdateUBOs(const Camera* camera) const
+GLResource<Envy::Framebuffer> Renderer::GetMainFramebuffer() const
 {
-    float time = glfwGetTime();
-    glm::mat4 viewMatrix = camera->GetViewMatrix();
-    glm::mat4 projectionMatrix = camera->GetProjectionMatrix(16.0f/9.0f);
-    m_globalUBO->UploadData(0, 4, &time);
-    m_globalUBO->UploadData(16, 64, &viewMatrix);
-    m_globalUBO->UploadData(80, 64, &projectionMatrix);
-    m_globalUBO->UploadData(144, 16, &camera->position);
-
-    m_lightUBO->UploadData(16, 16, &camera->position);
+    return m_mainFBO;
 }
 
-void Renderer::_RenderToScreenQuad() const
+GLResource<Envy::Framebuffer> Renderer::GetMainShadowFramebuffer() const
 {
-    static const Envy::ShaderProgram* vertexShader =
-        m_envyInstance->GetShaderProgram(Path("engine/renderer/shaders/screen_quad.vert").Str());
-    static const Envy::ShaderProgram* fragmentShader =
-        m_envyInstance->GetShaderProgram(Path("engine/renderer/shaders/screen_quad.frag").Str());
-    static const GLResource<Envy::Pipeline>
-        quadPipeline = m_envyInstance->CreatePipeline(vertexShader, fragmentShader);
-    
-    m_envyInstance->BindDefaultFramebuffer();
-    m_screenQuadVAO->Bind();
-    quadPipeline->Bind();
-    m_fbo->BindColorAttachment(0);
-            
-    static Envy::VAOChunk quadVAOChunk
-    {
-        .elementsOffset = 0,
-        .elementsCount = 6, 
-        .vertexOffset = 0
-    };
+    return m_shadowFBO;
+}
 
-    m_envyInstance->SetViewport(0, 0, 2560, 1440);
-    m_envyInstance->ClearBuffer();
-    m_envyInstance->Draw(quadVAOChunk);
+void Renderer::_UpdateUBOTime() const
+{
+    float time = glfwGetTime();
+    m_globalUBO->UploadData(offsetof(GlobalUBO, u_time), 4, &time);
+}
+
+void Renderer::_UpdateUBOCamera(const Camera* camera, CameraProjection camera_projection) const
+{
+    glm::mat4 viewMatrix = camera->GetViewMatrix();
+    glm::mat4 projectionMatrix;
+    if (camera_projection == CameraProjection::ORTHOGRAPHIC)
+        projectionMatrix = camera->GetOrthogonalProjectionMatrix();
+    else
+        projectionMatrix = camera->GetPerspectiveProjectionMatrix(16.0f/9.0f);
+
+    m_globalUBO->UploadData(offsetof(GlobalUBO, u_view), 64, &viewMatrix);
+    m_globalUBO->UploadData(offsetof(GlobalUBO, u_projection), 64, &projectionMatrix);
+    m_globalUBO->UploadData(offsetof(GlobalUBO, u_cameraPos), 16, &camera->position);
+}
+
+void Renderer::_UpdateUBODepthCamera(const Camera* camera, CameraProjection camera_projection) const
+{
+    glm::mat4 viewMatrix = camera->GetViewMatrix();
+    glm::mat4 projectionMatrix;
+    if (camera_projection == CameraProjection::ORTHOGRAPHIC)
+        projectionMatrix = camera->GetOrthogonalProjectionMatrix();
+    else
+        projectionMatrix = camera->GetPerspectiveProjectionMatrix(16.0f/9.0f);
+
+    glm::mat4 lightSpace = projectionMatrix * viewMatrix;
+    m_globalUBO->UploadData(offsetof(GlobalUBO, u_lightSpace), 64, &lightSpace);
+}
+
+void Renderer::_RenderShadowMap() const
+{
+    static Camera camera;
+
+
 }
 
 HNCRSP_NAMESPACE_END

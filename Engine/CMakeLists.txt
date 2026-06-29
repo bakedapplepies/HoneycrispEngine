@@ -11,7 +11,9 @@ target_include_directories(HoneycrispEngineI INTERFACE
 
 target_link_libraries(HoneycrispEngineI INTERFACE
     GLFW_LIBRARY
+    TRACY_LIBRARY
     ASSIMP_LIBRARY
+    IMGUI_LIBRARY
     ENVYENGINE_LIBRARY
 )
 
