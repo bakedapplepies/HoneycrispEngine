@@ -5,7 +5,7 @@
 
 #include "core/Defines.h"
 #include "core/Types.h"
-#include "editor/Material.h"
+#include "../Material.h"
 #include "renderer/Renderer.h"
 
 HNCRSP_NAMESPACE_START

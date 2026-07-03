@@ -1,6 +1,5 @@
 # TODO List
 
-- TODO: manage publicity of api functions
 - TODO: LOD (tesselation shader)
 - TODO: Quaternions for rotation
 - TODO: Render graph
@@ -9,4 +8,5 @@
 - TODO: Mesh shaders
 - TODO: MSAA
 - TODO: SSAO
-- TODO: IMGUI
+- TODO: Normal Space for Nomral Maps
+- TODO: Make m_rendererSetup in Renderer.h atomic

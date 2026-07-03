@@ -172,13 +172,25 @@ float ShadowModifier(vec4 light_space_pos)
     vec3 projCoords = light_space_pos.xyz / light_space_pos.w;
     projCoords = projCoords * 0.5 + 0.5;
 
-    float closestDepth = texture(u_depthMap, projCoords.xy).x;
     float currentDepth = projCoords.z;
+    float shadow = 0.0;
 
-    float shadow = currentDepth > closestDepth ? 1.0 : 0.0;
+    if (currentDepth > 1.0)
+    {
+        return shadow;
+    }
 
-    return shadow;
-    // return 0.0;
+    vec2 texelSize = 1.0 / textureSize(u_depthMap, 0);
+    for (int x = -1; x <= 1; x++)
+    {
+        for (int y = -1; y <= 1; y++)
+        {
+            float pcfDepth = texture(u_depthMap, projCoords.xy + vec2(x, y) * texelSize).x;
+            shadow += currentDepth > pcfDepth + 0.005 ? 1.0 : 0.0;
+        }
+    }
+
+    return shadow / 9.0;
 }
 
 void main()

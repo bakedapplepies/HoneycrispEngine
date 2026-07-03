@@ -4,7 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include "core/Defines.h"
-#include "Camera.h"
+#include "renderer/Camera.h"
 
 HNCRSP_NAMESPACE_START
 

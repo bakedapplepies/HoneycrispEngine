@@ -13,6 +13,7 @@
 #include "renderer/meshes/Quad.h"
 #include "renderer/meshes/Model.h"
 #include "renderer/PostprocessQueue.h"
+#include "renderer/ForwardRenderer.h"
 
 HNCRSP_NAMESPACE_START
 
@@ -113,7 +114,7 @@ void Application::Run()
     postprocessQueue.AddCompute(m_envyInstance->GetShaderProgram(Path("engine/renderer/shaders/postprocess/gamma.comp").Str()));
 
     // Sub-systems setup
-    m_renderer = std::make_unique<Renderer>(m_envyInstance);
+    m_renderer = std::make_unique<ForwardRenderer>(m_envyInstance);
 
     // Scene data
     std::vector<glm::vec3> quadPositions;
@@ -230,6 +231,7 @@ void Application::Run()
             .cameraProjection = CameraProjection::PERSPECTIVE
         };
         m_renderer->BeginFrame(mainFrame);
+        shadowFrameResult->Bind(TEXTURE_UNIT_DEPTH_MAP);
         // m_renderer->RenderIndirect(quadRenderCmdIndirect);
         m_renderer->RenderMultiple(model.GetRenderCmds());
         GLResource<Envy::Texture2D> mainFrameResult = m_renderer->EndFrame(skybox);

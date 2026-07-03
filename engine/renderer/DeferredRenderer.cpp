@@ -1,4 +1,4 @@
-#include "Renderer.h"
+#include "DeferredRenderer.h"
 
 #include <GLFW/glfw3.h>
 #include <fmt/format.h>
@@ -9,7 +9,7 @@
 
 HNCRSP_NAMESPACE_START
 
-Renderer::Renderer(const Envy::EnvyInstance* envy_instance)
+DeferredRenderer::DeferredRenderer(const Envy::EnvyInstance* envy_instance)
 {
     m_envyInstance->SetFrontFaceOrder(Envy::FaceOrder::CLOCKWISE);
     m_envyInstance->SetDepthTesting(true);
@@ -47,14 +47,14 @@ Renderer::Renderer(const Envy::EnvyInstance* envy_instance)
     // whilst already holding a resource, it may lead to non-deallocated memory.
     // It will get cleaned up when the program ends, but in the duration the
     // program is running, it's just sitting there.
-    m_mainFBO = m_envyInstance->CreateFramebuffer(2560, 1440, {
-        Envy::FBOAttachment {
-            .target = Envy::FBOAttachmentTarget::COLOR,
+    m_gBuffer = m_envyInstance->CreateFramebuffer(2560, 1440, {
+        Envy::FBOAttachment {  // position texture
+            .target = Envy::FBOAttachmentTarget::COLOR0,
             .usage = Envy::FBOAttachmentUsage::TEXTURE
         },
-        Envy::FBOAttachment {
-            .target = Envy::FBOAttachmentTarget::DEPTH,
-            .usage = Envy::FBOAttachmentUsage::RENDER_BUFFER
+        Envy::FBOAttachment {  // normal buffer
+            .target = Envy::FBOAttachmentTarget::COLOR1,
+            .usage = Envy::FBOAttachmentUsage::TEXTURE
         }
     });
     m_shadowFBO = m_envyInstance->CreateFramebuffer(2560, 1440, {
@@ -73,22 +73,22 @@ Renderer::Renderer(const Envy::EnvyInstance* envy_instance)
         m_envyInstance->GetShaderProgram(Path("engine/renderer/shaders/shadow.frag").Str()));
 }
 
-Renderer::~Renderer()
+DeferredRenderer::~DeferredRenderer()
 {
     m_envyInstance = nullptr;
     m_globalUBO = GLResource<Envy::UniformBuffer>::empty;
     m_lightUBO = GLResource<Envy::UniformBuffer>::empty;
     m_materialUBO = GLResource<Envy::UniformBuffer>::empty;
-    m_mainFBO = GLResource<Envy::Framebuffer>::empty;
+    m_gBuffer = GLResource<Envy::Framebuffer>::empty;
     m_shadowFBO = GLResource<Envy::Framebuffer>::empty;
 }
 
-void Renderer::UpdateDirLight(const DirLight& dir_light) const
+void DeferredRenderer::UpdateDirLight(const DirLight& dir_light) const
 {
     m_lightUBO->UploadData(offsetof(LightUBO, u_dirLight), 16, &dir_light);
 }
 
-void Renderer::UpdatePointLights(const std::vector<PointLight>& point_lights) const
+void DeferredRenderer::UpdatePointLights(const std::vector<PointLight>& point_lights) const
 {
     // m_pointLights = std::move(point_lights);
 
@@ -100,7 +100,7 @@ void Renderer::UpdatePointLights(const std::vector<PointLight>& point_lights) co
     }
 }
 
-void Renderer::UpdateGlobalMatParam(const MaterialUBO& mat_params) const
+void DeferredRenderer::UpdateGlobalMatParam(const MaterialUBO& mat_params) const
 {
     m_materialUBO->UploadData(offsetof(MaterialUBO, u_ambient_intensity), 4, &mat_params.u_ambient_intensity);
     m_materialUBO->UploadData(offsetof(MaterialUBO, u_diffuse_intensity), 4, &mat_params.u_diffuse_intensity);
@@ -108,9 +108,9 @@ void Renderer::UpdateGlobalMatParam(const MaterialUBO& mat_params) const
     m_materialUBO->UploadData(offsetof(MaterialUBO, u_roughness_scalar), 4, &mat_params.u_roughness_scalar);
 }
 
-void Renderer::BeginFrame(const FrameData& frame_data)
+void DeferredRenderer::BeginFrame(const FrameData& frame_data)
 {
-    assert(m_currentFrameType == FrameType::NONE && "Renderer::BeginFrame: In the middle of a frame.");
+    assert(m_currentFrameType == FrameType::NONE && "DeferredRenderer::BeginFrame: In the middle of a frame.");
 
     m_currentFrameType = frame_data.frameType;
 
@@ -130,9 +130,9 @@ void Renderer::BeginFrame(const FrameData& frame_data)
     _UpdateUBOTime();
 }
 
-GLResource<Envy::Texture2D> Renderer::EndFrame(const GLResource<Envy::Cubemap>& cubemap)
+GLResource<Envy::Texture2D> DeferredRenderer::EndFrame(const GLResource<Envy::Cubemap>& cubemap)
 {
-    assert(m_currentFrameType != FrameType::NONE && "Renderer::EndFrame: Frame hasn't started.");
+    assert(m_currentFrameType != FrameType::NONE && "DeferredRenderer::EndFrame: Frame hasn't started.");
 
     FrameType frameType = m_currentFrameType;
     m_currentFrameType = FrameType::NONE;
@@ -142,16 +142,16 @@ GLResource<Envy::Texture2D> Renderer::EndFrame(const GLResource<Envy::Cubemap>& 
         {
             cubemap->Draw();
         }
-        return m_mainFBO->GetTex2DAttachment(MAIN_FBO_COLOR_ATTACHMENT_INDEX);
+        return m_gBuffer->GetTex2DAttachment(MAIN_FBO_COLOR_ATTACHMENT_INDEX);
     }
     else if (frameType == FrameType::SHADOW)
     {
         return m_shadowFBO->GetTex2DAttachment(SHADOW_FBO_DEPTH_ATTACHMENT_INDEX);
     }
-    assert(false && "Renderer::EndFrame: Unknown frame type.");
+    assert(false && "DeferredRenderer::EndFrame: Unknown frame type.");
 }
 
-void Renderer::Render(const RenderCommand& render_command) const
+void DeferredRenderer::Render(const RenderCommand& render_command) const
 {
     ZoneScoped;
     if (m_currentFrameType == FrameType::NONE)
@@ -172,7 +172,7 @@ void Renderer::Render(const RenderCommand& render_command) const
     m_envyInstance->Draw(*render_command.vaoChunk);
 }
 
-void Renderer::RenderMultiple(const std::vector<RenderCommand>& render_commands) const
+void DeferredRenderer::RenderMultiple(const std::vector<RenderCommand>& render_commands) const
 {
     ZoneScoped;
     if (m_currentFrameType == FrameType::NONE)
@@ -209,7 +209,7 @@ void Renderer::RenderMultiple(const std::vector<RenderCommand>& render_commands)
     }
 }
 
-void Renderer::RenderIndirect(const RenderCommandIndirect& render_command_indirect) const
+void DeferredRenderer::RenderIndirect(const RenderCommandIndirect& render_command_indirect) const
 {
     ZoneScoped;
     if (m_currentFrameType == FrameType::NONE)
@@ -238,23 +238,23 @@ void Renderer::RenderIndirect(const RenderCommandIndirect& render_command_indire
     m_envyInstance->DrawIndirect(render_command_indirect.indirectBuffer->GetCommandCount());
 }
 
-GLResource<Envy::Framebuffer> Renderer::GetMainFramebuffer() const
+GLResource<Envy::Framebuffer> DeferredRenderer::GetMainFramebuffer() const
 {
-    return m_mainFBO;
+    return m_gBuffer;
 }
 
-GLResource<Envy::Framebuffer> Renderer::GetMainShadowFramebuffer() const
+GLResource<Envy::Framebuffer> DeferredRenderer::GetMainShadowFramebuffer() const
 {
     return m_shadowFBO;
 }
 
-void Renderer::_UpdateUBOTime() const
+void DeferredRenderer::_UpdateUBOTime() const
 {
     float time = glfwGetTime();
     m_globalUBO->UploadData(offsetof(GlobalUBO, u_time), 4, &time);
 }
 
-void Renderer::_UpdateUBOCamera(const Camera* camera, CameraProjection camera_projection) const
+void DeferredRenderer::_UpdateUBOCamera(const Camera* camera, CameraProjection camera_projection) const
 {
     glm::mat4 viewMatrix = camera->GetViewMatrix();
     glm::mat4 projectionMatrix;
@@ -268,7 +268,7 @@ void Renderer::_UpdateUBOCamera(const Camera* camera, CameraProjection camera_pr
     m_globalUBO->UploadData(offsetof(GlobalUBO, u_cameraPos), 16, &camera->position);
 }
 
-void Renderer::_UpdateUBODepthCamera(const Camera* camera, CameraProjection camera_projection) const
+void DeferredRenderer::_UpdateUBODepthCamera(const Camera* camera, CameraProjection camera_projection) const
 {
     glm::mat4 viewMatrix = camera->GetViewMatrix();
     glm::mat4 projectionMatrix;
@@ -279,13 +279,6 @@ void Renderer::_UpdateUBODepthCamera(const Camera* camera, CameraProjection came
 
     glm::mat4 lightSpace = projectionMatrix * viewMatrix;
     m_globalUBO->UploadData(offsetof(GlobalUBO, u_lightSpace), 64, &lightSpace);
-}
-
-void Renderer::_RenderShadowMap() const
-{
-    static Camera camera;
-
-
 }
 
 HNCRSP_NAMESPACE_END

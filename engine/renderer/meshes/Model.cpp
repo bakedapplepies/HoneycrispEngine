@@ -8,7 +8,7 @@
 
 #include "core/Assert.h"
 #include "util/Path.h"
-#include "editor/Material.h"
+#include "../Material.h"
 
 HNCRSP_NAMESPACE_START
 

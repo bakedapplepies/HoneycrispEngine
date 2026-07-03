@@ -21,7 +21,7 @@ target_include_directories(GLFW_LIBRARY INTERFACE
     ${glfw_SOURCE_DIR}/include
 )
 target_link_libraries(GLFW_LIBRARY INTERFACE
-    ${glfw_BINARY_DIR}/src/libglfw3.a
+    glfw
 )
 
 # ======================================================================

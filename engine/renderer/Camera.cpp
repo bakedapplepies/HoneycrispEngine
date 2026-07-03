@@ -17,7 +17,7 @@ glm::mat4 Camera::GetPerspectiveProjectionMatrix(float aspect_ratio) const
 
 glm::mat4 Camera::GetOrthogonalProjectionMatrix() const
 {
-    return glm::ortho(-10.f, 10.f, -10.f, 10.f, nearPlane, farPlane);
+    return glm::ortho(-10.f, 10.f, -10.0f, 10.0f, nearPlane, 50.0f);
 }
 
 void Camera::MoveForward(float distance, float delta_time)
