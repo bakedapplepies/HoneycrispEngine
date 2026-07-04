@@ -17,10 +17,10 @@ layout (location = 3) in vec3 i_inst_Translation;
 
 layout (location = 0) out V_OUT
 {
-    vec3 o_WorldPosition;
-    vec3 o_Normal;
-    vec2 o_UV;
-    vec4 o_LightSpacePosition;
+    vec3 WorldPosition;
+    vec3 Normal;
+    vec2 UV;
+    vec4 LightSpacePosition;
     flat uint instanceID;
 } v_out;
 
@@ -39,10 +39,10 @@ void main()
 {
     // vec4 worldPosition = u_model * vec4(i_Position, 1.0);
     vec4 worldPosition = u_model * vec4(i_Position + i_inst_Translation, 1.0);
-    v_out.o_WorldPosition = worldPosition.xyz;
-    v_out.o_Normal = i_Normal;
-    v_out.o_UV = i_UV;
-    v_out.o_LightSpacePosition = u_lightSpace * worldPosition;
+    v_out.WorldPosition = worldPosition.xyz;
+    v_out.Normal = i_Normal;
+    v_out.UV = i_UV;
+    v_out.LightSpacePosition = u_lightSpace * worldPosition;
     v_out.instanceID = gl_InstanceID;
 
     gl_Position = u_projection * u_view * worldPosition;

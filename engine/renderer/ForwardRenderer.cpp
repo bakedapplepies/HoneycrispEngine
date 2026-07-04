@@ -50,17 +50,20 @@ ForwardRenderer::ForwardRenderer(const Envy::EnvyInstance* envy_instance)
     m_mainFBO = m_envyInstance->CreateFramebuffer(2560, 1440, {
         Envy::FBOAttachment {
             .target = Envy::FBOAttachmentTarget::COLOR0,
-            .usage = Envy::FBOAttachmentUsage::TEXTURE
+            .usage = Envy::FBOAttachmentUsage::TEXTURE,
+            .format = Envy::TextureFormat::RGBA8
         },
         Envy::FBOAttachment {
             .target = Envy::FBOAttachmentTarget::DEPTH,
-            .usage = Envy::FBOAttachmentUsage::RENDER_BUFFER
+            .usage = Envy::FBOAttachmentUsage::RENDER_BUFFER,
+            .format = Envy::TextureFormat::DEPTH
         }
     });
     m_shadowFBO = m_envyInstance->CreateFramebuffer(2560, 1440, {
         Envy::FBOAttachment {
             .target = Envy::FBOAttachmentTarget::DEPTH,
-            .usage = Envy::FBOAttachmentUsage::TEXTURE
+            .usage = Envy::FBOAttachmentUsage::TEXTURE,
+            .format = Envy::TextureFormat::DEPTH32F
         }
     });
     m_shadowFBO->EnableColorTargetRead(Envy::FBOAttachmentTarget::NONE);

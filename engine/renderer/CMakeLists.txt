@@ -1,4 +1,5 @@
 set(RENDERER_SOURCES
+    Renderer.cpp
     ForwardRenderer.cpp
     DeferredRenderer.cpp
     PostprocessQueue.cpp

@@ -50,11 +50,23 @@ DeferredRenderer::DeferredRenderer(const Envy::EnvyInstance* envy_instance)
     m_gBuffer = m_envyInstance->CreateFramebuffer(2560, 1440, {
         Envy::FBOAttachment {  // position texture
             .target = Envy::FBOAttachmentTarget::COLOR0,
-            .usage = Envy::FBOAttachmentUsage::TEXTURE
+            .usage = Envy::FBOAttachmentUsage::TEXTURE,
+            .format = Envy::TextureFormat::RGBA32F
         },
         Envy::FBOAttachment {  // normal buffer
             .target = Envy::FBOAttachmentTarget::COLOR1,
-            .usage = Envy::FBOAttachmentUsage::TEXTURE
+            .usage = Envy::FBOAttachmentUsage::TEXTURE,
+            .format = Envy::TextureFormat::RGBA32F
+        },
+        Envy::FBOAttachment {  // albedo buffer
+            .target = Envy::FBOAttachmentTarget::COLOR2,
+            .usage = Envy::FBOAttachmentUsage::TEXTURE,
+            .format = Envy::TextureFormat::RGBA8
+        },
+        Envy::FBOAttachment {
+            .target = Envy::FBOAttachmentTarget::DEPTH,
+            .usage = Envy::FBOAttachmentUsage::RENDER_BUFFER,
+            .format = Envy::TextureFormat::DEPTH32F
         }
     });
     m_shadowFBO = m_envyInstance->CreateFramebuffer(2560, 1440, {
