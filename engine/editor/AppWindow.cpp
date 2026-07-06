@@ -14,6 +14,7 @@
 #include "renderer/meshes/Model.h"
 #include "renderer/PostprocessQueue.h"
 #include "renderer/ForwardRenderer.h"
+#include "renderer/DeferredRenderer.h"
 
 HNCRSP_NAMESPACE_START
 
@@ -114,7 +115,7 @@ void Application::Run()
     postprocessQueue.AddCompute(m_envyInstance->GetShaderProgram(Path("engine/renderer/shaders/postprocess/gamma.comp").Str()));
 
     // Sub-systems setup
-    m_renderer = std::make_unique<ForwardRenderer>(m_envyInstance);
+    m_renderer = std::make_unique<DeferredRenderer>(m_envyInstance);
 
     // Scene data
     std::vector<glm::vec3> quadPositions;
@@ -232,7 +233,6 @@ void Application::Run()
         };
         m_renderer->BeginFrame(mainFrame);
         shadowFrameResult->Bind(TEXTURE_UNIT_DEPTH_MAP);
-        // m_renderer->RenderIndirect(quadRenderCmdIndirect);
         m_renderer->RenderMultiple(model.GetRenderCmds());
         GLResource<Envy::Texture2D> mainFrameResult = m_renderer->EndFrame(skybox);
         // --------------------------
@@ -268,7 +268,7 @@ void Application::Run()
         }
         else if (glfwGetKey(m_window, GLFW_KEY_2) == GLFW_PRESS)
         {
-            textureID = shadowFrameResult->GetID();
+            // textureID = shadowFrameResult->GetID();
         }
         updateDepthMapDir |= ImGui::Button("Set Dir");
         updatePointLight |= ImGui::SliderFloat3("PointLight 1", glm::value_ptr(pointLights[0].position), -10.0f, 10.0f);
@@ -380,11 +380,14 @@ void Application::_LoadShaderPrograms() const
         Envy::ShaderType::FRAGMENT,
         Path("engine/renderer/shaders/forward.frag").Str());
     m_envyInstance->LoadShaderProgram(
+        Envy::ShaderType::FRAGMENT,
+        Path("engine/renderer/shaders/deferred.frag").Str());
+    m_envyInstance->LoadShaderProgram(
         Envy::ShaderType::VERTEX,
         Path("engine/renderer/shaders/screen_quad.vert").Str());
     m_envyInstance->LoadShaderProgram(
         Envy::ShaderType::FRAGMENT,
-        Path("engine/renderer/shaders/screen_quad.frag").Str());
+        Path("engine/renderer/shaders/deferred_shading.frag").Str());
     m_envyInstance->LoadShaderProgram(
         Envy::ShaderType::VERTEX,
         Path("engine/renderer/shaders/shadow.vert").Str());

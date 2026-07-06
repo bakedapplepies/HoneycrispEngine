@@ -2,6 +2,7 @@
 
 #include "core/Defines.h"
 #include "Renderer.h"
+#include "meshes/Quad.h"
 
 HNCRSP_NAMESPACE_START
 
@@ -39,7 +40,10 @@ private:
     GLResource<Envy::UniformBuffer> m_lightUBO;
     GLResource<Envy::UniformBuffer> m_materialUBO;
     GLResource<Envy::Framebuffer> m_gBuffer;
+    GLResource<Envy::Framebuffer> m_mainFBO;
     GLResource<Envy::Framebuffer> m_shadowFBO;
+    std::unique_ptr<Quad> m_quad;
+    Material m_deferredMaterial;
     Material m_shadowMappingMaterial;
 
     FrameType m_currentFrameType = FrameType::NONE;

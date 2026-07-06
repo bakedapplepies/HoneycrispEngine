@@ -14,6 +14,11 @@ constexpr int TEXTURE_UNIT_ROUGHNESS = 2;
 constexpr int TEXTURE_UNIT_CUBEMAP   = 3;
 constexpr int TEXTURE_UNIT_DEPTH_MAP = 4;
 
+constexpr int TEXTURE_UNIT_GBUFFER_POSITION  = 0;
+constexpr int TEXTURE_UNIT_GBUFFER_NORMAL    = 1;
+constexpr int TEXTURE_UNIT_GBUFFER_ROUGHNESS = 2;
+constexpr int TEXTURE_UNIT_GBUFFER_ALBEDO    = 3;
+
 constexpr int IMAGE_UNIT_READ  = 0;
 constexpr int IMAGE_UNIT_WRITE = 1;
 

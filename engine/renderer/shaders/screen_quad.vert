@@ -11,10 +11,14 @@ out gl_PerVertex
 };
 
 layout (location = 0) in vec3 i_Position;
+layout (location = 1) in vec3 i_Normal;
+layout (location = 2) in vec2 i_UV;
+layout (location = 3) in vec3 i_inst_Translation;
 
 layout (location = 0) out V_OUT
 {
-    vec2 o_UV;
+    vec2 UV;
+    // vec4 LightSpacePosition;
 } v_out;
 
 layout (binding = 0, std140) uniform GlobalUBO
@@ -28,7 +32,7 @@ layout (binding = 0, std140) uniform GlobalUBO
 
 void main()
 {
-    v_out.o_UV = i_Position.xy * 0.5 + vec2(0.5);
+    v_out.UV = i_Position.xy * 0.5 + vec2(0.5);
 
     gl_Position = vec4(i_Position, 1.0);
 }

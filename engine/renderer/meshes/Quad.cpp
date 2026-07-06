@@ -38,11 +38,10 @@ Quad::Quad(const Envy::EnvyInstance* envy_instance)
                                              indices.size());
 
     const Envy::ShaderProgram* vertexShader =
-        envy_instance->GetShaderProgram(Path("engine/renderer/shaders/default.vert").Str());
+        envy_instance->GetShaderProgram(Path("engine/renderer/shaders/screen_quad.vert").Str());
     const Envy::ShaderProgram* fragmentShader =
-        envy_instance->GetShaderProgram(Path("engine/renderer/shaders/forward.frag").Str());
+        envy_instance->GetShaderProgram(Path("engine/renderer/shaders/deferred_shading.frag").Str());
 
-    material.albedo = envy_instance->GetTexture2D(Path("engine/resources/images/villager.png").Str());
     material.pipeline = envy_instance->CreatePipeline();
     material.pipeline->SetVertexProgram(vertexShader);
     material.pipeline->SetFragmentProgram(fragmentShader);
@@ -50,12 +49,12 @@ Quad::Quad(const Envy::EnvyInstance* envy_instance)
 
 RenderCommand Quad::GetRenderCmd() const
 {
-    static Envy::VAOChunk vaoChunk = Envy::VAOChunk {
+    constexpr static Envy::VAOChunk vaoChunk = Envy::VAOChunk {
         .elementsOffset = 0,
         .elementsCount = 6,
         .vertexOffset = 0
     };
-    static Transform defaultTransform;
+    constexpr static Transform defaultTransform;
 
     return RenderCommand {
         .vertexArray = m_vao,

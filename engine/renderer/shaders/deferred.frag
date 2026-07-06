@@ -3,7 +3,8 @@
 // G-Buffer textures
 layout (location = 0) out vec3 gPosition;
 layout (location = 1) out vec3 gNormal;
-layout (location = 2) out vec4 gAlbedo;
+layout (location = 2) out vec4 gRoughness;
+layout (location = 3) out vec4 gAlbedo;
 
 // Constants
 const float PI = 3.1415926;
@@ -12,9 +13,9 @@ const uint UBO_BINDING_GLOBAL   = 0;
 const uint UBO_BINDING_LIGHT    = 1;
 const uint UBO_BINDING_MATERIAL = 2;
 
-const uint TEXTURE_UNIT_0         = 0;
-const uint TEXTURE_UNIT_1         = 1;
-const uint TEXTURE_UNIT_2         = 2;
+const uint TEXTURE_UNIT_ALBEDO    = 0;
+const uint TEXTURE_UNIT_NORMAL    = 1;
+const uint TEXTURE_UNIT_ROUGHNESS = 2;
 const uint TEXTURE_UNIT_CUBEMAP   = 3;
 const uint TEXTURE_UNIT_DEPTH_MAP = 4;
 
@@ -69,9 +70,9 @@ layout (binding = UBO_BINDING_MATERIAL, std140) uniform MaterialUBO
 };
 
 // Textures
-layout (binding = TEXTURE_UNIT_0) uniform sampler2D u_albedo;
-layout (binding = TEXTURE_UNIT_1) uniform sampler2D u_normal;
-layout (binding = TEXTURE_UNIT_2) uniform sampler2D u_roughness;
+layout (binding = TEXTURE_UNIT_ALBEDO) uniform sampler2D u_albedo;
+layout (binding = TEXTURE_UNIT_NORMAL) uniform sampler2D u_normal;
+layout (binding = TEXTURE_UNIT_ROUGHNESS) uniform sampler2D u_roughness;
 layout (binding = TEXTURE_UNIT_CUBEMAP) uniform samplerCube u_cubemap;
 layout (binding = TEXTURE_UNIT_DEPTH_MAP) uniform sampler2D u_depthMap;
 
@@ -79,5 +80,6 @@ void main()
 {
     gPosition = v_out.WorldPosition;
     gNormal = v_out.Normal;
-    gAlbedo = texture(u_normal, v_out.UV);
+    gRoughness = texture(u_roughness, v_out.UV);
+    gAlbedo = texture(u_albedo, v_out.UV);
 }

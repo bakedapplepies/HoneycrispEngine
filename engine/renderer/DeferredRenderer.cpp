@@ -58,8 +58,13 @@ DeferredRenderer::DeferredRenderer(const Envy::EnvyInstance* envy_instance)
             .usage = Envy::FBOAttachmentUsage::TEXTURE,
             .format = Envy::TextureFormat::RGBA32F
         },
-        Envy::FBOAttachment {  // albedo buffer
+        Envy::FBOAttachment {  // roughness buffer
             .target = Envy::FBOAttachmentTarget::COLOR2,
+            .usage = Envy::FBOAttachmentUsage::TEXTURE,
+            .format = Envy::TextureFormat::RGBA8
+        },
+        Envy::FBOAttachment {  // albedo buffer
+            .target = Envy::FBOAttachmentTarget::COLOR3,
             .usage = Envy::FBOAttachmentUsage::TEXTURE,
             .format = Envy::TextureFormat::RGBA8
         },
@@ -69,20 +74,49 @@ DeferredRenderer::DeferredRenderer(const Envy::EnvyInstance* envy_instance)
             .format = Envy::TextureFormat::DEPTH32F
         }
     });
+    m_gBuffer->EnableColorTargetRead(Envy::FBOAttachmentTarget::NONE);
+    m_gBuffer->EnableColorTargetWrites({
+        Envy::FBOAttachmentTarget::COLOR0,
+        Envy::FBOAttachmentTarget::COLOR1,
+        Envy::FBOAttachmentTarget::COLOR2,
+        Envy::FBOAttachmentTarget::COLOR3
+    });
+    m_mainFBO = m_envyInstance->CreateFramebuffer(2560, 1440, {
+        Envy::FBOAttachment {
+            .target = Envy::FBOAttachmentTarget::COLOR0,
+            .usage = Envy::FBOAttachmentUsage::TEXTURE,
+            .format = Envy::TextureFormat::RGBA8
+        },
+        Envy::FBOAttachment {
+            .target = Envy::FBOAttachmentTarget::DEPTH,
+            .usage = Envy::FBOAttachmentUsage::RENDER_BUFFER,
+            .format = Envy::TextureFormat::DEPTH32F
+        }
+    });
+    m_mainFBO->EnableColorTargetRead(Envy::FBOAttachmentTarget::NONE);
     m_shadowFBO = m_envyInstance->CreateFramebuffer(2560, 1440, {
         Envy::FBOAttachment {
             .target = Envy::FBOAttachmentTarget::DEPTH,
-            .usage = Envy::FBOAttachmentUsage::TEXTURE
+            .usage = Envy::FBOAttachmentUsage::TEXTURE,
+            .format = Envy::TextureFormat::DEPTH32F
         }
     });
     m_shadowFBO->EnableColorTargetRead(Envy::FBOAttachmentTarget::NONE);
     m_shadowFBO->EnableColorTargetWrite(Envy::FBOAttachmentTarget::NONE);
+
+    m_quad = std::make_unique<Quad>(envy_instance);
 
     m_shadowMappingMaterial.pipeline = m_envyInstance->CreatePipeline();
     m_shadowMappingMaterial.pipeline->SetVertexProgram(
         m_envyInstance->GetShaderProgram(Path("engine/renderer/shaders/shadow.vert").Str()));
     m_shadowMappingMaterial.pipeline->SetFragmentProgram(
         m_envyInstance->GetShaderProgram(Path("engine/renderer/shaders/shadow.frag").Str()));
+
+    m_deferredMaterial.pipeline = m_envyInstance->CreatePipeline();
+    m_deferredMaterial.pipeline->SetVertexProgram(
+        m_envyInstance->GetShaderProgram(Path("engine/renderer/shaders/default.vert").Str()));
+    m_deferredMaterial.pipeline->SetFragmentProgram(
+        m_envyInstance->GetShaderProgram(Path("engine/renderer/shaders/deferred.frag").Str()));
 }
 
 DeferredRenderer::~DeferredRenderer()
@@ -92,7 +126,9 @@ DeferredRenderer::~DeferredRenderer()
     m_lightUBO = GLResource<Envy::UniformBuffer>::empty;
     m_materialUBO = GLResource<Envy::UniformBuffer>::empty;
     m_gBuffer = GLResource<Envy::Framebuffer>::empty;
+    m_mainFBO = GLResource<Envy::Framebuffer>::empty;
     m_shadowFBO = GLResource<Envy::Framebuffer>::empty;
+    m_quad.reset();
 }
 
 void DeferredRenderer::UpdateDirLight(const DirLight& dir_light) const
@@ -128,11 +164,23 @@ void DeferredRenderer::BeginFrame(const FrameData& frame_data)
 
     frame_data.framebuffer->Bind();
     if ((frame_data.fboClearBufferFlags & Envy::FBOBuffer::COLOR) == Envy::FBOBuffer::COLOR)
-        frame_data.framebuffer->ClearBuffer(Envy::FBOBuffer::COLOR, 0.0f);
+    {
+        frame_data.framebuffer->ClearBuffer(Envy::FBOBuffer::COLOR, 0.0f, 0);
+        frame_data.framebuffer->ClearBuffer(Envy::FBOBuffer::COLOR, 0.0f, 1);
+        frame_data.framebuffer->ClearBuffer(Envy::FBOBuffer::COLOR, 0.0f, 2);
+        frame_data.framebuffer->ClearBuffer(Envy::FBOBuffer::COLOR, 0.0f, 3);
+        m_mainFBO->ClearBuffer(Envy::FBOBuffer::COLOR, 0.0f, 0);
+    }
     if ((frame_data.fboClearBufferFlags & Envy::FBOBuffer::DEPTH) == Envy::FBOBuffer::DEPTH)
+    {    
         frame_data.framebuffer->ClearBuffer(Envy::FBOBuffer::DEPTH, 1.0f);
+        m_mainFBO->ClearBuffer(Envy::FBOBuffer::DEPTH, 1.0F);
+    }
     if ((frame_data.fboClearBufferFlags & Envy::FBOBuffer::STENCIL) == Envy::FBOBuffer::STENCIL)
+    {
         frame_data.framebuffer->ClearBuffer(Envy::FBOBuffer::STENCIL, 0);
+        m_mainFBO->ClearBuffer(Envy::FBOBuffer::STENCIL, 0);
+    }
     m_envyInstance->SetViewport(0, 0, 2560, 1440);
 
     if (m_currentFrameType == FrameType::NORMAL)
@@ -154,7 +202,19 @@ GLResource<Envy::Texture2D> DeferredRenderer::EndFrame(const GLResource<Envy::Cu
         {
             cubemap->Draw();
         }
-        return m_gBuffer->GetTex2DAttachment(MAIN_FBO_COLOR_ATTACHMENT_INDEX);
+
+        // Shading pass
+        m_gBuffer->BindTex2DAttachment(0, TEXTURE_UNIT_GBUFFER_POSITION);
+        m_gBuffer->BindTex2DAttachment(1, TEXTURE_UNIT_GBUFFER_NORMAL);
+        m_gBuffer->BindTex2DAttachment(2, TEXTURE_UNIT_GBUFFER_ROUGHNESS);
+        m_gBuffer->BindTex2DAttachment(3, TEXTURE_UNIT_GBUFFER_ALBEDO);
+
+        m_mainFBO->Bind();
+        m_quad->material.pipeline->Bind();
+        m_quad->GetRenderCmd().vertexArray->Bind();
+        m_envyInstance->Draw(*m_quad->GetRenderCmd().vaoChunk);
+
+        return m_mainFBO->GetTex2DAttachment(MAIN_FBO_COLOR_ATTACHMENT_INDEX);
     }
     else if (frameType == FrameType::SHADOW)
     {
@@ -171,13 +231,12 @@ void DeferredRenderer::Render(const RenderCommand& render_command) const
         fmt::println("Honeycrisp: Frame hasn't began (use BeginFrame().)");
         return;
     }
-
+    
     const Material* material = render_command.material;
-    const uint32_t TEXTURE_UNIT_ALBEDO = 0;
     material->albedo->Bind(TEXTURE_UNIT_ALBEDO);
     material->roughness->Bind(TEXTURE_UNIT_ROUGHNESS);
-    material->pipeline->Bind();
-    material->pipeline->GetVertexProgram()->UniformMat4("u_model",
+    m_deferredMaterial.pipeline->Bind();
+    m_deferredMaterial.pipeline->GetVertexProgram()->UniformMat4("u_model",
                                                         render_command.transform->GetModelMatrix());
 
     render_command.vertexArray->Bind();
@@ -200,8 +259,8 @@ void DeferredRenderer::RenderMultiple(const std::vector<RenderCommand>& render_c
             const Material* material = render_commands[i].material;
             material->albedo->Bind(TEXTURE_UNIT_ALBEDO);
             if (material->roughness.Usable()) material->roughness->Bind(TEXTURE_UNIT_ROUGHNESS);
-            material->pipeline->Bind();
-            material->pipeline->GetVertexProgram()->UniformMat4("u_model",
+            m_deferredMaterial.pipeline->Bind();
+            m_deferredMaterial.pipeline->GetVertexProgram()->UniformMat4("u_model",
                                                                 render_commands[i].transform->GetModelMatrix());
     
             render_commands[i].vertexArray->Bind();
@@ -236,15 +295,14 @@ void DeferredRenderer::RenderIndirect(const RenderCommandIndirect& render_comman
     if (m_currentFrameType == FrameType::NORMAL)
     {
         material = render_command_indirect.material;
-        const uint32_t TEXTURE_UNIT_ALBEDO = 0;
         material->albedo->Bind(TEXTURE_UNIT_ALBEDO);
     }
     else if (m_currentFrameType == FrameType::SHADOW)
     {
         material = &m_shadowMappingMaterial;
     }
-    material->pipeline->Bind();
-    material->pipeline->GetVertexProgram()->UniformMat4("u_model",
+    m_deferredMaterial.pipeline->Bind();
+    m_deferredMaterial.pipeline->GetVertexProgram()->UniformMat4("u_model",
                                                         render_command_indirect.transform->GetModelMatrix());
     
     m_envyInstance->DrawIndirect(render_command_indirect.indirectBuffer->GetCommandCount());

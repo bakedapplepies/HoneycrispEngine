@@ -59,6 +59,8 @@ ForwardRenderer::ForwardRenderer(const Envy::EnvyInstance* envy_instance)
             .format = Envy::TextureFormat::DEPTH
         }
     });
+    m_mainFBO->EnableColorTargetRead(Envy::FBOAttachmentTarget::NONE);
+    m_mainFBO->EnableColorTargetWrite(Envy::FBOAttachmentTarget::COLOR0);
     m_shadowFBO = m_envyInstance->CreateFramebuffer(2560, 1440, {
         Envy::FBOAttachment {
             .target = Envy::FBOAttachmentTarget::DEPTH,
@@ -164,7 +166,6 @@ void ForwardRenderer::Render(const RenderCommand& render_command) const
     }
 
     const Material* material = render_command.material;
-    const uint32_t TEXTURE_UNIT_ALBEDO = 0;
     material->albedo->Bind(TEXTURE_UNIT_ALBEDO);
     material->roughness->Bind(TEXTURE_UNIT_ROUGHNESS);
     material->pipeline->Bind();

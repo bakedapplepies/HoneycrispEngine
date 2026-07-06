@@ -29,6 +29,11 @@ const uint TEXTURE_UNIT_ROUGHNESS = 2;
 const uint TEXTURE_UNIT_CUBEMAP   = 3;
 const uint TEXTURE_UNIT_DEPTH_MAP = 4;
 
+const uint TEXTURE_UNIT_GBUFFER_POSITION  = 0;
+const uint TEXTURE_UNIT_GBUFFER_NORMAL    = 1;
+const uint TEXTURE_UNIT_GBUFFER_ROUGHNESS = 2;
+const uint TEXTURE_UNIT_GBUFFER_ALBEDO    = 3;
+
 const uint MAX_POINT_LIGHTS = 20;
 
 // Structs
@@ -46,11 +51,7 @@ struct PointLight
 // Data from Vertex stage
 layout (location = 0) in V_OUT
 {
-    vec3 WorldPosition;
-    vec3 Normal;
     vec2 UV;
-    vec4 LightSpacePosition;
-    flat uint instanceID;
 } v_out;
 
 // UBOs
@@ -80,9 +81,10 @@ layout (binding = UBO_BINDING_MATERIAL, std140) uniform MaterialUBO
 };
 
 // Textures
-layout (binding = TEXTURE_UNIT_ALBEDO) uniform sampler2D u_albedo;
-layout (binding = TEXTURE_UNIT_NORMAL) uniform sampler2D u_normal;
-layout (binding = TEXTURE_UNIT_ROUGHNESS) uniform sampler2D u_roughness;
+layout (binding = TEXTURE_UNIT_GBUFFER_POSITION) uniform sampler2D u_worldPosition;
+layout (binding = TEXTURE_UNIT_GBUFFER_ALBEDO) uniform sampler2D u_albedo;
+layout (binding = TEXTURE_UNIT_GBUFFER_NORMAL) uniform sampler2D u_normal;
+layout (binding = TEXTURE_UNIT_GBUFFER_ROUGHNESS) uniform sampler2D u_roughness;
 layout (binding = TEXTURE_UNIT_CUBEMAP) uniform samplerCube u_cubemap;
 layout (binding = TEXTURE_UNIT_DEPTH_MAP) uniform sampler2D u_depthMap;
 
@@ -197,16 +199,19 @@ void main()
 {
     vec3 color = vec3(0.0);
 
+    vec3 worldPosition = texture(u_worldPosition, v_out.UV).xyz;
+    vec3 normal = texture(u_normal, v_out.UV).xyz;
+    vec3 albedo = texture(u_albedo, v_out.UV).xyz;
+    vec3 roughness = texture(u_roughness, v_out.UV).xyz;
+
     float k_ambient = u_ambient_intensity;
     float k_diffuse = u_diffuse_intensity;
     float k_specular = u_specular_intensity;
     float k_roughness = u_roughness_scalar;
     float shininess = 32.0;
-    float shadowMod = ShadowModifier(v_out.LightSpacePosition);
+    float shadowMod = ShadowModifier(u_lightSpace * vec4(worldPosition, 1.0));
     vec3 emission = vec3(0.0, 0.0, 0.0);
-    vec3 albedoSample = texture(u_albedo, v_out.UV).xyz;
-    vec3 roughnessSample = texture(u_roughness, v_out.UV).xyz;
-    vec3 w_o = normalize(u_cameraPos.xyz - v_out.WorldPosition);
+    vec3 w_o = normalize(u_cameraPos.xyz - worldPosition);
 
     {   // Directional Light
         vec3 w_i = normalize(-u_dirLight.direction);
@@ -215,16 +220,16 @@ void main()
 #if LAMBERTIAN_DIFFUSE
         vec3 brdf_diffuse = k_diffuse * Lambertian_DiffuseBRDF(w_i, w_o);
 #elif BURLEY_DIFFUSE
-        vec3 brdf_diffuse = k_diffuse * Burley_DiffuseBRDF(w_i, w_o, v_out.Normal, H, k_roughness);
+        vec3 brdf_diffuse = k_diffuse * Burley_DiffuseBRDF(w_i, w_o, normal, H, k_roughness);
 #else
         vec3 brdf_diffuse = k_diffuse * Lambertian_DiffuseBRDF(w_i, w_o);
 #endif
 
 #if USE_SPECULAR
     #if BLINN_PHONG_SPECULAR
-        vec3 brdf_specular = k_specular * BlinnPhong_SpecularBRDF(v_out.Normal, H, shininess);
+        vec3 brdf_specular = k_specular * BlinnPhong_SpecularBRDF(normal, H, shininess);
     #elif MICROFACET_SPECULAR
-        vec3 brdf_specular = k_specular * roughnessSample.z * Microfacet_SpecularBRDF(w_i, w_o, v_out.Normal, H, k_roughness);
+        vec3 brdf_specular = k_specular * roughness.z * Microfacet_SpecularBRDF(w_i, w_o, normal, H, k_roughness);
     #else
         vec3 brdf_specular = vec3(0.0);
     #endif
@@ -235,32 +240,32 @@ void main()
 #if BLEND_BRDF_FRESNEL
         vec3 brdf = (1.0 - F) * brdf_diffuse + brdf_specular;
 #else
-        vec3 brdf = albedoSample * brdf_diffuse + brdf_specular;
+        vec3 brdf = albedo * brdf_diffuse + brdf_specular;
 #endif
 
-        float cos_theta_i = dot_clamp01(w_i, v_out.Normal);
+        float cos_theta_i = dot_clamp01(w_i, normal);
     
         color += (1.0 - shadowMod) * brdf * cos_theta_i * inverse_square(length(u_dirLight.direction));
     }
 
     for (uint i = 0; i < u_numPointLight; i++)
     {
-        vec3 w_i = normalize(u_pointLights[i].position - v_out.WorldPosition);
+        vec3 w_i = normalize(u_pointLights[i].position - worldPosition);
         vec3 H = normalize(w_i + w_o);
 
 #if LAMBERTIAN_DIFFUSE
         vec3 brdf_diffuse = k_diffuse * Lambertian_DiffuseBRDF(w_i, w_o);
 #elif BURLEY_DIFFUSE
-        vec3 brdf_diffuse = k_diffuse * Burley_DiffuseBRDF(w_i, w_o, v_out.Normal, H, k_roughness);
+        vec3 brdf_diffuse = k_diffuse * Burley_DiffuseBRDF(w_i, w_o, normal, H, k_roughness);
 #else
         vec3 brdf_diffuse = k_diffuse * Lambertian_DiffuseBRDF(w_i, w_o);
 #endif
 
 #if USE_SPECULAR
     #if BLINN_PHONG_SPECULAR
-        vec3 brdf_specular = k_specular * BlinnPhong_SpecularBRDF(v_out.Normal, H, shininess);
+        vec3 brdf_specular = k_specular * BlinnPhong_SpecularBRDF(normal, H, shininess);
     #elif MICROFACET_SPECULAR
-        vec3 brdf_specular = k_specular * roughnessSample.z * Microfacet_SpecularBRDF(w_i, w_o, v_out.Normal, H, k_roughness);
+        vec3 brdf_specular = k_specular * roughness.z * Microfacet_SpecularBRDF(w_i, w_o, normal, H, k_roughness);
     #else
         vec3 brdf_specular = vec3(0.0);
     #endif
@@ -271,15 +276,15 @@ void main()
 #if BLEND_BRDF_FRESNEL
         vec3 brdf = (1.0 - F) * brdf_diffuse + brdf_specular;
 #else
-        vec3 brdf = albedoSample * brdf_diffuse + brdf_specular;
+        vec3 brdf = albedo * brdf_diffuse + brdf_specular;
 #endif
 
-        float cos_theta_i = dot_clamp01(w_i, v_out.Normal);
+        float cos_theta_i = dot_clamp01(w_i, normal);
     
-        color += brdf * cos_theta_i * inverse_square(length(u_pointLights[i].position - v_out.WorldPosition));
+        color += brdf * cos_theta_i * inverse_square(length(u_pointLights[i].position - worldPosition));
     }
 
-    color += k_ambient * albedoSample;
+    color += k_ambient * albedo;
     color += emission;
     color = clamp(color, vec3(0.0), vec3(1.0));
 
