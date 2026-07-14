@@ -1,7 +1,7 @@
 #include <Envy/EnvyInstance.h>
 #include "editor/AppWindow.h"
 
-int main(int argc, char** argv)
+int main(void)
 {
     // Object creation
     Honeycrisp::WindowConfig windowConfig {

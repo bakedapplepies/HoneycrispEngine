@@ -10,38 +10,12 @@
 HNCRSP_NAMESPACE_START
 
 DeferredRenderer::DeferredRenderer(const Envy::EnvyInstance* envy_instance)
+    : Renderer(envy_instance)
 {
     m_envyInstance->SetFrontFaceOrder(Envy::FaceOrder::CLOCKWISE);
     m_envyInstance->SetDepthTesting(true);
 
     m_envyInstance = envy_instance;
-
-    /*                      size    offset  total_size
-        float u_time      : 4       0
-        mat4 u_view       : 64      16
-        mat4 u_projection : 64      80
-        vec4 u_cameraPos  : 16      144
-        mat4 u_lightSpace : 64      160     224
-    */
-    m_globalUBO = m_envyInstance->CreateUBO(224, UBO_BINDING_INDEX_GLOBAL);
-
-    /*                                               size    offset  total_size
-        DirLight u_light                           : 16      0
-        uint u_numPointLight                       : 4       16
-        PointLight u_pointLights[MAX_POINT_LIGHTS] : 320     32      352
-    */
-    m_lightUBO = m_envyInstance->CreateUBO(352, UBO_BINDING_INDEX_LIGHT);
-
-    /*                               size    offset  total_size
-        float u_ambient_intensity  : 4       0
-        float u_diffuse_intensity  : 4       16
-        float u_specular_intensity : 4       32
-        float u_roughness_scalar   : 4       48      52
-    */
-    m_materialUBO = m_envyInstance->CreateUBO(64, UBO_BINDING_INDEX_MATERIAL);
-
-    uint32_t pointLightNum = 1;
-    m_lightUBO->UploadData(16, 4, &pointLightNum);
 
     // TODO: In case a Resource container is assigned to a different resource
     // whilst already holding a resource, it may lead to non-deallocated memory.
@@ -85,15 +59,10 @@ DeferredRenderer::DeferredRenderer(const Envy::EnvyInstance* envy_instance)
         Envy::FBOAttachment {
             .target = Envy::FBOAttachmentTarget::COLOR0,
             .usage = Envy::FBOAttachmentUsage::TEXTURE,
-            .format = Envy::TextureFormat::RGBA8
-        },
-        Envy::FBOAttachment {
-            .target = Envy::FBOAttachmentTarget::DEPTH,
-            .usage = Envy::FBOAttachmentUsage::RENDER_BUFFER,
-            .format = Envy::TextureFormat::DEPTH32F
+            .format = Envy::TextureFormat::RGBA16F
         }
     });
-    m_mainFBO->EnableColorTargetRead(Envy::FBOAttachmentTarget::NONE);
+    m_mainFBO->EnableColorTargetRead(Envy::FBOAttachmentTarget::COLOR0);
     m_shadowFBO = m_envyInstance->CreateFramebuffer(2560, 1440, {
         Envy::FBOAttachment {
             .target = Envy::FBOAttachmentTarget::DEPTH,
@@ -122,9 +91,6 @@ DeferredRenderer::DeferredRenderer(const Envy::EnvyInstance* envy_instance)
 DeferredRenderer::~DeferredRenderer()
 {
     m_envyInstance = nullptr;
-    m_globalUBO = GLResource<Envy::UniformBuffer>::empty;
-    m_lightUBO = GLResource<Envy::UniformBuffer>::empty;
-    m_materialUBO = GLResource<Envy::UniformBuffer>::empty;
     m_gBuffer = GLResource<Envy::Framebuffer>::empty;
     m_mainFBO = GLResource<Envy::Framebuffer>::empty;
     m_shadowFBO = GLResource<Envy::Framebuffer>::empty;
@@ -174,12 +140,10 @@ void DeferredRenderer::BeginFrame(const FrameData& frame_data)
     if ((frame_data.fboClearBufferFlags & Envy::FBOBuffer::DEPTH) == Envy::FBOBuffer::DEPTH)
     {    
         frame_data.framebuffer->ClearBuffer(Envy::FBOBuffer::DEPTH, 1.0f);
-        m_mainFBO->ClearBuffer(Envy::FBOBuffer::DEPTH, 1.0F);
     }
     if ((frame_data.fboClearBufferFlags & Envy::FBOBuffer::STENCIL) == Envy::FBOBuffer::STENCIL)
     {
         frame_data.framebuffer->ClearBuffer(Envy::FBOBuffer::STENCIL, 0);
-        m_mainFBO->ClearBuffer(Envy::FBOBuffer::STENCIL, 0);
     }
     m_envyInstance->SetViewport(0, 0, 2560, 1440);
 
@@ -213,7 +177,7 @@ GLResource<Envy::Texture2D> DeferredRenderer::EndFrame(const GLResource<Envy::Cu
         m_quad->material.pipeline->Bind();
         m_quad->GetRenderCmd().vertexArray->Bind();
         m_envyInstance->Draw(*m_quad->GetRenderCmd().vaoChunk);
-
+        
         return m_mainFBO->GetTex2DAttachment(MAIN_FBO_COLOR_ATTACHMENT_INDEX);
     }
     else if (frameType == FrameType::SHADOW)
@@ -309,6 +273,11 @@ void DeferredRenderer::RenderIndirect(const RenderCommandIndirect& render_comman
 }
 
 GLResource<Envy::Framebuffer> DeferredRenderer::GetMainFramebuffer() const
+{
+    return m_mainFBO;
+}
+
+GLResource<Envy::Framebuffer> DeferredRenderer::GetGBufferFramebuffer() const
 {
     return m_gBuffer;
 }

@@ -4,9 +4,10 @@
 
 HNCRSP_NAMESPACE_START
 
-constexpr int UBO_BINDING_INDEX_GLOBAL   = 0;
-constexpr int UBO_BINDING_INDEX_LIGHT    = 1;
-constexpr int UBO_BINDING_INDEX_MATERIAL = 2;
+constexpr int UBO_BINDING_INDEX_GLOBAL      = 0;
+constexpr int UBO_BINDING_INDEX_LIGHT       = 1;
+constexpr int UBO_BINDING_INDEX_MATERIAL    = 2;
+constexpr int UBO_BINDING_INDEX_POSTPROCESS = 3;
 
 constexpr int TEXTURE_UNIT_ALBEDO    = 0;
 constexpr int TEXTURE_UNIT_NORMAL    = 1;

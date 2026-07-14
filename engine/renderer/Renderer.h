@@ -86,7 +86,7 @@ struct MaterialUBO
 class Renderer
 {
 public:
-    Renderer();
+    Renderer(const Envy::EnvyInstance* envy_instance);
     virtual ~Renderer();
 
     // UBO Functions
@@ -104,6 +104,11 @@ public:
     // Utility Functions
     virtual GLResource<Envy::Framebuffer> GetMainFramebuffer() const = 0;
     virtual GLResource<Envy::Framebuffer> GetMainShadowFramebuffer() const = 0;
+
+protected:
+    GLResource<Envy::UniformBuffer> m_globalUBO;
+    GLResource<Envy::UniformBuffer> m_lightUBO;
+    GLResource<Envy::UniformBuffer> m_materialUBO;
 
 private:
     static bool m_rendererSetup;

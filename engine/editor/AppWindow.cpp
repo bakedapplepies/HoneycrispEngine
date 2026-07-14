@@ -13,7 +13,7 @@
 #include "renderer/meshes/Quad.h"
 #include "renderer/meshes/Model.h"
 #include "renderer/PostprocessQueue.h"
-#include "renderer/ForwardRenderer.h"
+// #include "renderer/ForwardRenderer.h"
 #include "renderer/DeferredRenderer.h"
 
 HNCRSP_NAMESPACE_START
@@ -311,6 +311,7 @@ void Application::Run()
         ImGui::End();
 
         m_envyInstance->ClearBuffer();
+        m_renderer->GetMainFramebuffer()->CopyToDefaultFBO(2560, 1440, Envy::FBOBuffer::COLOR);
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -337,37 +338,31 @@ void Application::_ProcessInput(float delta_time)
     if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
     {
         m_mainCamera->MoveForward(4.0f, delta_time);
-            
     }
 
     if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
     {
         m_mainCamera->MoveBackward(4.0f, delta_time);
-            
     }
 
     if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
     {
         m_mainCamera->MoveLeft(4.0f, delta_time);
-            
     }
 
     if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
     {
         m_mainCamera->MoveRight(4.0f, delta_time);
-            
     }
 
     if (glfwGetKey(m_window, GLFW_KEY_SPACE) == GLFW_PRESS)
     {
         m_mainCamera->MoveUp(4.0f, delta_time);
-            
     }
 
     if (glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
     {
         m_mainCamera->MoveDown(4.0f, delta_time);
-            
     }
 }
 

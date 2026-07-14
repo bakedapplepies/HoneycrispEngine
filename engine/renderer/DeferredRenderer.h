@@ -26,6 +26,7 @@ public:
 
     // Utility Functions
     GLResource<Envy::Framebuffer> GetMainFramebuffer() const override;
+    GLResource<Envy::Framebuffer> GetGBufferFramebuffer() const;
     GLResource<Envy::Framebuffer> GetMainShadowFramebuffer() const override;
 
 private:
@@ -36,9 +37,6 @@ private:
 
 private:
     const Envy::EnvyInstance* m_envyInstance = nullptr;
-    GLResource<Envy::UniformBuffer> m_globalUBO;
-    GLResource<Envy::UniformBuffer> m_lightUBO;
-    GLResource<Envy::UniformBuffer> m_materialUBO;
     GLResource<Envy::Framebuffer> m_gBuffer;
     GLResource<Envy::Framebuffer> m_mainFBO;
     GLResource<Envy::Framebuffer> m_shadowFBO;

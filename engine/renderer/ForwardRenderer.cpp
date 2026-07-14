@@ -10,35 +10,12 @@
 HNCRSP_NAMESPACE_START
 
 ForwardRenderer::ForwardRenderer(const Envy::EnvyInstance* envy_instance)
+    : Renderer(envy_instance)
 {
     m_envyInstance->SetFrontFaceOrder(Envy::FaceOrder::CLOCKWISE);
     m_envyInstance->SetDepthTesting(true);
 
     m_envyInstance = envy_instance;
-
-    /*                      size    offset  total_size
-        float u_time      : 4       0
-        mat4 u_view       : 64      16
-        mat4 u_projection : 64      80
-        vec4 u_cameraPos  : 16      144
-        mat4 u_lightSpace : 64      160     224
-    */
-    m_globalUBO = m_envyInstance->CreateUBO(224, UBO_BINDING_INDEX_GLOBAL);
-
-    /*                                               size    offset  total_size
-        DirLight u_light                           : 16      0
-        uint u_numPointLight                       : 4       16
-        PointLight u_pointLights[MAX_POINT_LIGHTS] : 320     32      352
-    */
-    m_lightUBO = m_envyInstance->CreateUBO(352, UBO_BINDING_INDEX_LIGHT);
-
-    /*                               size    offset  total_size
-        float u_ambient_intensity  : 4       0
-        float u_diffuse_intensity  : 4       16
-        float u_specular_intensity : 4       32
-        float u_roughness_scalar   : 4       48      52
-    */
-    m_materialUBO = m_envyInstance->CreateUBO(64, UBO_BINDING_INDEX_MATERIAL);
 
     uint32_t pointLightNum = 1;
     m_lightUBO->UploadData(16, 4, &pointLightNum);

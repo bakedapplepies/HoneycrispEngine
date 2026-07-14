@@ -35,9 +35,6 @@ private:
 
 private:
     const Envy::EnvyInstance* m_envyInstance = nullptr;
-    GLResource<Envy::UniformBuffer> m_globalUBO;
-    GLResource<Envy::UniformBuffer> m_lightUBO;
-    GLResource<Envy::UniformBuffer> m_materialUBO;
     GLResource<Envy::Framebuffer> m_mainFBO;
     GLResource<Envy::Framebuffer> m_shadowFBO;
     Material m_shadowMappingMaterial;

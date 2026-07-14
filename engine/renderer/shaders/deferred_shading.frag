@@ -288,5 +288,5 @@ void main()
     color += emission;
     color = clamp(color, vec3(0.0), vec3(1.0));
 
-    fragColor = vec4(color, 1.0);
+    fragColor = vec4(vec3(1), 1.0);
 }   
