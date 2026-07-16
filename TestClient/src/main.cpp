@@ -1,13 +1,28 @@
 #include <Envy/EnvyInstance.h>
 #include "editor/AppWindow.h"
 
-int main(void)
+#include <fmt/format.h>
+
+int main(int argc, char** argv)
 {
+    // Determine window size
+    if (argc != 3)
+    {
+        fmt::println("Honeycrisp TestClient: Invalid number of arguments (Must be 2.)");
+        return EXIT_FAILURE;
+    }
+    
+    char* windowWidthStr = argv[1];
+    char* windowHeightStr = argv[2];
+
+    int windowWidth = std::stoi(windowWidthStr);
+    int windowHeight = std::stoi(windowHeightStr);
+
     // Object creation
     Honeycrisp::WindowConfig windowConfig {
         .name = "HoneycrispEngine",
-        .width = 2560,
-        .height = 1440
+        .width = windowWidth,
+        .height = windowHeight
     };
     Honeycrisp::Application window;
     Envy::EnvyInstance envyInstance;
@@ -22,5 +37,5 @@ int main(void)
     envyInstance.Shutdown();
     window.Destroy();
     
-    return 0;
+    return EXIT_SUCCESS;
 }

@@ -9,8 +9,8 @@
 
 HNCRSP_NAMESPACE_START
 
-DeferredRenderer::DeferredRenderer(const Envy::EnvyInstance* envy_instance)
-    : Renderer(envy_instance)
+DeferredRenderer::DeferredRenderer(const Envy::EnvyInstance* envy_instance, int width, int height)
+    : Renderer(envy_instance, width, height)
 {
     m_envyInstance->SetFrontFaceOrder(Envy::FaceOrder::CLOCKWISE);
     m_envyInstance->SetDepthTesting(true);
@@ -21,7 +21,7 @@ DeferredRenderer::DeferredRenderer(const Envy::EnvyInstance* envy_instance)
     // whilst already holding a resource, it may lead to non-deallocated memory.
     // It will get cleaned up when the program ends, but in the duration the
     // program is running, it's just sitting there.
-    m_gBuffer = m_envyInstance->CreateFramebuffer(2560, 1440, {
+    m_gBuffer = m_envyInstance->CreateFramebuffer(m_width, m_height, {
         Envy::FBOAttachment {  // position texture
             .target = Envy::FBOAttachmentTarget::COLOR0,
             .usage = Envy::FBOAttachmentUsage::TEXTURE,
@@ -55,7 +55,7 @@ DeferredRenderer::DeferredRenderer(const Envy::EnvyInstance* envy_instance)
         Envy::FBOAttachmentTarget::COLOR2,
         Envy::FBOAttachmentTarget::COLOR3
     });
-    m_mainFBO = m_envyInstance->CreateFramebuffer(2560, 1440, {
+    m_mainFBO = m_envyInstance->CreateFramebuffer(m_width, m_height, {
         Envy::FBOAttachment {
             .target = Envy::FBOAttachmentTarget::COLOR0,
             .usage = Envy::FBOAttachmentUsage::TEXTURE,
@@ -63,7 +63,7 @@ DeferredRenderer::DeferredRenderer(const Envy::EnvyInstance* envy_instance)
         }
     });
     m_mainFBO->EnableColorTargetRead(Envy::FBOAttachmentTarget::COLOR0);
-    m_shadowFBO = m_envyInstance->CreateFramebuffer(2560, 1440, {
+    m_shadowFBO = m_envyInstance->CreateFramebuffer(m_width, m_height, {
         Envy::FBOAttachment {
             .target = Envy::FBOAttachmentTarget::DEPTH,
             .usage = Envy::FBOAttachmentUsage::TEXTURE,
@@ -122,30 +122,42 @@ void DeferredRenderer::UpdateGlobalMatParam(const MaterialUBO& mat_params) const
     m_materialUBO->UploadData(offsetof(MaterialUBO, u_roughness_scalar), 4, &mat_params.u_roughness_scalar);
 }
 
+void DeferredRenderer::UpdatePostprocessParam(const PostprocessUBO& postprocess_params) const
+{
+    m_postprocessUBO->UploadData(offsetof(PostprocessUBO, u_exposure), 4, &postprocess_params.u_exposure);
+}
+
 void DeferredRenderer::BeginFrame(const FrameData& frame_data)
 {
     assert(m_currentFrameType == FrameType::NONE && "DeferredRenderer::BeginFrame: In the middle of a frame.");
 
     m_currentFrameType = frame_data.frameType;
 
-    frame_data.framebuffer->Bind();
+    if (frame_data.frameType == FrameType::NORMAL)
+        m_gBuffer->Bind();
+    else if (frame_data.frameType == FrameType::SHADOW)
+        m_shadowFBO->Bind();
+    else
+        m_mainFBO->Bind();
+
     if ((frame_data.fboClearBufferFlags & Envy::FBOBuffer::COLOR) == Envy::FBOBuffer::COLOR)
     {
+        m_gBuffer->ClearBuffer(Envy::FBOBuffer::COLOR, 0.0f, 0);
+        m_gBuffer->ClearBuffer(Envy::FBOBuffer::COLOR, 0.0f, 1);
+        m_gBuffer->ClearBuffer(Envy::FBOBuffer::COLOR, 0.0f, 2);
+        m_gBuffer->ClearBuffer(Envy::FBOBuffer::COLOR, 0.0f, 3);
         frame_data.framebuffer->ClearBuffer(Envy::FBOBuffer::COLOR, 0.0f, 0);
-        frame_data.framebuffer->ClearBuffer(Envy::FBOBuffer::COLOR, 0.0f, 1);
-        frame_data.framebuffer->ClearBuffer(Envy::FBOBuffer::COLOR, 0.0f, 2);
-        frame_data.framebuffer->ClearBuffer(Envy::FBOBuffer::COLOR, 0.0f, 3);
-        m_mainFBO->ClearBuffer(Envy::FBOBuffer::COLOR, 0.0f, 0);
     }
     if ((frame_data.fboClearBufferFlags & Envy::FBOBuffer::DEPTH) == Envy::FBOBuffer::DEPTH)
     {    
+        m_gBuffer->ClearBuffer(Envy::FBOBuffer::DEPTH, 1.0f);
         frame_data.framebuffer->ClearBuffer(Envy::FBOBuffer::DEPTH, 1.0f);
     }
     if ((frame_data.fboClearBufferFlags & Envy::FBOBuffer::STENCIL) == Envy::FBOBuffer::STENCIL)
     {
         frame_data.framebuffer->ClearBuffer(Envy::FBOBuffer::STENCIL, 0);
     }
-    m_envyInstance->SetViewport(0, 0, 2560, 1440);
+    m_envyInstance->SetViewport(0, 0, m_width, m_height);
 
     if (m_currentFrameType == FrameType::NORMAL)
         _UpdateUBOCamera(frame_data.camera, frame_data.cameraProjection);

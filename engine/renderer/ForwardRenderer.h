@@ -9,13 +9,14 @@ HNCRSP_NAMESPACE_START
 class ForwardRenderer : public Renderer
 {
 public:
-    ForwardRenderer(const Envy::EnvyInstance* envy_instance);
+    ForwardRenderer(const Envy::EnvyInstance* envy_instance, int width, int height);
     ~ForwardRenderer();
 
     // UBO Functions
     void UpdateDirLight(const DirLight& dir_light) const override;
     void UpdatePointLights(const std::vector<PointLight>& point_lights) const override;
     void UpdateGlobalMatParam(const MaterialUBO& mat_params) const override;
+    void UpdatePostprocessParam(const PostprocessUBO& postprocess_params) const override;
 
     // Rendering Functions
     void BeginFrame(const FrameData& frame_data) override;

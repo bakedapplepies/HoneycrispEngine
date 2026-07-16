@@ -13,7 +13,7 @@
 #include "renderer/meshes/Quad.h"
 #include "renderer/meshes/Model.h"
 #include "renderer/PostprocessQueue.h"
-// #include "renderer/ForwardRenderer.h"
+#include "renderer/ForwardRenderer.h"
 #include "renderer/DeferredRenderer.h"
 
 HNCRSP_NAMESPACE_START
@@ -111,11 +111,13 @@ void Application::Run()
     _LoadTexture2Ds();
 
     // Postprocess Queue
-    PostprocessQueue postprocessQueue(m_envyInstance, 2560, 1440);
+    int windowWidth, windowHeight;
+    glfwGetWindowSize(m_window, &windowWidth, &windowHeight);
+    PostprocessQueue postprocessQueue(m_envyInstance, windowWidth, windowHeight);
     postprocessQueue.AddCompute(m_envyInstance->GetShaderProgram(Path("engine/renderer/shaders/postprocess/gamma.comp").Str()));
 
     // Sub-systems setup
-    m_renderer = std::make_unique<DeferredRenderer>(m_envyInstance);
+    m_renderer = std::make_unique<DeferredRenderer>(m_envyInstance, windowWidth, windowHeight);
 
     // Scene data
     std::vector<glm::vec3> quadPositions;
@@ -181,6 +183,11 @@ void Application::Run()
         .u_roughness_scalar = 0.4f
     };
 
+    // Postprocessing parameters
+    PostprocessUBO postprocessParams {
+        .u_exposure = 7.0f  // good for current tonemap operator
+    };
+
     // Skybox
     const GLResource<Envy::Cubemap> skybox =
         m_envyInstance->CreateCubemap(Envy::TextureFormat::SRGBA8,
@@ -196,6 +203,7 @@ void Application::Run()
     m_renderer->UpdateDirLight(dirLight);
     m_renderer->UpdatePointLights(pointLights);
     m_renderer->UpdateGlobalMatParam(matParams);
+    m_renderer->UpdatePostprocessParam(postprocessParams);
 
     // Keep track of time             
     float beginTime = glfwGetTime();
@@ -236,7 +244,7 @@ void Application::Run()
         m_renderer->RenderMultiple(model.GetRenderCmds());
         GLResource<Envy::Texture2D> mainFrameResult = m_renderer->EndFrame(skybox);
         // --------------------------
-        depthCamera.position = camera.position - (depthCamera.viewDir) * 20.0f;
+        depthCamera.position = camera.position - (depthCamera.viewDir) * 25.0f;
 
         m_envyInstance->BindDefaultFramebuffer();
 
@@ -260,6 +268,7 @@ void Application::Run()
         bool updateDirLight = false;
         bool updatePointLight = false;
         bool updateGlobalMatParams = false;
+        bool updatePostprocessParams = false;
         static glm::vec3 dirLightDir = dirLight.direction;
         updateDirLight |= ImGui::SliderFloat3("Directional Light", glm::value_ptr(dirLightDir), -10.0f, 10.0f);
         if (glfwGetKey(m_window, GLFW_KEY_1) == GLFW_PRESS)
@@ -268,9 +277,9 @@ void Application::Run()
         }
         else if (glfwGetKey(m_window, GLFW_KEY_2) == GLFW_PRESS)
         {
-            // textureID = shadowFrameResult->GetID();
+            textureID = shadowFrameResult->GetID();
         }
-        updateDepthMapDir |= ImGui::Button("Set Dir");
+        updatePostprocessParams |= ImGui::SliderFloat("Exposure", &postprocessParams.u_exposure, 0.1f, 16.0f);
         updatePointLight |= ImGui::SliderFloat3("PointLight 1", glm::value_ptr(pointLights[0].position), -10.0f, 10.0f);
         updatePointLight |= ImGui::SliderFloat3("PointLight 2", glm::value_ptr(pointLights[1].position), -10.0f, 10.0f);
         updateGlobalMatParams |= ImGui::SliderFloat("Ambient Intensity", &matParams.u_ambient_intensity, 0.0f, 1.0f);
@@ -286,6 +295,7 @@ void Application::Run()
         } 
         if (updatePointLight) m_renderer->UpdatePointLights(pointLights);
         if (updateGlobalMatParams) m_renderer->UpdateGlobalMatParam(matParams);
+        if (updatePostprocessParams) m_renderer->UpdatePostprocessParam(postprocessParams);
         ImGui::End();
 
         // ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Once);
@@ -311,7 +321,7 @@ void Application::Run()
         ImGui::End();
 
         m_envyInstance->ClearBuffer();
-        m_renderer->GetMainFramebuffer()->CopyToDefaultFBO(2560, 1440, Envy::FBOBuffer::COLOR);
+        m_renderer->GetMainFramebuffer()->CopyToDefaultFBO(windowWidth, windowHeight, Envy::FBOBuffer::COLOR);
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 

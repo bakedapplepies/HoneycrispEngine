@@ -1,6 +1,6 @@
 #version 460 core
 
-out vec4 fragColor;
+layout (location = 0) out vec4 fragColor;
 
 #define LAMBERTIAN_DIFFUSE   0
 #define BURLEY_DIFFUSE       1
@@ -19,9 +19,10 @@ out vec4 fragColor;
 // Constants
 const float PI = 3.1415926;
 
-const uint UBO_BINDING_GLOBAL   = 0;
-const uint UBO_BINDING_LIGHT    = 1;
-const uint UBO_BINDING_MATERIAL = 2;
+const uint UBO_BINDING_GLOBAL      = 0;
+const uint UBO_BINDING_LIGHT       = 1;
+const uint UBO_BINDING_MATERIAL    = 2;
+const uint UBO_BINDING_POSTPROCESS = 3;
 
 const uint TEXTURE_UNIT_ALBEDO    = 0;
 const uint TEXTURE_UNIT_NORMAL    = 1;
@@ -286,7 +287,6 @@ void main()
 
     color += k_ambient * albedo;
     color += emission;
-    color = clamp(color, vec3(0.0), vec3(1.0));
 
-    fragColor = vec4(vec3(1), 1.0);
+    fragColor = vec4(color, 1.0);
 }   

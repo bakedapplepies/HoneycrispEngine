@@ -6,7 +6,7 @@
             "request": "launch",
             "name": "Debug Application",
             "program": "${workspaceFolder}/build/Debug/TestClient/src/Honeycrisp.Test.exe",
-            "args": [],
+            "args": ["2560", "1440"],
             "cwd": "${workspaceFolder}/build/Debug",
         }
     ]

@@ -5,13 +5,45 @@ layout (local_size_x = 8, local_size_y = 8) in;
 layout (rgba8, binding = 0) readonly uniform image2D u_renderedScene;
 layout (rgba8, binding = 1) writeonly uniform image2D u_imageOutput;
 
-layout (binding = 0, std140) uniform GlobalUBO
+const uint UBO_BINDING_GLOBAL      = 0;
+const uint UBO_BINDING_LIGHT       = 1;
+const uint UBO_BINDING_MATERIAL    = 2;
+const uint UBO_BINDING_POSTPROCESS = 3;
+
+layout (binding = UBO_BINDING_GLOBAL, std140) uniform GlobalUBO
 {
     float u_time;
     mat4 u_view;
     mat4 u_projection;
     vec4 u_cameraPos;
 };
+
+layout (binding = UBO_BINDING_POSTPROCESS, std140) uniform PostprocessUBO
+{
+    float u_exposure;
+};
+
+float luminance(vec3 color)
+{
+    vec3 weights = vec3(0.2126, 0.7152, 0.0722);
+    return dot(weights, color);
+}
+
+vec3 Exposure(vec3 color)
+{
+    return color * u_exposure;
+}
+
+vec3 Tonemapping(vec3 color, float Lin)
+{
+    float a = 2.51,
+          b = 0.03,
+          c = 2.43,
+          d = 0.59,
+          e = 0.14;
+    color *= 0.6;
+    return (color * (a * color + b)) / (color * (c * color + d) + e);
+}
 
 vec3 GammaCorrect(vec3 color)
 {
@@ -24,7 +56,12 @@ void main()
 
     vec4 pixel = imageLoad(u_renderedScene, pixelCoords);
 
+
+    pixel.xyz = Exposure(pixel.xyz);
+    float Lin = luminance(pixel.xyz);
+    pixel.xyz = Tonemapping(pixel.xyz, Lin);
     pixel.xyz = GammaCorrect(pixel.xyz);
+    pixel.xyz = clamp(pixel.xyz, 0.0, 1.0);
 
     imageStore(u_imageOutput, pixelCoords, pixel);
 }

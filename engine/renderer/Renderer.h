@@ -83,16 +83,22 @@ struct MaterialUBO
     float u_roughness_scalar;
 };
 
+struct PostprocessUBO
+{
+    float u_exposure;
+};
+
 class Renderer
 {
 public:
-    Renderer(const Envy::EnvyInstance* envy_instance);
+    Renderer(const Envy::EnvyInstance* envy_instance, int width, int height);
     virtual ~Renderer();
 
     // UBO Functions
     virtual void UpdateDirLight(const DirLight& dir_light) const = 0;
     virtual void UpdatePointLights(const std::vector<PointLight>& point_lights) const = 0;
     virtual void UpdateGlobalMatParam(const MaterialUBO& mat_params) const = 0;
+    virtual void UpdatePostprocessParam(const PostprocessUBO& postprocess_params) const = 0;
 
     // Rendering Functions
     virtual void BeginFrame(const FrameData& frame_data) = 0;
@@ -106,9 +112,12 @@ public:
     virtual GLResource<Envy::Framebuffer> GetMainShadowFramebuffer() const = 0;
 
 protected:
+    int m_width;
+    int m_height;
     GLResource<Envy::UniformBuffer> m_globalUBO;
     GLResource<Envy::UniformBuffer> m_lightUBO;
     GLResource<Envy::UniformBuffer> m_materialUBO;
+    GLResource<Envy::UniformBuffer> m_postprocessUBO;
 
 private:
     static bool m_rendererSetup;

@@ -8,7 +8,8 @@ HNCRSP_NAMESPACE_START
 
 bool Renderer::m_rendererSetup = false;
 
-Renderer::Renderer(const Envy::EnvyInstance* envy_instance)
+Renderer::Renderer(const Envy::EnvyInstance* envy_instance, int width, int height)
+    : m_width(width), m_height(height)
 {
     assert(!m_rendererSetup && "A renderer has already existed.");
     m_rendererSetup = true;
@@ -36,6 +37,11 @@ Renderer::Renderer(const Envy::EnvyInstance* envy_instance)
         float u_roughness_scalar   : 4       48      52
     */
     m_materialUBO = envy_instance->CreateUBO(64, UBO_BINDING_INDEX_MATERIAL);
+
+    /*                      size    offset  total_size
+        float u_exposure  : 4       0       4
+    */
+    m_postprocessUBO = envy_instance->CreateUBO(4, UBO_BINDING_INDEX_POSTPROCESS);
 }
 
 Renderer::~Renderer()
@@ -44,6 +50,7 @@ Renderer::~Renderer()
     m_globalUBO = GLResource<Envy::UniformBuffer>::empty;
     m_lightUBO = GLResource<Envy::UniformBuffer>::empty;
     m_materialUBO = GLResource<Envy::UniformBuffer>::empty;
+    m_postprocessUBO = GLResource<Envy::UniformBuffer>::empty;
 }
 
 HNCRSP_NAMESPACE_END

@@ -9,8 +9,8 @@
 
 HNCRSP_NAMESPACE_START
 
-ForwardRenderer::ForwardRenderer(const Envy::EnvyInstance* envy_instance)
-    : Renderer(envy_instance)
+ForwardRenderer::ForwardRenderer(const Envy::EnvyInstance* envy_instance, int width, int height)
+    : Renderer(envy_instance, width, height)
 {
     m_envyInstance->SetFrontFaceOrder(Envy::FaceOrder::CLOCKWISE);
     m_envyInstance->SetDepthTesting(true);
@@ -24,7 +24,7 @@ ForwardRenderer::ForwardRenderer(const Envy::EnvyInstance* envy_instance)
     // whilst already holding a resource, it may lead to non-deallocated memory.
     // It will get cleaned up when the program ends, but in the duration the
     // program is running, it's just sitting there.
-    m_mainFBO = m_envyInstance->CreateFramebuffer(2560, 1440, {
+    m_mainFBO = m_envyInstance->CreateFramebuffer(m_width, m_height, {
         Envy::FBOAttachment {
             .target = Envy::FBOAttachmentTarget::COLOR0,
             .usage = Envy::FBOAttachmentUsage::TEXTURE,
@@ -38,7 +38,7 @@ ForwardRenderer::ForwardRenderer(const Envy::EnvyInstance* envy_instance)
     });
     m_mainFBO->EnableColorTargetRead(Envy::FBOAttachmentTarget::NONE);
     m_mainFBO->EnableColorTargetWrite(Envy::FBOAttachmentTarget::COLOR0);
-    m_shadowFBO = m_envyInstance->CreateFramebuffer(2560, 1440, {
+    m_shadowFBO = m_envyInstance->CreateFramebuffer(m_width, m_height, {
         Envy::FBOAttachment {
             .target = Envy::FBOAttachmentTarget::DEPTH,
             .usage = Envy::FBOAttachmentUsage::TEXTURE,
@@ -90,6 +90,11 @@ void ForwardRenderer::UpdateGlobalMatParam(const MaterialUBO& mat_params) const
     m_materialUBO->UploadData(offsetof(MaterialUBO, u_roughness_scalar), 4, &mat_params.u_roughness_scalar);
 }
 
+void ForwardRenderer::UpdatePostprocessParam(const PostprocessUBO& postprocess_params) const
+{
+    m_postprocessUBO->UploadData(offsetof(PostprocessUBO, u_exposure), 4, &postprocess_params.u_exposure);
+}
+
 void ForwardRenderer::BeginFrame(const FrameData& frame_data)
 {
     assert(m_currentFrameType == FrameType::NONE && "ForwardRenderer::BeginFrame: In the middle of a frame.");
@@ -103,7 +108,7 @@ void ForwardRenderer::BeginFrame(const FrameData& frame_data)
         frame_data.framebuffer->ClearBuffer(Envy::FBOBuffer::DEPTH, 1.0f);
     if ((frame_data.fboClearBufferFlags & Envy::FBOBuffer::STENCIL) == Envy::FBOBuffer::STENCIL)
         frame_data.framebuffer->ClearBuffer(Envy::FBOBuffer::STENCIL, 0);
-    m_envyInstance->SetViewport(0, 0, 2560, 1440);
+    m_envyInstance->SetViewport(0, 0, m_width, m_height);
 
     if (m_currentFrameType == FrameType::NORMAL)
         _UpdateUBOCamera(frame_data.camera, frame_data.cameraProjection);
