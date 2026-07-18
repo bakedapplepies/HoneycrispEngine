@@ -22,9 +22,19 @@ public:
     const GLResource<Envy::Texture2D> Process(const GLResource<Envy::Texture2D>& input,
                                               int group_x, int group_y, int group_z) const;
 
+    const GLResource<Envy::Texture2D> Bloom(const GLResource<Envy::Texture2D>& source,
+                                            const Envy::ShaderProgram* downsample_compute,
+                                            const Envy::ShaderProgram* upsample_compute) const;
+
+private:
+    void _BloomDownsample(const Envy::ShaderProgram* downsample_compute, const GLResource<Envy::Texture2D>& source) const;
+    void _BloomUpsample(const Envy::ShaderProgram* upsample_compute, const GLResource<Envy::Texture2D>& source) const;
+
 private:
     std::vector<const Envy::ShaderProgram*> m_computeShaders;
     GLResource<Envy::Texture2D> m_buffer = GLResource<Envy::Texture2D>::empty;
+    std::vector<GLResource<Envy::Texture2D>> m_bloomMips;
+    // GLResource<Envy::Texture2D> m_buffer2 = GLResource<Envy::Texture2D>::empty;
 };
 
 HNCRSP_NAMESPACE_END

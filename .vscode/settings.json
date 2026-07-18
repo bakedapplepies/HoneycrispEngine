@@ -122,7 +122,10 @@
     "C_Cpp.intelliSenseEngine": "disabled",
     "cmake.debugConfig": {
         "cwd": "${workspaceFolder}/build/Debug",
-        "args": ["1280", "720"]
+        "args": [
+            "2560",
+            "1440"
+        ]
     },
     "liveServer.settings.port": 5501,
     "glsllint.glslangValidatorArgs": []

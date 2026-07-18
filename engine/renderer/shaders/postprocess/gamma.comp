@@ -2,13 +2,17 @@
 
 layout (local_size_x = 8, local_size_y = 8) in;
 
-layout (rgba8, binding = 0) readonly uniform image2D u_renderedScene;
-layout (rgba8, binding = 1) writeonly uniform image2D u_imageOutput;
-
 const uint UBO_BINDING_GLOBAL      = 0;
 const uint UBO_BINDING_LIGHT       = 1;
 const uint UBO_BINDING_MATERIAL    = 2;
 const uint UBO_BINDING_POSTPROCESS = 3;
+
+const uint IMAGE_UNIT_READ       = 0;
+const uint IMAGE_UNIT_WRITE      = 1;
+const uint IMAGE_UNIT_READ_WRITE = 2;
+
+layout (rgba16f, binding = IMAGE_UNIT_READ) readonly uniform image2D u_renderedScene;
+layout (rgba16f, binding = IMAGE_UNIT_WRITE) writeonly uniform image2D u_imageOutput;
 
 layout (binding = UBO_BINDING_GLOBAL, std140) uniform GlobalUBO
 {
@@ -56,9 +60,9 @@ void main()
 
     vec4 pixel = imageLoad(u_renderedScene, pixelCoords);
 
+    float Lin = luminance(pixel.xyz);
 
     pixel.xyz = Exposure(pixel.xyz);
-    float Lin = luminance(pixel.xyz);
     pixel.xyz = Tonemapping(pixel.xyz, Lin);
     pixel.xyz = GammaCorrect(pixel.xyz);
     pixel.xyz = clamp(pixel.xyz, 0.0, 1.0);

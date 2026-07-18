@@ -1,10 +1,8 @@
 #version 460 core
 
 // G-Buffer textures
-layout (location = 0) out vec3 gPosition;
-layout (location = 1) out vec3 gNormal;
-layout (location = 2) out vec4 gRoughness;
-layout (location = 3) out vec4 gAlbedo;
+layout (location = 0) out vec3 HDR;
+layout (location = 1) out vec3 Bloom;
 
 // Constants
 const float PI = 3.1415926;
@@ -40,8 +38,5 @@ layout (binding = TEXTURE_UNIT_DEPTH_MAP) uniform sampler2D u_depthMap;
 
 void main()
 {
-    gPosition = v_out.WorldPosition;
-    gNormal = v_out.Normal;
-    gRoughness = texture(u_roughness, v_out.UV);
-    gAlbedo = texture(u_albedo, v_out.UV);
+    
 }

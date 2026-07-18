@@ -248,8 +248,11 @@ void Application::Run()
 
         m_envyInstance->BindDefaultFramebuffer();
 
-        GLResource<Envy::Texture2D> frame = postprocessQueue.Process(mainFrameResult, 320, 180, 1);
-        static ImTextureID textureID = frame->GetID();
+        mainFrameResult = postprocessQueue.Bloom(mainFrameResult,
+                                                 m_envyInstance->GetShaderProgram(Path("engine/renderer/shaders/postprocess/bloom_downsample.comp").Str()),
+                                                 m_envyInstance->GetShaderProgram(Path("engine/renderer/shaders/postprocess/bloom_upsample.comp").Str()));
+        mainFrameResult = postprocessQueue.Process(mainFrameResult, 320, 180, 1);
+        static ImTextureID textureID = mainFrameResult->GetID();
 
         _ProcessInput(deltaTime);
 
@@ -273,7 +276,7 @@ void Application::Run()
         updateDirLight |= ImGui::SliderFloat3("Directional Light", glm::value_ptr(dirLightDir), -10.0f, 10.0f);
         if (glfwGetKey(m_window, GLFW_KEY_1) == GLFW_PRESS)
         {
-            textureID = frame->GetID();
+            textureID = mainFrameResult->GetID();
         }
         else if (glfwGetKey(m_window, GLFW_KEY_2) == GLFW_PRESS)
         {
@@ -402,6 +405,12 @@ void Application::_LoadShaderPrograms() const
     m_envyInstance->LoadShaderProgram(
         Envy::ShaderType::COMPUTE,
         Path("engine/renderer/shaders/postprocess/gamma.comp").Str());
+    m_envyInstance->LoadShaderProgram(
+        Envy::ShaderType::COMPUTE,
+        Path("engine/renderer/shaders/postprocess/bloom_downsample.comp").Str());
+    m_envyInstance->LoadShaderProgram(
+        Envy::ShaderType::COMPUTE,
+        Path("engine/renderer/shaders/postprocess/bloom_upsample.comp").Str());
 }
 
 void Application::_LoadTexture2Ds() const
