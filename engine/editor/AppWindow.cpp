@@ -163,6 +163,15 @@ void Application::Run()
     pointLights.push_back(PointLight {
         .position = glm::vec3(1.0f, 1.0f, 1.0f)
     });
+    // pointLights.push_back(PointLight {
+    //     .position = glm::vec3(2.0f, 3.0f, 1.2f)
+    // });
+    // pointLights.push_back(PointLight {
+    //     .position = glm::vec3(2.4f, 1.8f, 0.8f)
+    // });
+    // pointLights.push_back(PointLight {
+    //     .position = glm::vec3(0.2f, 2.0f, -1.0f)
+    // });
 
     // Camera
     Camera camera;
@@ -185,7 +194,7 @@ void Application::Run()
 
     // Postprocessing parameters
     PostprocessUBO postprocessParams {
-        .u_exposure = 7.0f  // good for current tonemap operator
+        .u_exposure = 4.5f  // good for current tonemap operator
     };
 
     // Skybox

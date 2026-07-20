@@ -19,7 +19,7 @@ uniform vec2 u_inputRes;
 
 void main()
 {
-    vec2 inoutputUV = gl_GlobalInvocationID.xy / (gl_NumWorkGroups.xy * gl_WorkGroupSize.xy);
+    vec2 inoutputUV = vec2(gl_GlobalInvocationID.xy) / vec2(gl_NumWorkGroups.xy * gl_WorkGroupSize.xy);
     vec2 inTex = vec2(1.0) / u_inputRes;
 
     vec3 downsample = vec3(0.0);

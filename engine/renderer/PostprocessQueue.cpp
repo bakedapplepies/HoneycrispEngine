@@ -75,7 +75,9 @@ const GLResource<Envy::Texture2D> PostprocessQueue::Bloom(const GLResource<Envy:
                                                           const Envy::ShaderProgram* upsample_compute) const
 {
     _BloomDownsample(downsample_compute, source);
+    glUseProgram(0);
     _BloomUpsample(upsample_compute, source);
+    glUseProgram(0);
 
     return source;
 }
@@ -113,7 +115,7 @@ void PostprocessQueue::_BloomUpsample(const Envy::ShaderProgram* upsample_comput
         m_bloomMips[i]->Bind(TEXTURE_UNIT_ALBEDO);
         m_bloomMips[i-1]->MakeImageReadWriteAccess(IMAGE_UNIT_READ_WRITE);
         glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-        glDispatchCompute(m_bloomMips[i]->GetWidth()/LOCAL_X, m_bloomMips[i]->GetHeight()/LOCAL_Y, 1);
+        glDispatchCompute(m_bloomMips[i-1]->GetWidth()/LOCAL_X, m_bloomMips[i-1]->GetHeight()/LOCAL_Y, 1);
     }
     m_bloomMips[0]->Bind(TEXTURE_UNIT_ALBEDO);
     source->MakeImageReadWriteAccess(IMAGE_UNIT_READ_WRITE);

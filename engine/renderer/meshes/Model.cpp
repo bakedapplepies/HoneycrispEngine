@@ -85,7 +85,7 @@ void Model::_RetrieveMaterials(const aiScene* scene, std::string_view root_path,
             std::filesystem::path fullPath(root_path);
             fullPath.remove_filename();
             fullPath /= path.C_Str();
-            envy_instance->LoadTexture2D(Envy::TextureFormat::SRGBA8, fullPath.string());
+            envy_instance->LoadTexture2D(Envy::TextureFormat::RGBA8, fullPath.string());
             hncrspMaterial.normal = envy_instance->GetTexture2D(fullPath.string());
             hncrspMaterial.normal->ChangeSamplerConfig(textureSampler2DConfig);
         }
@@ -94,7 +94,7 @@ void Model::_RetrieveMaterials(const aiScene* scene, std::string_view root_path,
             std::filesystem::path fullPath(root_path);
             fullPath.remove_filename();
             fullPath /= path.C_Str();
-            envy_instance->LoadTexture2D(Envy::TextureFormat::SRGBA8, fullPath.string());
+            envy_instance->LoadTexture2D(Envy::TextureFormat::RGBA8, fullPath.string());
             hncrspMaterial.roughness = envy_instance->GetTexture2D(fullPath.string());
             hncrspMaterial.roughness->ChangeSamplerConfig(textureSampler2DConfig);
         }

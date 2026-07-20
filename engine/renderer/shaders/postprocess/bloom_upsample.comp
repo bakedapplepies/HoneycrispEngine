@@ -19,7 +19,7 @@ uniform float u_filterRadius;
 
 void main()
 {
-    vec2 inoutputUV = gl_GlobalInvocationID.xy / (gl_NumWorkGroups.xy * gl_WorkGroupSize.xy);
+    vec2 inoutputUV = vec2(gl_GlobalInvocationID.xy) / vec2(gl_NumWorkGroups.xy * gl_WorkGroupSize.xy);
     vec2 filterRad = vec2(u_filterRadius);
 
     vec3 upsample = vec3(0.0);
