@@ -13,7 +13,7 @@ PostprocessQueue::PostprocessQueue(const Envy::EnvyInstance* envy_instance, int 
     m_buffer = envy_instance->CreateTexture2DEmpty(Envy::TextureFormat::RGBA16F, width, height);
 
     // texture chain for bloom
-    int bloomChainSize = 4;
+    int bloomChainSize = 5;
     // Automatically find chain length with final mip width of around 64
     // int bloomChainSize = std::round(std::log2(static_cast<float>(width))) - 6;
     // E.g. 2560x1440 --- 5 mips --> 80x45
@@ -70,16 +70,15 @@ const GLResource<Envy::Texture2D> PostprocessQueue::Process(const GLResource<Env
         return input;
 }
 
-const GLResource<Envy::Texture2D> PostprocessQueue::Bloom(const GLResource<Envy::Texture2D>& source,
+const GLResource<Envy::Texture2D> PostprocessQueue::Bloom(const GLResource<Envy::Texture2D>& thresholded,
+                                                          const GLResource<Envy::Texture2D>& dest,
                                                           const Envy::ShaderProgram* downsample_compute,
                                                           const Envy::ShaderProgram* upsample_compute) const
 {
-    _BloomDownsample(downsample_compute, source);
-    glUseProgram(0);
-    _BloomUpsample(upsample_compute, source);
-    glUseProgram(0);
+    _BloomDownsample(downsample_compute, thresholded);
+    _BloomUpsample(upsample_compute, dest);
 
-    return source;
+    return dest;
 }
 
 void PostprocessQueue::_BloomDownsample(const Envy::ShaderProgram* downsample_compute, const GLResource<Envy::Texture2D>& source) const

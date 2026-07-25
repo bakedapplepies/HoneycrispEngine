@@ -15,4 +15,9 @@ glm::mat4 Transform::GetModelMatrix() const
     return model;
 }
 
+glm::mat3 Transform::GetNormalMatrix() const
+{
+    return glm::mat3(glm::transpose(glm::inverse(GetModelMatrix())));
+}
+
 HNCRSP_NAMESPACE_END

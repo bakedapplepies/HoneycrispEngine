@@ -60,9 +60,18 @@ DeferredRenderer::DeferredRenderer(const Envy::EnvyInstance* envy_instance, int 
             .target = Envy::FBOAttachmentTarget::COLOR0,
             .usage = Envy::FBOAttachmentUsage::TEXTURE,
             .format = Envy::TextureFormat::RGBA16F
+        },
+        Envy::FBOAttachment {
+            .target = Envy::FBOAttachmentTarget::COLOR1,
+            .usage = Envy::FBOAttachmentUsage::TEXTURE,
+            .format = Envy::TextureFormat::RGBA16F
         }
     });
-    m_mainFBO->EnableColorTargetRead(Envy::FBOAttachmentTarget::COLOR0);
+    // m_mainFBO->EnableColorTargetRead(Envy::FBOAttachmentTarget::COLOR0);
+    m_mainFBO->EnableColorTargetWrites({
+        Envy::FBOAttachmentTarget::COLOR0,
+        Envy::FBOAttachmentTarget::COLOR1
+    });
     m_shadowFBO = m_envyInstance->CreateFramebuffer(m_width, m_height, {
         Envy::FBOAttachment {
             .target = Envy::FBOAttachmentTarget::DEPTH,
@@ -95,36 +104,6 @@ DeferredRenderer::~DeferredRenderer()
     m_mainFBO = GLResource<Envy::Framebuffer>::empty;
     m_shadowFBO = GLResource<Envy::Framebuffer>::empty;
     m_quad.reset();
-}
-
-void DeferredRenderer::UpdateDirLight(const DirLight& dir_light) const
-{
-    m_lightUBO->UploadData(offsetof(LightUBO, u_dirLight), 16, &dir_light);
-}
-
-void DeferredRenderer::UpdatePointLights(const std::vector<PointLight>& point_lights) const
-{
-    // m_pointLights = std::move(point_lights);
-
-    uint32_t pointLightNum = point_lights.size();
-    m_lightUBO->UploadData(offsetof(LightUBO, u_numPointLight), 4, &pointLightNum);
-    for (uint32_t i = 0; i < point_lights.size(); i++)
-    {
-        m_lightUBO->UploadData(offsetof(LightUBO, u_pointLights) + 16 * i, 16, point_lights.data() + i);
-    }
-}
-
-void DeferredRenderer::UpdateGlobalMatParam(const MaterialUBO& mat_params) const
-{
-    m_materialUBO->UploadData(offsetof(MaterialUBO, u_ambient_intensity), 4, &mat_params.u_ambient_intensity);
-    m_materialUBO->UploadData(offsetof(MaterialUBO, u_diffuse_intensity), 4, &mat_params.u_diffuse_intensity);
-    m_materialUBO->UploadData(offsetof(MaterialUBO, u_specular_intensity), 4, &mat_params.u_specular_intensity);
-    m_materialUBO->UploadData(offsetof(MaterialUBO, u_roughness_scalar), 4, &mat_params.u_roughness_scalar);
-}
-
-void DeferredRenderer::UpdatePostprocessParam(const PostprocessUBO& postprocess_params) const
-{
-    m_postprocessUBO->UploadData(offsetof(PostprocessUBO, u_exposure), 4, &postprocess_params.u_exposure);
 }
 
 void DeferredRenderer::BeginFrame(const FrameData& frame_data)
@@ -190,7 +169,7 @@ GLResource<Envy::Texture2D> DeferredRenderer::EndFrame(const GLResource<Envy::Cu
         m_quad->GetRenderCmd().vertexArray->Bind();
         m_envyInstance->Draw(*m_quad->GetRenderCmd().vaoChunk);
         
-        return m_mainFBO->GetTex2DAttachment(MAIN_FBO_COLOR_ATTACHMENT_INDEX);
+        return m_mainFBO->GetTex2DAttachment(MAIN_FBO_COLOR_ATTACHMENT0_INDEX);
     }
     else if (frameType == FrameType::SHADOW)
     {
@@ -209,11 +188,13 @@ void DeferredRenderer::Render(const RenderCommand& render_command) const
     }
     
     const Material* material = render_command.material;
-    material->albedo->Bind(TEXTURE_UNIT_ALBEDO);
-    material->roughness->Bind(TEXTURE_UNIT_ROUGHNESS);
+    if (material->albedo.Usable()) material->albedo->Bind(TEXTURE_UNIT_ALBEDO);
+    if (material->roughness.Usable()) material->roughness->Bind(TEXTURE_UNIT_ROUGHNESS);
     m_deferredMaterial.pipeline->Bind();
     m_deferredMaterial.pipeline->GetVertexProgram()->UniformMat4("u_model",
-                                                        render_command.transform->GetModelMatrix());
+                                                                 render_command.transform->GetModelMatrix());
+    m_deferredMaterial.pipeline->GetVertexProgram()->UniformMat3("u_normalMat",
+                                                                 render_command.transform->GetNormalMatrix());
 
     render_command.vertexArray->Bind();
     m_envyInstance->Draw(*render_command.vaoChunk);
@@ -238,6 +219,8 @@ void DeferredRenderer::RenderMultiple(const std::vector<RenderCommand>& render_c
             m_deferredMaterial.pipeline->Bind();
             m_deferredMaterial.pipeline->GetVertexProgram()->UniformMat4("u_model",
                                                                 render_commands[i].transform->GetModelMatrix());
+            m_deferredMaterial.pipeline->GetVertexProgram()->UniformMat3("u_normalMat",
+                                                                render_commands[i].transform->GetNormalMatrix());
     
             render_commands[i].vertexArray->Bind();
             m_envyInstance->Draw(*render_commands[i].vaoChunk);
@@ -279,7 +262,9 @@ void DeferredRenderer::RenderIndirect(const RenderCommandIndirect& render_comman
     }
     m_deferredMaterial.pipeline->Bind();
     m_deferredMaterial.pipeline->GetVertexProgram()->UniformMat4("u_model",
-                                                        render_command_indirect.transform->GetModelMatrix());
+                                                                 render_command_indirect.transform->GetModelMatrix());
+    m_deferredMaterial.pipeline->GetVertexProgram()->UniformMat3("u_normalMat",
+                                                                 render_command_indirect.transform->GetNormalMatrix());
     
     m_envyInstance->DrawIndirect(render_command_indirect.indirectBuffer->GetCommandCount());
 }
@@ -297,6 +282,11 @@ GLResource<Envy::Framebuffer> DeferredRenderer::GetGBufferFramebuffer() const
 GLResource<Envy::Framebuffer> DeferredRenderer::GetMainShadowFramebuffer() const
 {
     return m_shadowFBO;
+}
+
+GLResource<Envy::Texture2D> DeferredRenderer::GetTextureForBloom() const
+{
+    return m_mainFBO->GetTex2DAttachment(1);
 }
 
 void DeferredRenderer::_UpdateUBOTime() const

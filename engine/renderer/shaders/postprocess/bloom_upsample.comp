@@ -2,6 +2,11 @@
 
 layout (local_size_x = 8, local_size_y = 8) in;
 
+const uint UBO_BINDING_GLOBAL      = 0;
+const uint UBO_BINDING_LIGHT       = 1;
+const uint UBO_BINDING_MATERIAL    = 2;
+const uint UBO_BINDING_POSTPROCESS = 3;
+
 const uint TEXTURE_UNIT_ALBEDO    = 0;
 const uint TEXTURE_UNIT_NORMAL    = 1;
 const uint TEXTURE_UNIT_ROUGHNESS = 2;
@@ -15,12 +20,18 @@ const uint IMAGE_UNIT_READ_WRITE = 2;
 layout (binding = TEXTURE_UNIT_ALBEDO) uniform sampler2D u_srcMip;
 layout (rgba16f, binding = IMAGE_UNIT_READ_WRITE) coherent uniform image2D u_dstMip;
 
-uniform float u_filterRadius;
+layout (binding = UBO_BINDING_POSTPROCESS, std140) uniform PostprocessUBO
+{
+    float u_exposure;
+    float u_saturation;
+    float u_bloomThres;
+    float u_bloomFilterRad;
+};
 
 void main()
 {
     vec2 inoutputUV = vec2(gl_GlobalInvocationID.xy) / vec2(gl_NumWorkGroups.xy * gl_WorkGroupSize.xy);
-    vec2 filterRad = vec2(u_filterRadius);
+    vec2 filterRad = vec2(0.005);
 
     vec3 upsample = vec3(0.0);
 

@@ -12,12 +12,6 @@ public:
     DeferredRenderer(const Envy::EnvyInstance* envy_instance, int width, int height);
     ~DeferredRenderer();
 
-    // UBO Functions
-    void UpdateDirLight(const DirLight& dir_light) const override;
-    void UpdatePointLights(const std::vector<PointLight>& point_lights) const override;
-    void UpdateGlobalMatParam(const MaterialUBO& mat_params) const override;
-    void UpdatePostprocessParam(const PostprocessUBO& postprocess_params) const override;
-
     // Rendering Functions
     void BeginFrame(const FrameData& frame_data) override;
     GLResource<Envy::Texture2D> EndFrame(const GLResource<Envy::Cubemap>& cubemap = {}) override;
@@ -29,6 +23,7 @@ public:
     GLResource<Envy::Framebuffer> GetMainFramebuffer() const override;
     GLResource<Envy::Framebuffer> GetGBufferFramebuffer() const;
     GLResource<Envy::Framebuffer> GetMainShadowFramebuffer() const override;
+    GLResource<Envy::Texture2D> GetTextureForBloom() const;
 
 private:
     void _UpdateUBOTime() const;

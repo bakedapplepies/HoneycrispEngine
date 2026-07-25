@@ -22,7 +22,8 @@ public:
     const GLResource<Envy::Texture2D> Process(const GLResource<Envy::Texture2D>& input,
                                               int group_x, int group_y, int group_z) const;
 
-    const GLResource<Envy::Texture2D> Bloom(const GLResource<Envy::Texture2D>& source,
+    const GLResource<Envy::Texture2D> Bloom(const GLResource<Envy::Texture2D>& thresholded,
+                                            const GLResource<Envy::Texture2D>& dest,
                                             const Envy::ShaderProgram* downsample_compute,
                                             const Envy::ShaderProgram* upsample_compute) const;
 

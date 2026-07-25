@@ -61,7 +61,7 @@ void Model::_RetrieveMaterials(const aiScene* scene, std::string_view root_path,
     Envy::Sampler2DConfig textureSampler2DConfig = Envy::Sampler2DConfig {
         .wrapX = GL_REPEAT,
         .wrapY = GL_REPEAT,
-        .closeFilter = GL_LINEAR_MIPMAP_LINEAR,
+        .closeFilter = GL_LINEAR,
         .farFilter = GL_NEAREST
     };
     for (uint32_t i = 0; i < scene->mNumMaterials; i++)

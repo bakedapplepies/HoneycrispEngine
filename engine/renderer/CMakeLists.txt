@@ -8,6 +8,7 @@ set(RENDERER_SOURCES
     Transform.cpp
     meshes/Quad.cpp
     meshes/Model.cpp
+    meshes/Cube.cpp
 )
 
 add_library(${PROJECT_NAME}.Renderer

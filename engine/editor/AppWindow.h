@@ -38,7 +38,8 @@ private:
 
     // This will be where graphics APIs can be switched in and out
     const Envy::EnvyInstance* m_envyInstance = nullptr;
-    std::unique_ptr<Renderer> m_renderer = nullptr;
+    std::unique_ptr<Renderer> m_deferredRenderer = nullptr;
+    // std::unique_ptr<Renderer> m_forwardRenderer = nullptr;
     Camera* m_mainCamera = nullptr;
 };
 

@@ -13,6 +13,7 @@ public:
     ~Transform() = default;
 
     glm::mat4 GetModelMatrix() const;
+    glm::mat3 GetNormalMatrix() const;
 
 public:
     glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);

@@ -14,7 +14,8 @@ HNCRSP_NAMESPACE_START
 // The Renderer can be the interface between the scene and shaders.
 // Meaning update in scene's lights are reflected in the shaders via the Renderer.
 constexpr uint32_t MAX_POINT_LIGHTS = 20;
-constexpr uint32_t MAIN_FBO_COLOR_ATTACHMENT_INDEX = 0;
+constexpr uint32_t MAIN_FBO_COLOR_ATTACHMENT0_INDEX = 0;
+constexpr uint32_t MAIN_FBO_COLOR_ATTACHMENT1_INDEX = 1;
 constexpr uint32_t SHADOW_FBO_DEPTH_ATTACHMENT_INDEX = 0;
 
 enum class FrameType
@@ -86,6 +87,9 @@ struct MaterialUBO
 struct PostprocessUBO
 {
     float u_exposure;
+    float u_saturation;
+    float u_bloomThres;
+    float u_bloomFilterRad;
 };
 
 class Renderer
@@ -95,10 +99,10 @@ public:
     virtual ~Renderer();
 
     // UBO Functions
-    virtual void UpdateDirLight(const DirLight& dir_light) const = 0;
-    virtual void UpdatePointLights(const std::vector<PointLight>& point_lights) const = 0;
-    virtual void UpdateGlobalMatParam(const MaterialUBO& mat_params) const = 0;
-    virtual void UpdatePostprocessParam(const PostprocessUBO& postprocess_params) const = 0;
+    virtual void UpdateDirLight(const DirLight& dir_light) const;
+    virtual void UpdatePointLights(const std::vector<PointLight>& point_lights) const;
+    virtual void UpdateGlobalMatParam(const MaterialUBO& mat_params) const;
+    virtual void UpdatePostprocessParam(const PostprocessUBO& postprocess_params) const;
 
     // Rendering Functions
     virtual void BeginFrame(const FrameData& frame_data) = 0;

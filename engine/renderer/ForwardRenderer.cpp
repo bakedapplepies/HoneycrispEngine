@@ -65,36 +65,6 @@ ForwardRenderer::~ForwardRenderer()
     m_shadowFBO = GLResource<Envy::Framebuffer>::empty;
 }
 
-void ForwardRenderer::UpdateDirLight(const DirLight& dir_light) const
-{
-    m_lightUBO->UploadData(offsetof(LightUBO, u_dirLight), 16, &dir_light);
-}
-
-void ForwardRenderer::UpdatePointLights(const std::vector<PointLight>& point_lights) const
-{
-    // m_pointLights = std::move(point_lights);
-
-    uint32_t pointLightNum = point_lights.size();
-    m_lightUBO->UploadData(offsetof(LightUBO, u_numPointLight), 4, &pointLightNum);
-    for (uint32_t i = 0; i < point_lights.size(); i++)
-    {
-        m_lightUBO->UploadData(offsetof(LightUBO, u_pointLights) + 16 * i, 16, point_lights.data() + i);
-    }
-}
-
-void ForwardRenderer::UpdateGlobalMatParam(const MaterialUBO& mat_params) const
-{
-    m_materialUBO->UploadData(offsetof(MaterialUBO, u_ambient_intensity), 4, &mat_params.u_ambient_intensity);
-    m_materialUBO->UploadData(offsetof(MaterialUBO, u_diffuse_intensity), 4, &mat_params.u_diffuse_intensity);
-    m_materialUBO->UploadData(offsetof(MaterialUBO, u_specular_intensity), 4, &mat_params.u_specular_intensity);
-    m_materialUBO->UploadData(offsetof(MaterialUBO, u_roughness_scalar), 4, &mat_params.u_roughness_scalar);
-}
-
-void ForwardRenderer::UpdatePostprocessParam(const PostprocessUBO& postprocess_params) const
-{
-    m_postprocessUBO->UploadData(offsetof(PostprocessUBO, u_exposure), 4, &postprocess_params.u_exposure);
-}
-
 void ForwardRenderer::BeginFrame(const FrameData& frame_data)
 {
     assert(m_currentFrameType == FrameType::NONE && "ForwardRenderer::BeginFrame: In the middle of a frame.");
@@ -129,7 +99,7 @@ GLResource<Envy::Texture2D> ForwardRenderer::EndFrame(const GLResource<Envy::Cub
         {
             cubemap->Draw();
         }
-        return m_mainFBO->GetTex2DAttachment(MAIN_FBO_COLOR_ATTACHMENT_INDEX);
+        return m_mainFBO->GetTex2DAttachment(MAIN_FBO_COLOR_ATTACHMENT0_INDEX);
     }
     else if (frameType == FrameType::SHADOW)
     {
