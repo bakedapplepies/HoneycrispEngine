@@ -1,0 +1,56 @@
+#version 460 core
+
+layout (local_size_x = 8, local_size_y = 8) in;
+
+const uint UBO_BINDING_GLOBAL      = 0;
+const uint UBO_BINDING_LIGHT       = 1;
+const uint UBO_BINDING_MATERIAL    = 2;
+const uint UBO_BINDING_POSTPROCESS = 3;
+
+const uint IMAGE_UNIT_READ       = 0;
+const uint IMAGE_UNIT_WRITE      = 1;
+const uint IMAGE_UNIT_READ_WRITE = 2;
+
+layout (rgba16f, binding = IMAGE_UNIT_READ) readonly uniform image2D u_renderedScene;
+layout (rgba16f, binding = IMAGE_UNIT_WRITE) writeonly uniform image2D u_imageOutput;
+
+layout (binding = UBO_BINDING_GLOBAL, std140) uniform GlobalUBO
+{
+    float u_time;
+    mat4 u_view;
+    mat4 u_projection;
+    vec4 u_cameraPos;
+};
+
+layout (binding = UBO_BINDING_POSTPROCESS, std140) uniform PostprocessUBO
+{
+    float u_exposure;
+    float u_saturation;
+    float u_bloomThres;
+    float u_bloomFilterRad;
+};
+
+float luminance(vec3 color)
+{
+    vec3 weights = vec3(0.2126, 0.7152, 0.0722);
+    return dot(weights, color);
+}
+
+void main()
+{
+    ivec2 pixelCoords = ivec2(gl_GlobalInvocationID.xy);
+
+    int radius = 1;
+
+    vec3 a = imageLoad(u_renderedScene, pixelCoords + ivec2( 0, 0) * radius).rgb;
+    vec3 b = imageLoad(u_renderedScene, pixelCoords + ivec2( 1, 0) * radius).rgb;
+    vec3 c = imageLoad(u_renderedScene, pixelCoords + ivec2( 0, 1) * radius).rgb;
+
+    float La = luminance(a);
+    float Lb = luminance(b);
+    float Lc = luminance(c);
+    vec3 dev = vec3(Lb - La, Lc - La, 0.0);
+    vec3 color = a + dev;
+
+    imageStore(u_imageOutput, pixelCoords, vec4(color, 1.0));
+}

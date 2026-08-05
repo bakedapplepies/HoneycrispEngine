@@ -17,9 +17,6 @@ ForwardRenderer::ForwardRenderer(const Envy::EnvyInstance* envy_instance, int wi
 
     m_envyInstance = envy_instance;
 
-    uint32_t pointLightNum = 1;
-    m_lightUBO->UploadData(16, 4, &pointLightNum);
-
     // TODO: In case a Resource container is assigned to a different resource
     // whilst already holding a resource, it may lead to non-deallocated memory.
     // It will get cleaned up when the program ends, but in the duration the
@@ -28,7 +25,7 @@ ForwardRenderer::ForwardRenderer(const Envy::EnvyInstance* envy_instance, int wi
         Envy::FBOAttachment {
             .target = Envy::FBOAttachmentTarget::COLOR0,
             .usage = Envy::FBOAttachmentUsage::TEXTURE,
-            .format = Envy::TextureFormat::RGBA8
+            .format = Envy::TextureFormat::RGBA16F
         },
         Envy::FBOAttachment {
             .target = Envy::FBOAttachmentTarget::DEPTH,
@@ -118,11 +115,13 @@ void ForwardRenderer::Render(const RenderCommand& render_command) const
     }
 
     const Material* material = render_command.material;
-    material->albedo->Bind(TEXTURE_UNIT_ALBEDO);
-    material->roughness->Bind(TEXTURE_UNIT_ROUGHNESS);
+    if (material->albedo.Usable()) material->albedo->Bind(TEXTURE_UNIT_ALBEDO);
+    if (material->roughness.Usable()) material->roughness->Bind(TEXTURE_UNIT_ROUGHNESS);
     material->pipeline->Bind();
     material->pipeline->GetVertexProgram()->UniformMat4("u_model",
                                                         render_command.transform->GetModelMatrix());
+    material->pipeline->GetVertexProgram()->UniformMat3("u_normalMat",
+                                                        render_command.transform->GetNormalMatrix());
 
     render_command.vertexArray->Bind();
     m_envyInstance->Draw(*render_command.vaoChunk);
@@ -142,11 +141,13 @@ void ForwardRenderer::RenderMultiple(const std::vector<RenderCommand>& render_co
         for (uint32_t i = 0; i < render_commands.size(); i++)
         {
             const Material* material = render_commands[i].material;
-            material->albedo->Bind(TEXTURE_UNIT_ALBEDO);
+            if (material->albedo.Usable()) material->albedo->Bind(TEXTURE_UNIT_ALBEDO);
             if (material->roughness.Usable()) material->roughness->Bind(TEXTURE_UNIT_ROUGHNESS);
             material->pipeline->Bind();
             material->pipeline->GetVertexProgram()->UniformMat4("u_model",
                                                                 render_commands[i].transform->GetModelMatrix());
+            material->pipeline->GetVertexProgram()->UniformMat3("u_normalMat",
+                                                                render_commands[i].transform->GetNormalMatrix());
     
             render_commands[i].vertexArray->Bind();
             m_envyInstance->Draw(*render_commands[i].vaoChunk);
@@ -180,8 +181,8 @@ void ForwardRenderer::RenderIndirect(const RenderCommandIndirect& render_command
     if (m_currentFrameType == FrameType::NORMAL)
     {
         material = render_command_indirect.material;
-        const uint32_t TEXTURE_UNIT_ALBEDO = 0;
-        material->albedo->Bind(TEXTURE_UNIT_ALBEDO);
+        if (material->albedo.Usable()) material->albedo->Bind(TEXTURE_UNIT_ALBEDO);
+        if (material->roughness.Usable()) material->roughness->Bind(TEXTURE_UNIT_ROUGHNESS);
     }
     else if (m_currentFrameType == FrameType::SHADOW)
     {
@@ -190,6 +191,8 @@ void ForwardRenderer::RenderIndirect(const RenderCommandIndirect& render_command
     material->pipeline->Bind();
     material->pipeline->GetVertexProgram()->UniformMat4("u_model",
                                                         render_command_indirect.transform->GetModelMatrix());
+    material->pipeline->GetVertexProgram()->UniformMat3("u_normalMat",
+                                                        render_command_indirect.transform->GetNormalMatrix());
     
     m_envyInstance->DrawIndirect(render_command_indirect.indirectBuffer->GetCommandCount());
 }

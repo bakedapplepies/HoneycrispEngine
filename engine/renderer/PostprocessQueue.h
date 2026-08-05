@@ -32,6 +32,7 @@ private:
     void _BloomUpsample(const Envy::ShaderProgram* upsample_compute, const GLResource<Envy::Texture2D>& source) const;
 
 private:
+    const Envy::EnvyInstance* m_envyInstance = nullptr;
     std::vector<const Envy::ShaderProgram*> m_computeShaders;
     GLResource<Envy::Texture2D> m_buffer = GLResource<Envy::Texture2D>::empty;
     std::vector<GLResource<Envy::Texture2D>> m_bloomMips;

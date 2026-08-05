@@ -8,22 +8,22 @@ Quad::Quad(const Envy::EnvyInstance* envy_instance)
 {
     std::array<Envy::Vertex, 4> vertices = {
         Envy::Vertex {
-            .position = glm::vec3(-1.0f,  1.0f,  0.0f),
+            .position = glm::vec3(-0.5f,  0.5f,  0.0f),
             .normal   = glm::vec3( 0.0f,  0.0f,  0.0f),
-            .uv       = glm::vec2( 0.0f,  1.0f)
+            .uv       = glm::vec2( 0.0f,  0.5f)
         },
         Envy::Vertex {
-            .position = glm::vec3( 1.0f,  1.0f,  0.0f),
+            .position = glm::vec3( 0.5f,  0.5f,  0.0f),
             .normal   = glm::vec3( 0.0f,  0.0f,  0.0f),
-            .uv       = glm::vec2( 1.0f,  1.0f)
+            .uv       = glm::vec2( 0.5f,  0.5f)
         },
         Envy::Vertex {
-            .position = glm::vec3( 1.0f, -1.0f,  0.0f),
+            .position = glm::vec3( 0.5f, -0.5f,  0.0f),
             .normal   = glm::vec3( 0.0f,  0.0f,  0.0f),
-            .uv       = glm::vec2( 1.0f,  0.0f)
+            .uv       = glm::vec2( 0.5f,  0.0f)
         },
         Envy::Vertex {
-            .position = glm::vec3(-1.0f, -1.0f,  0.0f),
+            .position = glm::vec3(-0.5f, -0.5f,  0.0f),
             .normal   = glm::vec3( 0.0f,  0.0f,  0.0f),
             .uv       = glm::vec2( 0.0f,  0.0f)
         }
@@ -40,7 +40,7 @@ Quad::Quad(const Envy::EnvyInstance* envy_instance)
     const Envy::ShaderProgram* vertexShader =
         envy_instance->GetShaderProgram(Path("engine/renderer/shaders/screen_quad.vert").Str());
     const Envy::ShaderProgram* fragmentShader =
-        envy_instance->GetShaderProgram(Path("engine/renderer/shaders/deferred_shading.frag").Str());
+        envy_instance->GetShaderProgram(Path("engine/renderer/shaders/sim.frag").Str());
 
     material.pipeline = envy_instance->CreatePipeline();
     material.pipeline->SetVertexProgram(vertexShader);

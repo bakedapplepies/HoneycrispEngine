@@ -114,44 +114,47 @@ void Application::Run()
     // Postprocess Queue
     int windowWidth, windowHeight;
     glfwGetWindowSize(m_window, &windowWidth, &windowHeight);
-    PostprocessQueue postprocessQueue(m_envyInstance, windowWidth, windowHeight);
-    postprocessQueue.AddCompute(m_envyInstance->GetShaderProgram(Path("engine/renderer/shaders/postprocess/gamma.comp").Str()));
+    // PostprocessQueue postprocessQueue(m_envyInstance, windowWidth, windowHeight);
+    // postprocessQueue.AddCompute(m_envyInstance->GetShaderProgram(Path("engine/renderer/shaders/postprocess/gamma.comp").Str()));
+    PostprocessQueue simulation(m_envyInstance, windowWidth, windowHeight);
+    simulation.AddCompute(m_envyInstance->GetShaderProgram(Path("engine/renderer/shaders/simulation/derivative.comp").Str()));
 
     // Sub-systems setup
     m_deferredRenderer = std::make_unique<DeferredRenderer>(m_envyInstance, windowWidth, windowHeight);
+    m_forwardRenderer = std::make_unique<ForwardRenderer>(m_envyInstance, windowWidth, windowHeight);
 
     // Scene data
-    std::vector<glm::vec3> quadPositions;
-    quadPositions.resize(10000);
-    for (int i = 0; i < 100; i++)
-    {
-        for (int j = 0; j < 100; j++)
-        {
-            quadPositions[100 * i + j] = glm::vec3(2.0f * i, 0.0f, -2.0f * j);
-        }
-    }
+    // std::vector<glm::vec3> quadPositions;
+    // quadPositions.resize(10000);
+    // for (int i = 0; i < 100; i++)
+    // {
+    //     for (int j = 0; j < 100; j++)
+    //     {
+    //         quadPositions[100 * i + j] = glm::vec3(2.0f * i, 0.0f, -2.0f * j);
+    //     }
+    // }
 
     Quad quad(m_envyInstance);
 
-    RenderCommand quadRenderCmd = quad.GetRenderCmd();
-    quadRenderCmd.vertexArray->AddInstanceBuffer(3, sizeof(glm::vec3), 10000, quadPositions.data());
-    Envy::IndirectCommand indirectCmd {
-        .count = quadRenderCmd.vaoChunk->elementsCount,
-        .instanceCount = 10000,
-        .firstIndex = quadRenderCmd.vaoChunk->elementsOffset,
-        .baseVertex = quadRenderCmd.vaoChunk->vertexOffset,
-        .baseInstance = 0
-    };
-    GLResource<Envy::IndirectBuffer> quadIndirectBuffer =
-        m_envyInstance->CreateIndirectBuffer(1, &indirectCmd);
-    RenderCommandIndirect quadRenderCmdIndirect {
-        .vertexArray = quadRenderCmd.vertexArray,
-        .indirectBuffer = quadIndirectBuffer,
-        .material = quadRenderCmd.material,
-        .transform = quadRenderCmd.transform
-    };
+    // RenderCommand quadRenderCmd = quad.GetRenderCmd();
+    // quadRenderCmd.vertexArray->AddInstanceBuffer(3, sizeof(glm::vec3), 10000, quadPositions.data());
+    // Envy::IndirectCommand indirectCmd {
+    //     .count = quadRenderCmd.vaoChunk->elementsCount,
+    //     .instanceCount = 10000,
+    //     .firstIndex = quadRenderCmd.vaoChunk->elementsOffset,
+    //     .baseVertex = quadRenderCmd.vaoChunk->vertexOffset,
+    //     .baseInstance = 0
+    // };
+    // GLResource<Envy::IndirectBuffer> quadIndirectBuffer =
+    //     m_envyInstance->CreateIndirectBuffer(1, &indirectCmd);
+    // RenderCommandIndirect quadRenderCmdIndirect {
+    //     .vertexArray = quadRenderCmd.vertexArray,
+    //     .indirectBuffer = quadIndirectBuffer,
+    //     .material = quadRenderCmd.material,
+    //     .transform = quadRenderCmd.transform
+    // };
 
-    Model model(Path("engine/resources/models/sponza2/Sponza.gltf").Str(), m_envyInstance);
+    // Model model(Path("engine/resources/models/sponza2/Sponza.gltf").Str(), m_envyInstance);
 
     // Lights
     DirLight dirLight {
@@ -221,6 +224,18 @@ void Application::Run()
     m_deferredRenderer->UpdateGlobalMatParam(matParams);
     m_deferredRenderer->UpdatePostprocessParam(postprocessParams);
 
+    // Initialize simulation
+    FrameData simulationStart {
+        .frameType = FrameType::NORMAL,
+        .framebuffer = m_forwardRenderer->GetMainFramebuffer(),
+        .fboClearBufferFlags = Envy::FBOBuffer::COLOR | Envy::FBOBuffer::DEPTH,
+        .camera = m_mainCamera,  // shader won't use camera so this is placeholder
+        .cameraProjection = CameraProjection::ORTHOGRAPHIC
+    };
+    m_forwardRenderer->BeginFrame(simulationStart);
+    m_forwardRenderer->Render(quad.GetRenderCmd());
+    GLResource<Envy::Texture2D> mainFrameResult = m_forwardRenderer->EndFrame();
+
     // Keep track of time             
     float beginTime = glfwGetTime();
     float totalTime = 0.0f;
@@ -233,35 +248,35 @@ void Application::Run()
         totalTime += deltaTime;
         beginTime = glfwGetTime();
 
-        // ----- Shadow mapping -----
-        FrameData shadowMapFrame {
-            .frameType = FrameType::SHADOW,
-            .framebuffer = m_deferredRenderer->GetMainShadowFramebuffer(),
-            .fboClearBufferFlags = Envy::FBOBuffer::DEPTH,
-            .camera = &depthCamera,
-            .cameraProjection = CameraProjection::ORTHOGRAPHIC
-        };
-        m_deferredRenderer->BeginFrame(shadowMapFrame);
-        m_deferredRenderer->RenderMultiple(model.GetRenderCmds());
-        GLResource<Envy::Texture2D> shadowFrameResult = m_deferredRenderer->EndFrame();
-        depthCamera.position = m_mainCamera->position;
-        // --------------------------
+        // // ----- Shadow mapping -----
+        // static FrameData shadowMapFrame {
+        //     .frameType = FrameType::SHADOW,
+        //     .framebuffer = m_deferredRenderer->GetMainShadowFramebuffer(),
+        //     .fboClearBufferFlags = Envy::FBOBuffer::DEPTH,
+        //     .camera = &depthCamera,
+        //     .cameraProjection = CameraProjection::ORTHOGRAPHIC
+        // };
+        // m_deferredRenderer->BeginFrame(shadowMapFrame);
+        // m_deferredRenderer->RenderMultiple(model.GetRenderCmds());
+        // GLResource<Envy::Texture2D> shadowFrameResult = m_deferredRenderer->EndFrame();
+        // depthCamera.position = m_mainCamera->position;
+        // // --------------------------
 
-        // ------- Main scene -------
-        FrameData mainFrame {
-            .frameType = FrameType::NORMAL,
-            .framebuffer = m_deferredRenderer->GetMainFramebuffer(),
-            .fboClearBufferFlags = Envy::FBOBuffer::COLOR | Envy::FBOBuffer::DEPTH,
-            .camera = m_mainCamera,
-            .cameraProjection = CameraProjection::PERSPECTIVE
-        };
-        m_deferredRenderer->BeginFrame(mainFrame);
-        shadowFrameResult->Bind(TEXTURE_UNIT_DEPTH_MAP);
-        m_deferredRenderer->RenderMultiple(model.GetRenderCmds());
-        m_deferredRenderer->Render(cube.GetRenderCmd());
-        GLResource<Envy::Texture2D> mainFrameResult = m_deferredRenderer->EndFrame(skybox);
-        // --------------------------
-        depthCamera.position = camera.position - (depthCamera.viewDir) * 25.0f;
+        // // ------- Main scene -------
+        // static FrameData mainFrame {
+        //     .frameType = FrameType::NORMAL,
+        //     .framebuffer = m_deferredRenderer->GetMainFramebuffer(),
+        //     .fboClearBufferFlags = Envy::FBOBuffer::COLOR | Envy::FBOBuffer::DEPTH,
+        //     .camera = m_mainCamera,
+        //     .cameraProjection = CameraProjection::PERSPECTIVE
+        // };
+        // m_deferredRenderer->BeginFrame(mainFrame);
+        // shadowFrameResult->Bind(TEXTURE_UNIT_SHADOW_MAP);
+        // m_deferredRenderer->RenderMultiple(model.GetRenderCmds());
+        // m_deferredRenderer->Render(cube.GetRenderCmd());
+        // GLResource<Envy::Texture2D> mainFrameResult = m_deferredRenderer->EndFrame(skybox);
+        // // --------------------------
+        // depthCamera.position = camera.position - (depthCamera.viewDir) * 25.0f;
 
         m_envyInstance->BindDefaultFramebuffer();
 
@@ -269,7 +284,8 @@ void Application::Run()
         //                                          mainFrameResult,
         //                                          m_envyInstance->GetShaderProgram(Path("engine/renderer/shaders/postprocess/bloom_downsample.comp").Str()),
         //                                          m_envyInstance->GetShaderProgram(Path("engine/renderer/shaders/postprocess/bloom_upsample.comp").Str()));
-        mainFrameResult = postprocessQueue.Process(mainFrameResult, 320, 180, 1);
+        // mainFrameResult = postprocessQueue.Process(mainFrameResult, 320, 180, 1);
+        mainFrameResult = simulation.Process(mainFrameResult, 320, 180, 1);
         static ImTextureID textureID = mainFrameResult->GetID();
 
         _ProcessInput(deltaTime);
@@ -298,7 +314,7 @@ void Application::Run()
         }
         else if (glfwGetKey(m_window, GLFW_KEY_2) == GLFW_PRESS)
         {
-            textureID = shadowFrameResult->GetID();
+            // textureID = shadowFrameResult->GetID();
         }
         updatePostprocessParams |= ImGui::SliderFloat("Bloom Threshold", &postprocessParams.u_bloomThres, 0.0f, 5.0f);
         updatePostprocessParams |= ImGui::SliderFloat("Exposure", &postprocessParams.u_exposure, 0.1f, 16.0f);
@@ -423,6 +439,9 @@ void Application::_LoadShaderPrograms() const
         Envy::ShaderType::FRAGMENT,
         Path("engine/renderer/shaders/shadow.frag").Str());
     m_envyInstance->LoadShaderProgram(
+        Envy::ShaderType::FRAGMENT,
+        Path("engine/renderer/shaders/sim.frag").Str());
+    m_envyInstance->LoadShaderProgram(
         Envy::ShaderType::COMPUTE,
         Path("engine/renderer/shaders/postprocess/gamma.comp").Str());
     m_envyInstance->LoadShaderProgram(
@@ -431,6 +450,9 @@ void Application::_LoadShaderPrograms() const
     m_envyInstance->LoadShaderProgram(
         Envy::ShaderType::COMPUTE,
         Path("engine/renderer/shaders/postprocess/bloom_upsample.comp").Str());
+    m_envyInstance->LoadShaderProgram(
+        Envy::ShaderType::COMPUTE,
+        Path("engine/renderer/shaders/simulation/derivative.comp").Str());
 }
 
 void Application::_LoadTexture2Ds() const

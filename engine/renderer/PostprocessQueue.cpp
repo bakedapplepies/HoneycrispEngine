@@ -8,6 +8,7 @@
 HNCRSP_NAMESPACE_START
 
 PostprocessQueue::PostprocessQueue(const Envy::EnvyInstance* envy_instance, int width, int height)
+    : m_envyInstance(envy_instance)
 {
     // main texture for general postprocessing
     m_buffer = envy_instance->CreateTexture2DEmpty(Envy::TextureFormat::RGBA16F, width, height);
@@ -45,6 +46,7 @@ void PostprocessQueue::AddCompute(const Envy::ShaderProgram* compute_shader)
 const GLResource<Envy::Texture2D> PostprocessQueue::Process(const GLResource<Envy::Texture2D>& input,
                                                             int group_x, int group_y, int group_z) const
 {
+    HNCRSP_ASSERT(input->GetID() != m_buffer->GetID(), "PostprocessQueue::Process can't have the input be its auxilary buffer.")
     uint32_t i;
     for (i = 0; i < m_computeShaders.size(); i++)
     {
@@ -65,9 +67,9 @@ const GLResource<Envy::Texture2D> PostprocessQueue::Process(const GLResource<Env
     
     glUseProgram(0);
     if (i % 2 == 1)
-        return m_buffer;
-    else
-        return input;
+        m_envyInstance->CopyTexture2D(m_buffer, input);
+
+    return input;
 }
 
 const GLResource<Envy::Texture2D> PostprocessQueue::Bloom(const GLResource<Envy::Texture2D>& thresholded,

@@ -11,7 +11,7 @@ class Scene
 public:
 
 private:
-    std::vector<uint32_t> m_ids;
+    
 };
 
 HNCRSP_NAMESPACE_END

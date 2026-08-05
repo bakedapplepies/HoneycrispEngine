@@ -118,10 +118,10 @@ public:
 protected:
     int m_width;
     int m_height;
-    GLResource<Envy::UniformBuffer> m_globalUBO;
-    GLResource<Envy::UniformBuffer> m_lightUBO;
-    GLResource<Envy::UniformBuffer> m_materialUBO;
-    GLResource<Envy::UniformBuffer> m_postprocessUBO;
+    static GLResource<Envy::UniformBuffer> m_globalUBO;
+    static GLResource<Envy::UniformBuffer> m_lightUBO;
+    static GLResource<Envy::UniformBuffer> m_materialUBO;
+    static GLResource<Envy::UniformBuffer> m_postprocessUBO;
 
 private:
     static bool m_rendererSetup;
