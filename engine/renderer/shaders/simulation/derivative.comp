@@ -36,21 +36,29 @@ float luminance(vec3 color)
     return dot(weights, color);
 }
 
+vec3 temp_color(float t)
+{
+    vec3 RED   = vec3(1, 0, 0);
+    vec3 GREEN = vec3(0, 1, 0);
+    vec3 BLUE  = vec3(0, 0, 1);
+    if (t < 0.5) return mix(BLUE, GREEN, t);
+    else return mix(GREEN, RED, t);
+}
+
 void main()
 {
     ivec2 pixelCoords = ivec2(gl_GlobalInvocationID.xy);
 
     int radius = 1;
 
-    vec3 a = imageLoad(u_renderedScene, pixelCoords + ivec2( 0, 0) * radius).rgb;
-    vec3 b = imageLoad(u_renderedScene, pixelCoords + ivec2( 1, 0) * radius).rgb;
-    vec3 c = imageLoad(u_renderedScene, pixelCoords + ivec2( 0, 1) * radius).rgb;
+    float a = imageLoad(u_renderedScene, pixelCoords + ivec2( 0, 0) * radius).r;
+    float b = imageLoad(u_renderedScene, pixelCoords + ivec2( 1, 0) * radius).r;
+    float c = imageLoad(u_renderedScene, pixelCoords + ivec2( 0, 1) * radius).r;
 
-    float La = luminance(a);
-    float Lb = luminance(b);
-    float Lc = luminance(c);
-    vec3 dev = vec3(Lb - La, Lc - La, 0.0);
-    vec3 color = a + dev;
+    vec2 dev = vec2(b - a, c - a);
+    vec3 color = temp_color(a + 0.000001*dot(dev, dev));
+
+    // TODO: make a separate postprocessqueue so we can save the simulation data instead of turning everything into RGB
 
     imageStore(u_imageOutput, pixelCoords, vec4(color, 1.0));
 }
