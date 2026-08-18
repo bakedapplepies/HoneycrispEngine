@@ -49,16 +49,23 @@ void main()
 {
     ivec2 pixelCoords = ivec2(gl_GlobalInvocationID.xy);
 
-    int radius = 1;
+    int delta = 1;
+    vec2 texel = 1.0 / gl_GlobalInvocationID.xy;
 
-    float a = imageLoad(u_renderedScene, pixelCoords + ivec2( 0, 0) * radius).r;
-    float b = imageLoad(u_renderedScene, pixelCoords + ivec2( 1, 0) * radius).r;
-    float c = imageLoad(u_renderedScene, pixelCoords + ivec2( 0, 1) * radius).r;
+    // x a x
+    // b c d
+    // x e x
 
-    vec2 dev = vec2(b - a, c - a);
-    vec3 color = temp_color(a + 0.000001*dot(dev, dev));
+    float a = imageLoad(u_renderedScene, pixelCoords + ivec2( 0,  1) * delta).r;
+    float b = imageLoad(u_renderedScene, pixelCoords + ivec2(-1,  0) * delta).r;
+    float c = imageLoad(u_renderedScene, pixelCoords + ivec2( 0,  0) * delta).r;
+    float d = imageLoad(u_renderedScene, pixelCoords + ivec2( 1,  0) * delta).r;
+    float e = imageLoad(u_renderedScene, pixelCoords + ivec2( 0, -1) * delta).r;
 
-    // TODO: make a separate postprocessqueue so we can save the simulation data instead of turning everything into RGB
+    float d2T_dx2 = (b + d - 2*c) / pow(texel.x, 2.0);
+    float d2T_dy2 = (a + e - 2*c) / pow(texel.y, 2.0);
+    float nabla2T = d2T_dx2 + d2T_dy2;
+    float newTemp = c + 0.000000001 * nabla2T;
 
-    imageStore(u_imageOutput, pixelCoords, vec4(color, 1.0));
+    imageStore(u_imageOutput, pixelCoords, vec4(vec3(newTemp), 1.0));
 }

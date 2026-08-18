@@ -119,6 +119,9 @@ void Application::Run()
     PostprocessQueue simulation(m_envyInstance, windowWidth, windowHeight);
     simulation.AddCompute(m_envyInstance->GetShaderProgram(Path("engine/renderer/shaders/simulation/derivative.comp").Str()));
 
+    PostprocessQueue colorSimulation(m_envyInstance, windowWidth, windowHeight);
+    colorSimulation.AddCompute(m_envyInstance->GetShaderProgram(Path("engine/renderer/shaders/simulation/color.comp").Str()));
+
     // Sub-systems setup
     m_deferredRenderer = std::make_unique<DeferredRenderer>(m_envyInstance, windowWidth, windowHeight);
     m_forwardRenderer = std::make_unique<ForwardRenderer>(m_envyInstance, windowWidth, windowHeight);
@@ -286,7 +289,10 @@ void Application::Run()
         //                                          m_envyInstance->GetShaderProgram(Path("engine/renderer/shaders/postprocess/bloom_upsample.comp").Str()));
         // mainFrameResult = postprocessQueue.Process(mainFrameResult, 320, 180, 1);
         mainFrameResult = simulation.Process(mainFrameResult, 320, 180, 1);
-        static ImTextureID textureID = mainFrameResult->GetID();
+        static GLResource<Envy::Texture2D> mainFrameResultColor = m_envyInstance->CreateTexture2DEmpty(Envy::TextureFormat::RGBA16F, windowWidth, windowHeight);
+        m_envyInstance->CopyTexture2D(mainFrameResult, mainFrameResultColor);
+        mainFrameResultColor = colorSimulation.Process(mainFrameResultColor, 320, 180, 1);
+        static ImTextureID textureID = mainFrameResultColor->GetID();
 
         _ProcessInput(deltaTime);
 
@@ -453,6 +459,9 @@ void Application::_LoadShaderPrograms() const
     m_envyInstance->LoadShaderProgram(
         Envy::ShaderType::COMPUTE,
         Path("engine/renderer/shaders/simulation/derivative.comp").Str());
+    m_envyInstance->LoadShaderProgram(
+        Envy::ShaderType::COMPUTE,
+        Path("engine/renderer/shaders/simulation/color.comp").Str());
 }
 
 void Application::_LoadTexture2Ds() const
